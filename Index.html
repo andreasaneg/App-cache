@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CACHÊ PRO V12</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --primary: #10b981; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --extra: #f59e0b; --diaria: #0ea5e9; --danger: #ef4444; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; padding-bottom: 50px; }
+        .header { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-bottom: 15px; }
+        
+        .semana-selector { display: flex; align-items: center; justify-content: space-between; background: var(--card); padding: 8px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--primary); }
+        .btn-nav { background: var(--primary); border: none; color: #0f172a; padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 1.2em; }
+        .semana-label { font-weight: bold; font-size: 0.85em; text-align: center; flex: 1; }
+
+        .dashboard { background: var(--card); padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #334155; text-align: center; }
+        .total-semana { font-size: 2.2em; font-weight: bold; color: var(--primary); margin-bottom: 5px; }
+        .pgto-info { font-size: 0.9em; color: #94a3b8; margin-bottom: 15px; display: block; }
+        
+        .chart-container { position: relative; height: 180px; margin-bottom: 15px; display: flex; justify-content: center; }
+        
+        .custom-legend { display: flex; justify-content: space-around; margin-top: 10px; flex-wrap: wrap; gap: 10px; }
+        .legend-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; }
+        .legend-color { width: 12px; height: 12px; border-radius: 3px; margin-bottom: 5px; }
+        .legend-label { font-size: 0.65em; color: #94a3b8; text-transform: uppercase; }
+        .legend-value { font-size: 0.8em; font-weight: bold; }
+
+        .input-group { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #334155; }
+        label { display: block; margin-bottom: 5px; color: #94a3b8; font-size: 0.7em; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 16px; box-sizing: border-box; margin-bottom: 12px; }
+        
+        .btn { width: 100%; border: none; padding: 16px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-bottom: 10px; font-size: 1em; }
+        .btn-save { background: var(--primary); color: #0f172a; }
+        .btn-export { background: #475569; color: white; }
+        
+        .history-card { background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid var(--primary); position: relative; }
+        .btn-del { position: absolute; top: 12px; right: 12px; color: var(--danger); background: none; border: none; font-size: 1.6em; }
+
+        #modalExcluir { display: none; position: fixed; top:0; left:0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; }
+        .modal-content { background: var(--card); padding: 25px; border-radius: 16px; width: 80%; max-width: 300px; text-align: center; border: 1px solid var(--danger); }
+        .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-confirm { background: var(--danger); color: white; flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; }
+        .btn-cancel { background: #475569; color: white; flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header"><h3>CACHÊ PRO V12</h3></div>
+
+    <div id="modalExcluir">
+        <div class="modal-content">
+            <h4 style="margin:0 0 15px 0">Deseja mesmo apagar?</h4>
+            <div class="modal-btns">
+                <button class="btn-cancel" onclick="fecharModal()">CANCELAR</button>
+                <button class="btn-confirm" id="confirmarBtn">EXCLUIR</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="semana-selector">
+        <button class="btn-nav" onclick="mudarSemana(-7)">❮</button>
+        <div class="semana-label" id="labelSemana">Carregando...</div>
+        <button class="btn-nav" onclick="mudarSemana(7)">❯</button>
+    </div>
+
+    <div class="dashboard">
+        <div id="vTotalSemana" class="total-semana">R$ 0,00</div>
+        <span id="vPgto" class="pgto-info">Pgto previsto: --/--</span>
+        
+        <div class="chart-container">
+            <canvas id="graficoPizza"></canvas>
+        </div>
+
+        <div class="custom-legend">
+            <div class="legend-item"><div class="legend-color" style="background: var(--primary)"></div><div class="legend-label">Cachê</div><div id="legCache" class="legend-value">R$ 0,00</div></div>
+            <div class="legend-item"><div class="legend-color" style="background: var(--diaria)"></div><div class="legend-label">Diária</div><div id="legDiaria" class="legend-value">R$ 0,00</div></div>
+            <div class="legend-item"><div class="legend-color" style="background: var(--extra)"></div><div class="legend-label">Extras</div><div id="legExtra" class="legend-value">R$ 0,00</div></div>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label>Data</label><input type="date" id="dataJob">
+        <label>Nome do Job</label><input type="text" id="nomeJob" placeholder="Ex: Comercial">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div><label>Cachê</label><input type="number" id="vCacheBase" value="750"></div>
+            <div><label>Diária</label><input type="number" id="vDiaria" value="80"></div>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <div style="flex:1"><label>Início</label><input type="time" id="inicio" value="08:00"></div>
+            <div style="flex:1"><label>Fim</label><input type="time" id="fim" value="20:00"></div>
+        </div>
+    </div>
+
+    <button class="btn btn-save" onclick="salvarJob()">💾 SALVAR NO FECHAMENTO</button>
+    <button class="btn btn-export" onclick="baixarExcelCompleto()">📊 EXPORTAR TUDO (EXCEL)</button>
+
+    <div id="listaHistorico"></div>
+
+    <script>
+        var db, meuGrafico, dataReferencia = new Date(), idParaExcluir = null;
+
+        var request = indexedDB.open("CacheFinal_V12", 1);
+        request.onupgradeneeded = (e) => {
+            var d = e.target.result;
+            if (!d.objectStoreNames.contains("jobs")) d.createObjectStore("jobs", { keyPath: "id", autoIncrement: true });
+        };
+        request.onsuccess = (e) => { db = e.target.result; atualizarTela(); };
+
+        function mudarSemana(dias) { dataReferencia.setDate(dataReferencia.getDate() + dias); atualizarTela(); }
+
+        function getLimitesSemana(dt) {
+            var d = new Date(dt); d.setHours(0,0,0,0);
+            var diaS = d.getDay(); 
+            var diff = d.getDate() - diaS + (diaS === 0 ? -6 : 1); 
+            var seg = new Date(d.setDate(diff));
+            var dom = new Date(seg); dom.setDate(seg.getDate() + 6); dom.setHours(23,59,59);
+            var pgto = new Date(dom); pgto.setDate(dom.getDate() + 5); 
+            return { seg, dom, pgto };
+        }
+
+        function salvarJob() {
+            var dt = document.getElementById('dataJob').value;
+            if(!dt) return alert("Selecione a data!");
+            var c = parseFloat(document.getElementById('vCacheBase').value) || 0;
+            var dV = parseFloat(document.getElementById('vDiaria').value) || 0;
+            var job = document.getElementById('nomeJob').value || "Sem Nome";
+            var t1 = document.getElementById('inicio').value.split(':');
+            var t2 = document.getElementById('fim').value.split(':');
+            var min = (parseInt(t2[0])*60 + parseInt(t2[1])) - (parseInt(t1[0])*60 + parseInt(t1[1]));
+            if(min < 0) min += 1440;
+            var exH = Math.max(0, (min/60) - 12);
+            var vEx = exH * (c/12);
+
+            var registro = { data: dt, job: job, cache: c, diaria: dV, extra: vEx, total: (c + dV + vEx) };
+            var tx = db.transaction("jobs", "readwrite");
+            tx.objectStore("jobs").add(registro).onsuccess = () => {
+                document.getElementById('nomeJob').value = "";
+                atualizarTela();
+            };
+        }
+
+        function atualizarTela() {
+            if(!db) return;
+            var limites = getLimitesSemana(dataReferencia);
+            document.getElementById('labelSemana').innerHTML = 
+                limites.seg.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'}) + " a " + 
+                limites.dom.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'});
+            
+            document.getElementById('vPgto').innerText = "Pgto previsto: " + limites.pgto.toLocaleDateString('pt-BR');
+
+            var sC=0, sD=0, sE=0, totalS=0;
+            var lista = document.getElementById('listaHistorico');
+            lista.innerHTML = "";
+
+            db.transaction("jobs").objectStore("jobs").openCursor(null, 'prev').onsuccess = (e) => {
+                var cursor = e.target.result;
+                if(cursor) {
+                    var d = cursor.value;
+                    var dataJ = new Date(d.data + "T00:00:00");
+                    if(dataJ >= limites.seg && dataJ <= limites.dom) {
+                        sC += d.cache; sD += d.diaria; sE += d.extra; totalS += d.total;
+                        var card = document.createElement('div');
+                        card.className = 'history-card';
+                        card.innerHTML = `<b>${d.data.split('-').reverse().join('/')}</b> - ${d.job}<br>R$ ${d.total.toFixed(2)}
+                                         <button class="btn-del" onclick="abrirModal(${d.id})">×</button>`;
+                        lista.appendChild(card);
+                    }
+                    cursor.continue();
+                } else {
+                    document.getElementById('vTotalSemana').innerText = totalS.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+                    document.getElementById('legCache').innerText = sC.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+                    document.getElementById('legDiaria').innerText = sD.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+                    document.getElementById('legExtra').innerText = sE.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+                    setTimeout(() => renderGrafico(sC, sD, sE), 100);
+                }
+            };
+        }
+
+        function renderGrafico(c, d, e) {
+            var ctx = document.getElementById('graficoPizza');
+            if(!ctx) return;
+            if(meuGrafico) meuGrafico.destroy();
+            meuGrafico = new Chart(ctx, {
+                type: 'doughnut',
+                data: { datasets: [{ data:[c||1, d||0, e||0], backgroundColor:['#10b981','#0ea5e9','#f59e0b'], borderWidth:0 }] },
+                options: { cutout:'75%', responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}} }
+            });
+        }
+
+        function abrirModal(id) { idParaExcluir = id; document.getElementById('modalExcluir').style.display = 'flex'; }
+        function fecharModal() { document.getElementById('modalExcluir').style.display = 'none'; idParaExcluir = null; }
+        document.getElementById('confirmarBtn').onclick = function() {
+            if(idParaExcluir) {
+                db.transaction("jobs","readwrite").objectStore("jobs").delete(idParaExcluir).onsuccess = () => {
+                    fecharModal(); atualizarTela();
+                };
+            }
+        };
+
+        function baixarExcelCompleto() {
+            var csv = "\ufeffData;Job;Cache;Diária;Extra;Total\n";
+            db.transaction("jobs").objectStore("jobs").openCursor().onsuccess = (e) => {
+                var c = e.target.result;
+                if(c) {
+                    csv += `${c.value.data};${c.value.job};${c.value.cache};${c.value.diaria};${c.value.extra};${c.value.total}\n`;
+                    c.continue();
+                } else {
+                    var link = document.createElement("a");
+                    link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
+                    link.download = "Relatorio_Jobs.csv";
+                    link.click();
+                }
+            };
+        }
+    </script>
+</body>
+                                        </html>
+                                        
