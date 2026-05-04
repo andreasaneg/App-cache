@@ -98,6 +98,12 @@
 
     <button class="btn btn-save" onclick="salvarJob()">💾 SALVAR NO FECHAMENTO</button>
     <button class="btn btn-export" onclick="baixarExcelCompleto()">📊 EXPORTAR TUDO (EXCEL)</button>
+<div style="margin: 15px 0;">
+    <input type="text" id="inputBusca" onkeyup="filtrarTabela()" placeholder="🔍 Buscar por job ou data..." 
+           style="width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #10b981; background: #1e293b; color: white; font-size: 16px; box-sizing: border-box;">
+</div>
+
+<button class="btn" style="background: #6366f1; color: white;" onclick="fazerBackupWhatsApp()">📲 BACKUP VIA WHATSAPP</button>
 
     <div id="listaHistorico"></div>
 
@@ -217,6 +223,37 @@
                 }
             };
         }
+        // FUNÇÃO DE FILTRO
+function filtrarTabela() {
+    let input = document.getElementById("inputBusca");
+    let filter = input.value.toUpperCase();
+    let cards = document.getElementsByClassName("history-card");
+
+    for (let i = 0; i < cards.length; i++) {
+        let textoCard = cards[i].innerText.toUpperCase();
+        if (textoCard.indexOf(filter) > -1) {
+            cards[i].style.display = "";
+        } else {
+            cards[i].style.display = "none";
+        }
+    }
+}
+
+// FUNÇÃO DE BACKUP VIA WHATSAPP
+function fazerBackupWhatsApp() {
+    db.transaction("jobs").objectStore("jobs").getAll().onsuccess = (e) => {
+        const dados = e.target.result;
+        if (dados.length === 0) return alert("Não há dados para backup!");
+        
+        // Converte os dados em uma string compacta
+        const backupStr = JSON.stringify(dados);
+        const mensagem = encodeURIComponent("MEU BACKUP FADER LIVRE:\n\n" + backupStr);
+        
+        // Abre o WhatsApp para você enviar para si mesmo ou para alguém
+        window.open(`https://wa.me/?text=${mensagem}`);
+    };
+}
+        
     </script>
 </body>
                                         </html>
