@@ -96,14 +96,15 @@
         </div>
     </div>
 
-    <button class="btn btn-save" onclick="salvarJob()">💾 SALVAR JOB</button>
-    <button class="btn btn-export" onclick="baixarExcelCompleto()">📊 EXPORTAR TUDO (EXCEL)</button>
-<div style="margin: 15px 0;">
+    <button class="btn" style="background: #f59e0b; color: #000;" onclick="salvarJob()">💾 REGISTRAR JOB</button>
+
+<button class="btn" style="background: #25D366; color: #000;" onclick="enviarRelatorioWhatsApp()">🟢 EXPORTAR PARA WHATSAPP</button>
+
+<button class="btn btn-export" onclick="baixarExcelCompleto()">📊 EXPORTAR TUDO (EXCEL)</button>
+
     <input type="text" id="inputBusca" onkeyup="filtrarTabela()" placeholder="🔍 Buscar por job ou data..." 
            style="width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #10b981; background: #1e293b; color: white; font-size: 16px; box-sizing: border-box;">
 </div>
-
-<button class="btn" style="background: #25D366; color: #000;" onclick="enviarRelatorioWhatsApp()">🟢 EXPORTAR PARA WHATSAPP</button>
 
     <div id="listaHistorico"></div>
 
