@@ -45,7 +45,17 @@
     </style>
 </head>
 <body>
-
+    <div id="telaBloqueio" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:10000; padding:30px; box-sizing:border-box; text-align:center; flex-direction:column; justify-content:center;">
+    <h2 style="color:var(--primary)">FADER LIVRE</h2>
+    <p style="color:#94a3b8;">Aplicativo Não Ativado</p>
+    <div style="background:var(--card); padding:20px; border-radius:12px; margin:20px 0; border:1px solid #334155;">
+        <label style="font-size:0.7em; color:#94a3b8; text-transform:uppercase;">ID DO APARELHO (Envie ao vendedor):</label>
+        <div id="displayID" style="font-size:1.8em; font-weight:bold; color:var(--extra); margin:10px 0;"></div>
+    </div>
+    <input type="text" id="inputSerial" placeholder="Digite o Serial de Ativação" style="width:100%; padding:15px; border-radius:8px; border:1px solid var(--primary); background:#0f172a; color:white; font-size:16px; margin-bottom:10px;">
+    <button class="btn" style="background:var(--primary); color:#0f172a; font-weight:bold;" onclick="verificarSerial()">ATIVAR AGORA</button>
+    </div>
+    
     <div <div class="header">
     <img src="FaderLivreIcon.png" style="width: 160px; height: 160px; border-radius: 15px; margin-bottom: 10px; border: 2px solid #10b981; object-fit: cover;">
     <h3>Cachê Control</h3>
@@ -110,7 +120,39 @@
 
     <script>
         var db, meuGrafico, dataReferencia = new Date(), idParaExcluir = null;
+// --- INÍCIO DO SISTEMA DE LICENÇA ---
+if(!localStorage.getItem('fader_device_id')) {
+    localStorage.setItem('fader_device_id', Math.floor(1000 + Math.random() * 8999));
+}
+const ID_APARELHO = localStorage.getItem('fader_device_id');
 
+function verificarAtivacao() {
+    const licenca = localStorage.getItem('fader_license');
+    // Fórmula de cálculo: ID * 7 + 123
+    const chaveCorreta = (parseInt(ID_APARELHO) * 7 + 123).toString();
+
+    if (licenca !== chaveCorreta) {
+        document.getElementById('telaBloqueio').style.display = 'flex';
+        document.getElementById('displayID').innerText = "FL-" + ID_APARELHO;
+    } else {
+        document.getElementById('telaBloqueio').style.display = 'none';
+    }
+}
+
+function verificarSerial() {
+    const input = document.getElementById('inputSerial').value;
+    const chaveCorreta = (parseInt(ID_APARELHO) * 7 + 123).toString();
+    
+    if (input === chaveCorreta) {
+        localStorage.setItem('fader_license', input);
+        alert("Fader Livre Ativado com Sucesso!");
+        location.reload();
+    } else {
+        alert("Serial Inválido! Entre em contato com o suporte.");
+    }
+}
+// --- FIM DO SISTEMA DE LICENÇA ---
+        
         var request = indexedDB.open("CacheFinal_V12", 1);
         request.onupgradeneeded = (e) => {
             var d = e.target.result;
