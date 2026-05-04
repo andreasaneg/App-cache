@@ -103,7 +103,7 @@
            style="width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #10b981; background: #1e293b; color: white; font-size: 16px; box-sizing: border-box;">
 </div>
 
-<button class="btn" style="background: #6366f1; color: white;" onclick="fazerBackupWhatsApp()">📲 BACKUP VIA WHATSAPP</button>
+<button class="btn" style="background: #25D366; color: #000;" onclick="enviarRelatorioWhatsApp()">🟢 EXPORTAR PARA WHATSAPP</button>
 
     <div id="listaHistorico"></div>
 
@@ -239,20 +239,36 @@ function filtrarTabela() {
     }
 }
 
-// FUNÇÃO DE BACKUP VIA WHATSAPP
-function fazerBackupWhatsApp() {
+function enviarRelatorioWhatsApp() {
     db.transaction("jobs").objectStore("jobs").getAll().onsuccess = (e) => {
         const dados = e.target.result;
-        if (dados.length === 0) return alert("Não há dados para backup!");
+        if (dados.length === 0) return alert("Não há dados para exportar!");
         
-        // Converte os dados em uma string compacta
-        const backupStr = JSON.stringify(dados);
-        const mensagem = encodeURIComponent("MEU BACKUP FADER LIVRE:\n\n" + backupStr);
-        
-        // Abre o WhatsApp para você enviar para si mesmo ou para alguém
-        window.open(`https://wa.me/?text=${mensagem}`);
+        // Organiza por data (da mais antiga para a mais nova)
+        dados.sort((a, b) => new Date(a.data) - new Date(b.data));
+
+        let msg = "⭐ *FADER LIVRE - CACHÊ CONTROL* ⭐\n";
+        msg += "==============================\n\n";
+
+        let totalGeral = 0;
+
+        dados.forEach(item => {
+            const dt = item.data.split('-').reverse().join('/');
+            msg += `📅 *DATA:* ${dt}\n`;
+            msg += `🎬 *JOB:* ${item.job.toUpperCase()}\n`;
+            msg += `💰 *VALOR:* R$ ${item.total.toFixed(2)}\n`;
+            msg += `------------------------------\n`;
+            totalGeral += item.total;
+        });
+
+        msg += `\n✅ *TOTAL ACUMULADO:* R$ ${totalGeral.toFixed(2)}`;
+        msg += `\n\n_Relatório gerado em: ${new Date().toLocaleString('pt-BR')}_`;
+
+        const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+        window.open(url);
     };
 }
+
         
     </script>
 </body>
