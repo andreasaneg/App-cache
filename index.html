@@ -235,20 +235,31 @@
         };
 
         function baixarExcelCompleto() {
-            var csv = "\ufeffData;Job;Cache;Diária;Extra;Total\n";
-            db.transaction("jobs").objectStore("jobs").openCursor().onsuccess = (e) => {
-                var c = e.target.result;
-                if(c) {
-                    csv += `${c.value.data};${c.value.job};${c.value.cache};${c.value.diaria};${c.value.extra};${c.value.total}\n`;
-                    c.continue();
-                } else {
-                    var link = document.createElement("a");
-                    link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
-                    link.download = "Relatorio_Jobs.csv";
-                    link.click();
-                }
-            };
+    // Cabeçalho do arquivo
+    var csv = "\ufeffData;Job;Cache;Diária;Extra;Total\n";
+    var totalGeral = 0;
+
+    db.transaction("jobs").objectStore("jobs").openCursor().onsuccess = (e) => {
+        var c = e.target.result;
+        if (c) {
+            // Adiciona a linha do job
+            csv += `${c.value.data.split('-').reverse().join('/')};${c.value.job};${c.value.cache.toFixed(2)};${c.value.diaria.toFixed(2)};${c.value.extra.toFixed(2)};${c.value.total.toFixed(2)}\n`;
+            
+            // Soma o total para o rodapé
+            totalGeral += c.value.total;
+            c.continue();
+        } else {
+            // ADICIONA A LINHA DE TOTAL NO FINAL
+            csv += `\n; ; ; ;TOTAL GERAL:;${totalGeral.toFixed(2)}\n`;
+
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+            link.download = `Relatorio_FaderLivre_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.csv`;
+            link.click();
         }
+    };
+}
+
 
         function filtrarTabela() {
             let input = document.getElementById("inputBusca");
