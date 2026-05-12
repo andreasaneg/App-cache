@@ -97,10 +97,12 @@ body{
 
 .custom-legend{
     display:flex;
-    justify-content:space-around;
+    justify-content:space-between;
+    align-items:center;
     margin-top:10px;
-    flex-wrap:wrap;
-    gap:10px;
+    gap:4px;
+    flex-wrap:nowrap;
+    overflow-x:auto;
 }
 
 .legend-item{
@@ -294,11 +296,11 @@ style="width:160px;height:160px;border-radius:15px;margin-bottom:10px;border:2px
 
 <div class="semana-selector">
 
-<button class="btn-nav" onclick="mudarSemana(-7)">❮</button>
+<button class="btn-nav" onclick="mudarSemana(-1)">❮</button>
 
 <div class="semana-label" id="labelSemana">Carregando...</div>
 
-<button class="btn-nav" onclick="mudarSemana(7)">❯</button>
+<button class="btn-nav" onclick="mudarSemana(1)">❯</button>
 
 </div>
 
@@ -315,19 +317,19 @@ style="width:160px;height:160px;border-radius:15px;margin-bottom:10px;border:2px
 <div class="custom-legend">
 
 <div class="legend-item">
-<div class="legend-color" style="background: var(--primary)"></div>
+<div class="legend-color" style="background:#10b981"></div>
 <div class="legend-label">Cachê</div>
 <div id="legCache" class="legend-value">R$ 0,00</div>
 </div>
 
 <div class="legend-item">
-<div class="legend-color" style="background: var(--diaria)"></div>
+<div class="legend-color" style="background:#0ea5e9"></div>
 <div class="legend-label">Diária</div>
 <div id="legDiaria" class="legend-value">R$ 0,00</div>
 </div>
 
 <div class="legend-item">
-<div class="legend-color" style="background: var(--extra)"></div>
+<div class="legend-color" style="background:#f59e0b"></div>
 <div class="legend-label">Extras</div>
 <div id="legExtra" class="legend-value">R$ 0,00</div>
 </div>
@@ -345,6 +347,14 @@ style="width:160px;height:160px;border-radius:15px;margin-bottom:10px;border:2px
 
 <h3 style="margin-top:0;color:#10b981;">⚙️ Configurações</h3>
 
+<label>Tipo de Fechamento</label>
+
+<select id="tipoFechamento">
+<option value="semanal">Semanal</option>
+<option value="quinzenal">Quinzenal</option>
+<option value="mensal">Mensal</option>
+</select>
+
 <label>Início da Semana</label>
 
 <select id="inicioSemana">
@@ -352,11 +362,17 @@ style="width:160px;height:160px;border-radius:15px;margin-bottom:10px;border:2px
 <option value="0">Domingo</option>
 </select>
 
-<label>Prazo de Pagamento (dias)</label>
-<input type="number" id="prazoPagamento" value="5">
+<label>Prazo após fechamento</label>
+
+<select id="prazoPagamento">
+<option value="7">7 dias</option>
+<option value="15">15 dias</option>
+<option value="30">30 dias</option>
+</select>
 
 <label>% NF / Imposto</label>
-<input type="number" id="percentualNF" value="0" step="0.1">
+
+<input type="number" id="percentualNF" placeholder="0" step="0.1">
 
 </div>
 
@@ -424,21 +440,28 @@ placeholder="🔍 Buscar por job ou data...">
 
 var db, meuGrafico, dataReferencia = new Date(), idParaExcluir = null;
 
-// CONFIGURAÇÕES
+// CONFIGS
 
 if(!localStorage.getItem('inicioSemana')){
-    localStorage.setItem('inicioSemana', '1');
+    localStorage.setItem('inicioSemana','1');
+}
+
+if(!localStorage.getItem('tipoFechamento')){
+    localStorage.setItem('tipoFechamento','semanal');
 }
 
 if(!localStorage.getItem('prazoPagamento')){
-    localStorage.setItem('prazoPagamento', '5');
+    localStorage.setItem('prazoPagamento','7');
 }
 
 if(!localStorage.getItem('percentualNF')){
-    localStorage.setItem('percentualNF', '0');
+    localStorage.setItem('percentualNF','');
 }
 
 window.addEventListener('load', () => {
+
+    document.getElementById('tipoFechamento').value =
+        localStorage.getItem('tipoFechamento');
 
     document.getElementById('inicioSemana').value =
         localStorage.getItem('inicioSemana');
@@ -449,12 +472,18 @@ window.addEventListener('load', () => {
     document.getElementById('percentualNF').value =
         localStorage.getItem('percentualNF');
 
+    document.getElementById('tipoFechamento').onchange = salvarConfigs;
     document.getElementById('inicioSemana').onchange = salvarConfigs;
-    document.getElementById('prazoPagamento').oninput = salvarConfigs;
+    document.getElementById('prazoPagamento').onchange = salvarConfigs;
     document.getElementById('percentualNF').oninput = salvarConfigs;
 });
 
 function salvarConfigs(){
+
+    localStorage.setItem(
+        'tipoFechamento',
+        document.getElementById('tipoFechamento').value
+    );
 
     localStorage.setItem(
         'inicioSemana',
@@ -530,6 +559,7 @@ request.onupgradeneeded = (e) => {
     var d = e.target.result;
 
     if (!d.objectStoreNames.contains("jobs")) {
+
         d.createObjectStore("jobs", {
             keyPath: "id",
             autoIncrement: true
@@ -546,9 +576,22 @@ request.onsuccess = (e) => {
     atualizarTela();
 };
 
-function mudarSemana(dias){
+function mudarSemana(valor){
 
-    dataReferencia.setDate(dataReferencia.getDate() + dias);
+    const tipo =
+        localStorage.getItem('tipoFechamento') || 'semanal';
+
+    if(tipo === 'semanal'){
+        dataReferencia.setDate(dataReferencia.getDate() + (valor * 7));
+    }
+
+    else if(tipo === 'quinzenal'){
+        dataReferencia.setDate(dataReferencia.getDate() + (valor * 15));
+    }
+
+    else{
+        dataReferencia.setMonth(dataReferencia.getMonth() + valor);
+    }
 
     atualizarTela();
 }
@@ -559,33 +602,71 @@ function getLimitesSemana(dt) {
         parseInt(localStorage.getItem('inicioSemana')) || 1;
 
     let prazoPagamento =
-        parseInt(localStorage.getItem('prazoPagamento')) || 5;
+        parseInt(localStorage.getItem('prazoPagamento')) || 7;
+
+    let tipoFechamento =
+        localStorage.getItem('tipoFechamento') || 'semanal';
 
     var d = new Date(dt);
 
     d.setHours(0,0,0,0);
 
-    var dia = d.getDay();
+    let inicio;
+    let fim;
 
-    var diff;
+    // SEMANAL
 
-    if(inicioSemana === 1){
-        diff = d.getDate() - dia + (dia === 0 ? -6 : 1);
-    } else {
-        diff = d.getDate() - dia;
+    if(tipoFechamento === 'semanal'){
+
+        var dia = d.getDay();
+
+        var diff;
+
+        if(inicioSemana === 1){
+            diff = d.getDate() - dia + (dia === 0 ? -6 : 1);
+        } else {
+            diff = d.getDate() - dia;
+        }
+
+        inicio = new Date(d.setDate(diff));
+
+        fim = new Date(inicio);
+
+        fim.setDate(inicio.getDate() + 6);
     }
 
-    var inicio = new Date(d.setDate(diff));
+    // QUINZENAL
 
-    var fim = new Date(inicio);
+    else if(tipoFechamento === 'quinzenal'){
 
-    fim.setDate(inicio.getDate() + 6);
+        if(d.getDate() <= 15){
+
+            inicio = new Date(d.getFullYear(), d.getMonth(), 1);
+
+            fim = new Date(d.getFullYear(), d.getMonth(), 15);
+
+        } else {
+
+            inicio = new Date(d.getFullYear(), d.getMonth(), 16);
+
+            fim = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+        }
+    }
+
+    // MENSAL
+
+    else {
+
+        inicio = new Date(d.getFullYear(), d.getMonth(), 1);
+
+        fim = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    }
 
     fim.setHours(23,59,59);
 
     var pgto = new Date(fim);
 
-    pgto.setDate(fim.getDate() + prazoPagamento);
+    pgto.setDate(pgto.getDate() + prazoPagamento);
 
     return {
         seg: inicio,
@@ -649,6 +730,11 @@ function salvarJob() {
     tx.objectStore("jobs").add(registro).onsuccess = () => {
 
         document.getElementById('nomeJob').value = "";
+        document.getElementById('dataJob').value = "";
+        document.getElementById('vCacheBase').value = "";
+        document.getElementById('vDiaria').value = "";
+        document.getElementById('inicio').value = "08:00";
+        document.getElementById('fim').value = "20:00";
 
         atualizarTela();
     };
@@ -661,9 +747,9 @@ function atualizarTela() {
     var limites = getLimitesSemana(dataReferencia);
 
     document.getElementById('labelSemana').innerHTML =
-        limites.seg.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}) +
-        " a " +
-        limites.dom.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+        limites.seg.toLocaleDateString('pt-BR') +
+        " até " +
+        limites.dom.toLocaleDateString('pt-BR');
 
     document.getElementById('vPgto').innerText =
         "Pgto previsto: " +
@@ -940,4 +1026,5 @@ function enviarRelatorioWhatsApp() {
 
 </script>
 </body>
+</html>
 </html>
