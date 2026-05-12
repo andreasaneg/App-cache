@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>FADER LIVRE - CACHÊ CONTROL</title>
 
@@ -104,7 +108,7 @@ body{
 }
 
 .chart-container{
-    height:200px;
+    height:220px;
     margin-top:15px;
 }
 
@@ -300,27 +304,44 @@ select{
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div id="telaBloqueio">
 
-    <h2 style="color:var(--primary)">FADER LIVRE</h2>
+    <h2 style="color:var(--primary)">
+        FADER LIVRE
+    </h2>
 
-    <p style="color:var(--muted)">Aplicativo não ativado</p>
+    <p style="color:var(--muted)">
+        Aplicativo não ativado
+    </p>
 
-    <div style="background:var(--card); padding:20px; border-radius:14px; border:1px solid #334155; margin:20px 0;">
+    <div style="background:var(--card);
+    padding:20px;
+    border-radius:14px;
+    border:1px solid #334155;
+    margin:20px 0;">
 
         <label>ID DO APARELHO</label>
 
-        <div id="displayID" style="font-size:2em; font-weight:bold; color:var(--extra); margin-top:10px;"></div>
+        <div id="displayID"
+        style="font-size:2em;
+        font-weight:bold;
+        color:var(--extra);
+        margin-top:10px;">
+        </div>
 
     </div>
 
-    <input type="text" id="inputSerial" placeholder="Digite o serial de ativação">
+    <input type="text"
+    id="inputSerial"
+    placeholder="Digite o serial de ativação">
 
-    <button class="btn btn-save" onclick="verificarSerial()">
+    <button class="btn btn-save"
+    onclick="verificarSerial()">
         ATIVAR AGORA
     </button>
 
@@ -342,11 +363,13 @@ select{
 
         <div class="modal-btns">
 
-            <button class="btn-cancel" onclick="fecharModal()">
+            <button class="btn-cancel"
+            onclick="fecharModal()">
                 CANCELAR
             </button>
 
-            <button class="btn-confirm" id="confirmarBtn">
+            <button class="btn-confirm"
+            id="confirmarBtn">
                 EXCLUIR
             </button>
 
@@ -358,23 +381,32 @@ select{
 
 <div class="semana-selector">
 
-    <button class="btn-nav" onclick="mudarSemana(-7)">❮</button>
+    <button class="btn-nav"
+    onclick="mudarSemana(-7)">
+        ❮
+    </button>
 
-    <div class="semana-label" id="labelSemana">
+    <div class="semana-label"
+    id="labelSemana">
         Carregando...
     </div>
 
-    <button class="btn-nav" onclick="mudarSemana(7)">❯</button>
+    <button class="btn-nav"
+    onclick="mudarSemana(7)">
+        ❯
+    </button>
 
 </div>
 
 <div class="dashboard">
 
-    <div id="vTotalSemana" class="total-semana">
+    <div id="vTotalSemana"
+    class="total-semana">
         R$ 0,00
     </div>
 
-    <span id="vPgto" class="pgto-info">
+    <span id="vPgto"
+    class="pgto-info">
         Pagamento previsto: --
     </span>
 
@@ -385,27 +417,70 @@ select{
     <div class="custom-legend">
 
         <div class="legend-item">
-            <div class="legend-color" style="background:var(--primary)"></div>
-            <div class="legend-label">Cachê</div>
-            <div id="legCache" class="legend-value">R$ 0,00</div>
+            <div class="legend-color"
+            style="background:var(--primary)">
+            </div>
+
+            <div class="legend-label">
+                Cachê
+            </div>
+
+            <div id="legCache"
+            class="legend-value">
+                R$ 0,00
+            </div>
         </div>
 
         <div class="legend-item">
-            <div class="legend-color" style="background:var(--diaria)"></div>
-            <div class="legend-label">Diária</div>
-            <div id="legDiaria" class="legend-value">R$ 0,00</div>
+
+            <div class="legend-color"
+            style="background:var(--diaria)">
+            </div>
+
+            <div class="legend-label">
+                Diária
+            </div>
+
+            <div id="legDiaria"
+            class="legend-value">
+                R$ 0,00
+            </div>
+
         </div>
 
         <div class="legend-item">
-            <div class="legend-color" style="background:var(--extra)"></div>
-            <div class="legend-label">Extras</div>
-            <div id="legExtra" class="legend-value">R$ 0,00</div>
+
+            <div class="legend-color"
+            style="background:var(--extra)">
+            </div>
+
+            <div class="legend-label">
+                Extras
+            </div>
+
+            <div id="legExtra"
+            class="legend-value">
+                R$ 0,00
+            </div>
+
         </div>
 
         <div class="legend-item">
-            <div class="legend-color" style="background:#8b5cf6"></div>
-            <div class="legend-label">NF</div>
-            <div id="legNF" class="legend-value">R$ 0,00</div>
+
+            <div class="legend-color"
+            style="background:#ef4444">
+            </div>
+
+            <div class="legend-label">
+                NF
+            </div>
+
+            <div id="legNF"
+            class="legend-value"
+            style="color:#ef4444;">
+                R$ 0,00
+            </div>
+
         </div>
 
     </div>
@@ -415,83 +490,155 @@ select{
 <div class="input-group">
 
     <label>Data</label>
-    <input type="date" id="dataJob">
+
+    <input type="date"
+    id="dataJob">
 
     <label>Nome do Job</label>
-    <input type="text" id="nomeJob" placeholder="Ex: Comercial">
 
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+    <input type="text"
+    id="nomeJob"
+    placeholder="Ex: Comercial">
+
+    <div style="display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;">
 
         <div>
+
             <label>Cachê</label>
-            <input type="number" id="vCacheBase">
+
+            <input type="number"
+            id="vCacheBase">
+
         </div>
 
         <div>
+
             <label>Diária</label>
-            <input type="number" id="vDiaria">
+
+            <input type="number"
+            id="vDiaria">
+
         </div>
 
     </div>
 
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+    <div style="display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;">
 
         <div>
+
             <label>Início</label>
-            <input type="time" id="inicio" value="08:00">
+
+            <input type="time"
+            id="inicio"
+            value="08:00">
+
         </div>
 
         <div>
+
             <label>Fim</label>
-            <input type="time" id="fim" value="20:00">
+
+            <input type="time"
+            id="fim"
+            value="20:00">
+
         </div>
 
     </div>
 
     <label>Tipo de Pagamento</label>
 
-    <select id="tipoPagamento">
-        <option value="semanal">Semanal</option>
-        <option value="quinzenal">Quinzenal</option>
-        <option value="mensal">Mensal</option>
+    <select id="tipoPagamento"
+    onchange="toggleQuinzena()">
+
+        <option value="semanal">
+            Semanal
+        </option>
+
+        <option value="quinzenal">
+            Quinzenal
+        </option>
+
+        <option value="mensal">
+            Mensal
+        </option>
+
     </select>
 
+    <div id="boxQuinzena"
+    style="display:none;">
+
+        <label>Período Quinzenal</label>
+
+        <div style="display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10px;">
+
+            <div>
+
+                <input type="date"
+                id="quinzenaInicio">
+
+            </div>
+
+            <div>
+
+                <input type="date"
+                id="quinzenaFim">
+
+            </div>
+
+        </div>
+
+        <label>Prazo em dias</label>
+
+        <input type="number"
+        id="prazoQuinzena"
+        value="15">
+
+    </div>
+
     <label>NF (%)</label>
-    <input type="number" id="nfPercentual" value="0">
+
+    <input type="number"
+    id="nfPercentual"
+    value="0">
 
 </div>
 
-<button class="btn btn-save" onclick="salvarJob()">
+<button class="btn btn-save"
+onclick="salvarJob()">
+
 💾 SALVAR JOB
+
 </button>
 
-<button class="btn btn-whats" onclick="enviarRelatorioWhatsApp()">
+<button class="btn btn-whats"
+onclick="enviarRelatorioWhatsApp()">
+
 🟢 ENVIAR PARA WHATSAPP
+
 </button>
 
-<button class="btn btn-export" onclick="baixarExcelCompleto()">
+<button class="btn btn-export"
+onclick="baixarExcelCompleto()">
+
 📊 EXPORTAR EXCEL
-</button>
 
-<button class="btn btn-export" onclick="exportarBackup()">
-💾 BACKUP
 </button>
-
-<button class="btn btn-export" onclick="document.getElementById('inputRestore').click()">
-📥 RESTAURAR BACKUP
-</button>
-
-<input type="file" id="inputRestore" style="display:none">
 
 <div style="margin-top:20px;">
 
     <input
-        type="text"
-        id="inputBusca"
-        onkeyup="filtrarTabela()"
-        placeholder="🔍 Buscar por job ou data..."
-        style="border:2px solid var(--primary)"
-    >
+    type="text"
+    id="inputBusca"
+    onkeyup="filtrarTabela()"
+    placeholder="🔍 Buscar por job ou data..."
+    style="border:2px solid var(--primary)">
 
 </div>
 
@@ -504,43 +651,59 @@ let meuGrafico;
 let dataReferencia = new Date();
 let idParaExcluir = null;
 
-/* ========= LICENÇA APRIMORADA ========= */
+/* ========= LICENÇA ========= */
 
 if(!localStorage.getItem('fader_device_id')){
 
     const novoID =
-        Date.now().toString(36) +
-        Math.random().toString(36).substring(2,8);
+        Date.now().toString(36)
+        +
+        Math.random()
+        .toString(36)
+        .substring(2,8);
 
-    localStorage.setItem('fader_device_id', novoID);
+    localStorage.setItem(
+        'fader_device_id',
+        novoID
+    );
 
 }
 
-const ID_APARELHO = localStorage.getItem('fader_device_id');
+const ID_APARELHO =
+    localStorage.getItem(
+        'fader_device_id'
+    );
 
 function gerarChave(id){
 
     return btoa(id + "_FADER_2026")
-        .replace(/=/g,'');
+    .replace(/=/g,'');
 
 }
 
 function verificarAtivacao(){
 
-    const licenca = localStorage.getItem('fader_license');
+    const licenca =
+        localStorage.getItem(
+            'fader_license'
+        );
 
-    const chaveCorreta = gerarChave(ID_APARELHO);
+    const chaveCorreta =
+        gerarChave(ID_APARELHO);
 
     if(licenca !== chaveCorreta){
 
-        document.getElementById('telaBloqueio').style.display = 'flex';
+        document.getElementById(
+            'telaBloqueio'
+        ).style.display = 'flex';
 
-        document.getElementById('displayID').innerText =
-            "FL-" + ID_APARELHO.substring(0,10);
-
-    }else{
-
-        document.getElementById('telaBloqueio').style.display = 'none';
+        document.getElementById(
+            'displayID'
+        ).innerText =
+            "FL-"
+            +
+            ID_APARELHO
+            .substring(0,10);
 
     }
 
@@ -549,13 +712,19 @@ function verificarAtivacao(){
 function verificarSerial(){
 
     const input =
-        document.getElementById('inputSerial').value.trim();
+        document.getElementById(
+            'inputSerial'
+        ).value.trim();
 
-    const chaveCorreta = gerarChave(ID_APARELHO);
+    const chaveCorreta =
+        gerarChave(ID_APARELHO);
 
     if(input === chaveCorreta){
 
-        localStorage.setItem('fader_license', input);
+        localStorage.setItem(
+            'fader_license',
+            input
+        );
 
         alert("Aplicativo ativado!");
 
@@ -571,7 +740,11 @@ function verificarSerial(){
 
 /* ========= DATABASE ========= */
 
-const request = indexedDB.open("CacheFinal_V15", 1);
+const request =
+    indexedDB.open(
+        "CacheFinal_V16",
+        1
+    );
 
 request.onupgradeneeded = (e)=>{
 
@@ -581,7 +754,10 @@ request.onupgradeneeded = (e)=>{
 
         d.createObjectStore(
             "jobs",
-            { keyPath:"id", autoIncrement:true }
+            {
+                keyPath:"id",
+                autoIncrement:true
+            }
         );
 
     }
@@ -598,12 +774,31 @@ request.onsuccess = (e)=>{
 
 };
 
+/* ========= QUINZENA ========= */
+
+function toggleQuinzena(){
+
+    const tipo =
+        document.getElementById(
+            'tipoPagamento'
+        ).value;
+
+    document.getElementById(
+        'boxQuinzena'
+    ).style.display =
+        tipo === 'quinzenal'
+        ? 'block'
+        : 'none';
+
+}
+
 /* ========= SEMANA ========= */
 
 function mudarSemana(dias){
 
     dataReferencia.setDate(
-        dataReferencia.getDate() + dias
+        dataReferencia.getDate()
+        + dias
     );
 
     atualizarTela();
@@ -619,12 +814,14 @@ function getLimitesSemana(data){
     let dia = d.getDay();
 
     let diff =
-        d.getDate() -
-        dia +
-        (dia === 0 ? -6 : 1);
+        d.getDate()
+        - dia
+        + (dia === 0 ? -6 : 1);
 
     let segunda =
-        new Date(d.setDate(diff));
+        new Date(
+            d.setDate(diff)
+        );
 
     let domingo =
         new Date(segunda);
@@ -642,58 +839,91 @@ function getLimitesSemana(data){
 
 }
 
-/* ========= PAGAMENTOS ========= */
+/* ========= PAGAMENTO ========= */
 
 function calcularPagamento(dataStr, tipo){
 
-    const data = new Date(dataStr + "T00:00:00");
+    const data =
+        new Date(dataStr + "T00:00:00");
+
+    /* ========= SEMANAL ========= */
 
     if(tipo === "semanal"){
 
-        const sexta = new Date(data);
+        let inicioSemana =
+            new Date(data);
 
-        const dia = sexta.getDay();
+        let dia =
+            inicioSemana.getDay();
 
-        let diff = 5 - dia;
+        let diff =
+            inicioSemana.getDate()
+            - dia
+            + (dia === 0 ? -6 : 1);
 
-        if(diff <= 0){
-            diff += 7;
-        }
+        inicioSemana.setDate(diff);
 
-        sexta.setDate(sexta.getDate() + diff);
+        let domingo =
+            new Date(inicioSemana);
 
-        return sexta;
+        domingo.setDate(
+            inicioSemana.getDate() + 6
+        );
+
+        let pagamento =
+            new Date(domingo);
+
+        pagamento.setDate(
+            domingo.getDate() + 5
+        );
+
+        return pagamento;
 
     }
+
+    /* ========= QUINZENAL ========= */
 
     if(tipo === "quinzenal"){
 
-        const dia = data.getDate();
+        const fim =
+            document.getElementById(
+                'quinzenaFim'
+            ).value;
 
-        if(dia <= 15){
+        const prazo =
+            parseInt(
+                document.getElementById(
+                    'prazoQuinzena'
+                ).value
+            ) || 15;
 
-            return new Date(
-                data.getFullYear(),
-                data.getMonth() + 1,
-                0
-            );
+        if(!fim){
 
-        }else{
-
-            return new Date(
-                data.getFullYear(),
-                data.getMonth() + 1,
-                15
-            );
+            return data;
 
         }
 
+        let pagamento =
+            new Date(fim + "T00:00:00");
+
+        pagamento.setDate(
+            pagamento.getDate()
+            + prazo
+        );
+
+        return pagamento;
+
     }
+
+    /* ========= MENSAL ========= */
 
     if(tipo === "mensal"){
 
-        let ano = data.getFullYear();
-        let mes = data.getMonth() + 1;
+        let ano =
+            data.getFullYear();
+
+        let mes =
+            data.getMonth() + 1;
 
         let contador = 0;
 
@@ -701,11 +931,18 @@ function calcularPagamento(dataStr, tipo){
 
         while(contador < 5){
 
-            let d = new Date(ano, mes, dia);
+            let d =
+                new Date(
+                    ano,
+                    mes,
+                    dia
+                );
 
-            let semana = d.getDay();
+            let semana =
+                d.getDay();
 
-            if(semana !== 0 && semana !== 6){
+            if(semana !== 0
+            && semana !== 6){
 
                 contador++;
 
@@ -715,7 +952,11 @@ function calcularPagamento(dataStr, tipo){
 
         }
 
-        return new Date(ano, mes, dia - 1);
+        return new Date(
+            ano,
+            mes,
+            dia - 1
+        );
 
     }
 
@@ -725,52 +966,81 @@ function calcularPagamento(dataStr, tipo){
 
 function salvarJob(){
 
-    let dt = document.getElementById('dataJob').value;
+    let dt =
+        document.getElementById(
+            'dataJob'
+        ).value;
 
     if(!dt){
 
-        return alert("Selecione a data!");
+        return alert(
+            "Selecione a data!"
+        );
 
     }
 
     let cache =
         parseFloat(
-            document.getElementById('vCacheBase').value
+            document.getElementById(
+                'vCacheBase'
+            ).value
         ) || 0;
 
     let diaria =
         parseFloat(
-            document.getElementById('vDiaria').value
+            document.getElementById(
+                'vDiaria'
+            ).value
         ) || 0;
 
     let nf =
         parseFloat(
-            document.getElementById('nfPercentual').value
+            document.getElementById(
+                'nfPercentual'
+            ).value
         ) || 0;
 
     let job =
-        document.getElementById('nomeJob').value
+        document.getElementById(
+            'nomeJob'
+        ).value
         || "Sem nome";
 
     let tipoPagamento =
-        document.getElementById('tipoPagamento').value;
+        document.getElementById(
+            'tipoPagamento'
+        ).value;
 
     let inicio =
-        document.getElementById('inicio').value.split(':');
+        document.getElementById(
+            'inicio'
+        ).value
+        .split(':');
 
     let fim =
-        document.getElementById('fim').value.split(':');
+        document.getElementById(
+            'fim'
+        ).value
+        .split(':');
 
     let min =
-        (parseInt(fim[0])*60 + parseInt(fim[1])) -
-        (parseInt(inicio[0])*60 + parseInt(inicio[1]));
+        (parseInt(fim[0])*60
+        + parseInt(fim[1]))
+        -
+        (parseInt(inicio[0])*60
+        + parseInt(inicio[1]));
 
     if(min < 0){
+
         min += 1440;
+
     }
 
     let extraHoras =
-        Math.max(0, (min/60) - 12);
+        Math.max(
+            0,
+            (min/60) - 12
+        );
 
     let extra =
         extraHoras * (cache / 12);
@@ -781,8 +1051,11 @@ function salvarJob(){
     let valorNF =
         total * (nf / 100);
 
-    const pagamento =
-        calcularPagamento(dt, tipoPagamento);
+    let pagamento =
+        calcularPagamento(
+            dt,
+            tipoPagamento
+        );
 
     const registro = {
 
@@ -800,17 +1073,22 @@ function salvarJob(){
     };
 
     let tx =
-        db.transaction("jobs","readwrite");
+        db.transaction(
+            "jobs",
+            "readwrite"
+        );
 
     tx.objectStore("jobs")
-        .add(registro)
-        .onsuccess = ()=>{
+    .add(registro)
+    .onsuccess = ()=>{
 
-            document.getElementById('nomeJob').value = "";
+        document.getElementById(
+            'nomeJob'
+        ).value = "";
 
-            atualizarTela();
+        atualizarTela();
 
-        };
+    };
 
 }
 
@@ -821,14 +1099,25 @@ function atualizarTela(){
     if(!db) return;
 
     const limites =
-        getLimitesSemana(dataReferencia);
+        getLimitesSemana(
+            dataReferencia
+        );
 
-    document.getElementById('labelSemana').innerHTML =
-        limites.seg.toLocaleDateString('pt-BR')
+    document.getElementById(
+        'labelSemana'
+    ).innerHTML =
+
+        limites.seg
+        .toLocaleDateString('pt-BR')
+
         +
+
         " até "
+
         +
-        limites.dom.toLocaleDateString('pt-BR');
+
+        limites.dom
+        .toLocaleDateString('pt-BR');
 
     let sC=0;
     let sD=0;
@@ -837,7 +1126,9 @@ function atualizarTela(){
     let total=0;
 
     const lista =
-        document.getElementById('listaHistorico');
+        document.getElementById(
+            'listaHistorico'
+        );
 
     lista.innerHTML = "";
 
@@ -846,16 +1137,22 @@ function atualizarTela(){
     .openCursor(null,'prev')
     .onsuccess = (e)=>{
 
-        const cursor = e.target.result;
+        const cursor =
+            e.target.result;
 
         if(cursor){
 
-            const d = cursor.value;
+            const d =
+                cursor.value;
 
             const dataJ =
-                new Date(d.data + "T00:00:00");
+                new Date(
+                    d.data
+                    + "T00:00:00"
+                );
 
-            if(dataJ >= limites.seg && dataJ <= limites.dom){
+            if(dataJ >= limites.seg
+            && dataJ <= limites.dom){
 
                 sC += d.cache;
                 sD += d.diaria;
@@ -867,41 +1164,66 @@ function atualizarTela(){
                 const card =
                     document.createElement('div');
 
-                card.className = 'history-card';
+                card.className =
+                    'history-card';
 
                 card.innerHTML = `
 
-                    <b>${d.data.split('-').reverse().join('/')}</b>
+                    <b>
+                    ${d.data
+                    .split('-')
+                    .reverse()
+                    .join('/')}
+                    </b>
+
                     - ${d.job}
 
                     <br><br>
 
                     💰 Total:
                     <b>
-                    ${d.total.toLocaleString('pt-BR',{
-                        style:'currency',
-                        currency:'BRL'
-                    })}
+
+                    ${d.total
+                    .toLocaleString(
+                        'pt-BR',
+                        {
+                            style:'currency',
+                            currency:'BRL'
+                        }
+                    )}
+
                     </b>
 
                     <br>
 
                     📄 NF:
-                    ${d.valorNF.toLocaleString('pt-BR',{
-                        style:'currency',
-                        currency:'BRL'
-                    })}
+                    <b style="color:#ef4444;">
+
+                    ${d.valorNF
+                    .toLocaleString(
+                        'pt-BR',
+                        {
+                            style:'currency',
+                            currency:'BRL'
+                        }
+                    )}
+
+                    </b>
 
                     <br>
 
-                    📅 Pagamento:
+                    📅 Previsão:
+                    <b style="color:#10b981;">
+
                     ${new Date(d.pagamento)
-                        .toLocaleDateString('pt-BR')}
+                    .toLocaleDateString('pt-BR')}
+
+                    </b>
 
                     <button
-                        class="btn-del"
-                        onclick="abrirModal(${d.id})">
-                        ×
+                    class="btn-del"
+                    onclick="abrirModal(${d.id})">
+                    ×
                     </button>
 
                 `;
@@ -914,42 +1236,72 @@ function atualizarTela(){
 
         }else{
 
-            document.getElementById('vTotalSemana')
-            .innerText =
-                total.toLocaleString('pt-BR',{
-                    style:'currency',
-                    currency:'BRL'
-                });
+            document.getElementById(
+                'vTotalSemana'
+            ).innerText =
 
-            document.getElementById('legCache')
-            .innerText =
-                sC.toLocaleString('pt-BR',{
-                    style:'currency',
-                    currency:'BRL'
-                });
+                total.toLocaleString(
+                    'pt-BR',
+                    {
+                        style:'currency',
+                        currency:'BRL'
+                    }
+                );
 
-            document.getElementById('legDiaria')
-            .innerText =
-                sD.toLocaleString('pt-BR',{
-                    style:'currency',
-                    currency:'BRL'
-                });
+            document.getElementById(
+                'legCache'
+            ).innerText =
 
-            document.getElementById('legExtra')
-            .innerText =
-                sE.toLocaleString('pt-BR',{
-                    style:'currency',
-                    currency:'BRL'
-                });
+                sC.toLocaleString(
+                    'pt-BR',
+                    {
+                        style:'currency',
+                        currency:'BRL'
+                    }
+                );
 
-            document.getElementById('legNF')
-            .innerText =
-                sNF.toLocaleString('pt-BR',{
-                    style:'currency',
-                    currency:'BRL'
-                });
+            document.getElementById(
+                'legDiaria'
+            ).innerText =
 
-            renderGrafico(sC,sD,sE);
+                sD.toLocaleString(
+                    'pt-BR',
+                    {
+                        style:'currency',
+                        currency:'BRL'
+                    }
+                );
+
+            document.getElementById(
+                'legExtra'
+            ).innerText =
+
+                sE.toLocaleString(
+                    'pt-BR',
+                    {
+                        style:'currency',
+                        currency:'BRL'
+                    }
+                );
+
+            document.getElementById(
+                'legNF'
+            ).innerText =
+
+                sNF.toLocaleString(
+                    'pt-BR',
+                    {
+                        style:'currency',
+                        currency:'BRL'
+                    }
+                );
+
+            renderGrafico(
+                sC,
+                sD,
+                sE,
+                sNF
+            );
 
         }
 
@@ -957,12 +1309,14 @@ function atualizarTela(){
 
 }
 
-/* ========= GRAFICO ========= */
+/* ========= GRÁFICO ========= */
 
-function renderGrafico(c,d,e){
+function renderGrafico(c,d,e,nf){
 
     const ctx =
-        document.getElementById('graficoPizza');
+        document.getElementById(
+            'graficoPizza'
+        );
 
     if(meuGrafico){
 
@@ -975,26 +1329,50 @@ function renderGrafico(c,d,e){
         type:'doughnut',
 
         data:{
+
+            labels:[
+                'Cachê',
+                'Diária',
+                'Extras',
+                'NF'
+            ],
+
             datasets:[{
-                data:[c||1,d||0,e||0],
+
+                data:[
+                    c || 0,
+                    d || 0,
+                    e || 0,
+                    nf || 0
+                ],
+
                 backgroundColor:[
                     '#10b981',
                     '#0ea5e9',
-                    '#f59e0b'
+                    '#f59e0b',
+                    '#ef4444'
                 ],
+
                 borderWidth:0
+
             }]
+
         },
 
         options:{
-            cutout:'75%',
+
+            cutout:'72%',
+
             responsive:true,
+
             maintainAspectRatio:false,
+
             plugins:{
                 legend:{
                     display:false
                 }
             }
+
         }
 
     });
@@ -1007,8 +1385,9 @@ function abrirModal(id){
 
     idParaExcluir = id;
 
-    document.getElementById('modalExcluir')
-    .style.display = 'flex';
+    document.getElementById(
+        'modalExcluir'
+    ).style.display = 'flex';
 
 }
 
@@ -1016,17 +1395,23 @@ function fecharModal(){
 
     idParaExcluir = null;
 
-    document.getElementById('modalExcluir')
-    .style.display = 'none';
+    document.getElementById(
+        'modalExcluir'
+    ).style.display = 'none';
 
 }
 
-document.getElementById('confirmarBtn')
-.onclick = function(){
+document.getElementById(
+    'confirmarBtn'
+).onclick = function(){
 
-    if(!idParaExcluir) return;
+    if(!idParaExcluir)
+    return;
 
-    db.transaction("jobs","readwrite")
+    db.transaction(
+        "jobs",
+        "readwrite"
+    )
     .objectStore("jobs")
     .delete(idParaExcluir)
     .onsuccess = ()=>{
@@ -1044,7 +1429,7 @@ document.getElementById('confirmarBtn')
 function baixarExcelCompleto(){
 
     let csv =
-        "\ufeffData;Job;Cache;Diária;Extra;NF;Total\n";
+    "\ufeffData;Job;Cache;Diária;Extra;NF;Total\n";
 
     let totalGeral = 0;
 
@@ -1053,35 +1438,55 @@ function baixarExcelCompleto(){
     .openCursor()
     .onsuccess = (e)=>{
 
-        const c = e.target.result;
+        const c =
+            e.target.result;
 
         if(c){
 
-            const v = c.value;
+            const v =
+                c.value;
 
             csv +=
-                `${v.data.split('-').reverse().join('/')};`
-                +
-                `${v.job};`
-                +
-                `${v.cache.toFixed(2)};`
-                +
-                `${v.diaria.toFixed(2)};`
-                +
-                `${v.extra.toFixed(2)};`
-                +
-                `${(v.valorNF || 0).toFixed(2)};`
-                +
-                `${v.total.toFixed(2)}\n`;
 
-            totalGeral += v.total;
+            `${v.data
+            .split('-')
+            .reverse()
+            .join('/')};`
+
+            +
+
+            `${v.job};`
+
+            +
+
+            `${v.cache.toFixed(2)};`
+
+            +
+
+            `${v.diaria.toFixed(2)};`
+
+            +
+
+            `${v.extra.toFixed(2)};`
+
+            +
+
+            `${(v.valorNF || 0)
+            .toFixed(2)};`
+
+            +
+
+            `${v.total.toFixed(2)}\n`;
+
+            totalGeral +=
+                v.total;
 
             c.continue();
 
         }else{
 
             csv +=
-                `\n;;;;TOTAL GERAL;${totalGeral.toFixed(2)}\n`;
+            `\n;;;;TOTAL GERAL;${totalGeral.toFixed(2)}\n`;
 
             const link =
                 document.createElement('a');
@@ -1090,7 +1495,9 @@ function baixarExcelCompleto(){
                 URL.createObjectURL(
                     new Blob(
                         [csv],
-                        {type:'text/csv;charset=utf-8;'}
+                        {
+                            type:'text/csv;charset=utf-8;'
+                        }
                     )
                 );
 
@@ -1105,99 +1512,32 @@ function baixarExcelCompleto(){
 
 }
 
-/* ========= BACKUP ========= */
-
-function exportarBackup(){
-
-    db.transaction("jobs")
-    .objectStore("jobs")
-    .getAll()
-    .onsuccess = (e)=>{
-
-        const dados = e.target.result;
-
-        const blob =
-            new Blob(
-                [JSON.stringify(dados)],
-                {type:'application/json'}
-            );
-
-        const link =
-            document.createElement('a');
-
-        link.href =
-            URL.createObjectURL(blob);
-
-        link.download =
-            "backup_fader_livre.json";
-
-        link.click();
-
-    };
-
-}
-
-document.getElementById('inputRestore')
-.addEventListener('change', function(ev){
-
-    const file = ev.target.files[0];
-
-    if(!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = function(e){
-
-        const dados =
-            JSON.parse(e.target.result);
-
-        const tx =
-            db.transaction("jobs","readwrite");
-
-        const store =
-            tx.objectStore("jobs");
-
-        dados.forEach(item=>{
-
-            delete item.id;
-
-            store.add(item);
-
-        });
-
-        tx.oncomplete = ()=>{
-
-            alert("Backup restaurado!");
-
-            atualizarTela();
-
-        };
-
-    };
-
-    reader.readAsText(file);
-
-});
-
-/* ========= FILTRO ========= */
+/* ========= BUSCA ========= */
 
 function filtrarTabela(){
 
     let input =
-        document.getElementById("inputBusca");
+        document.getElementById(
+            "inputBusca"
+        );
 
     let filter =
         input.value.toUpperCase();
 
     let cards =
-        document.getElementsByClassName("history-card");
+        document.getElementsByClassName(
+            "history-card"
+        );
 
     for(let i=0; i<cards.length; i++){
 
         let texto =
-            cards[i].innerText.toUpperCase();
+            cards[i]
+            .innerText
+            .toUpperCase();
 
         cards[i].style.display =
+
             texto.indexOf(filter) > -1
             ? ""
             : "none";
@@ -1215,11 +1555,14 @@ function enviarRelatorioWhatsApp(){
     .getAll()
     .onsuccess = (e)=>{
 
-        const dados = e.target.result;
+        const dados =
+            e.target.result;
 
         if(dados.length === 0){
 
-            return alert("Sem dados!");
+            return alert(
+                "Sem dados!"
+            );
 
         }
 
@@ -1240,20 +1583,35 @@ function enviarRelatorioWhatsApp(){
             totalNF += item.valorNF || 0;
 
             msg +=
-`📅 ${item.data.split('-').reverse().join('/')}
+
+`📅 ${item.data
+.split('-')
+.reverse()
+.join('/')}
 
 🎬 ${item.job}
 
-💰 ${item.total.toLocaleString('pt-BR',{
+💰 ${item.total.toLocaleString(
+'pt-BR',
+{
 style:'currency',
 currency:'BRL'
-})}
+}
+)}
 
 📄 NF:
-${(item.valorNF || 0).toLocaleString('pt-BR',{
+${(item.valorNF || 0)
+.toLocaleString(
+'pt-BR',
+{
 style:'currency',
 currency:'BRL'
-})}
+}
+)}
+
+📅 Pgto:
+${new Date(item.pagamento)
+.toLocaleDateString('pt-BR')}
 
 ============================
 
@@ -1262,21 +1620,29 @@ currency:'BRL'
         });
 
         msg +=
+
 `
 ✅ TOTAL BRUTO:
-${total.toLocaleString('pt-BR',{
+${total.toLocaleString(
+'pt-BR',
+{
 style:'currency',
 currency:'BRL'
-})}
+}
+)}
 
 📄 TOTAL NF:
-${totalNF.toLocaleString('pt-BR',{
+${totalNF.toLocaleString(
+'pt-BR',
+{
 style:'currency',
 currency:'BRL'
-})}
+}
+)}
 
 🕒 Gerado em:
-${new Date().toLocaleString('pt-BR')}
+${new Date()
+.toLocaleString('pt-BR')}
 `;
 
         window.open(
