@@ -1,14 +1,362 @@
-<!-- ========================= -->
-<!-- SUBSTITUA APENAS A DASHBOARD -->
-<!-- ========================= -->
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>FADER LIVRE - CACHÊ CONTROL</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+:root{
+    --primary:#10b981;
+    --bg:#0f172a;
+    --card:#1e293b;
+    --text:#f8fafc;
+    --extra:#f59e0b;
+    --diaria:#0ea5e9;
+    --danger:#ef4444;
+    --muted:#94a3b8;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:15px;
+    padding-bottom:60px;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.header{
+    text-align:center;
+    border-bottom:2px solid var(--primary);
+    padding-bottom:15px;
+    margin-bottom:20px;
+}
+
+.header img{
+    width:140px;
+    height:140px;
+    border-radius:18px;
+    border:2px solid var(--primary);
+    object-fit:cover;
+}
+
+.header h2{
+    margin:10px 0 0 0;
+}
+
+.semana-selector{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--card);
+    border:1px solid var(--primary);
+    padding:10px;
+    border-radius:14px;
+    margin-bottom:18px;
+}
+
+.btn-nav{
+    background:var(--primary);
+    border:none;
+    color:#000;
+    font-size:1.2em;
+    font-weight:bold;
+    padding:10px 18px;
+    border-radius:10px;
+}
+
+.semana-label{
+    text-align:center;
+    flex:1;
+    font-weight:bold;
+    font-size:0.9em;
+}
+
+.dashboard{
+    background:var(--card);
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:20px;
+    border:1px solid #334155;
+    text-align:center;
+}
+
+.total-semana{
+    font-size:2.4em;
+    font-weight:bold;
+    color:var(--primary);
+}
+
+.chart-container{
+    height:220px;
+    margin-top:15px;
+}
+
+.input-group{
+    background:var(--card);
+    border:1px solid #334155;
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:15px;
+}
+
+label{
+    display:block;
+    margin-bottom:5px;
+    color:var(--muted);
+    font-size:0.75em;
+    text-transform:uppercase;
+}
+
+input,
+select{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #334155;
+    background:#0f172a;
+    color:white;
+    margin-bottom:12px;
+    font-size:16px;
+}
+
+.btn{
+    width:100%;
+    border:none;
+    padding:16px;
+    border-radius:14px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-bottom:10px;
+    font-size:1em;
+}
+
+.btn-save{
+    background:var(--primary);
+    color:#000;
+}
+
+.btn-export{
+    background:#475569;
+    color:white;
+}
+
+.btn-whats{
+    background:#25D366;
+    color:#000;
+}
+
+.history-card{
+    background:var(--card);
+    border-left:4px solid var(--primary);
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:10px;
+    position:relative;
+}
+
+.btn-del{
+    position:absolute;
+    top:10px;
+    right:12px;
+    background:none;
+    border:none;
+    color:var(--danger);
+    font-size:1.5em;
+}
+
+#modalExcluir{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.85);
+    z-index:9999;
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-content{
+    background:var(--card);
+    border:1px solid var(--danger);
+    border-radius:18px;
+    padding:25px;
+    width:90%;
+    max-width:320px;
+    text-align:center;
+}
+
+.modal-btns{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+.btn-confirm,
+.btn-cancel{
+    flex:1;
+    border:none;
+    border-radius:10px;
+    padding:12px;
+    font-weight:bold;
+}
+
+.btn-confirm{
+    background:var(--danger);
+    color:white;
+}
+
+.btn-cancel{
+    background:#475569;
+    color:white;
+}
+
+#telaBloqueio{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:var(--bg);
+    z-index:10000;
+    padding:30px;
+    text-align:center;
+    flex-direction:column;
+    justify-content:center;
+}
+
+@media print{
+
+    body{
+        background:white;
+        color:black;
+    }
+
+    .btn,
+    .btn-nav,
+    #inputBusca,
+    #modalExcluir{
+        display:none !important;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="telaBloqueio">
+
+    <h2 style="color:var(--primary)">
+        FADER LIVRE
+    </h2>
+
+    <p style="color:var(--muted)">
+        Aplicativo não ativado
+    </p>
+
+    <div style="background:var(--card);
+    padding:20px;
+    border-radius:14px;
+    border:1px solid #334155;
+    margin:20px 0;">
+
+        <label>ID DO APARELHO</label>
+
+        <div id="displayID"
+        style="font-size:2em;
+        font-weight:bold;
+        color:var(--extra);
+        margin-top:10px;">
+        </div>
+
+    </div>
+
+    <input type="text"
+    id="inputSerial"
+    placeholder="Digite o serial de ativação">
+
+    <button class="btn btn-save"
+    onclick="verificarSerial()">
+        ATIVAR AGORA
+    </button>
+
+</div>
+
+<div class="header">
+
+    <img src="FaderLivreIcon.png">
+
+    <h2>Cachê Control</h2>
+
+</div>
+
+<div id="modalExcluir">
+
+    <div class="modal-content">
+
+        <h3>Deseja apagar este registro?</h3>
+
+        <div class="modal-btns">
+
+            <button class="btn-cancel"
+            onclick="fecharModal()">
+                CANCELAR
+            </button>
+
+            <button class="btn-confirm"
+            id="confirmarBtn">
+                EXCLUIR
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="semana-selector">
+
+    <button class="btn-nav"
+    onclick="mudarSemana(-7)">
+        ❮
+    </button>
+
+    <div class="semana-label"
+    id="labelSemana">
+        Carregando...
+    </div>
+
+    <button class="btn-nav"
+    onclick="mudarSemana(7)">
+        ❯
+    </button>
+
+</div>
 
 <div class="dashboard">
 
     <div id="vTotalSemana" class="total-semana">
         R$ 0,00
     </div>
-
-    <!-- GRAFICO SEMANAL -->
 
     <div id="boxGraficoSemanal" style="display:none; margin-top:25px;">
 
@@ -22,8 +370,6 @@
 
     </div>
 
-    <!-- GRAFICO QUINZENAL -->
-
     <div id="boxGraficoQuinzenal" style="display:none; margin-top:30px;">
 
         <h3 style="margin-bottom:10px; color:#0ea5e9;">
@@ -35,8 +381,6 @@
         </div>
 
     </div>
-
-    <!-- GRAFICO MENSAL -->
 
     <div id="boxGraficoMensal" style="display:none; margin-top:30px;">
 
@@ -52,57 +396,588 @@
 
 </div>
 
-<!-- ========================= -->
-<!-- REMOVA ISSO -->
-<!-- ========================= -->
+<div class="input-group">
 
-<!--
-<span id="vPgto" class="pgto-info">
-    Pagamento previsto: --
-</span>
--->
+    <label>Data</label>
 
-<!-- ========================= -->
-<!-- SUBSTITUA A VARIAVEL -->
-<!-- ========================= -->
+    <input type="date"
+    id="dataJob">
+
+    <label>Nome do Job</label>
+
+    <input type="text"
+    id="nomeJob"
+    placeholder="Ex: Comercial">
+
+    <div style="display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;">
+
+        <div>
+
+            <label>Cachê</label>
+
+            <input type="number"
+            id="vCacheBase">
+
+        </div>
+
+        <div>
+
+            <label>Diária</label>
+
+            <input type="number"
+            id="vDiaria">
+
+        </div>
+
+    </div>
+
+    <div style="display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;">
+
+        <div>
+
+            <label>Início</label>
+
+            <input type="time"
+            id="inicio"
+            value="08:00">
+
+        </div>
+
+        <div>
+
+            <label>Fim</label>
+
+            <input type="time"
+            id="fim"
+            value="20:00">
+
+        </div>
+
+    </div>
+
+    <label>Tipo de Pagamento</label>
+
+    <select id="tipoPagamento"
+    onchange="toggleQuinzena()">
+
+        <option value="semanal">
+            Semanal
+        </option>
+
+        <option value="quinzenal">
+            Quinzenal
+        </option>
+
+        <option value="mensal">
+            Mensal
+        </option>
+
+    </select>
+
+    <div id="boxQuinzena"
+    style="display:none;">
+
+        <label>Período Quinzenal</label>
+
+        <div style="display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10px;">
+
+            <input type="date"
+            id="quinzenaInicio">
+
+            <input type="date"
+            id="quinzenaFim">
+
+        </div>
+
+        <label>Prazo em dias</label>
+
+        <input type="number"
+        id="prazoQuinzena"
+        value="15">
+
+    </div>
+
+    <label>NF (%)</label>
+
+    <input type="number"
+    id="nfPercentual"
+    value="0">
+
+</div>
+
+<button class="btn btn-save"
+onclick="salvarJob()">
+
+💾 SALVAR JOB
+
+</button>
+
+<button class="btn btn-whats"
+onclick="enviarRelatorioWhatsApp()">
+
+🟢 ENVIAR PARA WHATSAPP
+
+</button>
+
+<button class="btn btn-export"
+onclick="baixarExcelCompleto()">
+
+📊 EXPORTAR EXCEL
+
+</button>
+
+<div style="margin-top:20px;">
+
+    <input
+    type="text"
+    id="inputBusca"
+    onkeyup="filtrarTabela()"
+    placeholder="🔍 Buscar por job ou data..."
+    style="border:2px solid var(--primary)">
+
+</div>
+
+<div id="listaHistorico"></div>
 
 <script>
 
 let db;
-
-let graficoSemanal;
-let graficoQuinzenal;
-let graficoMensal;
-
 let dataReferencia = new Date();
-
 let idParaExcluir = null;
 
-</script>
+if(!localStorage.getItem('fader_device_id')){
 
-<!-- ========================= -->
-<!-- SUBSTITUA COMPLETAMENTE -->
-<!-- A FUNÇÃO atualizarTela() -->
-<!-- ========================= -->
+    const novoID =
+        Date.now().toString(36)
+        +
+        Math.random()
+        .toString(36)
+        .substring(2,8);
 
-<script>
+    localStorage.setItem(
+        'fader_device_id',
+        novoID
+    );
+
+}
+
+const ID_APARELHO =
+    localStorage.getItem(
+        'fader_device_id'
+    );
+
+function gerarChave(id){
+
+    return btoa(id + "_FADER_2026")
+    .replace(/=/g,'');
+
+}
+
+function verificarAtivacao(){
+
+    const licenca =
+        localStorage.getItem(
+            'fader_license'
+        );
+
+    const chaveCorreta =
+        gerarChave(ID_APARELHO);
+
+    if(licenca !== chaveCorreta){
+
+        document.getElementById(
+            'telaBloqueio'
+        ).style.display = 'flex';
+
+        document.getElementById(
+            'displayID'
+        ).innerText =
+            "FL-"
+            +
+            ID_APARELHO.substring(0,10);
+
+    }
+
+}
+
+function verificarSerial(){
+
+    const input =
+        document.getElementById(
+            'inputSerial'
+        ).value.trim();
+
+    const chaveCorreta =
+        gerarChave(ID_APARELHO);
+
+    if(input === chaveCorreta){
+
+        localStorage.setItem(
+            'fader_license',
+            input
+        );
+
+        alert("Aplicativo ativado!");
+
+        location.reload();
+
+    }else{
+
+        alert("Serial inválido!");
+
+    }
+
+}
+
+const request =
+    indexedDB.open(
+        "CacheFinal_V17",
+        1
+    );
+
+request.onupgradeneeded = (e)=>{
+
+    let d = e.target.result;
+
+    if(!d.objectStoreNames.contains("jobs")){
+
+        d.createObjectStore(
+            "jobs",
+            {
+                keyPath:"id",
+                autoIncrement:true
+            }
+        );
+
+    }
+
+};
+
+request.onsuccess = (e)=>{
+
+    db = e.target.result;
+
+    verificarAtivacao();
+
+    atualizarTela();
+
+};
+
+function toggleQuinzena(){
+
+    const tipo =
+        document.getElementById(
+            'tipoPagamento'
+        ).value;
+
+    document.getElementById(
+        'boxQuinzena'
+    ).style.display =
+        tipo === 'quinzenal'
+        ? 'block'
+        : 'none';
+
+}
+
+function mudarSemana(dias){
+
+    dataReferencia.setDate(
+        dataReferencia.getDate()
+        + dias
+    );
+
+    atualizarTela();
+
+}
+
+function getLimitesSemana(data){
+
+    let d = new Date(data);
+
+    d.setHours(0,0,0,0);
+
+    let dia = d.getDay();
+
+    let diff =
+        d.getDate()
+        - dia
+        + (dia === 0 ? -6 : 1);
+
+    let segunda =
+        new Date(
+            d.setDate(diff)
+        );
+
+    let domingo =
+        new Date(segunda);
+
+    domingo.setDate(
+        segunda.getDate() + 6
+    );
+
+    domingo.setHours(23,59,59);
+
+    return {
+        seg:segunda,
+        dom:domingo
+    };
+
+}
+
+function calcularPagamento(dataStr, tipo){
+
+    const data =
+        new Date(dataStr + "T00:00:00");
+
+    if(tipo === "semanal"){
+
+        let inicioSemana =
+            new Date(data);
+
+        let dia =
+            inicioSemana.getDay();
+
+        let diff =
+            inicioSemana.getDate()
+            - dia
+            + (dia === 0 ? -6 : 1);
+
+        inicioSemana.setDate(diff);
+
+        let domingo =
+            new Date(inicioSemana);
+
+        domingo.setDate(
+            inicioSemana.getDate() + 6
+        );
+
+        let pagamento =
+            new Date(domingo);
+
+        pagamento.setDate(
+            domingo.getDate() + 5
+        );
+
+        return pagamento;
+
+    }
+
+    if(tipo === "quinzenal"){
+
+        const fim =
+            document.getElementById(
+                'quinzenaFim'
+            ).value;
+
+        const prazo =
+            parseInt(
+                document.getElementById(
+                    'prazoQuinzena'
+                ).value
+            ) || 15;
+
+        let pagamento =
+            new Date(fim + "T00:00:00");
+
+        pagamento.setDate(
+            pagamento.getDate()
+            + prazo
+        );
+
+        return pagamento;
+
+    }
+
+    if(tipo === "mensal"){
+
+        let ano =
+            data.getFullYear();
+
+        let mes =
+            data.getMonth() + 1;
+
+        let contador = 0;
+        let dia = 1;
+
+        while(contador < 5){
+
+            let d =
+                new Date(
+                    ano,
+                    mes,
+                    dia
+                );
+
+            let semana =
+                d.getDay();
+
+            if(semana !== 0
+            && semana !== 6){
+
+                contador++;
+
+            }
+
+            dia++;
+
+        }
+
+        return new Date(
+            ano,
+            mes,
+            dia - 1
+        );
+
+    }
+
+}
+
+function salvarJob(){
+
+    let dt =
+        document.getElementById(
+            'dataJob'
+        ).value;
+
+    if(!dt){
+
+        return alert(
+            "Selecione a data!"
+        );
+
+    }
+
+    let cache =
+        parseFloat(
+            document.getElementById(
+                'vCacheBase'
+            ).value
+        ) || 0;
+
+    let diaria =
+        parseFloat(
+            document.getElementById(
+                'vDiaria'
+            ).value
+        ) || 0;
+
+    let nf =
+        parseFloat(
+            document.getElementById(
+                'nfPercentual'
+            ).value
+        ) || 0;
+
+    let job =
+        document.getElementById(
+            'nomeJob'
+        ).value
+        || "Sem nome";
+
+    let tipoPagamento =
+        document.getElementById(
+            'tipoPagamento'
+        ).value;
+
+    let inicio =
+        document.getElementById(
+            'inicio'
+        ).value
+        .split(':');
+
+    let fim =
+        document.getElementById(
+            'fim'
+        ).value
+        .split(':');
+
+    let min =
+        (parseInt(fim[0])*60
+        + parseInt(fim[1]))
+        -
+        (parseInt(inicio[0])*60
+        + parseInt(inicio[1]));
+
+    if(min < 0){
+
+        min += 1440;
+
+    }
+
+    let extraHoras =
+        Math.max(
+            0,
+            (min/60) - 12
+        );
+
+    let extra =
+        extraHoras * (cache / 12);
+
+    let total =
+        cache + diaria + extra;
+
+    let valorNF =
+        total * (nf / 100);
+
+    let pagamento =
+        calcularPagamento(
+            dt,
+            tipoPagamento
+        );
+
+    const registro = {
+
+        data:dt,
+        job:job,
+        cache:cache,
+        diaria:diaria,
+        extra:extra,
+        total:total,
+        nf:nf,
+        valorNF:valorNF,
+        pagamento:pagamento.toISOString(),
+        tipoPagamento:tipoPagamento
+
+    };
+
+    db.transaction(
+        "jobs",
+        "readwrite"
+    )
+    .objectStore("jobs")
+    .add(registro)
+    .onsuccess = ()=>{
+
+        document.getElementById(
+            'nomeJob'
+        ).value = "";
+
+        atualizarTela();
+
+    };
+
+}
 
 function atualizarTela(){
 
     if(!db) return;
 
     const limites =
-        getLimitesSemana(dataReferencia);
+        getLimitesSemana(
+            dataReferencia
+        );
 
     document.getElementById(
         'labelSemana'
     ).innerHTML =
 
-        limites.seg.toLocaleDateString('pt-BR')
-        +
-        " até "
-        +
-        limites.dom.toLocaleDateString('pt-BR');
+        limits = limits = `${limites.seg.toLocaleDateString('pt-BR')} até ${limites.dom.toLocaleDateString('pt-BR')}`;
 
     let total = 0;
 
@@ -157,8 +1032,6 @@ function atualizarTela(){
 
                 total += d.total;
 
-                /* ========= SOMAS ========= */
-
                 if(d.tipoPagamento === "semanal"){
 
                     semanal.cache += d.cache;
@@ -185,8 +1058,6 @@ function atualizarTela(){
                     mensal.nf += d.valorNF || 0;
 
                 }
-
-                /* ========= CARD ========= */
 
                 const card =
                     document.createElement('div');
@@ -258,86 +1129,11 @@ function atualizarTela(){
                     }
                 );
 
-            /* ========= GRAFICO SEMANAL ========= */
-
-            if(
-                semanal.cache > 0
-                ||
-                semanal.diaria > 0
-                ||
-                semanal.extra > 0
-            ){
-
-                document.getElementById(
-                    'boxGraficoSemanal'
-                ).style.display = 'block';
-
-                renderGrafico(
-                    'graficoSemanal',
-                    semanal
-                );
-
-            }else{
-
-                document.getElementById(
-                    'boxGraficoSemanal'
-                ).style.display = 'none';
-
-            }
-
-            /* ========= GRAFICO QUINZENAL ========= */
-
-            if(
-                quinzenal.cache > 0
-                ||
-                quinzenal.diaria > 0
-                ||
-                quinzenal.extra > 0
-            ){
-
-                document.getElementById(
-                    'boxGraficoQuinzenal'
-                ).style.display = 'block';
-
-                renderGrafico(
-                    'graficoQuinzenal',
-                    quinzenal
-                );
-
-            }else{
-
-                document.getElementById(
-                    'boxGraficoQuinzenal'
-                ).style.display = 'none';
-
-            }
-
-            /* ========= GRAFICO MENSAL ========= */
-
-            if(
-                mensal.cache > 0
-                ||
-                mensal.diaria > 0
-                ||
-                mensal.extra > 0
-            ){
-
-                document.getElementById(
-                    'boxGraficoMensal'
-                ).style.display = 'block';
-
-                renderGrafico(
-                    'graficoMensal',
-                    mensal
-                );
-
-            }else{
-
-                document.getElementById(
-                    'boxGraficoMensal'
-                ).style.display = 'none';
-
-            }
+            renderizarGraficos(
+                semanal,
+                quinzenal,
+                mensal
+            );
 
         }
 
@@ -345,20 +1141,61 @@ function atualizarTela(){
 
 }
 
-</script>
+function renderizarGraficos(
+    semanal,
+    quinzenal,
+    mensal
+){
 
-<!-- ========================= -->
-<!-- SUBSTITUA A renderGrafico -->
-<!-- ========================= -->
+    criarGrafico(
+        'graficoSemanal',
+        'boxGraficoSemanal',
+        semanal
+    );
 
-<script>
+    criarGrafico(
+        'graficoQuinzenal',
+        'boxGraficoQuinzenal',
+        quinzenal
+    );
 
-function renderGrafico(id, dados){
+    criarGrafico(
+        'graficoMensal',
+        'boxGraficoMensal',
+        mensal
+    );
+
+}
+
+function criarGrafico(idCanvas, idBox, dados){
+
+    const total =
+        dados.cache
+        +
+        dados.diaria
+        +
+        dados.extra
+        +
+        dados.nf;
+
+    if(total <= 0){
+
+        document.getElementById(
+            idBox
+        ).style.display = 'none';
+
+        return;
+
+    }
+
+    document.getElementById(
+        idBox
+    ).style.display = 'block';
 
     const ctx =
-        document.getElementById(id);
-
-    if(!ctx) return;
+        document.getElementById(
+            idCanvas
+        );
 
     const chartExistente =
         Chart.getChart(ctx);
@@ -385,10 +1222,10 @@ function renderGrafico(id, dados){
             datasets:[{
 
                 data:[
-                    dados.cache || 0,
-                    dados.diaria || 0,
-                    dados.extra || 0,
-                    dados.nf || 0
+                    dados.cache,
+                    dados.diaria,
+                    dados.extra,
+                    dados.nf
                 ],
 
                 backgroundColor:[
@@ -430,14 +1267,166 @@ function renderGrafico(id, dados){
 
 }
 
-</script>
+function abrirModal(id){
 
-<!-- ========================= -->
-<!-- SUBSTITUA A FUNÇÃO -->
-<!-- enviarRelatorioWhatsApp -->
-<!-- ========================= -->
+    idParaExcluir = id;
 
-<script>
+    document.getElementById(
+        'modalExcluir'
+    ).style.display = 'flex';
+
+}
+
+function fecharModal(){
+
+    idParaExcluir = null;
+
+    document.getElementById(
+        'modalExcluir'
+    ).style.display = 'none';
+
+}
+
+document.getElementById(
+    'confirmarBtn'
+).onclick = function(){
+
+    if(!idParaExcluir)
+    return;
+
+    db.transaction(
+        "jobs",
+        "readwrite"
+    )
+    .objectStore("jobs")
+    .delete(idParaExcluir)
+    .onsuccess = ()=>{
+
+        fecharModal();
+
+        atualizarTela();
+
+    };
+
+};
+
+function baixarExcelCompleto(){
+
+    let csv =
+    "\ufeffData;Job;Cache;Diária;Extra;NF;Total\n";
+
+    let totalGeral = 0;
+
+    db.transaction("jobs")
+    .objectStore("jobs")
+    .openCursor()
+    .onsuccess = (e)=>{
+
+        const c =
+            e.target.result;
+
+        if(c){
+
+            const v =
+                c.value;
+
+            csv +=
+
+            `${v.data
+            .split('-')
+            .reverse()
+            .join('/')};`
+
+            +
+
+            `${v.job};`
+
+            +
+
+            `${v.cache.toFixed(2)};`
+
+            +
+
+            `${v.diaria.toFixed(2)};`
+
+            +
+
+            `${v.extra.toFixed(2)};`
+
+            +
+
+            `${(v.valorNF || 0)
+            .toFixed(2)};`
+
+            +
+
+            `${v.total.toFixed(2)}\n`;
+
+            totalGeral +=
+                v.total;
+
+            c.continue();
+
+        }else{
+
+            csv +=
+            `\n;;;;TOTAL GERAL;${totalGeral.toFixed(2)}\n`;
+
+            const link =
+                document.createElement('a');
+
+            link.href =
+                URL.createObjectURL(
+                    new Blob(
+                        [csv],
+                        {
+                            type:'text/csv;charset=utf-8;'
+                        }
+                    )
+                );
+
+            link.download =
+                "Total geral de caches.csv";
+
+            link.click();
+
+        }
+
+    };
+
+}
+
+function filtrarTabela(){
+
+    let input =
+        document.getElementById(
+            "inputBusca"
+        );
+
+    let filter =
+        input.value.toUpperCase();
+
+    let cards =
+        document.getElementsByClassName(
+            "history-card"
+        );
+
+    for(let i=0; i<cards.length; i++){
+
+        let texto =
+            cards[i]
+            .innerText
+            .toUpperCase();
+
+        cards[i].style.display =
+
+            texto.indexOf(filter) > -1
+            ? ""
+            : "none";
+
+    }
+
+}
 
 function enviarRelatorioWhatsApp(){
 
@@ -523,3 +1512,6 @@ ${new Date()
 }
 
 </script>
+
+</body>
+</html>
