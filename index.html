@@ -1,3 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>FADER LIVRE - CACHÊ CONTROL</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+:root{
+    --primary:#10b981;
+    --bg:#0f172a;
+    --card:#1e293b;
+    --text:#f8fafc;
+    --extra:#f59e0b;
+    --diaria:#0ea5e9;
+    --danger:#ef4444;
+    --muted:#94a3b8;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:15px;
+    padding-bottom:60px;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.header{
+    text-align:center;
+    border-bottom:2px solid var(--primary);
+    padding-bottom:15px;
+    margin-bottom:20px;
+}
+
+.header img{
+    width:140px;
+    height:140px;
+    border-radius:18px;
+    border:2px solid var(--primary);
+    object-fit:cover;
+}
+
+.dashboard{
+    background:var(--card);
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:20px;
+    border:1px solid #334155;
+    text-align:center;
+}
+
+.total-semana{
+    font-size:2.4em;
+    font-weight:bold;
+    color:var(--primary);
+}
+
+.input-group{
+    background:var(--card);
+    border:1px solid #334155;
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:15px;
+}
+
+label{
+    display:block;
+    margin-bottom:5px;
+    color:var(--muted);
+    font-size:0.75em;
+    text-transform:uppercase;
+}
+
+input,
+select{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #334155;
+    background:#0f172a;
+    color:white;
+    margin-bottom:12px;
+    font-size:16px;
+}
+
+.btn{
+    width:100%;
+    border:none;
+    padding:16px;
+    border-radius:14px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-bottom:10px;
+    font-size:1em;
+}
+
+.btn-save{
+    background:var(--primary);
+    color:#000;
+}
+
+.btn-export{
+    background:#475569;
+    color:white;
+}
+
+.btn-whats{
+    background:#25D366;
+    color:#000;
+}
+
+.history-card{
+    background:var(--card);
+    border-left:4px solid var(--primary);
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:12px;
+    position:relative;
+}
+
+.btn-del{
+    position:absolute;
+    top:10px;
+    right:12px;
+    background:none;
+    border:none;
+    color:var(--danger);
+    font-size:1.5em;
+}
+
+.chart-container{
+    height:320px;
+    margin-top:20px;
+}
+
+#modalExcluir{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.85);
+    z-index:9999;
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-content{
+    background:var(--card);
+    padding:25px;
+    border-radius:16px;
+    width:90%;
+    max-width:320px;
+    text-align:center;
+}
+
+.modal-btns{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+.btn-confirm,
+.btn-cancel{
+    flex:1;
+    border:none;
+    padding:12px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+.btn-confirm{
+    background:var(--danger);
+    color:white;
+}
+
+.btn-cancel{
+    background:#475569;
+    color:white;
+}
+
+@media print{
+
+    .btn,
+    #inputBusca,
+    .btn-del{
+        display:none !important;
+    }
+
+    body{
+        background:white;
+        color:black;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+    <img src="FaderLivreIcon.png">
+
+    <h2>Cachê Control</h2>
+
+</div>
+
+<div class="dashboard">
+
+    <div id="vTotalSemana"
+    class="total-semana">
+        R$ 0,00
+    </div>
+
+    <div style="
+    display:flex;
+    justify-content:center;
+    margin-top:15px;">
+
+        <button onclick="toggleValores()"
+        style="
+        width:50px;
+        height:50px;
+        border:none;
+        border-radius:12px;
+        background:#334155;
+        color:white;
+        font-size:1.2em;">
+
+            👁️
+
+        </button>
+
+    </div>
+
+    <div class="chart-container">
+        <canvas id="graficoEmpresas"></canvas>
+    </div>
+
+</div>
+
+<div class="input-group">
+
+    <label>Data</label>
+
+    <input type="date"
+    id="dataJob">
+
+    <label>Empresa</label>
+
+    <input type="text"
+    id="empresaJob"
+    placeholder="Fader Livre">
+
+    <label>Nome do Job</label>
+
+    <input type="text"
+    id="nomeJob"
+    placeholder="Ex: Comercial">
+
+    <div style="
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;">
+
+        <div>
+
+            <label>Cachê</label>
+
+            <input type="number"
+            id="vCacheBase">
+
+        </div>
+
+        <div>
+
+            <label>Diária</label>
+
+            <input type="number"
+            id="vDiaria">
+
+        </div>
+
+    </div>
+
+    <div style="
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;">
+
+        <div>
+
+            <label>Início</label>
+
+            <input type="time"
+            id="inicio"
+            value="08:00">
+
+        </div>
+
+        <div>
+
+            <label>Fim</label>
+
+            <input type="time"
+            id="fim"
+            value="20:00">
+
+        </div>
+
+    </div>
+
+    <label>NF (%)</label>
+
+    <input type="number"
+    id="nfPercentual"
+    value="0">
+
+</div>
+
+<button class="btn btn-save"
+onclick="salvarJob()">
+💾 SALVAR JOB
+</button>
+
+<button class="btn btn-whats"
+onclick="enviarRelatorioWhatsApp()">
+🟢 ENVIAR WHATSAPP
+</button>
+
+<button class="btn btn-export"
+onclick="baixarExcelCompleto()">
+📊 EXPORTAR EXCEL
+</button>
+
+<input
+type="text"
+id="inputBusca"
+onkeyup="filtrarTabela()"
+placeholder="🔍 Buscar empresa, job ou data..."
+style="
+margin-top:20px;
+border:2px solid var(--primary);">
+
+<div id="listaHistorico"></div>
+
+<div id="modalExcluir">
+
+    <div class="modal-content">
+
+        <h3>Deseja apagar?</h3>
+
+        <div class="modal-btns">
+
+            <button class="btn-cancel"
+            onclick="fecharModal()">
+                Cancelar
+            </button>
+
+            <button class="btn-confirm"
+            id="confirmarBtn">
+                Excluir
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
 <script>
 
 let db;
@@ -202,7 +586,6 @@ function atualizarTela(){
     if(!db) return;
 
     let total = 0;
-    let totalNF = 0;
 
     const lista =
     document.getElementById(
@@ -212,6 +595,7 @@ function atualizarTela(){
     lista.innerHTML = "";
 
     let empresas = {};
+    let empresasNF = {};
 
     db.transaction("jobs")
     .objectStore("jobs")
@@ -228,17 +612,23 @@ function atualizarTela(){
 
             total += d.total;
 
-            totalNF +=
-            (d.valorNF || 0);
-
             if(!empresas[d.empresa]){
 
                 empresas[d.empresa] = 0;
 
             }
 
+            if(!empresasNF[d.empresa]){
+
+                empresasNF[d.empresa] = 0;
+
+            }
+
             empresas[d.empresa] +=
             d.total;
+
+            empresasNF[d.empresa] +=
+            (d.valorNF || 0);
 
             const card =
             document.createElement(
@@ -308,25 +698,12 @@ function atualizarTela(){
 
             document.getElementById(
                 'vTotalSemana'
-            ).innerHTML = `
-
-                <div>
-                    ${formatarValor(total)}
-                </div>
-
-                <div style="
-                color:#ef4444;
-                font-size:0.45em;
-                margin-top:10px;">
-
-                    - ${formatarValor(totalNF)}
-
-                </div>
-
-            `;
+            ).innerText =
+            formatarValor(total);
 
             renderGrafico(
-                empresas
+                empresas,
+                empresasNF
             );
 
         }
@@ -335,7 +712,10 @@ function atualizarTela(){
 
 }
 
-function renderGrafico(empresas){
+function renderGrafico(
+    empresas,
+    empresasNF
+){
 
     const ctx =
     document.getElementById(
@@ -354,23 +734,14 @@ function renderGrafico(empresas){
     const labels =
     Object.keys(empresas);
 
-    const valores =
+    const valoresTotais =
     Object.values(empresas);
 
-    const cores = [
-
-        '#10b981',
-        '#0ea5e9',
-        '#f59e0b',
-        '#ef4444',
-        '#8b5cf6',
-        '#ec4899',
-        '#14b8a6',
-        '#f97316',
-        '#22c55e',
-        '#3b82f6'
-
-    ];
+    const valoresNF =
+    labels.map(
+        empresa =>
+        empresasNF[empresa] || 0
+    );
 
     new Chart(ctx, {
 
@@ -378,24 +749,35 @@ function renderGrafico(empresas){
 
         data:{
 
-            labels:labels,
+            labels: labels,
 
-            datasets:[{
+            datasets:[
 
-                label:'Valor por Empresa',
+                {
 
-                data:valores,
+                    label:'Total',
 
-                backgroundColor:
-                labels.map((_,i)=>
-                    cores[i % cores.length]
-                ),
+                    data: valoresTotais,
 
-                borderRadius:12,
+                    backgroundColor:'#10b981',
 
-                borderWidth:0
+                    borderRadius:8
 
-            }]
+                },
+
+                {
+
+                    label:'NF',
+
+                    data: valoresNF,
+
+                    backgroundColor:'#ef4444',
+
+                    borderRadius:8
+
+                }
+
+            ]
 
         },
 
@@ -408,7 +790,11 @@ function renderGrafico(empresas){
             plugins:{
 
                 legend:{
-                    display:false
+
+                    labels:{
+                        color:'#ffffff'
+                    }
+
                 }
 
             },
@@ -447,4 +833,263 @@ function renderGrafico(empresas){
 
 }
 
+function abrirModal(id){
+
+    idParaExcluir = id;
+
+    document.getElementById(
+        'modalExcluir'
+    ).style.display = 'flex';
+
+}
+
+function fecharModal(){
+
+    idParaExcluir = null;
+
+    document.getElementById(
+        'modalExcluir'
+    ).style.display = 'none';
+
+}
+
+document.getElementById(
+    'confirmarBtn'
+).onclick = ()=>{
+
+    if(!idParaExcluir)
+    return;
+
+    db.transaction(
+        "jobs",
+        "readwrite"
+    )
+    .objectStore("jobs")
+    .delete(idParaExcluir)
+    .onsuccess = ()=>{
+
+        fecharModal();
+
+        atualizarTela();
+
+    };
+
+};
+
+function filtrarTabela(){
+
+    let filtro =
+    document.getElementById(
+        'inputBusca'
+    ).value.toUpperCase();
+
+    let cards =
+    document.getElementsByClassName(
+        'history-card'
+    );
+
+    for(let i=0;i<cards.length;i++){
+
+        let texto =
+        cards[i]
+        .innerText
+        .toUpperCase();
+
+        cards[i].style.display =
+
+        texto.includes(filtro)
+        ? ''
+        : 'none';
+
+    }
+
+}
+
+function baixarExcelCompleto(){
+
+    let filtro =
+    document.getElementById(
+        'inputBusca'
+    ).value.toUpperCase();
+
+    let csv =
+"\ufeffEmpresa;Data;Job;Entrada;Saída;Horas;Cache;Diária;Extra;NF;Total\n";
+
+    let total = 0;
+    let horas = 0;
+
+    db.transaction("jobs")
+    .objectStore("jobs")
+    .getAll()
+    .onsuccess = (e)=>{
+
+        const dados =
+        e.target.result;
+
+        dados.forEach(v=>{
+
+            let texto =
+            (
+                v.empresa +
+                " " +
+                v.job +
+                " " +
+                v.data
+            ).toUpperCase();
+
+            if(
+                filtro &&
+                !texto.includes(filtro)
+            ){
+                return;
+            }
+
+            total += v.total;
+
+            horas +=
+            parseFloat(v.horas);
+
+            csv +=
+
+`${v.empresa};${v.data};${v.job};${v.inicio};${v.fim};${v.horas};${v.cache};${v.diaria};${v.extra};${v.valorNF};${v.total}\n`;
+
+        });
+
+        csv +=
+`\n;;;;TOTAL HORAS;${horas.toFixed(1)}h\n`;
+
+        csv +=
+`;;;;TOTAL GERAL;${total.toFixed(2)}\n`;
+
+        const link =
+        document.createElement('a');
+
+        link.href =
+        URL.createObjectURL(
+            new Blob(
+                [csv],
+                {
+                    type:'text/csv;charset=utf-8;'
+                }
+            )
+        );
+
+        link.download =
+        "Total geral de caches.csv";
+
+        link.click();
+
+    };
+
+}
+
+function enviarRelatorioWhatsApp(){
+
+    let filtro =
+    document.getElementById(
+        'inputBusca'
+    ).value.toUpperCase();
+
+    db.transaction("jobs")
+    .objectStore("jobs")
+    .getAll()
+    .onsuccess = (e)=>{
+
+        const dados =
+        e.target.result;
+
+        let total = 0;
+        let horas = 0;
+
+        let msg =
+`⭐ *FADER LIVRE - RELATÓRIO* ⭐
+
+============================
+
+`;
+
+        dados.forEach(item=>{
+
+            let texto =
+            (
+                item.empresa +
+                " " +
+                item.job +
+                " " +
+                item.data
+            ).toUpperCase();
+
+            if(
+                filtro &&
+                !texto.includes(filtro)
+            ){
+                return;
+            }
+
+            total += item.total;
+
+            horas +=
+            parseFloat(item.horas);
+
+            msg +=
+
+`🏢 *EMPRESA:* ${item.empresa}
+
+📅 ${item.data
+.split('-')
+.reverse()
+.join('/')}
+
+🎬 ${item.job}
+
+🕒 ${item.inicio} às ${item.fim}
+
+⏱️ ${item.horas}h
+
+💵 Cachê:
+R$ ${item.cache.toFixed(2)}
+
+📘 Diária:
+R$ ${item.diaria.toFixed(2)}
+
+⚡ Extras:
+R$ ${item.extra.toFixed(2)}
+
+🧾 NF:
+R$ ${(item.valorNF || 0).toFixed(2)}
+
+💰 TOTAL:
+R$ ${item.total.toFixed(2)}
+
+============================
+
+`;
+
+        });
+
+        msg +=
+
+`
+⏱️ TOTAL HORAS:
+${horas.toFixed(1)}h
+
+✅ TOTAL GERAL:
+R$ ${total.toFixed(2)}
+
+🕒 Gerado em:
+${new Date()
+.toLocaleString('pt-BR')}
+`;
+
+        window.open(
+`https://wa.me/?text=${encodeURIComponent(msg)}`
+        );
+
+    };
+
+}
+
 </script>
+
+</body>
+</html>
