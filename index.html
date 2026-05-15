@@ -142,7 +142,7 @@ select{
 }
 
 .chart-container{
-    height:300px;
+    height:320px;
     margin-top:20px;
 }
 
@@ -264,7 +264,7 @@ select{
 
     <input type="text"
     id="empresaJob"
-    placeholder="Ex: Globo">
+    placeholder="Fader Livre">
 
     <label>Nome do Job</label>
 
@@ -595,6 +595,7 @@ function atualizarTela(){
     lista.innerHTML = "";
 
     let empresas = {};
+    let empresasNF = {};
 
     db.transaction("jobs")
     .objectStore("jobs")
@@ -617,8 +618,17 @@ function atualizarTela(){
 
             }
 
+            if(!empresasNF[d.empresa]){
+
+                empresasNF[d.empresa] = 0;
+
+            }
+
             empresas[d.empresa] +=
             d.total;
+
+            empresasNF[d.empresa] +=
+            (d.valorNF || 0);
 
             const card =
             document.createElement(
@@ -692,7 +702,8 @@ function atualizarTela(){
             formatarValor(total);
 
             renderGrafico(
-                empresas
+                empresas,
+                empresasNF
             );
 
         }
@@ -701,7 +712,10 @@ function atualizarTela(){
 
 }
 
-function renderGrafico(empresas){
+function renderGrafico(
+    empresas,
+    empresasNF
+){
 
     const ctx =
     document.getElementById(
@@ -717,21 +731,53 @@ function renderGrafico(empresas){
 
     }
 
+    const labels =
+    Object.keys(empresas);
+
+    const valoresTotais =
+    Object.values(empresas);
+
+    const valoresNF =
+    labels.map(
+        empresa =>
+        empresasNF[empresa] || 0
+    );
+
     new Chart(ctx, {
 
-        type:'doughnut',
+        type:'bar',
 
         data:{
 
-            labels:
-            Object.keys(empresas),
+            labels: labels,
 
-            datasets:[{
+            datasets:[
 
-                data:
-                Object.values(empresas)
+                {
 
-            }]
+                    label:'Total',
+
+                    data: valoresTotais,
+
+                    backgroundColor:'#10b981',
+
+                    borderRadius:8
+
+                },
+
+                {
+
+                    label:'NF',
+
+                    data: valoresNF,
+
+                    backgroundColor:'#ef4444',
+
+                    borderRadius:8
+
+                }
+
+            ]
 
         },
 
@@ -744,9 +790,39 @@ function renderGrafico(empresas){
             plugins:{
 
                 legend:{
+
                     labels:{
                         color:'#ffffff'
                     }
+
+                }
+
+            },
+
+            scales:{
+
+                y:{
+
+                    ticks:{
+                        color:'#ffffff'
+                    },
+
+                    grid:{
+                        color:'rgba(255,255,255,0.08)'
+                    }
+
+                },
+
+                x:{
+
+                    ticks:{
+                        color:'#ffffff'
+                    },
+
+                    grid:{
+                        display:false
+                    }
+
                 }
 
             }
