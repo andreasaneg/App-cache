@@ -425,167 +425,12 @@ function toggleValores(){
     ocultarValores =
     !ocultarValores;
 
-    atualizarTela();
-
-}
-
-function formatarValor(v){
-
-    if(ocultarValores){
-
-        return "R$ •••••";
-
-    }
-
-    return v.toLocaleString(
-        'pt-BR',
-        {
-            style:'currency',
-            currency:'BRL'
-        }
-    );
-
-}
-
-function salvarJob(){
-
-    let dt =
-    document.getElementById(
-        'dataJob'
-    ).value;
-
-    if(!dt){
-
-        return alert(
-            "Selecione a data"
-        );
-
-    }
-
-    let empresa =
-    document.getElementById(
-        'empresaJob'
-    ).value || "Sem empresa";
-
-    let job =
-    document.getElementById(
-        'nomeJob'
-    ).value || "Sem nome";
-
-    let cache =
-    parseFloat(
-        document.getElementById(
-            'vCacheBase'
-        ).value
-    ) || 0;
-
-    let diaria =
-    parseFloat(
-        document.getElementById(
-            'vDiaria'
-        ).value
-    ) || 0;
-
-    let nf =
-    parseFloat(
-        document.getElementById(
-            'nfPercentual'
-        ).value
-    ) || 0;
-
-    let inicio =
-    document.getElementById(
-        'inicio'
-    ).value;
-
-    let fim =
-    document.getElementById(
-        'fim'
-    ).value;
-
-    let ini =
-    inicio.split(':');
-
-    let end =
-    fim.split(':');
-
-    let min =
-    (
-        parseInt(end[0])*60
-        +
-        parseInt(end[1])
-    )
-    -
-    (
-        parseInt(ini[0])*60
-        +
-        parseInt(ini[1])
-    );
-
-    if(min < 0){
-
-        min += 1440;
-
-    }
-
-    let horas =
-    (min / 60);
-
-    let extraHoras =
-    Math.max(
-        0,
-        horas - 12
-    );
-
-    let extra =
-    extraHoras *
-    (cache / 12);
-
-    let total =
-    cache +
-    diaria +
-    extra;
-
-    let valorNF =
-    total *
-    (nf / 100);
-
-    const registro = {
-
-        data:dt,
-        empresa:empresa,
-        job:job,
-        cache:cache,
-        diaria:diaria,
-        extra:extra,
-        total:total,
-        nf:nf,
-        valorNF:valorNF,
-        inicio:inicio,
-        fim:fim,
-        horas:horas.toFixed(1)
-
-    };
-
-    db.transaction(
-        "jobs",
-        "readwrite"
-    )
-    .objectStore("jobs")
-    .add(registro)
-    .onsuccess = ()=>{
-
-        atualizarTela();
-
-    };
-
-}
-
-function atualizarTela(){
+  function atualizarTela(){
 
     if(!db) return;
 
     let total = 0;
+    let totalNF = 0;
 
     const lista =
     document.getElementById(
@@ -595,7 +440,6 @@ function atualizarTela(){
     lista.innerHTML = "";
 
     let empresas = {};
-    let empresasNF = {};
 
     db.transaction("jobs")
     .objectStore("jobs")
@@ -612,23 +456,17 @@ function atualizarTela(){
 
             total += d.total;
 
+            totalNF +=
+            (d.valorNF || 0);
+
             if(!empresas[d.empresa]){
 
                 empresas[d.empresa] = 0;
 
             }
 
-            if(!empresasNF[d.empresa]){
-
-                empresasNF[d.empresa] = 0;
-
-            }
-
             empresas[d.empresa] +=
             d.total;
-
-            empresasNF[d.empresa] +=
-            (d.valorNF || 0);
 
             const card =
             document.createElement(
@@ -698,12 +536,25 @@ function atualizarTela(){
 
             document.getElementById(
                 'vTotalSemana'
-            ).innerText =
-            formatarValor(total);
+            ).innerHTML = `
+
+                <div>
+                    ${formatarValor(total)}
+                </div>
+
+                <div style="
+                color:#ef4444;
+                font-size:0.45em;
+                margin-top:10px;">
+
+                    - ${formatarValor(totalNF)}
+
+                </div>
+
+            `;
 
             renderGrafico(
-                empresas,
-                empresasNF
+                empresas
             );
 
         }
@@ -712,10 +563,7 @@ function atualizarTela(){
 
 }
 
-function renderGrafico(
-    empresas,
-    empresasNF
-){
+function renderGrafico(empresas){
 
     const ctx =
     document.getElementById(
@@ -734,41 +582,23 @@ function renderGrafico(
     const labels =
     Object.keys(empresas);
 
-    const valoresTotais =
+    const valores =
     Object.values(empresas);
 
-    const valoresNF =
-    labels.map(
-        empresa =>
-        empresasNF[empresa] || 0
-    );
-
-    const coresEmpresas = [
+    const cores = [
 
         '#10b981',
         '#0ea5e9',
         '#f59e0b',
+        '#ef4444',
         '#8b5cf6',
         '#ec4899',
         '#14b8a6',
         '#f97316',
-        '#3b82f6',
-        '#84cc16',
-        '#e11d48'
+        '#22c55e',
+        '#3b82f6'
 
     ];
-
-    const totalGeral =
-    valoresTotais.reduce(
-        (a,b)=>a+b,
-        0
-    );
-
-    const totalNF =
-    valoresNF.reduce(
-        (a,b)=>a+b,
-        0
-    );
 
     new Chart(ctx, {
 
@@ -776,41 +606,24 @@ function renderGrafico(
 
         data:{
 
-            labels: labels,
+            labels:labels,
 
-            datasets:[
+            datasets:[{
 
-                {
+                label:'Valor por Empresa',
 
-                    label:'Total por Empresa',
+                data:valores,
 
-                    data: valoresTotais,
+                backgroundColor:
+                labels.map((_,i)=>
+                    cores[i % cores.length]
+                ),
 
-                    backgroundColor:
-                    labels.map(
-                        (_,i)=>
-                        coresEmpresas[
-                            i % coresEmpresas.length
-                        ]
-                    ),
+                borderRadius:12,
 
-                    borderRadius:8
+                borderWidth:0
 
-                },
-
-                {
-
-                    label:'NF por Empresa',
-
-                    data: valoresNF,
-
-                    backgroundColor:'#ef4444',
-
-                    borderRadius:8
-
-                }
-
-            ]
+            }]
 
         },
 
@@ -823,47 +636,7 @@ function renderGrafico(
             plugins:{
 
                 legend:{
-
-                    labels:{
-                        color:'#ffffff'
-                    }
-
-                },
-
-                tooltip:{
-
-                    callbacks:{
-
-                        footer:(tooltipItems)=>{
-
-                            return [
-
-                                'TOTAL GERAL: '
-                                +
-                                totalGeral.toLocaleString(
-                                    'pt-BR',
-                                    {
-                                        style:'currency',
-                                        currency:'BRL'
-                                    }
-                                ),
-
-                                'TOTAL NF: '
-                                +
-                                totalNF.toLocaleString(
-                                    'pt-BR',
-                                    {
-                                        style:'currency',
-                                        currency:'BRL'
-                                    }
-                                )
-
-                            ];
-
-                        }
-
-                    }
-
+                    display:false
                 }
 
             },
