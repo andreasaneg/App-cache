@@ -53,38 +53,6 @@ body{
     object-fit:cover;
 }
 
-.header h2{
-    margin:10px 0 0 0;
-}
-
-.semana-selector{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    background:var(--card);
-    border:1px solid var(--primary);
-    padding:10px;
-    border-radius:14px;
-    margin-bottom:18px;
-}
-
-.btn-nav{
-    background:var(--primary);
-    border:none;
-    color:#000;
-    font-size:1.2em;
-    font-weight:bold;
-    padding:10px 18px;
-    border-radius:10px;
-}
-
-.semana-label{
-    text-align:center;
-    flex:1;
-    font-weight:bold;
-    font-size:0.9em;
-}
-
 .dashboard{
     background:var(--card);
     border-radius:18px;
@@ -98,11 +66,6 @@ body{
     font-size:2.4em;
     font-weight:bold;
     color:var(--primary);
-}
-
-.chart-container{
-    height:260px;
-    margin-top:10px;
 }
 
 .input-group{
@@ -164,7 +127,7 @@ select{
     border-left:4px solid var(--primary);
     border-radius:12px;
     padding:16px;
-    margin-bottom:10px;
+    margin-bottom:12px;
     position:relative;
 }
 
@@ -178,13 +141,15 @@ select{
     font-size:1.5em;
 }
 
+.chart-container{
+    height:300px;
+    margin-top:20px;
+}
+
 #modalExcluir{
     display:none;
     position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
+    inset:0;
     background:rgba(0,0,0,0.85);
     z-index:9999;
     justify-content:center;
@@ -193,9 +158,8 @@ select{
 
 .modal-content{
     background:var(--card);
-    border:1px solid var(--danger);
-    border-radius:18px;
     padding:25px;
+    border-radius:16px;
     width:90%;
     max-width:320px;
     text-align:center;
@@ -211,8 +175,8 @@ select{
 .btn-cancel{
     flex:1;
     border:none;
-    border-radius:10px;
     padding:12px;
+    border-radius:10px;
     font-weight:bold;
 }
 
@@ -226,33 +190,17 @@ select{
     color:white;
 }
 
-#telaBloqueio{
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:var(--bg);
-    z-index:10000;
-    padding:30px;
-    text-align:center;
-    flex-direction:column;
-    justify-content:center;
-}
-
 @media print{
+
+    .btn,
+    #inputBusca,
+    .btn-del{
+        display:none !important;
+    }
 
     body{
         background:white;
         color:black;
-    }
-
-    .btn,
-    .btn-nav,
-    #inputBusca,
-    #modalExcluir{
-        display:none !important;
     }
 
 }
@@ -263,94 +211,11 @@ select{
 
 <body>
 
-<div id="telaBloqueio">
-
-    <h2 style="color:var(--primary)">
-        FADER LIVRE
-    </h2>
-
-    <p style="color:var(--muted)">
-        Aplicativo não ativado
-    </p>
-
-    <div style="
-    background:var(--card);
-    padding:20px;
-    border-radius:14px;
-    border:1px solid #334155;
-    margin:20px 0;">
-
-        <label>ID DO APARELHO</label>
-
-        <div id="displayID"
-        style="
-        font-size:2em;
-        font-weight:bold;
-        color:var(--extra);
-        margin-top:10px;">
-        </div>
-
-    </div>
-
-    <input type="text"
-    id="inputSerial"
-    placeholder="Digite o serial de ativação">
-
-    <button class="btn btn-save"
-    onclick="verificarSerial()">
-        ATIVAR AGORA
-    </button>
-
-</div>
-
 <div class="header">
 
     <img src="FaderLivreIcon.png">
 
     <h2>Cachê Control</h2>
-
-</div>
-
-<div id="modalExcluir">
-
-    <div class="modal-content">
-
-        <h3>Deseja apagar este registro?</h3>
-
-        <div class="modal-btns">
-
-            <button class="btn-cancel"
-            onclick="fecharModal()">
-                CANCELAR
-            </button>
-
-            <button class="btn-confirm"
-            id="confirmarBtn">
-                EXCLUIR
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-<div class="semana-selector">
-
-    <button class="btn-nav"
-    onclick="mudarSemana(-7)">
-        ❮
-    </button>
-
-    <div class="semana-label"
-    id="labelSemana">
-        Carregando...
-    </div>
-
-    <button class="btn-nav"
-    onclick="mudarSemana(7)">
-        ❯
-    </button>
 
 </div>
 
@@ -361,172 +226,29 @@ select{
         R$ 0,00
     </div>
 
-    <!-- SEMANAL -->
+    <div style="
+    display:flex;
+    justify-content:center;
+    margin-top:15px;">
 
-    <div id="boxGraficoSemanal"
-    style="display:none; margin-top:30px;">
+        <button onclick="toggleValores()"
+        style="
+        width:50px;
+        height:50px;
+        border:none;
+        border-radius:12px;
+        background:#334155;
+        color:white;
+        font-size:1.2em;">
 
-        <h3 style="color:#10b981;">
-            SEMANAL
-        </h3>
+            👁️
 
-        <div style="
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:12px;
-        margin-top:20px;
-        margin-bottom:20px;">
-
-            <div>
-                <small>Cachê</small>
-                <div id="totalCacheSemanal"
-                style="font-weight:bold; color:#10b981;">
-                    R$ 0,00
-                </div>
-            </div>
-
-            <div>
-                <small>Diária</small>
-                <div id="totalDiariaSemanal"
-                style="font-weight:bold; color:#0ea5e9;">
-                    R$ 0,00
-                </div>
-            </div>
-
-            <div>
-                <small>Extras</small>
-                <div id="totalExtraSemanal"
-                style="font-weight:bold; color:#f59e0b;">
-                    R$ 0,00
-                </div>
-            </div>
-
-            <div>
-                <small>NF</small>
-                <div id="totalNFSemanal"
-                style="font-weight:bold; color:#ef4444;">
-                    R$ 0,00
-                </div>
-            </div>
-
-        </div>
-
-        <div class="chart-container">
-            <canvas id="graficoSemanal"></canvas>
-        </div>
+        </button>
 
     </div>
 
-    <!-- QUINZENAL -->
-
-    <div id="boxGraficoQuinzenal"
-    style="display:none; margin-top:40px;">
-
-        <h3 style="color:#0ea5e9;">
-            QUINZENAL
-        </h3>
-
-        <div style="
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:12px;
-        margin-top:20px;
-        margin-bottom:20px;">
-
-            <div>
-                <small>Cachê</small>
-                <div id="totalCacheQuinzenal"
-                style="font-weight:bold; color:#10b981;">
-                    R$ 0,00
-                </div>
-            </div>
-
-            <div>
-                <small>Diária</small>
-                <div id="totalDiariaQuinzenal"
-                style="font-weight:bold; color:#0ea5e9;">
-                    R$ 0,00
-                </div>
-            </div>
-
-            <div>
-                <small>Extras</small>
-                <div id="totalExtraQuinzenal"
-                style="font-weight:bold; color:#f59e0b;">
-                    R$ 0,00
-                </div>
-            </div>
-
-            <div>
-                <small>NF</small>
-                <div id="totalNFQuinzenal"
-                style="font-weight:bold; color:#ef4444;">
-                    R$ 0,00
-                </div>
-            </div>
-
-        </div>
-
-        <div class="chart-container">
-            <canvas id="graficoQuinzenal"></canvas>
-        </div>
-
-    </div>
-
-    <!-- MENSAL -->
-
-    <div id="boxGraficoMensal"
-    style="display:none; margin-top:40px;">
-
-        <h3 style="color:#f59e0b;">
-            MENSAL
-        </h3>
-
-        <div style="
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:12px;
-        margin-top:20px;
-        margin-bottom:20px;">
-
-            <div>
-                <small>Cachê</small>
-                <div id="totalCacheMensal"
-                style="font-weight:bold; color:#10b981;">
-                    R$ 0,00
-                </div>
-            </div>
-
-            <div>
-                <small>Diária</small>
-                <div id="totalDiariaMensal"
-                style="font-weight:bold; color:#0ea5e9;">
-                    R$ 0,00
-                </div>
-            </div>
-
-            <div>
-                <small>Extras</small>
-                <div id="totalExtraMensal"
-                style="font-weight:bold; color:#f59e0b;">
-                    R$ 0,00
-                </div>
-            </div>
-
-            <div>
-                <small>NF</small>
-                <div id="totalNFMensal"
-                style="font-weight:bold; color:#ef4444;">
-                    R$ 0,00
-                </div>
-            </div>
-
-        </div>
-
-        <div class="chart-container">
-            <canvas id="graficoMensal"></canvas>
-        </div>
-
+    <div class="chart-container">
+        <canvas id="graficoEmpresas"></canvas>
     </div>
 
 </div>
@@ -537,6 +259,12 @@ select{
 
     <input type="date"
     id="dataJob">
+
+    <label>Empresa</label>
+
+    <input type="text"
+    id="empresaJob"
+    placeholder="Ex: Globo">
 
     <label>Nome do Job</label>
 
@@ -596,51 +324,6 @@ select{
 
     </div>
 
-    <label>Tipo de Pagamento</label>
-
-    <select id="tipoPagamento"
-    onchange="toggleQuinzena()">
-
-        <option value="semanal">
-            Semanal
-        </option>
-
-        <option value="quinzenal">
-            Quinzenal
-        </option>
-
-        <option value="mensal">
-            Mensal
-        </option>
-
-    </select>
-
-    <div id="boxQuinzena"
-    style="display:none;">
-
-        <label>Período Quinzenal</label>
-
-        <div style="
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:10px;">
-
-            <input type="date"
-            id="quinzenaInicio">
-
-            <input type="date"
-            id="quinzenaFim">
-
-        </div>
-
-        <label>Prazo em dias</label>
-
-        <input type="number"
-        id="prazoQuinzena"
-        value="15">
-
-    </div>
-
     <label>NF (%)</label>
 
     <input type="number"
@@ -656,7 +339,7 @@ onclick="salvarJob()">
 
 <button class="btn btn-whats"
 onclick="enviarRelatorioWhatsApp()">
-🟢 ENVIAR PARA WHATSAPP
+🟢 ENVIAR WHATSAPP
 </button>
 
 <button class="btn btn-export"
@@ -664,111 +347,52 @@ onclick="baixarExcelCompleto()">
 📊 EXPORTAR EXCEL
 </button>
 
-<div style="margin-top:20px;">
-
-    <input
-    type="text"
-    id="inputBusca"
-    onkeyup="filtrarTabela()"
-    placeholder="🔍 Buscar por job ou data..."
-    style="border:2px solid var(--primary)">
-
-</div>
+<input
+type="text"
+id="inputBusca"
+onkeyup="filtrarTabela()"
+placeholder="🔍 Buscar empresa, job ou data..."
+style="
+margin-top:20px;
+border:2px solid var(--primary);">
 
 <div id="listaHistorico"></div>
+
+<div id="modalExcluir">
+
+    <div class="modal-content">
+
+        <h3>Deseja apagar?</h3>
+
+        <div class="modal-btns">
+
+            <button class="btn-cancel"
+            onclick="fecharModal()">
+                Cancelar
+            </button>
+
+            <button class="btn-confirm"
+            id="confirmarBtn">
+                Excluir
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 <script>
 
 let db;
-let dataReferencia = new Date();
+let ocultarValores = false;
 let idParaExcluir = null;
 
-if(!localStorage.getItem('fader_device_id')){
-
-    const novoID =
-        Date.now().toString(36)
-        +
-        Math.random().toString(36).substring(2,8);
-
-    localStorage.setItem(
-        'fader_device_id',
-        novoID
-    );
-
-}
-
-const ID_APARELHO =
-    localStorage.getItem(
-        'fader_device_id'
-    );
-
-function gerarChave(id){
-
-    return btoa(id + "_FADER_2026")
-    .replace(/=/g,'');
-
-}
-
-function verificarAtivacao(){
-
-    const licenca =
-        localStorage.getItem(
-            'fader_license'
-        );
-
-    const chaveCorreta =
-        gerarChave(ID_APARELHO);
-
-    if(licenca !== chaveCorreta){
-
-        document.getElementById(
-            'telaBloqueio'
-        ).style.display = 'flex';
-
-        document.getElementById(
-            'displayID'
-        ).innerText =
-            "FL-" +
-            ID_APARELHO.substring(0,10);
-
-    }
-
-}
-
-function verificarSerial(){
-
-    const input =
-        document.getElementById(
-            'inputSerial'
-        ).value.trim();
-
-    const chaveCorreta =
-        gerarChave(ID_APARELHO);
-
-    if(input === chaveCorreta){
-
-        localStorage.setItem(
-            'fader_license',
-            input
-        );
-
-        alert("Aplicativo ativado!");
-
-        location.reload();
-
-    }else{
-
-        alert("Serial inválido!");
-
-    }
-
-}
-
 const request =
-    indexedDB.open(
-        "CacheFinal_V18",
-        1
-    );
+indexedDB.open(
+    "CacheFinal_V30",
+    1
+);
 
 request.onupgradeneeded = (e)=>{
 
@@ -792,244 +416,111 @@ request.onsuccess = (e)=>{
 
     db = e.target.result;
 
-    verificarAtivacao();
-
     atualizarTela();
 
 };
 
-function toggleQuinzena(){
+function toggleValores(){
 
-    const tipo =
-        document.getElementById(
-            'tipoPagamento'
-        ).value;
-
-    document.getElementById(
-        'boxQuinzena'
-    ).style.display =
-        tipo === 'quinzenal'
-        ? 'block'
-        : 'none';
-
-}
-
-function mudarSemana(dias){
-
-    dataReferencia.setDate(
-        dataReferencia.getDate() + dias
-    );
+    ocultarValores =
+    !ocultarValores;
 
     atualizarTela();
 
 }
 
-function getLimitesSemana(data){
+function formatarValor(v){
 
-    let d = new Date(data);
+    if(ocultarValores){
 
-    d.setHours(0,0,0,0);
-
-    let dia = d.getDay();
-
-    let diff =
-        d.getDate()
-        - dia
-        + (dia === 0 ? -6 : 1);
-
-    let segunda =
-        new Date(
-            d.setDate(diff)
-        );
-
-    let domingo =
-        new Date(segunda);
-
-    domingo.setDate(
-        segunda.getDate() + 6
-    );
-
-    domingo.setHours(23,59,59);
-
-    return {
-        seg:segunda,
-        dom:domingo
-    };
-
-}
-
-function calcularPagamento(dataStr, tipo){
-
-    const data =
-        new Date(dataStr + "T00:00:00");
-
-    if(tipo === "semanal"){
-
-        let inicioSemana =
-            new Date(data);
-
-        let dia =
-            inicioSemana.getDay();
-
-        let diff =
-            inicioSemana.getDate()
-            - dia
-            + (dia === 0 ? -6 : 1);
-
-        inicioSemana.setDate(diff);
-
-        let domingo =
-            new Date(inicioSemana);
-
-        domingo.setDate(
-            inicioSemana.getDate() + 6
-        );
-
-        let pagamento =
-            new Date(domingo);
-
-        pagamento.setDate(
-            domingo.getDate() + 5
-        );
-
-        return pagamento;
+        return "R$ •••••";
 
     }
 
-    if(tipo === "quinzenal"){
-
-        const fim =
-            document.getElementById(
-                'quinzenaFim'
-            ).value;
-
-        const prazo =
-            parseInt(
-                document.getElementById(
-                    'prazoQuinzena'
-                ).value
-            ) || 15;
-
-        let pagamento =
-            new Date(fim + "T00:00:00");
-
-        pagamento.setDate(
-            pagamento.getDate() + prazo
-        );
-
-        return pagamento;
-
-    }
-
-    if(tipo === "mensal"){
-
-        let ano =
-            data.getFullYear();
-
-        let mes =
-            data.getMonth() + 1;
-
-        let contador = 0;
-        let dia = 1;
-
-        while(contador < 5){
-
-            let d =
-                new Date(
-                    ano,
-                    mes,
-                    dia
-                );
-
-            let semana =
-                d.getDay();
-
-            if(semana !== 0
-            && semana !== 6){
-
-                contador++;
-
-            }
-
-            dia++;
-
+    return v.toLocaleString(
+        'pt-BR',
+        {
+            style:'currency',
+            currency:'BRL'
         }
-
-        return new Date(
-            ano,
-            mes,
-            dia - 1
-        );
-
-    }
+    );
 
 }
 
 function salvarJob(){
 
     let dt =
-        document.getElementById(
-            'dataJob'
-        ).value;
+    document.getElementById(
+        'dataJob'
+    ).value;
 
     if(!dt){
 
         return alert(
-            "Selecione a data!"
+            "Selecione a data"
         );
 
     }
 
-    let cache =
-        parseFloat(
-            document.getElementById(
-                'vCacheBase'
-            ).value
-        ) || 0;
-
-    let diaria =
-        parseFloat(
-            document.getElementById(
-                'vDiaria'
-            ).value
-        ) || 0;
-
-    let nf =
-        parseFloat(
-            document.getElementById(
-                'nfPercentual'
-            ).value
-        ) || 0;
+    let empresa =
+    document.getElementById(
+        'empresaJob'
+    ).value || "Sem empresa";
 
     let job =
-        document.getElementById(
-            'nomeJob'
-        ).value
-        || "Sem nome";
+    document.getElementById(
+        'nomeJob'
+    ).value || "Sem nome";
 
-    let tipoPagamento =
+    let cache =
+    parseFloat(
         document.getElementById(
-            'tipoPagamento'
-        ).value;
+            'vCacheBase'
+        ).value
+    ) || 0;
+
+    let diaria =
+    parseFloat(
+        document.getElementById(
+            'vDiaria'
+        ).value
+    ) || 0;
+
+    let nf =
+    parseFloat(
+        document.getElementById(
+            'nfPercentual'
+        ).value
+    ) || 0;
 
     let inicio =
-        document.getElementById(
-            'inicio'
-        ).value
-        .split(':');
+    document.getElementById(
+        'inicio'
+    ).value;
 
     let fim =
-        document.getElementById(
-            'fim'
-        ).value
-        .split(':');
+    document.getElementById(
+        'fim'
+    ).value;
+
+    let ini =
+    inicio.split(':');
+
+    let end =
+    fim.split(':');
 
     let min =
-        (parseInt(fim[0])*60
-        + parseInt(fim[1]))
-        -
-        (parseInt(inicio[0])*60
-        + parseInt(inicio[1]));
+    (
+        parseInt(end[0])*60
+        +
+        parseInt(end[1])
+    )
+    -
+    (
+        parseInt(ini[0])*60
+        +
+        parseInt(ini[1])
+    );
 
     if(min < 0){
 
@@ -1037,30 +528,32 @@ function salvarJob(){
 
     }
 
+    let horas =
+    (min / 60);
+
     let extraHoras =
-        Math.max(
-            0,
-            (min/60) - 12
-        );
+    Math.max(
+        0,
+        horas - 12
+    );
 
     let extra =
-        extraHoras * (cache / 12);
+    extraHoras *
+    (cache / 12);
 
     let total =
-        cache + diaria + extra;
+    cache +
+    diaria +
+    extra;
 
     let valorNF =
-        total * (nf / 100);
-
-    let pagamento =
-        calcularPagamento(
-            dt,
-            tipoPagamento
-        );
+    total *
+    (nf / 100);
 
     const registro = {
 
         data:dt,
+        empresa:empresa,
         job:job,
         cache:cache,
         diaria:diaria,
@@ -1068,8 +561,9 @@ function salvarJob(){
         total:total,
         nf:nf,
         valorNF:valorNF,
-        pagamento:pagamento.toISOString(),
-        tipoPagamento:tipoPagamento
+        inicio:inicio,
+        fim:fim,
+        horas:horas.toFixed(1)
 
     };
 
@@ -1081,10 +575,6 @@ function salvarJob(){
     .add(registro)
     .onsuccess = ()=>{
 
-        document.getElementById(
-            'nomeJob'
-        ).value = "";
-
         atualizarTela();
 
     };
@@ -1095,48 +585,16 @@ function atualizarTela(){
 
     if(!db) return;
 
-    const limites =
-        getLimitesSemana(
-            dataReferencia
-        );
-
-    document.getElementById(
-        'labelSemana'
-    ).innerHTML =
-
-        `${limites.seg.toLocaleDateString('pt-BR')}
-        até
-        ${limites.dom.toLocaleDateString('pt-BR')}`;
-
     let total = 0;
 
-    let semanal = {
-        cache:0,
-        diaria:0,
-        extra:0,
-        nf:0
-    };
-
-    let quinzenal = {
-        cache:0,
-        diaria:0,
-        extra:0,
-        nf:0
-    };
-
-    let mensal = {
-        cache:0,
-        diaria:0,
-        extra:0,
-        nf:0
-    };
-
     const lista =
-        document.getElementById(
-            'listaHistorico'
-        );
+    document.getElementById(
+        'listaHistorico'
+    );
 
     lista.innerHTML = "";
+
+    let empresas = {};
 
     db.transaction("jobs")
     .objectStore("jobs")
@@ -1144,103 +602,85 @@ function atualizarTela(){
     .onsuccess = (e)=>{
 
         const cursor =
-            e.target.result;
+        e.target.result;
 
         if(cursor){
 
             const d =
-                cursor.value;
+            cursor.value;
 
-            const dataJ =
-                new Date(
-                    d.data + "T00:00:00"
-                );
+            total += d.total;
 
-            if(dataJ >= limites.seg
-            && dataJ <= limites.dom){
+            if(!empresas[d.empresa]){
 
-                total += d.total;
-
-                if(d.tipoPagamento === "semanal"){
-
-                    semanal.cache += d.cache;
-                    semanal.diaria += d.diaria;
-                    semanal.extra += d.extra;
-                    semanal.nf += d.valorNF || 0;
-
-                }
-
-                if(d.tipoPagamento === "quinzenal"){
-
-                    quinzenal.cache += d.cache;
-                    quinzenal.diaria += d.diaria;
-                    quinzenal.extra += d.extra;
-                    quinzenal.nf += d.valorNF || 0;
-
-                }
-
-                if(d.tipoPagamento === "mensal"){
-
-                    mensal.cache += d.cache;
-                    mensal.diaria += d.diaria;
-                    mensal.extra += d.extra;
-                    mensal.nf += d.valorNF || 0;
-
-                }
-
-                const card =
-                    document.createElement('div');
-
-                card.className =
-                    'history-card';
-
-                card.innerHTML = `
-
-                    <b>
-                    ${d.data
-                    .split('-')
-                    .reverse()
-                    .join('/')}
-                    </b>
-
-                    - ${d.job}
-
-                    <br><br>
-
-                    💰 Total:
-                    <b>
-
-                    ${d.total.toLocaleString(
-                        'pt-BR',
-                        {
-                            style:'currency',
-                            currency:'BRL'
-                        }
-                    )}
-
-                    </b>
-
-                    <br>
-
-                    📅 Previsão:
-                    <b style="color:#10b981;">
-
-                    ${new Date(d.pagamento)
-                    .toLocaleDateString('pt-BR')}
-
-                    </b>
-
-                    <button
-                    class="btn-del"
-                    onclick="abrirModal(${d.id})">
-                    ×
-                    </button>
-
-                `;
-
-                lista.appendChild(card);
+                empresas[d.empresa] = 0;
 
             }
+
+            empresas[d.empresa] +=
+            d.total;
+
+            const card =
+            document.createElement(
+                'div'
+            );
+
+            card.className =
+            'history-card';
+
+            card.innerHTML = `
+
+                <div style="
+                color:#94a3b8;
+                font-size:0.8em;
+                margin-bottom:5px;">
+
+                    🏢 ${d.empresa}
+
+                </div>
+
+                <b>
+
+                ${d.data
+                .split('-')
+                .reverse()
+                .join('/')}
+
+                </b>
+
+                - ${d.job}
+
+                <br><br>
+
+                🕒
+                ${d.inicio}
+                às
+                ${d.fim}
+
+                •
+                ${d.horas}h
+
+                <br><br>
+
+                💰
+                ${formatarValor(d.total)}
+
+                <br>
+
+                <span style="color:#ef4444;">
+                NF:
+                ${formatarValor(d.valorNF || 0)}
+                </span>
+
+                <button
+                class="btn-del"
+                onclick="abrirModal(${d.id})">
+                ×
+                </button>
+
+            `;
+
+            lista.appendChild(card);
 
             cursor.continue();
 
@@ -1249,19 +689,10 @@ function atualizarTela(){
             document.getElementById(
                 'vTotalSemana'
             ).innerText =
+            formatarValor(total);
 
-                total.toLocaleString(
-                    'pt-BR',
-                    {
-                        style:'currency',
-                        currency:'BRL'
-                    }
-                );
-
-            renderizarGraficos(
-                semanal,
-                quinzenal,
-                mensal
+            renderGrafico(
+                empresas
             );
 
         }
@@ -1270,177 +701,35 @@ function atualizarTela(){
 
 }
 
-function renderizarGraficos(
-    semanal,
-    quinzenal,
-    mensal
-){
-
-    atualizarTotaisGrafico(
-        'Semanal',
-        semanal
-    );
-
-    atualizarTotaisGrafico(
-        'Quinzenal',
-        quinzenal
-    );
-
-    atualizarTotaisGrafico(
-        'Mensal',
-        mensal
-    );
-
-    criarGrafico(
-        'graficoSemanal',
-        'boxGraficoSemanal',
-        semanal
-    );
-
-    criarGrafico(
-        'graficoQuinzenal',
-        'boxGraficoQuinzenal',
-        quinzenal
-    );
-
-    criarGrafico(
-        'graficoMensal',
-        'boxGraficoMensal',
-        mensal
-    );
-
-}
-
-function atualizarTotaisGrafico(
-    tipo,
-    dados
-){
-
-    document.getElementById(
-        `totalCache${tipo}`
-    ).innerText =
-
-        dados.cache.toLocaleString(
-            'pt-BR',
-            {
-                style:'currency',
-                currency:'BRL'
-            }
-        );
-
-    document.getElementById(
-        `totalDiaria${tipo}`
-    ).innerText =
-
-        dados.diaria.toLocaleString(
-            'pt-BR',
-            {
-                style:'currency',
-                currency:'BRL'
-            }
-        );
-
-    document.getElementById(
-        `totalExtra${tipo}`
-    ).innerText =
-
-        dados.extra.toLocaleString(
-            'pt-BR',
-            {
-                style:'currency',
-                currency:'BRL'
-            }
-        );
-
-    document.getElementById(
-        `totalNF${tipo}`
-    ).innerText =
-
-        dados.nf.toLocaleString(
-            'pt-BR',
-            {
-                style:'currency',
-                currency:'BRL'
-            }
-        );
-
-}
-
-function criarGrafico(
-    idCanvas,
-    idBox,
-    dados
-){
-
-    const totalPrincipal =
-        dados.cache
-        +
-        dados.diaria
-        +
-        dados.extra;
-
-    if(totalPrincipal <= 0){
-
-        document.getElementById(
-            idBox
-        ).style.display = 'none';
-
-        return;
-
-    }
-
-    document.getElementById(
-        idBox
-    ).style.display = 'block';
+function renderGrafico(empresas){
 
     const ctx =
-        document.getElementById(
-            idCanvas
-        );
+    document.getElementById(
+        'graficoEmpresas'
+    );
 
-    const chartExistente =
-        Chart.getChart(ctx);
+    const existente =
+    Chart.getChart(ctx);
 
-    if(chartExistente){
+    if(existente){
 
-        chartExistente.destroy();
+        existente.destroy();
 
     }
 
     new Chart(ctx, {
 
-        type:'bar',
+        type:'doughnut',
 
         data:{
 
-            labels:[
-                'Cachê',
-                'Diária',
-                'Extras',
-                'NF'
-            ],
+            labels:
+            Object.keys(empresas),
 
             datasets:[{
 
-                label:'Valores',
-
-                data:[
-                    dados.cache,
-                    dados.diaria,
-                    dados.extra,
-                    dados.nf
-                ],
-
-                backgroundColor:[
-                    '#10b981',
-                    '#0ea5e9',
-                    '#f59e0b',
-                    '#ef4444'
-                ],
-
-                borderRadius:10,
-
-                borderWidth:0
+                data:
+                Object.values(empresas)
 
             }]
 
@@ -1455,35 +744,9 @@ function criarGrafico(
             plugins:{
 
                 legend:{
-                    display:false
-                }
-
-            },
-
-            scales:{
-
-                y:{
-
-                    ticks:{
+                    labels:{
                         color:'#ffffff'
-                    },
-
-                    grid:{
-                        color:'rgba(255,255,255,0.08)'
                     }
-
-                },
-
-                x:{
-
-                    ticks:{
-                        color:'#ffffff'
-                    },
-
-                    grid:{
-                        display:false
-                    }
-
                 }
 
             }
@@ -1516,7 +779,7 @@ function fecharModal(){
 
 document.getElementById(
     'confirmarBtn'
-).onclick = function(){
+).onclick = ()=>{
 
     if(!idParaExcluir)
     return;
@@ -1537,125 +800,47 @@ document.getElementById(
 
 };
 
-function baixarExcelCompleto(){
-
-    let csv =
-    "\ufeffData;Job;Cache;Diária;Extra;NF;Total\n";
-
-    let totalGeral = 0;
-
-    db.transaction("jobs")
-    .objectStore("jobs")
-    .openCursor()
-    .onsuccess = (e)=>{
-
-        const c =
-            e.target.result;
-
-        if(c){
-
-            const v =
-                c.value;
-
-            csv +=
-
-            `${v.data
-            .split('-')
-            .reverse()
-            .join('/')};`
-
-            +
-
-            `${v.job};`
-
-            +
-
-            `${v.cache.toFixed(2)};`
-
-            +
-
-            `${v.diaria.toFixed(2)};`
-
-            +
-
-            `${v.extra.toFixed(2)};`
-
-            +
-
-            `${(v.valorNF || 0)
-            .toFixed(2)};`
-
-            +
-
-            `${v.total.toFixed(2)}\n`;
-
-            totalGeral +=
-                v.total;
-
-            c.continue();
-
-        }else{
-
-            csv +=
-            `\n;;;;TOTAL GERAL;${totalGeral.toFixed(2)}\n`;
-
-            const link =
-                document.createElement('a');
-
-            link.href =
-                URL.createObjectURL(
-                    new Blob(
-                        [csv],
-                        {
-                            type:'text/csv;charset=utf-8;'
-                        }
-                    )
-                );
-
-            link.download =
-                "Total geral de caches.csv";
-
-            link.click();
-
-        }
-
-    };
-
-}
-
 function filtrarTabela(){
 
-    let input =
-        document.getElementById(
-            "inputBusca"
-        );
-
-    let filter =
-        input.value.toUpperCase();
+    let filtro =
+    document.getElementById(
+        'inputBusca'
+    ).value.toUpperCase();
 
     let cards =
-        document.getElementsByClassName(
-            "history-card"
-        );
+    document.getElementsByClassName(
+        'history-card'
+    );
 
-    for(let i=0; i<cards.length; i++){
+    for(let i=0;i<cards.length;i++){
 
         let texto =
-            cards[i]
-            .innerText
-            .toUpperCase();
+        cards[i]
+        .innerText
+        .toUpperCase();
 
         cards[i].style.display =
 
-            texto.indexOf(filter) > -1
-            ? ""
-            : "none";
+        texto.includes(filtro)
+        ? ''
+        : 'none';
 
     }
 
 }
 
-function enviarRelatorioWhatsApp(){
+function baixarExcelCompleto(){
+
+    let filtro =
+    document.getElementById(
+        'inputBusca'
+    ).value.toUpperCase();
+
+    let csv =
+"\ufeffEmpresa;Data;Job;Entrada;Saída;Horas;Cache;Diária;Extra;NF;Total\n";
+
+    let total = 0;
+    let horas = 0;
 
     db.transaction("jobs")
     .objectStore("jobs")
@@ -1663,17 +848,82 @@ function enviarRelatorioWhatsApp(){
     .onsuccess = (e)=>{
 
         const dados =
-            e.target.result;
+        e.target.result;
 
-        if(dados.length === 0){
+        dados.forEach(v=>{
 
-            return alert(
-                "Sem dados!"
-            );
+            let texto =
+            (
+                v.empresa +
+                " " +
+                v.job +
+                " " +
+                v.data
+            ).toUpperCase();
 
-        }
+            if(
+                filtro &&
+                !texto.includes(filtro)
+            ){
+                return;
+            }
+
+            total += v.total;
+
+            horas +=
+            parseFloat(v.horas);
+
+            csv +=
+
+`${v.empresa};${v.data};${v.job};${v.inicio};${v.fim};${v.horas};${v.cache};${v.diaria};${v.extra};${v.valorNF};${v.total}\n`;
+
+        });
+
+        csv +=
+`\n;;;;TOTAL HORAS;${horas.toFixed(1)}h\n`;
+
+        csv +=
+`;;;;TOTAL GERAL;${total.toFixed(2)}\n`;
+
+        const link =
+        document.createElement('a');
+
+        link.href =
+        URL.createObjectURL(
+            new Blob(
+                [csv],
+                {
+                    type:'text/csv;charset=utf-8;'
+                }
+            )
+        );
+
+        link.download =
+        "Total geral de caches.csv";
+
+        link.click();
+
+    };
+
+}
+
+function enviarRelatorioWhatsApp(){
+
+    let filtro =
+    document.getElementById(
+        'inputBusca'
+    ).value.toUpperCase();
+
+    db.transaction("jobs")
+    .objectStore("jobs")
+    .getAll()
+    .onsuccess = (e)=>{
+
+        const dados =
+        e.target.result;
 
         let total = 0;
+        let horas = 0;
 
         let msg =
 `⭐ *FADER LIVRE - RELATÓRIO* ⭐
@@ -1684,28 +934,56 @@ function enviarRelatorioWhatsApp(){
 
         dados.forEach(item=>{
 
+            let texto =
+            (
+                item.empresa +
+                " " +
+                item.job +
+                " " +
+                item.data
+            ).toUpperCase();
+
+            if(
+                filtro &&
+                !texto.includes(filtro)
+            ){
+                return;
+            }
+
             total += item.total;
+
+            horas +=
+            parseFloat(item.horas);
 
             msg +=
 
-`📅 ${item.data
+`🏢 *EMPRESA:* ${item.empresa}
+
+📅 ${item.data
 .split('-')
 .reverse()
 .join('/')}
 
 🎬 ${item.job}
 
-💰 ${item.total.toLocaleString(
-'pt-BR',
-{
-style:'currency',
-currency:'BRL'
-}
-)}
+🕒 ${item.inicio} às ${item.fim}
 
-📅 Pgto:
-${new Date(item.pagamento)
-.toLocaleDateString('pt-BR')}
+⏱️ ${item.horas}h
+
+💵 Cachê:
+R$ ${item.cache.toFixed(2)}
+
+📘 Diária:
+R$ ${item.diaria.toFixed(2)}
+
+⚡ Extras:
+R$ ${item.extra.toFixed(2)}
+
+🧾 NF:
+R$ ${(item.valorNF || 0).toFixed(2)}
+
+💰 TOTAL:
+R$ ${item.total.toFixed(2)}
 
 ============================
 
@@ -1716,14 +994,11 @@ ${new Date(item.pagamento)
         msg +=
 
 `
-✅ TOTAL BRUTO:
-${total.toLocaleString(
-'pt-BR',
-{
-style:'currency',
-currency:'BRL'
-}
-)}
+⏱️ TOTAL HORAS:
+${horas.toFixed(1)}h
+
+✅ TOTAL GERAL:
+R$ ${total.toFixed(2)}
 
 🕒 Gerado em:
 ${new Date()
@@ -1731,7 +1006,7 @@ ${new Date()
 `;
 
         window.open(
-            `https://wa.me/?text=${encodeURIComponent(msg)}`
+`https://wa.me/?text=${encodeURIComponent(msg)}`
         );
 
     };
