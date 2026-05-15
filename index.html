@@ -19,8 +19,6 @@ content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable
     --bg:#0f172a;
     --card:#1e293b;
     --text:#f8fafc;
-    --extra:#f59e0b;
-    --diaria:#0ea5e9;
     --danger:#ef4444;
     --muted:#94a3b8;
 }
@@ -68,6 +66,12 @@ body{
     color:var(--primary);
 }
 
+.total-nf{
+    color:var(--danger);
+    font-size:0.45em;
+    margin-top:10px;
+}
+
 .input-group{
     background:var(--card);
     border:1px solid #334155;
@@ -84,8 +88,7 @@ label{
     text-transform:uppercase;
 }
 
-input,
-select{
+input{
     width:100%;
     padding:12px;
     border-radius:10px;
@@ -190,21 +193,6 @@ select{
     color:white;
 }
 
-@media print{
-
-    .btn,
-    #inputBusca,
-    .btn-del{
-        display:none !important;
-    }
-
-    body{
-        background:white;
-        color:black;
-    }
-
-}
-
 </style>
 
 </head>
@@ -224,6 +212,11 @@ select{
     <div id="vTotalSemana"
     class="total-semana">
         R$ 0,00
+    </div>
+
+    <div id="vTotalNF"
+    class="total-nf">
+        Total NF - R$ 0,00
     </div>
 
     <div style="
@@ -388,6 +381,17 @@ let db;
 let ocultarValores = false;
 let idParaExcluir = null;
 
+const cores = [
+    '#10b981',
+    '#0ea5e9',
+    '#f59e0b',
+    '#ef4444',
+    '#8b5cf6',
+    '#ec4899',
+    '#14b8a6',
+    '#f97316'
+];
+
 const request =
 indexedDB.open(
     "CacheFinal_V30",
@@ -450,64 +454,43 @@ function formatarValor(v){
 function salvarJob(){
 
     let dt =
-    document.getElementById(
-        'dataJob'
-    ).value;
+    document.getElementById('dataJob').value;
 
     if(!dt){
 
-        return alert(
-            "Selecione a data"
-        );
+        return alert("Selecione a data");
 
     }
 
     let empresa =
-    document.getElementById(
-        'empresaJob'
-    ).value || "Sem empresa";
+    document.getElementById('empresaJob').value || "Sem empresa";
 
     let job =
-    document.getElementById(
-        'nomeJob'
-    ).value || "Sem nome";
+    document.getElementById('nomeJob').value || "Sem nome";
 
     let cache =
     parseFloat(
-        document.getElementById(
-            'vCacheBase'
-        ).value
+        document.getElementById('vCacheBase').value
     ) || 0;
 
     let diaria =
     parseFloat(
-        document.getElementById(
-            'vDiaria'
-        ).value
+        document.getElementById('vDiaria').value
     ) || 0;
 
     let nf =
     parseFloat(
-        document.getElementById(
-            'nfPercentual'
-        ).value
+        document.getElementById('nfPercentual').value
     ) || 0;
 
     let inicio =
-    document.getElementById(
-        'inicio'
-    ).value;
+    document.getElementById('inicio').value;
 
     let fim =
-    document.getElementById(
-        'fim'
-    ).value;
+    document.getElementById('fim').value;
 
-    let ini =
-    inicio.split(':');
-
-    let end =
-    fim.split(':');
+    let ini = inicio.split(':');
+    let end = fim.split(':');
 
     let min =
     (
@@ -528,27 +511,19 @@ function salvarJob(){
 
     }
 
-    let horas =
-    (min / 60);
+    let horas = (min / 60);
 
     let extraHoras =
-    Math.max(
-        0,
-        horas - 12
-    );
+    Math.max(0, horas - 12);
 
     let extra =
-    extraHoras *
-    (cache / 12);
+    extraHoras * (cache / 12);
 
     let total =
-    cache +
-    diaria +
-    extra;
+    cache + diaria + extra;
 
     let valorNF =
-    total *
-    (nf / 100);
+    total * (nf / 100);
 
     const registro = {
 
@@ -589,9 +564,7 @@ function atualizarTela(){
     let totalNF = 0;
 
     const lista =
-    document.getElementById(
-        'listaHistorico'
-    );
+    document.getElementById('listaHistorico');
 
     lista.innerHTML = "";
 
@@ -625,9 +598,7 @@ function atualizarTela(){
             d.total;
 
             const card =
-            document.createElement(
-                'div'
-            );
+            document.createElement('div');
 
             card.className =
             'history-card';
@@ -692,26 +663,15 @@ function atualizarTela(){
 
             document.getElementById(
                 'vTotalSemana'
-            ).innerHTML = `
+            ).innerText =
+            formatarValor(total);
 
-                <div>
-                    ${formatarValor(total)}
-                </div>
+            document.getElementById(
+                'vTotalNF'
+            ).innerText =
+            `Total NF - ${formatarValor(totalNF)}`;
 
-                <div style="
-                color:#ef4444;
-                font-size:0.45em;
-                margin-top:10px;">
-
-                    - ${formatarValor(totalNF)}
-
-                </div>
-
-            `;
-
-            renderGrafico(
-                empresas
-            );
+            renderGrafico(empresas);
 
         }
 
@@ -741,21 +701,6 @@ function renderGrafico(empresas){
     const valores =
     Object.values(empresas);
 
-    const cores = [
-
-        '#10b981',
-        '#0ea5e9',
-        '#f59e0b',
-        '#ef4444',
-        '#8b5cf6',
-        '#ec4899',
-        '#14b8a6',
-        '#f97316',
-        '#22c55e',
-        '#3b82f6'
-
-    ];
-
     new Chart(ctx, {
 
         type:'bar',
@@ -773,9 +718,7 @@ function renderGrafico(empresas){
                     cores[i % cores.length]
                 ),
 
-                borderRadius:12,
-
-                borderWidth:0
+                borderRadius:12
 
             }]
 
@@ -791,28 +734,6 @@ function renderGrafico(empresas){
 
                 legend:{
                     display:false
-                },
-
-                tooltip:{
-
-                    callbacks:{
-
-                        label:function(context){
-
-                            return context.label +
-                            ': ' +
-                            context.raw.toLocaleString(
-                                'pt-BR',
-                                {
-                                    style:'currency',
-                                    currency:'BRL'
-                                }
-                            );
-
-                        }
-
-                    }
-
                 }
 
             },
@@ -822,25 +743,15 @@ function renderGrafico(empresas){
                 y:{
 
                     ticks:{
-
-                        color:'#ffffff',
-
-                        callback:function(value){
-
-                            return value.toLocaleString(
-                                'pt-BR',
-                                {
-                                    style:'currency',
-                                    currency:'BRL'
-                                }
-                            );
-
-                        }
-
+                        display:false
                     },
 
                     grid:{
-                        color:'rgba(255,255,255,0.08)'
+                        display:false
+                    },
+
+                    border:{
+                        display:false
                     }
 
                 },
@@ -859,56 +770,7 @@ function renderGrafico(empresas){
 
             }
 
-        },
-
-        plugins:[{
-
-            id:'valorNasBarras',
-
-            afterDatasetsDraw(chart){
-
-                const {
-                    ctx
-                } = chart;
-
-                ctx.save();
-
-                chart.getDatasetMeta(0)
-                .data
-                .forEach((bar,index)=>{
-
-                    const valor =
-                    valores[index];
-
-                    ctx.fillStyle =
-                    '#ffffff';
-
-                    ctx.font =
-                    'bold 12px Arial';
-
-                    ctx.textAlign =
-                    'center';
-
-                    ctx.fillText(
-
-                        valor.toLocaleString(
-                            'pt-BR',
-                            {
-                                style:'currency',
-                                currency:'BRL'
-                            }
-                        ),
-
-                        bar.x,
-                        bar.y - 10
-
-                    );
-
-                });
-
-            }
-
-        }]
+        }
 
     });
 
@@ -1135,9 +997,6 @@ R$ ${item.diaria.toFixed(2)}
 
 ⚡ Extras:
 R$ ${item.extra.toFixed(2)}
-
-🧾 NF:
-R$ ${(item.valorNF || 0).toFixed(2)}
 
 💰 TOTAL:
 R$ ${item.total.toFixed(2)}
