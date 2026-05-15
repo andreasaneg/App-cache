@@ -68,7 +68,8 @@ body{
 
 .total-nf{
     color:var(--danger);
-    font-size:0.45em;
+    font-size:1.1em;
+    font-weight:bold;
     margin-top:10px;
 }
 
@@ -193,6 +194,16 @@ input{
     color:white;
 }
 
+@media print{
+
+    .btn,
+    #inputBusca,
+    .btn-del{
+        display:none !important;
+    }
+
+}
+
 </style>
 
 </head>
@@ -216,7 +227,7 @@ input{
 
     <div id="vTotalNF"
     class="total-nf">
-        Total NF - R$ 0,00
+        Total NF: - R$ 0,00
     </div>
 
     <div style="
@@ -381,17 +392,6 @@ let db;
 let ocultarValores = false;
 let idParaExcluir = null;
 
-const cores = [
-    '#10b981',
-    '#0ea5e9',
-    '#f59e0b',
-    '#ef4444',
-    '#8b5cf6',
-    '#ec4899',
-    '#14b8a6',
-    '#f97316'
-];
-
 const request =
 indexedDB.open(
     "CacheFinal_V30",
@@ -454,43 +454,64 @@ function formatarValor(v){
 function salvarJob(){
 
     let dt =
-    document.getElementById('dataJob').value;
+    document.getElementById(
+        'dataJob'
+    ).value;
 
     if(!dt){
 
-        return alert("Selecione a data");
+        return alert(
+            "Selecione a data"
+        );
 
     }
 
     let empresa =
-    document.getElementById('empresaJob').value || "Sem empresa";
+    document.getElementById(
+        'empresaJob'
+    ).value || "Fader Livre";
 
     let job =
-    document.getElementById('nomeJob').value || "Sem nome";
+    document.getElementById(
+        'nomeJob'
+    ).value || "Sem nome";
 
     let cache =
     parseFloat(
-        document.getElementById('vCacheBase').value
+        document.getElementById(
+            'vCacheBase'
+        ).value
     ) || 0;
 
     let diaria =
     parseFloat(
-        document.getElementById('vDiaria').value
+        document.getElementById(
+            'vDiaria'
+        ).value
     ) || 0;
 
     let nf =
     parseFloat(
-        document.getElementById('nfPercentual').value
+        document.getElementById(
+            'nfPercentual'
+        ).value
     ) || 0;
 
     let inicio =
-    document.getElementById('inicio').value;
+    document.getElementById(
+        'inicio'
+    ).value;
 
     let fim =
-    document.getElementById('fim').value;
+    document.getElementById(
+        'fim'
+    ).value;
 
-    let ini = inicio.split(':');
-    let end = fim.split(':');
+    let ini =
+    inicio.split(':');
+
+    let end =
+    fim.split(':');
 
     let min =
     (
@@ -511,19 +532,27 @@ function salvarJob(){
 
     }
 
-    let horas = (min / 60);
+    let horas =
+    (min / 60);
 
     let extraHoras =
-    Math.max(0, horas - 12);
+    Math.max(
+        0,
+        horas - 12
+    );
 
     let extra =
-    extraHoras * (cache / 12);
+    extraHoras *
+    (cache / 12);
 
     let total =
-    cache + diaria + extra;
+    cache +
+    diaria +
+    extra;
 
     let valorNF =
-    total * (nf / 100);
+    total *
+    (nf / 100);
 
     const registro = {
 
@@ -564,7 +593,9 @@ function atualizarTela(){
     let totalNF = 0;
 
     const lista =
-    document.getElementById('listaHistorico');
+    document.getElementById(
+        'listaHistorico'
+    );
 
     lista.innerHTML = "";
 
@@ -598,7 +629,9 @@ function atualizarTela(){
             d.total;
 
             const card =
-            document.createElement('div');
+            document.createElement(
+                'div'
+            );
 
             card.className =
             'history-card';
@@ -611,6 +644,16 @@ function atualizarTela(){
                 margin-bottom:5px;">
 
                     🏢 ${d.empresa}
+
+                </div>
+
+                <div style="
+                color:#10b981;
+                font-size:1em;
+                font-weight:bold;
+                margin-bottom:10px;">
+
+                    ${formatarValor(empresas[d.empresa])}
 
                 </div>
 
@@ -642,9 +685,14 @@ function atualizarTela(){
 
                 <br>
 
-                <span style="color:#ef4444;">
+                <span style="
+                color:#ef4444;
+                font-size:1.1em;
+                font-weight:bold;">
+
                 NF:
                 ${formatarValor(d.valorNF || 0)}
+
                 </span>
 
                 <button
@@ -669,9 +717,11 @@ function atualizarTela(){
             document.getElementById(
                 'vTotalNF'
             ).innerText =
-            `Total NF - ${formatarValor(totalNF)}`;
+            `Total NF: - ${formatarValor(totalNF)}`;
 
-            renderGrafico(empresas);
+            renderGrafico(
+                empresas
+            );
 
         }
 
@@ -701,17 +751,30 @@ function renderGrafico(empresas){
     const valores =
     Object.values(empresas);
 
+    const cores = [
+
+        '#10b981',
+        '#0ea5e9',
+        '#f59e0b',
+        '#ef4444',
+        '#8b5cf6',
+        '#ec4899',
+        '#14b8a6',
+        '#f97316'
+
+    ];
+
     new Chart(ctx, {
 
         type:'bar',
 
         data:{
 
-            labels:labels,
+            labels: labels,
 
             datasets:[{
 
-                data:valores,
+                data: valores,
 
                 backgroundColor:
                 labels.map((_,i)=>
@@ -741,19 +804,7 @@ function renderGrafico(empresas){
             scales:{
 
                 y:{
-
-                    ticks:{
-                        display:false
-                    },
-
-                    grid:{
-                        display:false
-                    },
-
-                    border:{
-                        display:false
-                    }
-
+                    display:false
                 },
 
                 x:{
@@ -770,7 +821,55 @@ function renderGrafico(empresas){
 
             }
 
-        }
+        },
+
+        plugins:[{
+
+            id:'valorTopo',
+
+            afterDatasetsDraw(chart){
+
+                const {
+                    ctx
+                } = chart;
+
+                ctx.save();
+
+                chart.data.datasets[0].data.forEach((valor, index)=>{
+
+                    const meta =
+                    chart.getDatasetMeta(0);
+
+                    const x =
+                    meta.data[index].x;
+
+                    const y =
+                    meta.data[index].y;
+
+                    ctx.fillStyle =
+                    '#ffffff';
+
+                    ctx.font =
+                    'bold 16px Arial';
+
+                    ctx.textAlign =
+                    'center';
+
+                    ctx.fillText(
+
+                        formatarValor(valor),
+
+                        x,
+
+                        y - 10
+
+                    );
+
+                });
+
+            }
+
+        }]
 
     });
 
@@ -942,7 +1041,6 @@ function enviarRelatorioWhatsApp(){
         e.target.result;
 
         let total = 0;
-        let horas = 0;
 
         let msg =
 `⭐ *FADER LIVRE - RELATÓRIO* ⭐
@@ -971,9 +1069,6 @@ function enviarRelatorioWhatsApp(){
 
             total += item.total;
 
-            horas +=
-            parseFloat(item.horas);
-
             msg +=
 
 `🏢 *EMPRESA:* ${item.empresa}
@@ -986,8 +1081,6 @@ function enviarRelatorioWhatsApp(){
 🎬 ${item.job}
 
 🕒 ${item.inicio} às ${item.fim}
-
-⏱️ ${item.horas}h
 
 💵 Cachê:
 R$ ${item.cache.toFixed(2)}
@@ -1010,9 +1103,6 @@ R$ ${item.total.toFixed(2)}
         msg +=
 
 `
-⏱️ TOTAL HORAS:
-${horas.toFixed(1)}h
-
 ✅ TOTAL GERAL:
 R$ ${total.toFixed(2)}
 
