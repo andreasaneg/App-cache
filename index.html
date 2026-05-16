@@ -1,6 +1,271 @@
-<!-- ADICIONE ESTE BLOCO logo abaixo do campo "Tipo de Pagamento" -->
+<!DOCTYPE html>
+<html lang="pt-br">
 
-<div id="periodoPersonalizado" style="display:none;">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>FADER LIVRE - CACHÊ CONTROL</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+:root{
+    --primary:#10b981;
+    --bg:#0f172a;
+    --card:#1e293b;
+    --text:#f8fafc;
+    --danger:#ef4444;
+    --muted:#94a3b8;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:15px;
+    padding-bottom:60px;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.header{
+    text-align:center;
+    border-bottom:2px solid var(--primary);
+    padding-bottom:15px;
+    margin-bottom:20px;
+}
+
+.header img{
+    width:140px;
+    height:140px;
+    border-radius:18px;
+    border:2px solid var(--primary);
+    object-fit:cover;
+}
+
+.dashboard{
+    background:var(--card);
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:20px;
+    border:1px solid #334155;
+    text-align:center;
+}
+
+.total-semana{
+    font-size:2.4em;
+    font-weight:bold;
+    color:var(--primary);
+}
+
+.total-nf{
+    color:var(--danger);
+    font-size:1.3em;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+.input-group{
+    background:var(--card);
+    border:1px solid #334155;
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:15px;
+}
+
+label{
+    display:block;
+    margin-bottom:5px;
+    color:var(--muted);
+    font-size:0.75em;
+    text-transform:uppercase;
+}
+
+input,
+select{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #334155;
+    background:#0f172a;
+    color:white;
+    margin-bottom:12px;
+    font-size:16px;
+}
+
+.btn{
+    width:100%;
+    border:none;
+    padding:16px;
+    border-radius:14px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-bottom:10px;
+    font-size:1em;
+}
+
+.btn-save{
+    background:var(--primary);
+    color:#000;
+}
+
+.btn-export{
+    background:#475569;
+    color:white;
+}
+
+.btn-whats{
+    background:#25D366;
+    color:#000;
+}
+
+.history-card{
+    background:var(--card);
+    border-left:4px solid var(--primary);
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:12px;
+    position:relative;
+}
+
+.btn-del{
+    position:absolute;
+    top:10px;
+    right:12px;
+    background:none;
+    border:none;
+    color:var(--danger);
+    font-size:1.5em;
+}
+
+.chart-container{
+    height:320px;
+    margin-top:20px;
+}
+
+#modalExcluir{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.85);
+    z-index:9999;
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-content{
+    background:var(--card);
+    padding:25px;
+    border-radius:16px;
+    width:90%;
+    max-width:320px;
+    text-align:center;
+}
+
+.modal-btns{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+.btn-confirm,
+.btn-cancel{
+    flex:1;
+    border:none;
+    padding:12px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+.btn-confirm{
+    background:var(--danger);
+    color:white;
+}
+
+.btn-cancel{
+    background:#475569;
+    color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+    <img src="FaderLivreIcon.png">
+
+    <h2>Cachê Control</h2>
+
+</div>
+
+<div class="dashboard">
+
+    <div id="vTotalSemana"
+    class="total-semana">
+        R$ 0,00
+    </div>
+
+    <div id="vTotalNF"
+    class="total-nf">
+        Total NF: - R$ 0,00
+    </div>
+
+    <div style="
+    display:flex;
+    justify-content:center;
+    margin-top:15px;">
+
+        <button onclick="toggleValores()"
+        style="
+        width:50px;
+        height:50px;
+        border:none;
+        border-radius:12px;
+        background:#334155;
+        color:white;
+        font-size:1.2em;">
+
+            👁️
+
+        </button>
+
+    </div>
+
+    <div class="chart-container">
+        <canvas id="graficoEmpresas"></canvas>
+    </div>
+
+</div>
+
+<div class="input-group">
+
+    <label>Data</label>
+
+    <input type="date"
+    id="dataJob">
+
+    <label>Empresa</label>
+
+    <input type="text"
+    id="empresaJob"
+    placeholder="Fader Livre">
+
+    <label>Nome do Job</label>
+
+    <input type="text"
+    id="nomeJob"
+    placeholder="Ex: Comercial">
 
     <div style="
     display:grid;
@@ -9,28 +274,775 @@
 
         <div>
 
-            <label>Início do Período</label>
+            <label>Cachê</label>
 
             <input type="number"
-            id="inicioPeriodo"
-            min="1"
-            max="31"
-            placeholder="Ex: 5">
+            id="vCacheBase">
 
         </div>
 
         <div>
 
-            <label>Fim do Período</label>
+            <label>Diária</label>
 
             <input type="number"
-            id="fimPeriodo"
-            min="1"
-            max="31"
-            placeholder="Ex: 20">
+            id="vDiaria">
+
+        </div>
+
+    </div>
+
+    <div style="
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;">
+
+        <div>
+
+            <label>Início</label>
+
+            <input type="time"
+            id="inicio"
+            value="08:00">
+
+        </div>
+
+        <div>
+
+            <label>Fim</label>
+
+            <input type="time"
+            id="fim"
+            value="20:00">
+
+        </div>
+
+    </div>
+
+    <label>Tipo de Pagamento</label>
+
+    <select id="tipoPagamento"
+    onchange="alterarPeriodoPagamento()">
+
+        <option value="Semanal">Semanal</option>
+        <option value="Quinzenal">Quinzenal</option>
+        <option value="Mensal">Mensal</option>
+
+    </select>
+
+    <div id="periodoPersonalizado"
+    style="display:none;">
+
+        <div style="
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10px;">
+
+            <div>
+
+                <label>Início do Período</label>
+
+                <input type="number"
+                id="inicioPeriodo"
+                min="1"
+                max="31"
+                placeholder="Ex: 5">
+
+            </div>
+
+            <div>
+
+                <label>Fim do Período</label>
+
+                <input type="number"
+                id="fimPeriodo"
+                min="1"
+                max="31"
+                placeholder="Ex: 20">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <label>Dias após fechamento</label>
+
+    <input type="number"
+    id="diasPagamento"
+    value="5">
+
+    <label>NF (%)</label>
+
+    <input type="number"
+    id="nfPercentual"
+    value="0">
+
+</div>
+
+<button class="btn btn-save"
+onclick="salvarJob()">
+💾 SALVAR JOB
+</button>
+
+<input
+type="text"
+id="inputBusca"
+onkeyup="filtrarTabela()"
+placeholder="🔍 Buscar empresa, job ou data..."
+style="
+margin-top:20px;
+border:2px solid var(--primary);">
+
+<div id="listaHistorico"></div>
+
+<div id="modalExcluir">
+
+    <div class="modal-content">
+
+        <h3>Deseja apagar?</h3>
+
+        <div class="modal-btns">
+
+            <button class="btn-cancel"
+            onclick="fecharModal()">
+                Cancelar
+            </button>
+
+            <button class="btn-confirm"
+            id="confirmarBtn">
+                Excluir
+            </button>
 
         </div>
 
     </div>
 
 </div>
+
+<script>
+
+let db;
+let ocultarValores = false;
+let idParaExcluir = null;
+
+const request =
+indexedDB.open(
+    "CacheFinal_V32",
+    1
+);
+
+request.onupgradeneeded = (e)=>{
+
+    let d = e.target.result;
+
+    if(!d.objectStoreNames.contains("jobs")){
+
+        d.createObjectStore(
+            "jobs",
+            {
+                keyPath:"id",
+                autoIncrement:true
+            }
+        );
+
+    }
+
+};
+
+request.onsuccess = (e)=>{
+
+    db = e.target.result;
+
+    atualizarTela();
+
+};
+
+function alterarPeriodoPagamento(){
+
+    let tipo =
+    document.getElementById(
+        'tipoPagamento'
+    ).value;
+
+    let box =
+    document.getElementById(
+        'periodoPersonalizado'
+    );
+
+    if(
+        tipo === "Quinzenal"
+        ||
+        tipo === "Mensal"
+    ){
+
+        box.style.display =
+        'block';
+
+    }else{
+
+        box.style.display =
+        'none';
+
+    }
+
+}
+
+function toggleValores(){
+
+    ocultarValores =
+    !ocultarValores;
+
+    atualizarTela();
+
+}
+
+function formatarValor(v){
+
+    if(ocultarValores){
+
+        return "R$ •••••";
+
+    }
+
+    return Number(v).toLocaleString(
+        'pt-BR',
+        {
+            style:'currency',
+            currency:'BRL'
+        }
+    );
+
+}
+
+function calcularPagamento(
+    dataBase,
+    tipo,
+    dias,
+    fimPeriodo
+){
+
+    let data =
+    new Date(dataBase + "T00:00:00");
+
+    let fechamento;
+
+    if(tipo === "Semanal"){
+
+        fechamento =
+        new Date(data);
+
+        fechamento.setDate(
+            data.getDate() +
+            (7 - data.getDay())
+        );
+
+    }
+
+    else{
+
+        fechamento =
+        new Date(
+            data.getFullYear(),
+            data.getMonth(),
+            fimPeriodo
+        );
+
+        if(
+            data.getDate() >
+            fimPeriodo
+        ){
+
+            fechamento =
+            new Date(
+                data.getFullYear(),
+                data.getMonth() + 1,
+                fimPeriodo
+            );
+
+        }
+
+    }
+
+    fechamento.setDate(
+        fechamento.getDate() +
+        Number(dias)
+    );
+
+    return fechamento
+    .toLocaleDateString('pt-BR');
+
+}
+
+function salvarJob(){
+
+    let dt =
+    document.getElementById(
+        'dataJob'
+    ).value;
+
+    if(!dt){
+
+        return alert(
+            "Selecione a data"
+        );
+
+    }
+
+    let empresa =
+    document.getElementById(
+        'empresaJob'
+    ).value || "Fader Livre";
+
+    let job =
+    document.getElementById(
+        'nomeJob'
+    ).value || "Sem nome";
+
+    let cache =
+    parseFloat(
+        document.getElementById(
+            'vCacheBase'
+        ).value
+    ) || 0;
+
+    let diaria =
+    parseFloat(
+        document.getElementById(
+            'vDiaria'
+        ).value
+    ) || 0;
+
+    let nf =
+    parseFloat(
+        document.getElementById(
+            'nfPercentual'
+        ).value
+    ) || 0;
+
+    let tipoPagamento =
+    document.getElementById(
+        'tipoPagamento'
+    ).value;
+
+    let diasPagamento =
+    parseInt(
+        document.getElementById(
+            'diasPagamento'
+        ).value
+    ) || 0;
+
+    let inicioPeriodo =
+    parseInt(
+        document.getElementById(
+            'inicioPeriodo'
+        )?.value
+    ) || 1;
+
+    let fimPeriodo =
+    parseInt(
+        document.getElementById(
+            'fimPeriodo'
+        )?.value
+    ) || 15;
+
+    let previsaoPagamento =
+    calcularPagamento(
+        dt,
+        tipoPagamento,
+        diasPagamento,
+        fimPeriodo
+    );
+
+    let inicio =
+    document.getElementById(
+        'inicio'
+    ).value;
+
+    let fim =
+    document.getElementById(
+        'fim'
+    ).value;
+
+    let ini =
+    inicio.split(':');
+
+    let end =
+    fim.split(':');
+
+    let min =
+    (
+        parseInt(end[0])*60
+        +
+        parseInt(end[1])
+    )
+    -
+    (
+        parseInt(ini[0])*60
+        +
+        parseInt(ini[1])
+    );
+
+    if(min < 0){
+
+        min += 1440;
+
+    }
+
+    let horas =
+    (min / 60);
+
+    let extraHoras =
+    Math.max(
+        0,
+        horas - 12
+    );
+
+    let extra =
+    extraHoras *
+    (cache / 12);
+
+    let total =
+    cache +
+    diaria +
+    extra;
+
+    let valorNF =
+    total *
+    (nf / 100);
+
+    const registro = {
+
+        data:dt,
+        empresa:empresa,
+        job:job,
+        total:total,
+        valorNF:valorNF,
+        tipoPagamento:tipoPagamento,
+        diasPagamento:diasPagamento,
+        previsaoPagamento:previsaoPagamento,
+        inicioPeriodo:inicioPeriodo,
+        fimPeriodo:fimPeriodo,
+        inicio:inicio,
+        fim:fim,
+        horas:horas.toFixed(1)
+
+    };
+
+    db.transaction(
+        "jobs",
+        "readwrite"
+    )
+    .objectStore("jobs")
+    .add(registro)
+    .onsuccess = ()=>{
+
+        atualizarTela();
+
+    };
+
+}
+
+function atualizarTela(){
+
+    if(!db) return;
+
+    let total = 0;
+    let totalNF = 0;
+
+    const lista =
+    document.getElementById(
+        'listaHistorico'
+    );
+
+    lista.innerHTML = "";
+
+    let empresas = {};
+
+    db.transaction("jobs")
+    .objectStore("jobs")
+    .openCursor(null,'prev')
+    .onsuccess = (e)=>{
+
+        const cursor =
+        e.target.result;
+
+        if(cursor){
+
+            const d =
+            cursor.value;
+
+            total += d.total;
+
+            totalNF +=
+            (d.valorNF || 0);
+
+            if(!empresas[d.empresa]){
+
+                empresas[d.empresa] = 0;
+
+            }
+
+            empresas[d.empresa] +=
+            d.total;
+
+            const card =
+            document.createElement(
+                'div'
+            );
+
+            card.className =
+            'history-card';
+
+            card.innerHTML = `
+
+                <div style="
+                color:#94a3b8;
+                font-size:0.8em;
+                margin-bottom:5px;">
+
+                    🏢 ${d.empresa}
+
+                </div>
+
+                <b>
+
+                ${d.data
+                .split('-')
+                .reverse()
+                .join('/')}
+
+                </b>
+
+                - ${d.job}
+
+                <br><br>
+
+                🕒
+                ${d.inicio}
+                às
+                ${d.fim}
+
+                •
+                ${d.horas}h
+
+                <br><br>
+
+                💳 ${d.tipoPagamento}
+                + ${d.diasPagamento} dias
+
+                <br>
+
+                📅 Fechamento:
+                ${d.tipoPagamento === 'Semanal'
+                ? 'Segunda a Domingo'
+                : `${d.inicioPeriodo} até ${d.fimPeriodo}`}
+
+                <br>
+
+                📆 Pagamento:
+                ${d.previsaoPagamento}
+
+                <br><br>
+
+                <span style="
+                color:#ef4444;
+                font-size:1.2em;
+                font-weight:bold;">
+
+                NF:
+                ${formatarValor(d.valorNF || 0)}
+
+                </span>
+
+                <button
+                class="btn-del"
+                onclick="abrirModal(${d.id})">
+                ×
+                </button>
+
+            `;
+
+            lista.appendChild(card);
+
+            cursor.continue();
+
+        }else{
+
+            document.getElementById(
+                'vTotalSemana'
+            ).innerText =
+            formatarValor(total);
+
+            document.getElementById(
+                'vTotalNF'
+            ).innerText =
+            `Total NF: - ${formatarValor(totalNF)}`;
+
+            renderGrafico(
+                empresas
+            );
+
+        }
+
+    };
+
+}
+
+function renderGrafico(empresas){
+
+    const ctx =
+    document.getElementById(
+        'graficoEmpresas'
+    );
+
+    const existente =
+    Chart.getChart(ctx);
+
+    if(existente){
+
+        existente.destroy();
+
+    }
+
+    const labels =
+    Object.keys(empresas);
+
+    const valores =
+    Object.values(empresas);
+
+    new Chart(ctx, {
+
+        type:'bar',
+
+        data:{
+
+            labels: labels,
+
+            datasets:[{
+
+                data: valores,
+
+                backgroundColor:'#10b981',
+                borderRadius:12
+
+            }]
+
+        },
+
+        options:{
+
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            plugins:{
+
+                legend:{
+                    display:false
+                }
+
+            },
+
+            scales:{
+
+                y:{
+                    display:false
+                },
+
+                x:{
+
+                    ticks:{
+                        color:'#ffffff'
+                    },
+
+                    grid:{
+                        display:false
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+}
+
+function abrirModal(id){
+
+    idParaExcluir = id;
+
+    document.getElementById(
+        'modalExcluir'
+    ).style.display = 'flex';
+
+}
+
+function fecharModal(){
+
+    idParaExcluir = null;
+
+    document.getElementById(
+        'modalExcluir'
+    ).style.display = 'none';
+
+}
+
+document.getElementById(
+    'confirmarBtn'
+).onclick = ()=>{
+
+    if(!idParaExcluir)
+    return;
+
+    db.transaction(
+        "jobs",
+        "readwrite"
+    )
+    .objectStore("jobs")
+    .delete(idParaExcluir)
+    .onsuccess = ()=>{
+
+        fecharModal();
+
+        atualizarTela();
+
+    };
+
+};
+
+function filtrarTabela(){
+
+    let filtro =
+    document.getElementById(
+        'inputBusca'
+    ).value.toUpperCase();
+
+    let cards =
+    document.getElementsByClassName(
+        'history-card'
+    );
+
+    for(let i=0;i<cards.length;i++){
+
+        let texto =
+        cards[i]
+        .innerText
+        .toUpperCase();
+
+        cards[i].style.display =
+
+        texto.includes(filtro)
+        ? ''
+        : 'none';
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
