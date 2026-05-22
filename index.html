@@ -244,6 +244,8 @@ padding:18px;
 
 border-radius:18px;
 
+position:relative;
+
 }
 
 .card-mini h3{
@@ -258,6 +260,26 @@ margin-bottom:10px;
 
 font-size:1.5em;
 font-weight:bold;
+
+}
+
+.eye-button{
+
+position:absolute;
+
+top:15px;
+right:15px;
+
+width:45px;
+height:45px;
+
+border-radius:14px;
+
+background:#1e293b;
+
+color:white;
+
+font-size:1em;
 
 }
 
@@ -384,12 +406,24 @@ margin-bottom:30px;
 
 .empresa-title{
 
-font-size:1.2em;
+font-size:1.5em;
 font-weight:bold;
 
 color:var(--primary);
 
-margin-bottom:15px;
+margin-bottom:18px;
+
+padding-left:8px;
+
+border-left:5px solid var(--primary);
+
+}
+
+.search-box{
+
+display:none;
+
+margin-top:15px;
 
 }
 
@@ -451,6 +485,14 @@ Cachê Control Premium
 
 <div class="card-mini">
 
+<button
+class="eye-button"
+onclick="togglePrivacidade()">
+
+👁️
+
+</button>
+
 <h3 style="color:var(--blue)">
 TOTAL GERAL
 </h3>
@@ -494,29 +536,6 @@ style="color:var(--primary)">
 0h
 
 </span>
-
-</div>
-
-<div class="card-mini">
-
-<h3>
-PRIVACIDADE
-</h3>
-
-<button
-onclick="togglePrivacidade()"
-style="
-width:55px;
-height:55px;
-border:none;
-border-radius:16px;
-background:#1e293b;
-color:white;
-font-size:1.2em;">
-
-👁️
-
-</button>
 
 </div>
 
@@ -708,6 +727,51 @@ id="graficoEmpresas">
 <div class="glass">
 
 <h2
+style="margin-bottom:18px;">
+
+Todos os Jobs
+
+</h2>
+
+<div class="actions">
+
+<button
+class="btn btn-primary"
+onclick="abrirBusca()">
+
+BUSCAR
+
+</button>
+
+<button
+class="btn btn-gray"
+onclick="limparBusca()">
+
+LIMPAR BUSCA
+
+</button>
+
+</div>
+
+<div
+id="searchBox"
+class="search-box">
+
+<input
+type="text"
+id="busca"
+placeholder="Buscar empresa, job ou data..."
+onkeyup="filtrar()">
+
+</div>
+
+<div id="listaHistorico"></div>
+
+</div>
+
+<div class="glass">
+
+<h2
 style="margin-bottom:15px;">
 
 Exportações
@@ -758,25 +822,6 @@ style="display:none;">
 
 </div>
 
-<div class="glass">
-
-<h2
-style="margin-bottom:18px;">
-
-Histórico
-
-</h2>
-
-<input
-type="text"
-id="busca"
-placeholder="Buscar empresa, job ou data..."
-onkeyup="filtrar()">
-
-<div id="listaHistorico"></div>
-
-</div>
-
 <script>
 
 let db;
@@ -824,6 +869,28 @@ document.getElementById(
 alert('Senha inválida');
 
 }
+
+}
+
+function abrirBusca(){
+
+document.getElementById(
+'searchBox'
+).style.display='block';
+
+}
+
+function limparBusca(){
+
+document.getElementById(
+'busca'
+).value='';
+
+document.getElementById(
+'searchBox'
+).style.display='none';
+
+filtrar();
 
 }
 
@@ -915,8 +982,7 @@ togglePeriodo();
 atualizarTela();
 
 };
-
-function calcularPagamento(
+ function calcularPagamento(
 dataBase,
 tipo,
 dias,
@@ -983,6 +1049,7 @@ return fechamento
 );
 
 }
+
 function salvarJob(){
 
 if(!dataJob.value){
@@ -1222,10 +1289,6 @@ document.getElementById(
 'nfPercentual'
 ).value='0';
 
-document.getElementById(
-'busca'
-).value='';
-
 togglePeriodo();
 
 }
@@ -1290,8 +1353,7 @@ grupos[item.empresa]
 .push(item);
 
 });
-
-Object.keys(grupos)
+ Object.keys(grupos)
 .forEach(empresa=>{
 
 const bloco =
@@ -1332,6 +1394,17 @@ onclick="editar(${item.id})">
 ✏️
 
 </button>
+
+<div
+style="
+font-size:1.3em;
+font-weight:bold;
+margin-bottom:10px;
+color:#ffffff;">
+
+${item.empresa}
+
+</div>
 
 <h3>
 
@@ -1422,7 +1495,8 @@ renderGrafico(empresas);
 };
 
 }
- function renderGrafico(empresas){
+
+function renderGrafico(empresas){
 
 const ctx =
 document.getElementById(
@@ -1444,17 +1518,6 @@ Object.keys(empresas);
 const valores =
 Object.values(empresas);
 
-const cores = [
-
-'#38bdf8',
-'#10b981',
-'#8b5cf6',
-'#f59e0b',
-'#ef4444',
-'#06b6d4'
-
-];
-
 new Chart(ctx,{
 
 type:'bar',
@@ -1466,11 +1529,6 @@ labels,
 datasets:[{
 
 data:valores,
-
-backgroundColor:
-labels.map((_,i)=>
-cores[i % cores.length]
-),
 
 borderRadius:14
 
@@ -1969,4 +2027,4 @@ navigator
 
 </body>
 
-</html> 
+</html>
