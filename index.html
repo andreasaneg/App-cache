@@ -4,9 +4,7 @@
 <head>
 
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>FADER LIVRE - CACHÊ CONTROL</title>
 
@@ -15,375 +13,152 @@ content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable
 <style>
 
 :root{
-
---primary:#10b981;
---bg:#0f172a;
---card:#1e293b;
---text:#f8fafc;
---danger:#ef4444;
---muted:#94a3b8;
---blue:#38bdf8;
-
+    --primary:#10b981;
+    --bg:#0f172a;
+    --card:#1e293b;
+    --text:#f8fafc;
+    --danger:#ef4444;
+    --muted:#94a3b8;
 }
 
 *{
-
-box-sizing:border-box;
-
+    box-sizing:border-box;
 }
 
 body{
-
-margin:0;
-padding:15px;
-padding-bottom:60px;
-
-background:var(--bg);
-
-color:var(--text);
-
-font-family:Arial, Helvetica, sans-serif;
-
+    margin:0;
+    padding:15px;
+    padding-bottom:60px;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial, Helvetica, sans-serif;
 }
 
 .header{
-
-text-align:center;
-
-border-bottom:2px solid var(--primary);
-
-padding-bottom:15px;
-
-margin-bottom:20px;
-
+    text-align:center;
+    border-bottom:2px solid var(--primary);
+    padding-bottom:15px;
+    margin-bottom:20px;
 }
 
 .header img{
-
-width:140px;
-height:140px;
-
-border-radius:18px;
-
-border:2px solid var(--primary);
-
-object-fit:cover;
-
+    width:140px;
+    height:140px;
+    border-radius:18px;
+    border:2px solid var(--primary);
+    object-fit:cover;
 }
 
 .dashboard{
-
-display:grid;
-
-grid-template-columns:
-repeat(auto-fit,minmax(220px,1fr));
-
-gap:15px;
-
-margin-bottom:20px;
-
+    background:var(--card);
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:20px;
+    border:1px solid #334155;
+    text-align:center;
+    position:relative;
 }
 
-.dashboard-card{
-
-background:var(--card);
-
-border-radius:18px;
-
-padding:20px;
-
-border:1px solid #334155;
-
-position:relative;
-
-}
-
-.dashboard-title{
-
-font-size:.8em;
-
-text-transform:uppercase;
-
-margin-bottom:10px;
-
-letter-spacing:1px;
-
-}
-
-.total-geral{
-
-font-size:2em;
-
-font-weight:bold;
-
-color:var(--blue);
-
+.total-semana{
+    font-size:2.4em;
+    font-weight:bold;
+    color:var(--primary);
 }
 
 .total-nf{
-
-font-size:2em;
-
-font-weight:bold;
-
-color:var(--danger);
-
+    color:var(--danger);
+    font-size:1.3em;
+    font-weight:bold;
+    margin-top:10px;
 }
 
-.total-horas{
-
-font-size:2em;
-
-font-weight:bold;
-
-color:var(--primary);
-
-}
-
-.eye-button{
-
-position:absolute;
-
-top:15px;
-right:15px;
-
-width:60px;
-height:60px;
-
-border:none;
-
-border-radius:18px;
-
-background:#334155;
-
-color:white;
-
-font-size:1.8em;
-
-cursor:pointer;
-
-transition:.2s;
-
-}
-
-.eye-button:hover{
-
-transform:scale(1.08);
-
+.eye-btn{
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:#334155;
+    border:none;
+    color:white;
+    padding:12px;
+    border-radius:12px;
+    font-size:18px;
+    cursor:pointer;
 }
 
 .input-group{
-
-background:var(--card);
-
-border:1px solid #334155;
-
-border-radius:16px;
-
-padding:16px;
-
-margin-bottom:15px;
-
+    background:var(--card);
+    border:1px solid #334155;
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:15px;
 }
 
-label{
-
-display:block;
-
-margin-bottom:5px;
-
-color:var(--muted);
-
-font-size:0.75em;
-
-text-transform:uppercase;
-
-}
-
-input,
-select{
-
-width:100%;
-
-padding:12px;
-
-border-radius:10px;
-
-border:1px solid #334155;
-
-background:#0f172a;
-
-color:white;
-
-margin-bottom:12px;
-
-font-size:16px;
-
+input, select{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    background:#0f172a;
+    color:white;
+    margin-bottom:12px;
+    font-size:16px;
 }
 
 .btn{
-
-width:100%;
-
-border:none;
-
-padding:16px;
-
-border-radius:14px;
-
-font-weight:bold;
-
-cursor:pointer;
-
-margin-bottom:10px;
-
-font-size:1em;
-
-transition:.2s;
-
+    width:100%;
+    border:none;
+    padding:16px;
+    border-radius:14px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-bottom:10px;
 }
 
-.btn:hover{
-
-transform:translateY(-2px);
-
-}
-
-.btn-save{
-
-background:var(--primary);
-
-color:#000;
-
-}
-
-.btn-export{
-
-background:#475569;
-
-color:white;
-
-}
-
-.btn-whats{
-
-background:#25D366;
-
-color:#000;
-
-}
-
-.btn-search{
-
-background:#0ea5e9;
-
-color:white;
-
-}
+.btn-save{background:var(--primary);color:#000;}
+.btn-export{background:#475569;color:white;}
+.btn-whats{background:#25D366;color:#000;}
 
 .history-card{
-
-background:var(--card);
-
-border-radius:16px;
-
-padding:18px;
-
-margin-bottom:15px;
-
-position:relative;
-
-border-left:6px solid var(--primary);
-
-}
-
-.empresa-title{
-
-font-size:1.3em;
-
-font-weight:bold;
-
-margin-bottom:10px;
-
-}
-
-.extra-box{
-
-margin-top:10px;
-
-padding:10px;
-
-border-radius:10px;
-
-background:#082f49;
-
-color:#38bdf8;
-
-font-weight:bold;
-
+    background:var(--card);
+    border-left:4px solid var(--primary);
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:12px;
+    position:relative;
 }
 
 .btn-del{
-
-position:absolute;
-
-top:10px;
-right:12px;
-
-background:none;
-
-border:none;
-
-color:var(--danger);
-
-font-size:1.5em;
-
-cursor:pointer;
-
+    position:absolute;
+    top:10px;
+    right:12px;
+    background:none;
+    border:none;
+    color:var(--danger);
+    font-size:1.5em;
+    cursor:pointer;
 }
 
 .chart-container{
-
-height:320px;
-
-margin-top:20px;
-
+    height:320px;
+    margin-top:20px;
 }
 
-.search-box{
-
-display:none;
-
-margin-bottom:15px;
-
+#loginScreen{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.9);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
 }
 
-.empresa-group{
-
-margin-bottom:30px;
-
-}
-
-.section-title{
-
-font-size:1.3em;
-
-font-weight:bold;
-
-margin:25px 0 15px;
-
-}
-
-@media print{
-
-.btn,
-.search-box,
-.btn-del{
-
-display:none !important;
-
-}
-
+.login-box{
+    background:var(--card);
+    padding:25px;
+    border-radius:16px;
+    width:300px;
+    text-align:center;
 }
 
 </style>
@@ -391,812 +166,374 @@ display:none !important;
 </head>
 
 <body>
- <div id="loginScreen"
-style="
-position:fixed;
-inset:0;
-background:#020617;
-display:flex;
-justify-content:center;
-align-items:center;
-z-index:9999;">
 
-<div style="
-background:#1e293b;
-padding:30px;
-border-radius:20px;
-width:90%;
-max-width:360px;">
+<!-- LOGIN -->
+<div id="loginScreen">
 
-<div style="text-align:center;">
+    <div class="login-box">
 
-<img
-src="FaderLivreIcon.png"
-style="
-width:120px;
-height:120px;
-border-radius:20px;
-border:2px solid #10b981;
-object-fit:cover;
-margin-bottom:20px;">
+        <img src="FaderLivreIcon.png" style="width:120px;margin-bottom:15px;">
+
+        <input type="password" id="senhaInput" placeholder="Senha">
+
+        <button class="btn btn-save" onclick="login()">ENTRAR</button>
+
+    </div>
 
 </div>
 
-<h2 style="
-text-align:center;
-margin-bottom:20px;">
-
-🔒 Login
-
-</h2>
-
-<input
-type="password"
-id="senhaInput"
-placeholder="Digite sua senha">
-
-<div
-id="novaSenhaBox"
-style="
-display:none;
-margin-top:10px;">
-
-<input
-type="password"
-id="novaSenha"
-placeholder="Nova senha">
-
-<input
-type="email"
-id="emailRecuperacao"
-placeholder="Email para recuperação">
-
-<button
-class="btn btn-save"
-onclick="cadastrarSenha()">
-
-SALVAR SENHA
-
-</button>
-
-</div>
-
-<button
-class="btn btn-save"
-onclick="login()">
-
-ENTRAR
-
-</button>
-
-<button
-class="btn btn-search"
-onclick="toggleCadastroSenha()">
-
-CADASTRAR SENHA
-
-</button>
-
-<button
-class="btn btn-export"
-onclick="recuperarSenha()">
-
-RECUPERAR SENHA
-
-</button>
-
-</div>
-
-</div>
-
+<!-- HEADER -->
 <div class="header">
 
-<img src="FaderLivreIcon.png">
+    <img src="FaderLivreIcon.png">
 
-<h2>
-Cachê Control
-</h2>
+    <h2>Cachê Control</h2>
 
 </div>
 
+<!-- DASHBOARD -->
 <div class="dashboard">
 
-<div class="dashboard-card">
+    <button class="eye-btn" onclick="toggleValores()">👁️</button>
 
-<button
-class="eye-button"
-id="eyeButton"
-onclick="toggleValores()">
-
-👁️
-
-</button>
-
-<div class="dashboard-title"
-style="color:var(--blue)">
-
-TOTAL GERAL
+    <div id="vTotalSemana" class="total-semana">R$ 0,00</div>
+    <div id="vTotalNF" class="total-nf">Total NF: - R$ 0,00</div>
 
 </div>
-
-<div id="vTotalSemana"
-class="total-geral">
-
-R$ 0,00
-
-</div>
-
-</div>
-
-<div class="dashboard-card">
-
-<div class="dashboard-title"
-style="color:var(--danger)">
-
-NOTA FISCAL
-
-</div>
-
-<div id="vTotalNF"
-class="total-nf">
-
-- R$ 0,00
-
-</div>
-
-</div>
-
-<div class="dashboard-card">
-
-<div class="dashboard-title"
-style="color:var(--primary)">
-
-HORAS TRABALHADAS
-
-</div>
-
-<div id="vTotalHoras"
-class="total-horas">
-
-0h
-
-</div>
-
-</div>
-
-</div>
-
+<!-- FORMULÁRIO -->
 <div class="input-group">
 
-<label>Data</label>
+    <label>Data</label>
+    <input type="date" id="dataJob">
 
-<input type="date"
-id="dataJob">
+    <label>Empresa</label>
+    <input type="text" id="empresaJob" placeholder="Fader Livre">
 
-<label>Empresa</label>
+    <label>Nome do Job</label>
+    <input type="text" id="nomeJob" placeholder="Ex: Comercial">
 
-<input type="text"
-id="empresaJob"
-placeholder="Fader Livre">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
 
-<label>Nome do Job</label>
+        <div>
+            <label>Cachê</label>
+            <input type="number" id="vCacheBase">
+        </div>
 
-<input type="text"
-id="nomeJob"
-placeholder="Ex: Comercial">
+        <div>
+            <label>Diária</label>
+            <input type="number" id="vDiaria">
+        </div>
 
-<div style="
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;">
+    </div>
 
-<div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
 
-<label>Cachê</label>
+        <div>
+            <label>Início</label>
+            <input type="time" id="inicio" value="08:00">
+        </div>
 
-<input type="number"
-id="vCacheBase">
+        <div>
+            <label>Fim</label>
+            <input type="time" id="fim" value="20:00">
+        </div>
 
-</div>
+    </div>
 
-<div>
+    <label>Tipo de Pagamento</label>
+    <select id="tipoPagamento" onchange="alterarPeriodoPagamento()">
+        <option value="Semanal">Semanal</option>
+        <option value="Quinzenal">Quinzenal</option>
+        <option value="Mensal">Mensal</option>
+    </select>
 
-<label>Diária</label>
+    <div id="periodoPersonalizado" style="display:none;">
 
-<input type="number"
-id="vDiaria">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
 
-</div>
+            <div>
+                <label>Início do Período</label>
+                <input type="number" id="inicioPeriodo" min="1" max="31">
+            </div>
 
-</div>
+            <div>
+                <label>Fim do Período</label>
+                <input type="number" id="fimPeriodo" min="1" max="31">
+            </div>
 
-<div style="
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;">
+        </div>
 
-<div>
+    </div>
 
-<label>Início</label>
+    <label>Dias após fechamento</label>
+    <input type="number" id="diasPagamento" value="5">
 
-<input type="time"
-id="inicio"
-value="08:00">
-
-</div>
-
-<div>
-
-<label>Fim</label>
-
-<input type="time"
-id="fim"
-value="20:00">
-
-</div>
-
-</div>
-
-<label>Tipo de Pagamento</label>
-
-<select
-id="tipoPagamento"
-onchange="alterarPeriodoPagamento()">
-
-<option value="Semanal">
-Semanal
-</option>
-
-<option value="Quinzenal">
-Quinzenal
-</option>
-
-<option value="Mensal">
-Mensal
-</option>
-
-</select>
-
-<div
-id="periodoPersonalizado"
-style="display:none;">
-
-<div style="
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;">
-
-<div>
-
-<label>Início do período</label>
-
-<input type="number"
-id="inicioPeriodo"
-min="1"
-max="31"
-placeholder="1">
+    <label>NF (%)</label>
+    <input type="number" id="nfPercentual" value="0">
 
 </div>
 
-<div>
+<button class="btn btn-save" onclick="salvarJob()">💾 SALVAR JOB</button>
+<button class="btn btn-whats" onclick="enviarWhatsApp()">🟢 ENVIAR WHATSAPP</button>
+<button class="btn btn-export" onclick="exportarCSV()">📊 EXPORTAR EXCEL</button>
 
-<label>Fim do período</label>
-
-<input type="number"
-id="fimPeriodo"
-min="1"
-max="31"
-placeholder="15">
-
-</div>
-
-</div>
-
-</div>
-
-<label>
-Dias após fechamento
-</label>
-
-<input type="number"
-id="diasPagamento"
-value="5">
-
-<label>NF (%)</label>
-
-<input type="number"
-id="nfPercentual"
-value="0">
-
-<button
-class="btn btn-save"
-onclick="salvarJob()">
-
-💾 SALVAR JOB
-
-</button>
-
-<button
-class="btn btn-export"
-onclick="limparCampos()">
-
-🧹 LIMPAR
-
-</button>
-
-</div>
-<div class="input-group">
-
-<h2 style="margin-bottom:15px;">
-
-Financeiro
-
-</h2>
-
-<div class="chart-container">
-
-<canvas id="graficoEmpresas"></canvas>
-
-</div>
-
-</div>
-
-<div class="input-group">
-
-<div style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:15px;">
-
-<div class="section-title">
-
-Todos os Jobs
-
-</div>
-
-</div>
-
-<div style="
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;">
-
-<button
-class="btn btn-search"
-onclick="abrirBusca()">
-
-🔍 BUSCAR
-
-</button>
-
-<button
-class="btn btn-export"
-onclick="limparBusca()">
-
-❌ LIMPAR BUSCA
-
-</button>
-
-</div>
-
-<div
-id="searchBox"
-class="search-box">
-
-<input
-type="text"
-id="inputBusca"
-onkeyup="filtrarTabela()"
-placeholder="Buscar empresa, job ou data...">
-
-</div>
+<input type="text" id="inputBusca" placeholder="🔍 Buscar..." onkeyup="filtrarTabela()">
 
 <div id="listaHistorico"></div>
 
+<div class="chart-container">
+    <canvas id="graficoEmpresas"></canvas>
 </div>
 
-<div class="input-group">
+<!-- MODAL EXCLUIR -->
+<div id="modalExcluir" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);justify-content:center;align-items:center;">
 
-<h2>
+    <div style="background:#1e293b;padding:20px;border-radius:12px;width:300px;text-align:center;">
 
-Exportações e Backup
+        <h3>Deseja excluir?</h3>
 
-</h2>
+        <button onclick="confirmarExclusao()" style="background:#ef4444;color:white;padding:10px;border:none;border-radius:8px;width:100%;margin-bottom:10px;">
+            Excluir
+        </button>
 
-<button
-class="btn btn-whats"
-onclick="enviarRelatorioWhatsApp()">
+        <button onclick="fecharModal()" style="background:#475569;color:white;padding:10px;border:none;border-radius:8px;width:100%;">
+            Cancelar
+        </button>
 
-WHATSAPP
-
-</button>
-
-<button
-class="btn btn-export"
-onclick="baixarExcelCompleto()">
-
-EXPORTAR CSV
-
-</button>
-
-<button
-class="btn btn-export"
-onclick="fazerBackup()">
-
-BACKUP
-
-</button>
-
-<button
-class="btn btn-export"
-onclick="document.getElementById('restoreFile').click()">
-
-RESTAURAR BACKUP
-
-</button>
-
-<input
-type="file"
-id="restoreFile"
-accept=".json"
-style="display:none;">
+    </div>
 
 </div>
+
 <script>
 
 let db;
+let idParaExcluir = null;
 let ocultarValores = false;
-let mapaCores = {};
-let coresGrafico = [
-'#38bdf8','#10b981','#f59e0b','#ef4444',
-'#8b5cf6','#ec4899','#14b8a6','#f97316'
-];
 
-let senhaSalva = localStorage.getItem("senha_cache_control");
-let emailRecuperacao = localStorage.getItem("email_cache_control");
-
-if(!senhaSalva){
-document.getElementById("senhaInput").placeholder =
-"Defina sua senha (primeiro acesso)";
-}
-
-function toggleCadastroSenha(){
-
-const box =
-document.getElementById("novaSenhaBox");
-
-box.style.display =
-box.style.display === "none" ? "block" : "none";
-
-}
-
-function cadastrarSenha(){
-
-const novaSenha =
-document.getElementById("novaSenha").value;
-
-const email =
-document.getElementById("emailRecuperacao").value;
-
-if(!novaSenha || !email){
-alert("Preencha senha e email");
-return;
-}
-
-localStorage.setItem("senha_cache_control", novaSenha);
-localStorage.setItem("email_cache_control", email);
-
-alert("Senha cadastrada com sucesso");
-document.getElementById("novaSenhaBox").style.display="none";
-
-}
-
-function login(){
-
-const senha =
-document.getElementById("senhaInput").value;
-
-if(!senhaSalva){
-
-// primeiro acesso
-localStorage.setItem("senha_cache_control", senha);
-document.getElementById("loginScreen").style.display="none";
-return;
-
-}
-
-if(senha === senhaSalva){
-document.getElementById("loginScreen").style.display="none";
-}else{
-alert("Senha incorreta");
-}
-
-}
-
-function recuperarSenha(){
-
-const email = localStorage.getItem("email_cache_control");
-
-if(!email){
-alert("Nenhum email cadastrado");
-return;
-}
-
-alert("Senha enviada para: " + email);
-
-}
+/* ================= INDEXEDDB ================= */
 
 const request = indexedDB.open("CacheFinal_V33",1);
 
-request.onupgradeneeded = e=>{
-let d = e.target.result;
-if(!d.objectStoreNames.contains("jobs")){
-d.createObjectStore("jobs",{keyPath:"id",autoIncrement:true});
-}
-};
+request.onupgradeneeded = (e)=>{
 
-request.onsuccess = e=>{
-db = e.target.result;
-atualizarTela();
-};
+    let d = e.target.result;
 
-function toggleValores(){
-
-ocultarValores = !ocultarValores;
-
-document.getElementById("eyeButton").innerHTML =
-ocultarValores ? "🙈" : "👁️";
-
-atualizarTela();
-
-}
-
-function formatarValor(v){
-
-if(ocultarValores) return "R$ •••••";
-
-return Number(v).toLocaleString("pt-BR",{
-style:"currency",currency:"BRL"
-});
-
-}
-
-/* ================= BACKUP ================= */
-
-function fazerBackup(){
-
-db.transaction("jobs").objectStore("jobs").getAll().onsuccess = e=>{
-
-const data = e.target.result;
-
-const blob = new Blob([JSON.stringify(data,null,2)],{
-type:"application/json"
-});
-
-const nome = "cache_control_backup_" +
-new Date().toISOString().split("T")[0] + ".json";
-
-const a = document.createElement("a");
-a.href = URL.createObjectURL(blob);
-a.download = nome;
-a.click();
+    if(!d.objectStoreNames.contains("jobs")){
+        d.createObjectStore("jobs",{keyPath:"id",autoIncrement:true});
+    }
 
 };
 
-}
+request.onsuccess = (e)=>{
 
-document.getElementById("restoreFile").addEventListener("change",function(e){
+    db = e.target.result;
 
-const file = e.target.files[0];
-
-const reader = new FileReader();
-
-reader.onload = function(){
-
-const data = JSON.parse(reader.result);
-
-const tx = db.transaction("jobs","readwrite");
-const store = tx.objectStore("jobs");
-
-data.forEach(item=>{
-store.put(item);
-});
-
-tx.oncomplete = ()=>{
-alert("Backup restaurado");
-atualizarTela();
-};
+    atualizarTela();
 
 };
 
-reader.readAsText(file);
-
-});
-
-/* ================= RESTANTE ================= */
+/* ================= CONTROLE PERÍODO ================= */
 
 function alterarPeriodoPagamento(){
 
-const tipo = document.getElementById("tipoPagamento").value;
+    let tipo = document.getElementById("tipoPagamento").value;
+    let box = document.getElementById("periodoPersonalizado");
 
-document.getElementById("periodoPersonalizado").style.display =
-(tipo==="Quinzenal"||tipo==="Mensal") ? "block":"none";
-
-}
-
-function calcularPagamento(dataBase,tipo,dias,inicioPeriodo,fimPeriodo){
-
-let data = new Date(dataBase+"T00:00:00");
-let fechamento;
-
-if(tipo==="Semanal"){
-
-fechamento = new Date(data);
-fechamento.setDate(data.getDate()+(7-data.getDay()));
-
-}else{
-
-let dia = data.getDate();
-
-fechamento = (dia>=inicioPeriodo && dia<=fimPeriodo)
-? new Date(data.getFullYear(),data.getMonth(),fimPeriodo)
-: new Date(data.getFullYear(),data.getMonth()+1,fimPeriodo);
+    box.style.display =
+    (tipo === "Quinzenal" || tipo === "Mensal")
+    ? "block"
+    : "none";
 
 }
 
-fechamento.setDate(fechamento.getDate()+Number(dias));
+/* ================= FORMAT ================= */
 
-return fechamento.toLocaleDateString("pt-BR");
+function formatarValor(v){
+
+    if(ocultarValores) return "R$ •••••";
+
+    return Number(v).toLocaleString("pt-BR",{
+        style:"currency",
+        currency:"BRL"
+    });
 
 }
 
-/* ================= CRUD ================= */
+/* ================= TOGGLE PRIVACIDADE ================= */
+
+function toggleValores(){
+
+    ocultarValores = !ocultarValores;
+
+    document.querySelector(".eye-btn").innerHTML =
+    ocultarValores ? "🙈" : "👁️";
+
+    atualizarTela();
+
+}
+
+/* ================= SALVAR JOB ================= */
 
 function salvarJob(){
 
-const dt = dataJob.value;
-if(!dt) return alert("Selecione data");
+    let dt = document.getElementById("dataJob").value;
+    if(!dt) return alert("Selecione a data");
 
-const cache = parseFloat(vCacheBase.value||0);
-const diaria = parseFloat(vDiaria.value||0);
-const nf = parseFloat(nfPercentual.value||0);
+    let empresa = document.getElementById("empresaJob").value || "Fader Livre";
+    let job = document.getElementById("nomeJob").value || "Sem nome";
 
-const inicio = inicio.value;
-const fim = fim.value;
+    let cache = parseFloat(document.getElementById("vCacheBase").value || 0);
+    let diaria = parseFloat(document.getElementById("vDiaria").value || 0);
+    let nf = parseFloat(document.getElementById("nfPercentual").value || 0);
 
-const ini = inicio.split(":");
-const end = fim.split(":");
+    let inicio = document.getElementById("inicio").value;
+    let fim = document.getElementById("fim").value;
 
-let min =
-(parseInt(end[0])*60+parseInt(end[1])) -
-(parseInt(ini[0])*60+parseInt(ini[1]));
+    let ini = inicio.split(":");
+    let end = fim.split(":");
 
-if(min<0) min+=1440;
+    let min =
+        (parseInt(end[0])*60 + parseInt(end[1])) -
+        (parseInt(ini[0])*60 + parseInt(ini[1]));
 
-const horas = min/60;
-const extraHoras = Math.max(0,horas-12);
-const extra = extraHoras*(cache/12);
+    if(min < 0) min += 1440;
 
-const total = cache+diaria+extra;
+    let horas = min / 60;
 
-const item = {
-data:dt,
-empresa:empresaJob.value||"Fader Livre",
-job:nomeJob.value||"",
-cache,diaria,extra,total,
-valorNF: total*(nf/100),
-horas:horas.toFixed(1),
-inicio,fim,
-tipoPagamento:tipoPagamento.value,
-diasPagamento:parseInt(diasPagamento.value||0),
-inicioPeriodo:parseInt(inicioPeriodo.value||1),
-fimPeriodo:parseInt(fimPeriodo.value||15),
-previsaoPagamento:
-calcularPagamento(dt,tipoPagamento.value,diasPagamento.value,inicioPeriodo.value,fimPeriodo.value)
-};
+    let extraHoras = Math.max(0, horas - 12);
+    let extra = extraHoras * (cache / 12);
 
-db.transaction("jobs","readwrite")
-.objectStore("jobs")
-.add(item)
-.onsuccess = ()=> atualizarTela();
+    let total = cache + diaria + extra;
+
+    let inicioPeriodo = parseInt(document.getElementById("inicioPeriodo")?.value || 1);
+    let fimPeriodo = parseInt(document.getElementById("fimPeriodo")?.value || 15);
+
+    let tipoPagamento = document.getElementById("tipoPagamento").value;
+    let diasPagamento = parseInt(document.getElementById("diasPagamento").value || 0);
+
+    let previsao = calcularPagamento(dt, tipoPagamento, diasPagamento, inicioPeriodo, fimPeriodo);
+
+    let obj = {
+        data:dt,
+        empresa,
+        job,
+        cache,
+        diaria,
+        extra,
+        total,
+        nf,
+        horas:horas.toFixed(1),
+        tipoPagamento,
+        diasPagamento,
+        previsaoPagamento:previsao,
+        inicioPeriodo,
+        fimPeriodo
+    };
+
+    db.transaction("jobs","readwrite")
+    .objectStore("jobs")
+    .add(obj)
+    .onsuccess = ()=> atualizarTela();
+
+}
+
+/* ================= CALCULO PAGAMENTO ================= */
+
+function calcularPagamento(data,tipo,dias,i,f){
+
+    let d = new Date(data+"T00:00:00");
+
+    if(tipo === "Semanal"){
+        d.setDate(d.getDate() + (7 - d.getDay()));
+    } else {
+
+        let dia = d.getDate();
+
+        if(dia >= i && dia <= f){
+            d = new Date(d.getFullYear(), d.getMonth(), f);
+        } else {
+            d = new Date(d.getFullYear(), d.getMonth()+1, f);
+        }
+
+    }
+
+    d.setDate(d.getDate() + dias);
+
+    return d.toLocaleDateString("pt-BR");
 
 }
 
 </script>
 
-</body>
-</html>
-<script>
-
-/* ================= ATUALIZAÇÃO DA TELA ================= */
+/* ================= ATUALIZAR TELA ================= */
 
 function atualizarTela(){
 
-if(!db) return;
+    if(!db) return;
 
-const lista = document.getElementById("listaHistorico");
+    let tx = db.transaction("jobs","readonly");
+    let store = tx.objectStore("jobs");
 
-lista.innerHTML = "";
+    store.getAll().onsuccess = (e)=>{
 
-let total = 0;
-let totalNF = 0;
-let totalHoras = 0;
+        let dados = e.target.result;
 
-let empresas = {};
+        let total = 0;
+        let totalNF = 0;
+        let horasTotal = 0;
 
-const tx = db.transaction("jobs","readonly");
-const store = tx.objectStore("jobs");
+        let empresas = {};
 
-store.getAll().onsuccess = e=>{
+        let lista = document.getElementById("listaHistorico");
+        lista.innerHTML = "";
 
-const dados = e.target.result.reverse();
+        dados.forEach((d)=>{
 
-dados.forEach(d=>{
+            total += d.total;
+            totalNF += d.nf || 0;
+            horasTotal += parseFloat(d.horas || 0);
 
-total += d.total || 0;
-totalNF += d.valorNF || 0;
-totalHoras += parseFloat(d.horas || 0);
+            if(!empresas[d.empresa]){
+                empresas[d.empresa] = 0;
+            }
 
-if(!empresas[d.empresa]){
-empresas[d.empresa] = 0;
-}
+            empresas[d.empresa] += d.total;
 
-empresas[d.empresa] += d.total;
+            let card = document.createElement("div");
+            card.className = "history-card";
 
-if(!mapaCores[d.empresa]){
-mapaCores[d.empresa] =
-coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
-}
+            card.innerHTML = `
 
-/* CARD */
+                <div style="font-weight:bold;font-size:18px;color:#f8fafc;">
+                    ${d.empresa}
+                </div>
 
-const card = document.createElement("div");
-card.className = "history-card";
-card.style.borderLeft = "6px solid " + mapaCores[d.empresa];
+                <div style="opacity:0.8;margin-bottom:6px;">
+                    ${d.data} - ${d.job}
+                </div>
 
-card.innerHTML = `
-<div class="empresa-title" style="color:${mapaCores[d.empresa]}">
-${d.empresa}
-</div>
+                <div>⏱ ${d.horas}h</div>
+                <div>➕ Extra: ${formatarValor(d.extra)}</div>
+                <div>💰 Total: ${formatarValor(d.total)}</div>
+                <div style="color:#ef4444;">NF: - ${formatarValor(d.nf)}</div>
 
-<b>${d.data.split("-").reverse().join("/")}</b> - ${d.job}
+                <button class="btn-del" onclick="abrirExcluir(${d.id})">×</button>
 
-<br><br>
+            `;
 
-🕒 ${d.inicio} às ${d.fim} • ${d.horas}h
+            lista.appendChild(card);
 
-<br><br>
+        });
 
-💰 Total: ${formatarValor(d.total)}
+        document.getElementById("vTotalSemana").innerText =
+        formatarValor(total);
 
-<div class="extra-box">
-Hora Extra: ${formatarValor(d.extra)}
-</div>
+        document.getElementById("vTotalNF").innerText =
+        "Total NF: - " + formatarValor(totalNF);
 
-<p style="color:#ef4444">
-NF: - ${formatarValor(d.valorNF)}
-</p>
-`;
+        renderGrafico(empresas);
 
-lista.appendChild(card);
-
-});
-
-/* DASHBOARD */
-
-document.getElementById("vTotalSemana").innerText =
-formatarValor(total);
-
-document.getElementById("vTotalNF").innerText =
-"- " + formatarValor(totalNF);
-
-document.getElementById("vTotalHoras").innerText =
-totalHoras.toFixed(1) + "h";
-
-renderGrafico(empresas);
-
-};
+    };
 
 }
 
@@ -1204,101 +541,160 @@ renderGrafico(empresas);
 
 function renderGrafico(empresas){
 
-const ctx = document.getElementById("graficoEmpresas");
+    let ctx = document.getElementById("graficoEmpresas").getContext("2d");
 
-const labels = Object.keys(empresas);
-const values = Object.values(empresas);
+    if(window.chartInstance){
+        window.chartInstance.destroy();
+    }
 
-const colors = labels.map(e=>mapaCores[e]);
+    window.chartInstance = new Chart(ctx,{
 
-if(window.chartInstance){
-window.chartInstance.destroy();
-}
+        type:"bar",
 
-window.chartInstance = new Chart(ctx,{
+        data:{
+            labels:Object.keys(empresas),
+            datasets:[{
+                data:Object.values(empresas),
+                backgroundColor:Object.keys(empresas).map((e,i)=>
+                    cores[i % cores.length]
+                )
+            }]
+        },
 
-type:"bar",
+        options:{
+            responsive:true,
+            plugins:{
+                legend:{display:false}
+            },
+            scales:{
+                y:{display:false},
+                x:{
+                    ticks:{color:"#fff"}
+                }
+            }
+        }
 
-data:{
-labels:labels,
-datasets:[{
-data:values,
-backgroundColor:colors,
-borderRadius:12
-}]
-},
-
-options:{
-responsive:true,
-maintainAspectRatio:false,
-plugins:{legend:{display:false}},
-scales:{
-y:{display:false},
-x:{ticks:{color:"#fff"},grid:{display:false}}
-}
-},
-
-plugins:[{
-id:"values",
-afterDatasetsDraw(chart){
-
-if(ocultarValores) return;
-
-const {ctx} = chart;
-
-chart.data.datasets[0].data.forEach((v,i)=>{
-
-const meta = chart.getDatasetMeta(0);
-const x = meta.data[i].x;
-const y = meta.data[i].y;
-
-ctx.fillStyle = "#fff";
-ctx.textAlign = "center";
-ctx.font = "bold 13px Arial";
-
-ctx.fillText(formatarValor(v),x,y-10);
-
-});
-
-}
-}]
-
-});
+    });
 
 }
 
-/* ================= BUSCA ================= */
+/* ================= EXCLUIR ================= */
+
+function abrirExcluir(id){
+
+    idParaExcluir = id;
+    document.getElementById("modalExcluir").style.display = "flex";
+
+}
+
+function fecharModal(){
+
+    idParaExcluir = null;
+    document.getElementById("modalExcluir").style.display = "none";
+
+}
+
+function confirmarExclusao(){
+
+    let tx = db.transaction("jobs","readwrite");
+    let store = tx.objectStore("jobs");
+
+    store.delete(idParaExcluir).onsuccess = ()=>{
+
+        fecharModal();
+        atualizarTela();
+
+    };
+
+}
+
+/* ================= FILTRO ================= */
 
 function filtrarTabela(){
 
-const f = inputBusca.value.toUpperCase();
+    let filtro = document.getElementById("inputBusca").value.toLowerCase();
 
-document.querySelectorAll(".history-card").forEach(card=>{
+    let cards = document.querySelectorAll(".history-card");
 
-card.style.display =
-card.innerText.toUpperCase().includes(f)
-? "block":"none";
+    cards.forEach((c)=>{
 
-});
+        c.style.display =
+        c.innerText.toLowerCase().includes(filtro)
+        ? "block"
+        : "none";
+
+    });
 
 }
 
-/* ================= LIMPAR ================= */
+/* ================= EXPORT CSV ================= */
 
-function limparCampos(){
+function exportarCSV(){
 
-dataJob.value="";
-empresaJob.value="";
-nomeJob.value="";
-vCacheBase.value="";
-vDiaria.value="";
-inicio.value="08:00";
-fim.value="20:00";
-tipoPagamento.value="Semanal";
-diasPagamento.value="5";
-nfPercentual.value="0";
+    let tx = db.transaction("jobs","readonly");
+    let store = tx.objectStore("jobs");
 
-document.getElementById("periodoPersonalizado").style.display="none";
+    store.getAll().onsuccess = (e)=>{
+
+        let dados = e.target.result;
+
+        let csv = "Empresa;Data;Job;Horas;Extra;Total;NF\n";
+
+        dados.forEach(v=>{
+
+            csv += `${v.empresa};${v.data};${v.job};${v.horas};${v.extra};${v.total};${v.nf}\n`;
+
+        });
+
+        let blob = new Blob([csv],{type:"text/csv;charset=utf-8;"});
+
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "cache_control.csv";
+        a.click();
+
+    };
+
+}
+
+/* ================= WHATSAPP ================= */
+
+function enviarWhatsApp(){
+
+    let tx = db.transaction("jobs","readonly");
+    let store = tx.objectStore("jobs");
+
+    store.getAll().onsuccess = (e)=>{
+
+        let dados = e.target.result;
+
+        let msg = "RELATORIO CACHE CONTROL\n\n";
+
+        let total = 0;
+
+        dados.forEach(v=>{
+
+            total += v.total;
+
+            msg +=
+`EMPRESA: ${v.empresa}
+DATA: ${v.data}
+JOB: ${v.job}
+HORAS: ${v.horas}
+EXTRA: ${v.extra}
+TOTAL: ${v.total}
+NF: ${v.nf}
+----------------------\n`;
+
+        });
+
+        msg += "\nTOTAL GERAL: " + total;
+
+        window.open(
+            "https://wa.me/?text=" + encodeURIComponent(msg)
+        );
+
+    };
 
 }
 
@@ -1306,3 +702,389 @@ document.getElementById("periodoPersonalizado").style.display="none";
 
 </body>
 </html>
+
+/* ================= UTILITÁRIO GLOBAL ================= */
+
+const cores = [
+    "#10b981",
+    "#38bdf8",
+    "#f59e0b",
+    "#ef4444",
+    "#8b5cf6",
+    "#14b8a6",
+    "#f97316"
+];
+
+/* ================= AJUSTE DE FORMATAÇÃO SEGURA ================= */
+
+function formatarValor(v){
+
+    if(v === undefined || v === null || isNaN(v)){
+        v = 0;
+    }
+
+    if(ocultarValores){
+        return "R$ •••••";
+    }
+
+    return Number(v).toLocaleString("pt-BR",{
+        style:"currency",
+        currency:"BRL"
+    });
+
+}
+
+/* ================= LIMPAR CAMPOS ================= */
+
+function limparCampos(){
+
+    document.getElementById("dataJob").value = "";
+    document.getElementById("empresaJob").value = "";
+    document.getElementById("nomeJob").value = "";
+    document.getElementById("vCacheBase").value = "";
+    document.getElementById("vDiaria").value = "";
+    document.getElementById("inicio").value = "08:00";
+    document.getElementById("fim").value = "20:00";
+    document.getElementById("nfPercentual").value = "0";
+
+}
+
+/* ================= CORREÇÃO: EVITAR QUE GRÁFICO QUEBRE ================= */
+
+function renderGrafico(empresas){
+
+    let ctx = document.getElementById("graficoEmpresas").getContext("2d");
+
+    if(window.chartInstance){
+        window.chartInstance.destroy();
+    }
+
+    let labels = Object.keys(empresas || {});
+    let values = Object.values(empresas || {});
+
+    if(labels.length === 0){
+        return;
+    }
+
+    window.chartInstance = new Chart(ctx,{
+
+        type:"bar",
+
+        data:{
+            labels:labels,
+            datasets:[{
+                data:values,
+                backgroundColor:labels.map((e,i)=>cores[i % cores.length])
+            }]
+        },
+
+        options:{
+            responsive:true,
+            plugins:{
+                legend:{display:false}
+            },
+            scales:{
+                y:{display:false},
+                x:{ticks:{color:"#fff"}}
+            }
+        }
+
+    });
+
+}
+
+/* ================= PROTEÇÃO DE DB ================= */
+
+function garantirDB(){
+
+    if(!db){
+        console.warn("DB ainda não inicializado");
+        return false;
+    }
+
+    return true;
+
+}
+
+/* ================= MELHORIA: SALVAR SEGURA ================= */
+
+function salvarJob(){
+
+    if(!garantirDB()) return;
+
+    let dt = document.getElementById("dataJob").value;
+    if(!dt) return alert("Selecione a data");
+
+    let empresa = document.getElementById("empresaJob").value || "Fader Livre";
+    let job = document.getElementById("nomeJob").value || "Sem nome";
+
+    let cache = parseFloat(document.getElementById("vCacheBase").value || 0);
+    let diaria = parseFloat(document.getElementById("vDiaria").value || 0);
+    let nf = parseFloat(document.getElementById("nfPercentual").value || 0);
+
+    let inicio = document.getElementById("inicio").value;
+    let fim = document.getElementById("fim").value;
+
+    let ini = inicio.split(":");
+    let end = fim.split(":");
+
+    let min =
+        (parseInt(end[0])*60 + parseInt(end[1])) -
+        (parseInt(ini[0])*60 + parseInt(ini[1]));
+
+    if(min < 0) min += 1440;
+
+    let horas = min / 60;
+
+    let extraHoras = Math.max(0, horas - 12);
+    let extra = extraHoras * (cache / 12);
+
+    let total = cache + diaria + extra;
+
+    let tipoPagamento = document.getElementById("tipoPagamento").value;
+    let diasPagamento = parseInt(document.getElementById("diasPagamento").value || 0);
+
+    let inicioPeriodo = parseInt(document.getElementById("inicioPeriodo")?.value || 1);
+    let fimPeriodo = parseInt(document.getElementById("fimPeriodo")?.value || 15);
+
+    let previsaoPagamento =
+        calcularPagamento(dt, tipoPagamento, diasPagamento, inicioPeriodo, fimPeriodo);
+
+    let obj = {
+        data:dt,
+        empresa,
+        job,
+        cache,
+        diaria,
+        extra,
+        total,
+        nf,
+        horas:horas.toFixed(1),
+        tipoPagamento,
+        diasPagamento,
+        previsaoPagamento,
+        inicioPeriodo,
+        fimPeriodo
+    };
+
+    db.transaction("jobs","readwrite")
+    .objectStore("jobs")
+    .add(obj)
+    .onsuccess = ()=>{
+
+        atualizarTela();
+        limparCampos();
+
+    };
+
+}
+
+/* ================= DEBUG FINAL (AJUDA EM ERRO) ================= */
+
+function debugApp(){
+
+    console.log("DB:", db);
+    console.log("Estado oculto:", ocultarValores);
+
+}
+
+</script>
+
+/* ================= LOGIN ================= */
+
+function login(){
+
+    let senhaSalva = localStorage.getItem("cache_senha");
+    let input = document.getElementById("senhaInput").value;
+
+    // primeira vez cria senha
+    if(!senhaSalva || senhaSalva === "null"){
+
+        if(!input){
+            alert("Defina uma senha");
+            return;
+        }
+
+        localStorage.setItem("cache_senha", input);
+        document.getElementById("loginScreen").style.display = "none";
+
+        return;
+
+    }
+
+    if(input === senhaSalva){
+
+        document.getElementById("loginScreen").style.display = "none";
+
+    } else {
+
+        alert("Senha incorreta");
+
+    }
+
+}
+
+/* ================= INICIALIZAÇÃO SEGURA ================= */
+
+window.addEventListener("load", ()=>{
+
+    // garante estado inicial seguro
+
+    let login = document.getElementById("loginScreen");
+    if(login){
+        login.style.display = "flex";
+    }
+
+});
+
+/* ================= GARANTIR ATUALIZAÇÃO APÓS DB ================= */
+
+function iniciarApp(){
+
+    if(!db) return;
+
+    atualizarTela();
+
+}
+
+/* ================= FIX FINAL DE FORMATAÇÃO GLOBAL ================= */
+
+function safeNumber(v){
+
+    v = parseFloat(v);
+
+    if(isNaN(v)) return 0;
+
+    return v;
+
+}
+
+/* ================= MELHORIA WHATSAPP (SEM EMOJI / PROFISSIONAL) ================= */
+
+function enviarWhatsApp(){
+
+    if(!db) return;
+
+    let tx = db.transaction("jobs","readonly");
+    let store = tx.objectStore("jobs");
+
+    store.getAll().onsuccess = (e)=>{
+
+        let dados = e.target.result;
+
+        let total = 0;
+
+        let msg = "RELATORIO CACHE CONTROL\n";
+        msg += "=================================\n\n";
+
+        dados.forEach(v=>{
+
+            total += v.total;
+
+            msg +=
+`EMPRESA: ${v.empresa}
+DATA: ${v.data}
+JOB: ${v.job}
+HORAS: ${v.horas}
+CACHE: ${v.cache}
+DIARIA: ${v.diaria}
+EXTRA: ${v.extra}
+TOTAL: ${v.total}
+NF: ${v.nf}
+---------------------------------
+`;
+
+        });
+
+        msg += "\nTOTAL GERAL: " + total;
+
+        window.open(
+            "https://wa.me/?text=" + encodeURIComponent(msg)
+        );
+
+    };
+
+}
+
+/* ================= GARANTIA FINAL DO SISTEMA ================= */
+
+console.log("Cache Control carregado com sucesso");
+
+</script>
+
+</body>
+</html>
+
+/* ================= GARANTIA DE INTEGRAÇÃO GERAL ================= */
+
+function iniciarSistema(){
+
+    if(!db){
+        console.warn("DB ainda não pronto");
+        return;
+    }
+
+    atualizarTela();
+
+}
+
+/* ================= AUTO-INICIALIZAÇÃO SEGURA ================= */
+
+setTimeout(()=>{
+
+    if(db){
+        atualizarTela();
+    }
+
+}, 500);
+
+/* ================= AJUSTE FINAL DE SEGURANÇA DE DADOS ================= */
+
+function limparUndefined(obj){
+
+    Object.keys(obj).forEach(k=>{
+
+        if(obj[k] === undefined || obj[k] === null){
+            obj[k] = 0;
+        }
+
+    });
+
+    return obj;
+
+}
+
+/* ================= REFORÇO DE ATUALIZAÇÃO (EVITA TELA VAZIA) ================= */
+
+function forcarRefresh(){
+
+    if(!db) return;
+
+    atualizarTela();
+
+}
+
+/* ================= DEBUG FINAL OPCIONAL ================= */
+
+function debugFinal(){
+
+    console.log("==== CACHE CONTROL DEBUG ====");
+    console.log("DB:", db);
+    console.log("Ocultar valores:", ocultarValores);
+    console.log("Login ativo:", !!localStorage.getItem("cache_senha"));
+
+}
+
+/* ================= TRAVA FINAL DE ERRO SILENCIOSO ================= */
+
+window.onerror = function(msg, src, line, col, err){
+
+    console.log("Erro capturado:", msg, "Linha:", line);
+
+    return false;
+
+};
+
+/* ================= FINALIZAÇÃO ================= */
+
+console.log("Sistema Cache Control totalmente carregado");
