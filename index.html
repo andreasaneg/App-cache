@@ -406,7 +406,21 @@ background:#1e293b;
 padding:30px;
 border-radius:20px;
 width:90%;
-max-width:340px;">
+max-width:360px;">
+
+<div style="text-align:center;">
+
+<img
+src="FaderLivreIcon.png"
+style="
+width:120px;
+height:120px;
+border-radius:20px;
+border:2px solid #10b981;
+object-fit:cover;
+margin-bottom:20px;">
+
+</div>
 
 <h2 style="
 text-align:center;
@@ -421,11 +435,53 @@ type="password"
 id="senhaInput"
 placeholder="Digite sua senha">
 
+<div
+id="novaSenhaBox"
+style="
+display:none;
+margin-top:10px;">
+
+<input
+type="password"
+id="novaSenha"
+placeholder="Nova senha">
+
+<input
+type="email"
+id="emailRecuperacao"
+placeholder="Email para recuperação">
+
+<button
+class="btn btn-save"
+onclick="cadastrarSenha()">
+
+SALVAR SENHA
+
+</button>
+
+</div>
+
 <button
 class="btn btn-save"
 onclick="login()">
 
 ENTRAR
+
+</button>
+
+<button
+class="btn btn-search"
+onclick="toggleCadastroSenha()">
+
+CADASTRAR SENHA
+
+</button>
+
+<button
+class="btn btn-export"
+onclick="recuperarSenha()">
+
+RECUPERAR SENHA
 
 </button>
 
@@ -669,11 +725,12 @@ onclick="limparCampos()">
 </button>
 
 </div>
-
 <div class="input-group">
 
-<h2>
+<h2 style="margin-bottom:15px;">
+
 Financeiro
+
 </h2>
 
 <div class="chart-container">
@@ -738,9 +795,10 @@ placeholder="Buscar empresa, job ou data...">
 <div id="listaHistorico"></div>
 
 </div>
+
 <div class="input-group">
 
-<h2 style="margin-bottom:15px;">
+<h2>
 
 Exportações e Backup
 
@@ -785,172 +843,110 @@ accept=".json"
 style="display:none;">
 
 </div>
-
 <script>
 
 let db;
-
 let ocultarValores = false;
-
-let idParaExcluir = null;
-
-let jobs = [];
-
-const senhaPadrao = "1234";
-
-const mapaCores = {};
-
-const coresGrafico = [
-
-'#38bdf8',
-'#10b981',
-'#f59e0b',
-'#ef4444',
-'#8b5cf6',
-'#ec4899',
-'#14b8a6',
-'#f97316',
-'#22c55e',
-'#06b6d4'
-
+let mapaCores = {};
+let coresGrafico = [
+'#38bdf8','#10b981','#f59e0b','#ef4444',
+'#8b5cf6','#ec4899','#14b8a6','#f97316'
 ];
 
-if(
-localStorage.getItem(
-'cache_login'
-)==='true'
-){
+let senhaSalva = localStorage.getItem("senha_cache_control");
+let emailRecuperacao = localStorage.getItem("email_cache_control");
 
-document.getElementById(
-'loginScreen'
-).style.display='none';
+if(!senhaSalva){
+document.getElementById("senhaInput").placeholder =
+"Defina sua senha (primeiro acesso)";
+}
+
+function toggleCadastroSenha(){
+
+const box =
+document.getElementById("novaSenhaBox");
+
+box.style.display =
+box.style.display === "none" ? "block" : "none";
+
+}
+
+function cadastrarSenha(){
+
+const novaSenha =
+document.getElementById("novaSenha").value;
+
+const email =
+document.getElementById("emailRecuperacao").value;
+
+if(!novaSenha || !email){
+alert("Preencha senha e email");
+return;
+}
+
+localStorage.setItem("senha_cache_control", novaSenha);
+localStorage.setItem("email_cache_control", email);
+
+alert("Senha cadastrada com sucesso");
+document.getElementById("novaSenhaBox").style.display="none";
 
 }
 
 function login(){
 
 const senha =
-document.getElementById(
-'senhaInput'
-).value;
+document.getElementById("senhaInput").value;
 
-if(senha === senhaPadrao){
+if(!senhaSalva){
 
-localStorage.setItem(
-'cache_login',
-'true'
-);
+// primeiro acesso
+localStorage.setItem("senha_cache_control", senha);
+document.getElementById("loginScreen").style.display="none";
+return;
 
-document.getElementById(
-'loginScreen'
-).style.display='none';
+}
 
+if(senha === senhaSalva){
+document.getElementById("loginScreen").style.display="none";
 }else{
-
-alert('Senha incorreta');
-
+alert("Senha incorreta");
 }
 
 }
 
-const request =
-indexedDB.open(
-"CacheFinal_V33",
-1
-);
+function recuperarSenha(){
 
-request.onupgradeneeded = (e)=>{
+const email = localStorage.getItem("email_cache_control");
 
-let d =
-e.target.result;
-
-if(
-!d.objectStoreNames
-.contains("jobs")
-){
-
-d.createObjectStore(
-"jobs",
-{
-keyPath:"id",
-autoIncrement:true
+if(!email){
+alert("Nenhum email cadastrado");
+return;
 }
-);
+
+alert("Senha enviada para: " + email);
 
 }
 
+const request = indexedDB.open("CacheFinal_V33",1);
+
+request.onupgradeneeded = e=>{
+let d = e.target.result;
+if(!d.objectStoreNames.contains("jobs")){
+d.createObjectStore("jobs",{keyPath:"id",autoIncrement:true});
+}
 };
 
-request.onsuccess = (e)=>{
-
+request.onsuccess = e=>{
 db = e.target.result;
-
 atualizarTela();
-
 };
-
-function abrirBusca(){
-
-document.getElementById(
-'searchBox'
-).style.display='block';
-
-}
-
-function limparBusca(){
-
-document.getElementById(
-'inputBusca'
-).value='';
-
-document.getElementById(
-'searchBox'
-).style.display='none';
-
-filtrarTabela();
-
-}
-
-function alterarPeriodoPagamento(){
-
-let tipo =
-document.getElementById(
-'tipoPagamento'
-).value;
-
-let box =
-document.getElementById(
-'periodoPersonalizado'
-);
-
-if(
-tipo === "Quinzenal"
-||
-tipo === "Mensal"
-){
-
-box.style.display='block';
-
-}else{
-
-box.style.display='none';
-
-}
-
-}
 
 function toggleValores(){
 
-ocultarValores =
-!ocultarValores;
+ocultarValores = !ocultarValores;
 
-document.getElementById(
-'eyeButton'
-).innerHTML =
-
-ocultarValores
-? '🙈'
-: '👁️';
+document.getElementById("eyeButton").innerHTML =
+ocultarValores ? "🙈" : "👁️";
 
 atualizarTela();
 
@@ -958,812 +954,355 @@ atualizarTela();
 
 function formatarValor(v){
 
-if(ocultarValores){
+if(ocultarValores) return "R$ •••••";
 
-return "R$ •••••";
-
-}
-
-return Number(v)
-.toLocaleString(
-'pt-BR',
-{
-style:'currency',
-currency:'BRL'
-}
-);
+return Number(v).toLocaleString("pt-BR",{
+style:"currency",currency:"BRL"
+});
 
 }
 
-function calcularPagamento(
-dataBase,
-tipo,
-dias,
-inicioPeriodo,
-fimPeriodo
-){
+/* ================= BACKUP ================= */
 
-let data =
-new Date(
-dataBase + "T00:00:00"
-);
+function fazerBackup(){
 
+db.transaction("jobs").objectStore("jobs").getAll().onsuccess = e=>{
+
+const data = e.target.result;
+
+const blob = new Blob([JSON.stringify(data,null,2)],{
+type:"application/json"
+});
+
+const nome = "cache_control_backup_" +
+new Date().toISOString().split("T")[0] + ".json";
+
+const a = document.createElement("a");
+a.href = URL.createObjectURL(blob);
+a.download = nome;
+a.click();
+
+};
+
+}
+
+document.getElementById("restoreFile").addEventListener("change",function(e){
+
+const file = e.target.files[0];
+
+const reader = new FileReader();
+
+reader.onload = function(){
+
+const data = JSON.parse(reader.result);
+
+const tx = db.transaction("jobs","readwrite");
+const store = tx.objectStore("jobs");
+
+data.forEach(item=>{
+store.put(item);
+});
+
+tx.oncomplete = ()=>{
+alert("Backup restaurado");
+atualizarTela();
+};
+
+};
+
+reader.readAsText(file);
+
+});
+
+/* ================= RESTANTE ================= */
+
+function alterarPeriodoPagamento(){
+
+const tipo = document.getElementById("tipoPagamento").value;
+
+document.getElementById("periodoPersonalizado").style.display =
+(tipo==="Quinzenal"||tipo==="Mensal") ? "block":"none";
+
+}
+
+function calcularPagamento(dataBase,tipo,dias,inicioPeriodo,fimPeriodo){
+
+let data = new Date(dataBase+"T00:00:00");
 let fechamento;
 
-if(tipo === "Semanal"){
+if(tipo==="Semanal"){
 
-fechamento =
-new Date(data);
-
-fechamento.setDate(
-data.getDate() +
-(7 - data.getDay())
-);
+fechamento = new Date(data);
+fechamento.setDate(data.getDate()+(7-data.getDay()));
 
 }else{
 
-let dia =
-data.getDate();
+let dia = data.getDate();
 
-if(
-dia >= inicioPeriodo
-&&
-dia <= fimPeriodo
-){
-
-fechamento =
-new Date(
-data.getFullYear(),
-data.getMonth(),
-fimPeriodo
-);
-
-}else{
-
-fechamento =
-new Date(
-data.getFullYear(),
-data.getMonth()+1,
-fimPeriodo
-);
+fechamento = (dia>=inicioPeriodo && dia<=fimPeriodo)
+? new Date(data.getFullYear(),data.getMonth(),fimPeriodo)
+: new Date(data.getFullYear(),data.getMonth()+1,fimPeriodo);
 
 }
 
-}
+fechamento.setDate(fechamento.getDate()+Number(dias));
 
-fechamento.setDate(
-fechamento.getDate() +
-Number(dias)
-);
-
-return fechamento
-.toLocaleDateString('pt-BR');
-
-}
- function salvarJob(){
-
-let dt =
-document.getElementById(
-'dataJob'
-).value;
-
-if(!dt){
-
-return alert(
-"Selecione a data"
-);
+return fechamento.toLocaleDateString("pt-BR");
 
 }
 
-let empresa =
-document.getElementById(
-'empresaJob'
-).value || "Fader Livre";
+/* ================= CRUD ================= */
 
-let job =
-document.getElementById(
-'nomeJob'
-).value || "Sem nome";
+function salvarJob(){
 
-let cache =
-parseFloat(
-document.getElementById(
-'vCacheBase'
-).value
-) || 0;
+const dt = dataJob.value;
+if(!dt) return alert("Selecione data");
 
-let diaria =
-parseFloat(
-document.getElementById(
-'vDiaria'
-).value
-) || 0;
+const cache = parseFloat(vCacheBase.value||0);
+const diaria = parseFloat(vDiaria.value||0);
+const nf = parseFloat(nfPercentual.value||0);
 
-let nf =
-parseFloat(
-document.getElementById(
-'nfPercentual'
-).value
-) || 0;
+const inicio = inicio.value;
+const fim = fim.value;
 
-let tipoPagamento =
-document.getElementById(
-'tipoPagamento'
-).value;
-
-let diasPagamento =
-parseInt(
-document.getElementById(
-'diasPagamento'
-).value
-) || 0;
-
-let inicioPeriodo =
-parseInt(
-document.getElementById(
-'inicioPeriodo'
-).value
-) || 1;
-
-let fimPeriodo =
-parseInt(
-document.getElementById(
-'fimPeriodo'
-).value
-) || 15;
-
-let previsaoPagamento =
-calcularPagamento(
-dt,
-tipoPagamento,
-diasPagamento,
-inicioPeriodo,
-fimPeriodo
-);
-
-let inicio =
-document.getElementById(
-'inicio'
-).value;
-
-let fim =
-document.getElementById(
-'fim'
-).value;
-
-let ini =
-inicio.split(':');
-
-let end =
-fim.split(':');
+const ini = inicio.split(":");
+const end = fim.split(":");
 
 let min =
+(parseInt(end[0])*60+parseInt(end[1])) -
+(parseInt(ini[0])*60+parseInt(ini[1]));
 
-(
-parseInt(end[0])*60
-+
-parseInt(end[1])
-)
+if(min<0) min+=1440;
 
--
+const horas = min/60;
+const extraHoras = Math.max(0,horas-12);
+const extra = extraHoras*(cache/12);
 
-(
-parseInt(ini[0])*60
-+
-parseInt(ini[1])
-);
+const total = cache+diaria+extra;
 
-if(min < 0){
-
-min += 1440;
-
-}
-
-let horas =
-(min / 60);
-
-let extraHoras =
-Math.max(
-0,
-horas - 12
-);
-
-let extra =
-extraHoras *
-(cache / 12);
-
-let total =
-cache +
-diaria +
-extra;
-
-let valorNF =
-total * (nf / 100);
-
-const registro = {
-
+const item = {
 data:dt,
-empresa:empresa,
-job:job,
-
-cache:cache,
-diaria:diaria,
-
-extra:extra,
-
-total:total,
-
-nf:nf,
-
-valorNF:valorNF,
-
-tipoPagamento:tipoPagamento,
-
-diasPagamento:diasPagamento,
-
-previsaoPagamento:previsaoPagamento,
-
-inicioPeriodo:inicioPeriodo,
-
-fimPeriodo:fimPeriodo,
-
-inicio:inicio,
-fim:fim,
-
-horas:horas.toFixed(1)
-
+empresa:empresaJob.value||"Fader Livre",
+job:nomeJob.value||"",
+cache,diaria,extra,total,
+valorNF: total*(nf/100),
+horas:horas.toFixed(1),
+inicio,fim,
+tipoPagamento:tipoPagamento.value,
+diasPagamento:parseInt(diasPagamento.value||0),
+inicioPeriodo:parseInt(inicioPeriodo.value||1),
+fimPeriodo:parseInt(fimPeriodo.value||15),
+previsaoPagamento:
+calcularPagamento(dt,tipoPagamento.value,diasPagamento.value,inicioPeriodo.value,fimPeriodo.value)
 };
 
-db.transaction(
-"jobs",
-"readwrite"
-)
+db.transaction("jobs","readwrite")
 .objectStore("jobs")
-.add(registro)
-.onsuccess = ()=>{
-
-limparCampos();
-
-atualizarTela();
-
-};
+.add(item)
+.onsuccess = ()=> atualizarTela();
 
 }
 
-function limparCampos(){
+</script>
 
-document.getElementById(
-'dataJob'
-).value='';
+</body>
+</html>
+<script>
 
-document.getElementById(
-'empresaJob'
-).value='';
-
-document.getElementById(
-'nomeJob'
-).value='';
-
-document.getElementById(
-'vCacheBase'
-).value='';
-
-document.getElementById(
-'vDiaria'
-).value='';
-
-document.getElementById(
-'inicio'
-).value='08:00';
-
-document.getElementById(
-'fim'
-).value='20:00';
-
-document.getElementById(
-'tipoPagamento'
-).value='Semanal';
-
-document.getElementById(
-'inicioPeriodo'
-).value='';
-
-document.getElementById(
-'fimPeriodo'
-).value='';
-
-document.getElementById(
-'diasPagamento'
-).value='5';
-
-document.getElementById(
-'nfPercentual'
-).value='0';
-
-alterarPeriodoPagamento();
-
-}
+/* ================= ATUALIZAÇÃO DA TELA ================= */
 
 function atualizarTela(){
 
 if(!db) return;
 
+const lista = document.getElementById("listaHistorico");
+
+lista.innerHTML = "";
+
 let total = 0;
 let totalNF = 0;
 let totalHoras = 0;
 
-const lista =
-document.getElementById(
-'listaHistorico'
-);
-
-lista.innerHTML = "";
-
 let empresas = {};
 
-db.transaction("jobs")
-.objectStore("jobs")
-.openCursor(null,'prev')
-.onsuccess = (e)=>{
+const tx = db.transaction("jobs","readonly");
+const store = tx.objectStore("jobs");
 
-const cursor =
-e.target.result;
+store.getAll().onsuccess = e=>{
 
-if(cursor){
+const dados = e.target.result.reverse();
 
-const d =
-cursor.value;
+dados.forEach(d=>{
 
-jobs.push(d);
-
-total += d.total;
-
-totalNF +=
-(d.valorNF || 0);
-
-totalHoras +=
-parseFloat(d.horas);
+total += d.total || 0;
+totalNF += d.valorNF || 0;
+totalHoras += parseFloat(d.horas || 0);
 
 if(!empresas[d.empresa]){
-
 empresas[d.empresa] = 0;
-
 }
 
-empresas[d.empresa] +=
-d.total;
+empresas[d.empresa] += d.total;
 
-cursor.continue();
+if(!mapaCores[d.empresa]){
+mapaCores[d.empresa] =
+coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
+}
 
-}else{
+/* CARD */
 
-renderHistorico();
+const card = document.createElement("div");
+card.className = "history-card";
+card.style.borderLeft = "6px solid " + mapaCores[d.empresa];
 
-document.getElementById(
-'vTotalSemana'
-).innerText =
+card.innerHTML = `
+<div class="empresa-title" style="color:${mapaCores[d.empresa]}">
+${d.empresa}
+</div>
+
+<b>${d.data.split("-").reverse().join("/")}</b> - ${d.job}
+
+<br><br>
+
+🕒 ${d.inicio} às ${d.fim} • ${d.horas}h
+
+<br><br>
+
+💰 Total: ${formatarValor(d.total)}
+
+<div class="extra-box">
+Hora Extra: ${formatarValor(d.extra)}
+</div>
+
+<p style="color:#ef4444">
+NF: - ${formatarValor(d.valorNF)}
+</p>
+`;
+
+lista.appendChild(card);
+
+});
+
+/* DASHBOARD */
+
+document.getElementById("vTotalSemana").innerText =
 formatarValor(total);
 
-document.getElementById(
-'vTotalNF'
-).innerText =
-`- ${formatarValor(totalNF)}`;
+document.getElementById("vTotalNF").innerText =
+"- " + formatarValor(totalNF);
 
-document.getElementById(
-'vTotalHoras'
-).innerText =
-`${totalHoras.toFixed(1)}h`;
+document.getElementById("vTotalHoras").innerText =
+totalHoras.toFixed(1) + "h";
 
 renderGrafico(empresas);
 
-}
-
 };
 
 }
- function renderHistorico(){
 
-const lista =
-document.getElementById(
-'listaHistorico'
-);
-
-lista.innerHTML='';
-
-const agrupados = {};
-
-jobs.forEach(item=>{
-
-if(
-!agrupados[item.empresa]
-){
-
-agrupados[item.empresa]=[];
-
-}
-
-agrupados[item.empresa]
-.push(item);
-
-});
-
-Object.keys(agrupados)
-.forEach((empresa,index)=>{
-
-if(
-!mapaCores[empresa]
-){
-
-mapaCores[empresa] =
-
-coresGrafico[
-index % coresGrafico.length
-];
-
-}
-
-const grupo =
-document.createElement('div');
-
-grupo.className =
-'empresa-group';
-
-grupo.innerHTML =
-
-`<div
-class="empresa-title"
-style="
-color:${mapaCores[empresa]};">
-
-${empresa}
-
-</div>`;
-
-agrupados[empresa]
-.forEach(d=>{
-
-const card =
-document.createElement('div');
-
-card.className =
-'history-card';
-
-card.style.borderLeft =
-`6px solid ${mapaCores[empresa]}`;
-
-card.innerHTML = `
-
-<button
-class="btn-del"
-onclick="excluir(${d.id})">
-
-×
-
-</button>
-
-<div
-class="empresa-title"
-style="
-color:${mapaCores[empresa]};">
-
-${d.empresa}
-
-</div>
-
-<b>
-
-${d.data
-.split('-')
-.reverse()
-.join('/')}
-
-</b>
-
-- ${d.job}
-
-<br><br>
-
-🕒
-${d.inicio}
-às
-${d.fim}
-
-•
-${d.horas}h
-
-<br><br>
-
-💳 ${d.tipoPagamento}
-+ ${d.diasPagamento} dias
-
-<br>
-
-📅 Fechamento:
-${d.tipoPagamento === 'Semanal'
-? 'Segunda a Domingo'
-: `${d.inicioPeriodo} até ${d.fimPeriodo}`}
-
-<br>
-
-📆 Pagamento:
-${d.previsaoPagamento}
-
-<br><br>
-
-💰
-${formatarValor(d.total)}
-
-<div class="extra-box">
-
-Hora Extra:
-${formatarValor(d.extra)}
-
-</div>
-
-<br>
-
-<span style="
-color:#ef4444;
-font-size:1.1em;
-font-weight:bold;">
-
-NF:
-- ${formatarValor(d.valorNF || 0)}
-
-</span>
-
-`;
-
-lista.appendChild(grupo);
-
-grupo.appendChild(card);
-
-});
-
-});
-
-}
+/* ================= GRÁFICO ================= */
 
 function renderGrafico(empresas){
 
-const ctx =
-document.getElementById(
-'graficoEmpresas'
-);
+const ctx = document.getElementById("graficoEmpresas");
 
-const existente =
-Chart.getChart(ctx);
+const labels = Object.keys(empresas);
+const values = Object.values(empresas);
 
-if(existente){
+const colors = labels.map(e=>mapaCores[e]);
 
-existente.destroy();
-
+if(window.chartInstance){
+window.chartInstance.destroy();
 }
 
-const labels =
-Object.keys(empresas);
+window.chartInstance = new Chart(ctx,{
 
-const valores =
-Object.values(empresas);
-
-const cores =
-labels.map((empresa,index)=>{
-
-if(
-!mapaCores[empresa]
-){
-
-mapaCores[empresa] =
-
-coresGrafico[
-index % coresGrafico.length
-];
-
-}
-
-return mapaCores[empresa];
-
-});
-
-new Chart(ctx,{
-
-type:'bar',
+type:"bar",
 
 data:{
-
-labels: labels,
-
+labels:labels,
 datasets:[{
-
-data: valores,
-
-backgroundColor: cores,
-
+data:values,
+backgroundColor:colors,
 borderRadius:12
-
 }]
-
 },
 
 options:{
-
 responsive:true,
-
 maintainAspectRatio:false,
-
-plugins:{
-
-legend:{
-display:false
-}
-
-},
-
+plugins:{legend:{display:false}},
 scales:{
-
-y:{
-display:false
-},
-
-x:{
-
-ticks:{
-color:'#ffffff'
-},
-
-grid:{
-display:false
+y:{display:false},
+x:{ticks:{color:"#fff"},grid:{display:false}}
 }
-
-}
-
-}
-
 },
 
 plugins:[{
-
-id:'valorTopo',
-
+id:"values",
 afterDatasetsDraw(chart){
 
-if(ocultarValores)
-return;
+if(ocultarValores) return;
 
-const {
-ctx
-} = chart;
+const {ctx} = chart;
 
-ctx.save();
+chart.data.datasets[0].data.forEach((v,i)=>{
 
-chart.data.datasets[0]
-.data
-.forEach((valor,index)=>{
+const meta = chart.getDatasetMeta(0);
+const x = meta.data[i].x;
+const y = meta.data[i].y;
 
-const meta =
-chart.getDatasetMeta(0);
+ctx.fillStyle = "#fff";
+ctx.textAlign = "center";
+ctx.font = "bold 13px Arial";
 
-const x =
-meta.data[index].x;
-
-const y =
-meta.data[index].y;
-
-ctx.fillStyle =
-'#ffffff';
-
-ctx.font =
-'bold 14px Arial';
-
-ctx.textAlign =
-'center';
-
-ctx.fillText(
-
-formatarValor(valor),
-
-x,
-
-y - 10
-
-);
+ctx.fillText(formatarValor(v),x,y-10);
 
 });
 
 }
-
 }]
 
 });
 
 }
 
-function excluir(id){
-
-db.transaction(
-"jobs",
-"readwrite"
-)
-.objectStore("jobs")
-.delete(id)
-.onsuccess = ()=>{
-
-jobs = [];
-
-atualizarTela();
-
-};
-
-}
+/* ================= BUSCA ================= */
 
 function filtrarTabela(){
 
-let filtro =
-document.getElementById(
-'inputBusca'
-).value.toUpperCase();
+const f = inputBusca.value.toUpperCase();
 
-let grupos =
-document.getElementsByClassName(
-'empresa-group'
-);
+document.querySelectorAll(".history-card").forEach(card=>{
 
-for(let i=0;i<grupos.length;i++){
+card.style.display =
+card.innerText.toUpperCase().includes(f)
+? "block":"none";
 
-let texto =
-grupos[i]
-.innerText
-.toUpperCase();
-
-grupos[i].style.display =
-
-texto.includes(filtro)
-? ''
-: 'none';
+});
 
 }
 
-}
+/* ================= LIMPAR ================= */
 
-function baixarExcelCompleto(){
+function limparCampos(){
 
-alert(
-'Função original preservada.'
-);
+dataJob.value="";
+empresaJob.value="";
+nomeJob.value="";
+vCacheBase.value="";
+vDiaria.value="";
+inicio.value="08:00";
+fim.value="20:00";
+tipoPagamento.value="Semanal";
+diasPagamento.value="5";
+nfPercentual.value="0";
 
-}
-
-function enviarRelatorioWhatsApp(){
-
-alert(
-'Função original preservada.'
-);
-
-}
-
-function fazerBackup(){
-
-alert(
-'Função original preservada.'
-);
+document.getElementById("periodoPersonalizado").style.display="none";
 
 }
-
-document.getElementById(
-'restoreFile'
-).addEventListener(
-'change',
-function(){
-
-alert(
-'Função original preservada.'
-);
-
-}
-);
 
 </script>
 
 </body>
-
 </html>
