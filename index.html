@@ -1,6 +1,3 @@
-# CACHÊ CONTROL PREMIUM V34 — CÓDIGO BASE PREMIUM
-
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -416,36 +413,3 @@ navigator.serviceWorker.register('service-worker.js');
 </html>
 ```
 
----
-
-# manifest.json
-
-```json
-{
-"name":"Cache Control Premium",
-"short_name":"CacheControl",
-"start_url":"./index.html",
-"display":"standalone",
-"background_color":"#020617",
-"theme_color":"#10b981",
-"icons":[
-{
-"src":"FaderLivreIcon.png",
-"sizes":"192x192",
-"type":"image/png"
-}
-]
-}
-```
-
----
-
-# service-worker.js
-
-```javascript
-self.addEventListener('install',e=>{
-self.skipWaiting();
-});
-
-self.addEventListener('fetch',event=>{});
-```
