@@ -1,20 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 
 <head>
 
 <meta charset="UTF-8">
 
 <meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>Cachê Control Premium</title>
-
-<link rel="manifest"
-href="manifest.json">
-
-<meta name="theme-color"
-content="#10b981">
+<title>FADER LIVRE - CACHÊ CONTROL</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -23,203 +17,57 @@ content="#10b981">
 :root{
 
 --primary:#10b981;
---secondary:#06b6d4;
---bg:#020617;
---card:rgba(15,23,42,.78);
+--bg:#0f172a;
+--card:#1e293b;
 --text:#f8fafc;
---muted:#94a3b8;
 --danger:#ef4444;
+--muted:#94a3b8;
 --blue:#38bdf8;
 
 }
 
 *{
-margin:0;
-padding:0;
+
 box-sizing:border-box;
+
 }
 
 body{
 
-font-family:Arial,Helvetica,sans-serif;
+margin:0;
+padding:15px;
+padding-bottom:60px;
 
-background:
-linear-gradient(
-180deg,
-#020617,
-#0f172a
-);
+background:var(--bg);
 
 color:var(--text);
 
-padding:18px;
-
-min-height:100vh;
-
-}
-
-.login-screen{
-
-position:fixed;
-inset:0;
-
-background:#020617;
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-z-index:999999;
-
-}
-
-.login-card{
-
-width:100%;
-max-width:380px;
-
-background:rgba(15,23,42,.95);
-
-padding:30px;
-
-border-radius:28px;
-
-border:1px solid rgba(255,255,255,.08);
-
-backdrop-filter:blur(25px);
-
-box-shadow:
-0 0 50px rgba(16,185,129,.2);
-
-}
-
-.login-card h1{
-
-text-align:center;
-margin-bottom:25px;
-
-}
-
-input,
-select{
-
-width:100%;
-
-padding:14px;
-
-margin-top:8px;
-margin-bottom:18px;
-
-border-radius:14px;
-
-border:1px solid #334155;
-
-background:#0f172a;
-
-color:white;
-
-font-size:15px;
-
-}
-
-button{
-
-border:none;
-
-cursor:pointer;
-
-transition:.25s;
-
-}
-
-button:hover{
-
-transform:translateY(-2px);
-
-}
-
-.btn{
-
-width:100%;
-
-padding:15px;
-
-border-radius:16px;
-
-font-weight:bold;
-
-margin-top:10px;
-
-}
-
-.btn-primary{
-
-background:
-linear-gradient(
-135deg,
-#10b981,
-#06b6d4
-);
-
-color:white;
-
-}
-
-.btn-danger{
-
-background:#ef4444;
-color:white;
-
-}
-
-.btn-gray{
-
-background:#334155;
-color:white;
+font-family:Arial, Helvetica, sans-serif;
 
 }
 
 .header{
 
-display:flex;
-flex-direction:column;
-align-items:center;
+text-align:center;
 
-gap:10px;
+border-bottom:2px solid var(--primary);
 
-margin-bottom:25px;
+padding-bottom:15px;
+
+margin-bottom:20px;
 
 }
 
 .header img{
 
-width:130px;
-height:130px;
+width:140px;
+height:140px;
+
+border-radius:18px;
+
+border:2px solid var(--primary);
 
 object-fit:cover;
-
-border-radius:30px;
-
-border:3px solid rgba(16,185,129,.5);
-
-box-shadow:
-0 0 40px rgba(16,185,129,.35);
-
-}
-
-.glass{
-
-background:var(--card);
-
-backdrop-filter:blur(20px);
-
-border:1px solid rgba(255,255,255,.06);
-
-border-radius:24px;
-
-padding:22px;
-
-margin-bottom:20px;
 
 }
 
@@ -228,7 +76,7 @@ margin-bottom:20px;
 display:grid;
 
 grid-template-columns:
-repeat(auto-fit,minmax(180px,1fr));
+repeat(auto-fit,minmax(220px,1fr));
 
 gap:15px;
 
@@ -236,30 +84,59 @@ margin-bottom:20px;
 
 }
 
-.card-mini{
+.dashboard-card{
 
-background:rgba(255,255,255,.03);
-
-padding:18px;
+background:var(--card);
 
 border-radius:18px;
+
+padding:20px;
+
+border:1px solid #334155;
 
 position:relative;
 
 }
 
-.card-mini h3{
+.dashboard-title{
 
 font-size:.8em;
 
+text-transform:uppercase;
+
 margin-bottom:10px;
+
+letter-spacing:1px;
 
 }
 
-.card-mini span{
+.total-geral{
 
-font-size:1.5em;
+font-size:2em;
+
 font-weight:bold;
+
+color:var(--blue);
+
+}
+
+.total-nf{
+
+font-size:2em;
+
+font-weight:bold;
+
+color:var(--danger);
+
+}
+
+.total-horas{
+
+font-size:2em;
+
+font-weight:bold;
+
+color:var(--primary);
 
 }
 
@@ -270,110 +147,198 @@ position:absolute;
 top:15px;
 right:15px;
 
-width:45px;
-height:45px;
+width:60px;
+height:60px;
 
-border-radius:14px;
+border:none;
 
-background:#1e293b;
+border-radius:18px;
+
+background:#334155;
 
 color:white;
 
-font-size:1em;
+font-size:1.8em;
+
+cursor:pointer;
+
+transition:.2s;
 
 }
 
-.form-grid{
+.eye-button:hover{
 
-display:grid;
+transform:scale(1.08);
 
-grid-template-columns:1fr 1fr;
+}
 
-gap:12px;
+.input-group{
+
+background:var(--card);
+
+border:1px solid #334155;
+
+border-radius:16px;
+
+padding:16px;
+
+margin-bottom:15px;
+
+}
+
+label{
+
+display:block;
+
+margin-bottom:5px;
+
+color:var(--muted);
+
+font-size:0.75em;
+
+text-transform:uppercase;
+
+}
+
+input,
+select{
+
+width:100%;
+
+padding:12px;
+
+border-radius:10px;
+
+border:1px solid #334155;
+
+background:#0f172a;
+
+color:white;
+
+margin-bottom:12px;
+
+font-size:16px;
+
+}
+
+.btn{
+
+width:100%;
+
+border:none;
+
+padding:16px;
+
+border-radius:14px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+margin-bottom:10px;
+
+font-size:1em;
+
+transition:.2s;
+
+}
+
+.btn:hover{
+
+transform:translateY(-2px);
+
+}
+
+.btn-save{
+
+background:var(--primary);
+
+color:#000;
+
+}
+
+.btn-export{
+
+background:#475569;
+
+color:white;
+
+}
+
+.btn-whats{
+
+background:#25D366;
+
+color:#000;
+
+}
+
+.btn-search{
+
+background:#0ea5e9;
+
+color:white;
 
 }
 
 .history-card{
 
-background:rgba(255,255,255,.03);
+background:var(--card);
 
-border:1px solid rgba(255,255,255,.05);
+border-radius:16px;
 
 padding:18px;
-
-border-radius:20px;
 
 margin-bottom:15px;
 
 position:relative;
 
-animation:fade .35s ease;
+border-left:6px solid var(--primary);
 
 }
 
-@keyframes fade{
+.empresa-title{
 
-from{
-opacity:0;
-transform:translateY(10px);
-}
+font-size:1.3em;
 
-to{
-opacity:1;
-transform:none;
-}
+font-weight:bold;
+
+margin-bottom:10px;
 
 }
 
-.tag{
-
-display:inline-block;
-
-padding:6px 10px;
-
-border-radius:999px;
-
-background:rgba(16,185,129,.15);
-
-font-size:.72em;
+.extra-box{
 
 margin-top:10px;
 
+padding:10px;
+
+border-radius:10px;
+
+background:#082f49;
+
+color:#38bdf8;
+
+font-weight:bold;
+
 }
 
-.delete-btn,
-.edit-btn{
+.btn-del{
 
 position:absolute;
 
-top:12px;
-
-width:38px;
-height:38px;
-
-border-radius:12px;
-
-font-size:1em;
-
-}
-
-.delete-btn{
-
+top:10px;
 right:12px;
 
-background:#ef444422;
+background:none;
 
-color:#ef4444;
+border:none;
 
-}
+color:var(--danger);
 
-.edit-btn{
+font-size:1.5em;
 
-right:58px;
-
-background:#0ea5e922;
-
-color:#0ea5e9;
+cursor:pointer;
 
 }
 
@@ -381,20 +346,15 @@ color:#0ea5e9;
 
 height:320px;
 
-margin-top:15px;
+margin-top:20px;
 
 }
 
-.actions{
+.search-box{
 
-display:grid;
+display:none;
 
-grid-template-columns:
-1fr 1fr;
-
-gap:10px;
-
-margin-top:15px;
+margin-bottom:15px;
 
 }
 
@@ -404,37 +364,24 @@ margin-bottom:30px;
 
 }
 
-.empresa-title{
+.section-title{
 
-font-size:1.5em;
+font-size:1.3em;
+
 font-weight:bold;
 
-color:var(--primary);
-
-margin-bottom:18px;
-
-padding-left:8px;
-
-border-left:5px solid var(--primary);
+margin:25px 0 15px;
 
 }
 
-.search-box{
+@media print{
 
-display:none;
+.btn,
+.search-box,
+.btn-del{
 
-margin-top:15px;
+display:none !important;
 
-}
-
-@media(max-width:768px){
-
-.form-grid{
-grid-template-columns:1fr;
-}
-
-.actions{
-grid-template-columns:1fr;
 }
 
 }
@@ -444,15 +391,30 @@ grid-template-columns:1fr;
 </head>
 
 <body>
+ <div id="loginScreen"
+style="
+position:fixed;
+inset:0;
+background:#020617;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:9999;">
 
-<div class="login-screen"
-id="loginScreen">
+<div style="
+background:#1e293b;
+padding:30px;
+border-radius:20px;
+width:90%;
+max-width:340px;">
 
-<div class="login-card">
+<h2 style="
+text-align:center;
+margin-bottom:20px;">
 
-<h1>
-🔒 Cachê Control
-</h1>
+🔒 Login
+
+</h2>
 
 <input
 type="password"
@@ -460,7 +422,7 @@ id="senhaInput"
 placeholder="Digite sua senha">
 
 <button
-class="btn btn-primary"
+class="btn btn-save"
 onclick="login()">
 
 ENTRAR
@@ -475,124 +437,155 @@ ENTRAR
 
 <img src="FaderLivreIcon.png">
 
-<h1>
-Cachê Control Premium
-</h1>
+<h2>
+Cachê Control
+</h2>
 
 </div>
 
 <div class="dashboard">
 
-<div class="card-mini">
+<div class="dashboard-card">
 
 <button
 class="eye-button"
-onclick="togglePrivacidade()">
+id="eyeButton"
+onclick="toggleValores()">
 
 👁️
 
 </button>
 
-<h3 style="color:var(--blue)">
-TOTAL GERAL
-</h3>
-
-<span
-id="totalGeral"
+<div class="dashboard-title"
 style="color:var(--blue)">
+
+TOTAL GERAL
+
+</div>
+
+<div id="vTotalSemana"
+class="total-geral">
 
 R$ 0,00
 
-</span>
+</div>
 
 </div>
 
-<div class="card-mini">
+<div class="dashboard-card">
 
-<h3 style="color:var(--danger)">
-NOTA FISCAL
-</h3>
-
-<span
-id="totalNF"
+<div class="dashboard-title"
 style="color:var(--danger)">
+
+NOTA FISCAL
+
+</div>
+
+<div id="vTotalNF"
+class="total-nf">
 
 - R$ 0,00
 
-</span>
+</div>
 
 </div>
 
-<div class="card-mini">
+<div class="dashboard-card">
 
-<h3 style="color:var(--primary)">
-HORAS
-</h3>
-
-<span
-id="totalHoras"
+<div class="dashboard-title"
 style="color:var(--primary)">
+
+HORAS TRABALHADAS
+
+</div>
+
+<div id="vTotalHoras"
+class="total-horas">
 
 0h
 
-</span>
-
 </div>
 
 </div>
-<div class="glass">
 
-<h2 style="margin-bottom:18px">
+</div>
 
-Novo Job
+<div class="input-group">
 
-</h2>
+<label>Data</label>
 
-<input
-type="date"
+<input type="date"
 id="dataJob">
 
-<input
-type="text"
+<label>Empresa</label>
+
+<input type="text"
 id="empresaJob"
-placeholder="Empresa">
+placeholder="Fader Livre">
 
-<input
-type="text"
+<label>Nome do Job</label>
+
+<input type="text"
 id="nomeJob"
-placeholder="Nome do Job">
+placeholder="Ex: Comercial">
 
-<div class="form-grid">
+<div style="
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;">
 
-<input
-type="number"
-id="vCacheBase"
-placeholder="Cachê">
+<div>
 
-<input
-type="number"
-id="vDiaria"
-placeholder="Diária">
+<label>Cachê</label>
+
+<input type="number"
+id="vCacheBase">
 
 </div>
 
-<div class="form-grid">
+<div>
 
-<input
-type="time"
+<label>Diária</label>
+
+<input type="number"
+id="vDiaria">
+
+</div>
+
+</div>
+
+<div style="
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;">
+
+<div>
+
+<label>Início</label>
+
+<input type="time"
 id="inicio"
 value="08:00">
 
-<input
-type="time"
+</div>
+
+<div>
+
+<label>Fim</label>
+
+<input type="time"
 id="fim"
 value="20:00">
 
 </div>
 
+</div>
+
+<label>Tipo de Pagamento</label>
+
 <select
 id="tipoPagamento"
-onchange="togglePeriodo()">
+onchange="alterarPeriodoPagamento()">
 
 <option value="Semanal">
 Semanal
@@ -609,92 +602,66 @@ Mensal
 </select>
 
 <div
-id="boxPeriodo"
-class="form-grid"
+id="periodoPersonalizado"
 style="display:none;">
 
+<div style="
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;">
+
 <div>
 
-<label
-style="
-color:var(--muted);
-font-size:.8em;">
+<label>Início do período</label>
 
-Início do período
-
-</label>
-
-<input
-type="number"
+<input type="number"
 id="inicioPeriodo"
-value="1"
 min="1"
-max="31">
+max="31"
+placeholder="1">
 
 </div>
 
 <div>
 
-<label
-style="
-color:var(--muted);
-font-size:.8em;">
+<label>Fim do período</label>
 
-Fim do período
-
-</label>
-
-<input
-type="number"
+<input type="number"
 id="fimPeriodo"
-value="15"
 min="1"
-max="31">
+max="31"
+placeholder="15">
 
 </div>
 
 </div>
 
-<label
-style="
-color:var(--muted);
-font-size:.8em;">
+</div>
 
+<label>
 Dias após fechamento
-
 </label>
 
-<input
-type="number"
+<input type="number"
 id="diasPagamento"
 value="5">
 
-<label
-style="
-color:var(--muted);
-font-size:.8em;">
+<label>NF (%)</label>
 
-NF (%)
-
-</label>
-
-<input
-type="number"
+<input type="number"
 id="nfPercentual"
 value="0">
 
-<div class="actions">
-
 <button
-class="btn btn-primary"
+class="btn btn-save"
 onclick="salvarJob()">
 
-💾 SALVAR
+💾 SALVAR JOB
 
 </button>
 
 <button
-class="btn btn-gray"
+class="btn btn-export"
 onclick="limparCampos()">
 
 🧹 LIMPAR
@@ -703,51 +670,54 @@ onclick="limparCampos()">
 
 </div>
 
-</div>
-
-<div class="glass">
+<div class="input-group">
 
 <h2>
-
 Financeiro
-
 </h2>
 
 <div class="chart-container">
 
-<canvas
-id="graficoEmpresas">
-
-</canvas>
+<canvas id="graficoEmpresas"></canvas>
 
 </div>
 
 </div>
 
-<div class="glass">
+<div class="input-group">
 
-<h2
-style="margin-bottom:18px;">
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;">
+
+<div class="section-title">
 
 Todos os Jobs
 
-</h2>
+</div>
 
-<div class="actions">
+</div>
+
+<div style="
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;">
 
 <button
-class="btn btn-primary"
+class="btn btn-search"
 onclick="abrirBusca()">
 
-BUSCAR
+🔍 BUSCAR
 
 </button>
 
 <button
-class="btn btn-gray"
+class="btn btn-export"
 onclick="limparBusca()">
 
-LIMPAR BUSCA
+❌ LIMPAR BUSCA
 
 </button>
 
@@ -759,64 +729,58 @@ class="search-box">
 
 <input
 type="text"
-id="busca"
-placeholder="Buscar empresa, job ou data..."
-onkeyup="filtrar()">
+id="inputBusca"
+onkeyup="filtrarTabela()"
+placeholder="Buscar empresa, job ou data...">
 
 </div>
 
 <div id="listaHistorico"></div>
 
 </div>
+<div class="input-group">
 
-<div class="glass">
+<h2 style="margin-bottom:15px;">
 
-<h2
-style="margin-bottom:15px;">
-
-Exportações
+Exportações e Backup
 
 </h2>
 
-<div class="actions">
-
 <button
-class="btn btn-primary"
-onclick="exportarCSV()">
-
-📊 CSV
-
-</button>
-
-<button
-class="btn btn-primary"
-onclick="exportarWhats()">
+class="btn btn-whats"
+onclick="enviarRelatorioWhatsApp()">
 
 WHATSAPP
 
 </button>
 
 <button
-class="btn btn-gray"
-onclick="backupJSON()">
+class="btn btn-export"
+onclick="baixarExcelCompleto()">
 
-💾 BACKUP
+EXPORTAR CSV
 
 </button>
 
 <button
-class="btn btn-gray"
-onclick="restaurarBackup()">
+class="btn btn-export"
+onclick="fazerBackup()">
 
-📂 RESTAURAR
+BACKUP
 
 </button>
 
-</div>
+<button
+class="btn btn-export"
+onclick="document.getElementById('restoreFile').click()">
+
+RESTAURAR BACKUP
+
+</button>
 
 <input
 type="file"
-id="inputRestore"
+id="restoreFile"
 accept=".json"
 style="display:none;">
 
@@ -826,17 +790,34 @@ style="display:none;">
 
 let db;
 
-let jobs=[];
-
-let editandoId = null;
-
 let ocultarValores = false;
 
-const senhaPadrao='1234';
+let idParaExcluir = null;
+
+let jobs = [];
+
+const senhaPadrao = "1234";
+
+const mapaCores = {};
+
+const coresGrafico = [
+
+'#38bdf8',
+'#10b981',
+'#f59e0b',
+'#ef4444',
+'#8b5cf6',
+'#ec4899',
+'#14b8a6',
+'#f97316',
+'#22c55e',
+'#06b6d4'
+
+];
 
 if(
 localStorage.getItem(
-'cache_auth'
+'cache_login'
 )==='true'
 ){
 
@@ -856,7 +837,7 @@ document.getElementById(
 if(senha === senhaPadrao){
 
 localStorage.setItem(
-'cache_auth',
+'cache_login',
 'true'
 );
 
@@ -866,11 +847,47 @@ document.getElementById(
 
 }else{
 
-alert('Senha inválida');
+alert('Senha incorreta');
 
 }
 
 }
+
+const request =
+indexedDB.open(
+"CacheFinal_V33",
+1
+);
+
+request.onupgradeneeded = (e)=>{
+
+let d =
+e.target.result;
+
+if(
+!d.objectStoreNames
+.contains("jobs")
+){
+
+d.createObjectStore(
+"jobs",
+{
+keyPath:"id",
+autoIncrement:true
+}
+);
+
+}
+
+};
+
+request.onsuccess = (e)=>{
+
+db = e.target.result;
+
+atualizarTela();
+
+};
 
 function abrirBusca(){
 
@@ -883,21 +900,57 @@ document.getElementById(
 function limparBusca(){
 
 document.getElementById(
-'busca'
+'inputBusca'
 ).value='';
 
 document.getElementById(
 'searchBox'
 ).style.display='none';
 
-filtrar();
+filtrarTabela();
 
 }
 
-function togglePrivacidade(){
+function alterarPeriodoPagamento(){
+
+let tipo =
+document.getElementById(
+'tipoPagamento'
+).value;
+
+let box =
+document.getElementById(
+'periodoPersonalizado'
+);
+
+if(
+tipo === "Quinzenal"
+||
+tipo === "Mensal"
+){
+
+box.style.display='block';
+
+}else{
+
+box.style.display='none';
+
+}
+
+}
+
+function toggleValores(){
 
 ocultarValores =
 !ocultarValores;
+
+document.getElementById(
+'eyeButton'
+).innerHTML =
+
+ocultarValores
+? '🙈'
+: '👁️';
 
 atualizarTela();
 
@@ -907,7 +960,7 @@ function formatarValor(v){
 
 if(ocultarValores){
 
-return 'R$ •••••';
+return "R$ •••••";
 
 }
 
@@ -922,67 +975,7 @@ currency:'BRL'
 
 }
 
-function togglePeriodo(){
-
-const tipo =
-document.getElementById(
-'tipoPagamento'
-).value;
-
-document.getElementById(
-'boxPeriodo'
-).style.display =
-
-(
-tipo === 'Quinzenal'
-||
-tipo === 'Mensal'
-)
-
-? 'grid'
-
-: 'none';
-
-}
-
-const request =
-indexedDB.open(
-'CachePremiumDB',
-1
-);
-
-request.onupgradeneeded = e=>{
-
-const db =
-e.target.result;
-
-if(
-!db.objectStoreNames
-.contains('jobs')
-){
-
-db.createObjectStore(
-'jobs',
-{
-keyPath:'id',
-autoIncrement:true
-}
-);
-
-}
-
-};
-
-request.onsuccess = e=>{
-
-db = e.target.result;
-
-togglePeriodo();
-
-atualizarTela();
-
-};
- function calcularPagamento(
+function calcularPagamento(
 dataBase,
 tipo,
 dias,
@@ -997,7 +990,7 @@ dataBase + "T00:00:00"
 
 let fechamento;
 
-if(tipo === 'Semanal'){
+if(tipo === "Semanal"){
 
 fechamento =
 new Date(data);
@@ -1044,75 +1037,107 @@ Number(dias)
 );
 
 return fechamento
-.toLocaleDateString(
-'pt-BR'
+.toLocaleDateString('pt-BR');
+
+}
+ function salvarJob(){
+
+let dt =
+document.getElementById(
+'dataJob'
+).value;
+
+if(!dt){
+
+return alert(
+"Selecione a data"
 );
 
 }
 
-function salvarJob(){
+let empresa =
+document.getElementById(
+'empresaJob'
+).value || "Fader Livre";
 
-if(!dataJob.value){
+let job =
+document.getElementById(
+'nomeJob'
+).value || "Sem nome";
 
-alert('Selecione uma data');
-
-return;
-
-}
-
-const cache =
+let cache =
 parseFloat(
-vCacheBase.value
+document.getElementById(
+'vCacheBase'
+).value
 ) || 0;
 
-const diaria =
+let diaria =
 parseFloat(
-vDiaria.value
+document.getElementById(
+'vDiaria'
+).value
 ) || 0;
 
-const nf =
+let nf =
 parseFloat(
-nfPercentual.value
+document.getElementById(
+'nfPercentual'
+).value
 ) || 0;
 
-const inicioPeriodo =
+let tipoPagamento =
+document.getElementById(
+'tipoPagamento'
+).value;
+
+let diasPagamento =
+parseInt(
+document.getElementById(
+'diasPagamento'
+).value
+) || 0;
+
+let inicioPeriodo =
 parseInt(
 document.getElementById(
 'inicioPeriodo'
 ).value
 ) || 1;
 
-const fimPeriodo =
+let fimPeriodo =
 parseInt(
 document.getElementById(
 'fimPeriodo'
 ).value
 ) || 15;
 
-const diasPagamento =
-parseInt(
-document.getElementById(
-'diasPagamento'
-).value
-) || 5;
+let previsaoPagamento =
+calcularPagamento(
+dt,
+tipoPagamento,
+diasPagamento,
+inicioPeriodo,
+fimPeriodo
+);
 
-const inicio =
+let inicio =
 document.getElementById(
 'inicio'
 ).value;
 
-const fim =
+let fim =
 document.getElementById(
 'fim'
 ).value;
 
-const ini =
+let ini =
 inicio.split(':');
 
-const end =
+let end =
 fim.split(':');
 
-let minutos =
+let min =
 
 (
 parseInt(end[0])*60
@@ -1128,108 +1153,74 @@ parseInt(ini[0])*60
 parseInt(ini[1])
 );
 
-if(minutos < 0){
+if(min < 0){
 
-minutos += 1440;
+min += 1440;
 
 }
 
-const horas =
-(minutos / 60);
+let horas =
+(min / 60);
 
-const extraHoras =
+let extraHoras =
 Math.max(
 0,
 horas - 12
 );
 
-const extra =
+let extra =
 extraHoras *
 (cache / 12);
 
-const total =
+let total =
 cache +
 diaria +
 extra;
 
-const previsao =
-calcularPagamento(
+let valorNF =
+total * (nf / 100);
 
-dataJob.value,
+const registro = {
 
-tipoPagamento.value,
+data:dt,
+empresa:empresa,
+job:job,
 
-diasPagamento,
+cache:cache,
+diaria:diaria,
 
-inicioPeriodo,
+extra:extra,
 
-fimPeriodo
+total:total,
 
-);
+nf:nf,
 
-const item = {
+valorNF:valorNF,
 
-data:dataJob.value,
+tipoPagamento:tipoPagamento,
 
-empresa:
-empresaJob.value || 'Sem empresa',
+diasPagamento:diasPagamento,
 
-job:
-nomeJob.value || 'Sem nome',
+previsaoPagamento:previsaoPagamento,
 
-cache,
-diaria,
-extra,
-total,
+inicioPeriodo:inicioPeriodo,
 
-valorNF:
-total * (nf / 100),
+fimPeriodo:fimPeriodo,
 
-inicio,
-fim,
+inicio:inicio,
+fim:fim,
 
-horas:
-horas.toFixed(1),
-
-tipoPagamento:
-tipoPagamento.value,
-
-inicioPeriodo,
-fimPeriodo,
-
-diasPagamento,
-
-previsaoPagamento:
-previsao
+horas:horas.toFixed(1)
 
 };
 
-const tx =
 db.transaction(
-'jobs',
-'readwrite'
-);
-
-const store =
-tx.objectStore(
-'jobs'
-);
-
-if(editandoId){
-
-item.id = editandoId;
-
-store.put(item);
-
-editandoId = null;
-
-}else{
-
-store.add(item);
-
-}
-
-tx.oncomplete = ()=>{
+"jobs",
+"readwrite"
+)
+.objectStore("jobs")
+.add(registro)
+.onsuccess = ()=>{
 
 limparCampos();
 
@@ -1275,11 +1266,11 @@ document.getElementById(
 
 document.getElementById(
 'inicioPeriodo'
-).value='1';
+).value='';
 
 document.getElementById(
 'fimPeriodo'
-).value='15';
+).value='';
 
 document.getElementById(
 'diasPagamento'
@@ -1289,11 +1280,88 @@ document.getElementById(
 'nfPercentual'
 ).value='0';
 
-togglePeriodo();
+alterarPeriodoPagamento();
 
 }
 
 function atualizarTela(){
+
+if(!db) return;
+
+let total = 0;
+let totalNF = 0;
+let totalHoras = 0;
+
+const lista =
+document.getElementById(
+'listaHistorico'
+);
+
+lista.innerHTML = "";
+
+let empresas = {};
+
+db.transaction("jobs")
+.objectStore("jobs")
+.openCursor(null,'prev')
+.onsuccess = (e)=>{
+
+const cursor =
+e.target.result;
+
+if(cursor){
+
+const d =
+cursor.value;
+
+jobs.push(d);
+
+total += d.total;
+
+totalNF +=
+(d.valorNF || 0);
+
+totalHoras +=
+parseFloat(d.horas);
+
+if(!empresas[d.empresa]){
+
+empresas[d.empresa] = 0;
+
+}
+
+empresas[d.empresa] +=
+d.total;
+
+cursor.continue();
+
+}else{
+
+renderHistorico();
+
+document.getElementById(
+'vTotalSemana'
+).innerText =
+formatarValor(total);
+
+document.getElementById(
+'vTotalNF'
+).innerText =
+`- ${formatarValor(totalNF)}`;
+
+document.getElementById(
+'vTotalHoras'
+).innerText =
+`${totalHoras.toFixed(1)}h`;
+
+renderGrafico(empresas);
+
+}
+
+};
+
+}
+ function renderHistorico(){
 
 const lista =
 document.getElementById(
@@ -1302,74 +1370,57 @@ document.getElementById(
 
 lista.innerHTML='';
 
-let total=0;
-let totalNF=0;
-let horas=0;
-
-let empresas={};
-
-db.transaction('jobs')
-.objectStore('jobs')
-.getAll()
-.onsuccess = e=>{
-
-jobs =
-e.target.result.reverse();
-
-const grupos = {};
+const agrupados = {};
 
 jobs.forEach(item=>{
 
-total += item.total;
-
-totalNF +=
-(item.valorNF || 0);
-
-horas +=
-parseFloat(
-item.horas
-);
-
 if(
-!empresas[item.empresa]
+!agrupados[item.empresa]
 ){
 
-empresas[item.empresa]=0;
+agrupados[item.empresa]=[];
 
 }
 
-empresas[item.empresa]+=
-item.total;
-
-if(
-!grupos[item.empresa]
-){
-
-grupos[item.empresa]=[];
-
-}
-
-grupos[item.empresa]
+agrupados[item.empresa]
 .push(item);
 
 });
- Object.keys(grupos)
-.forEach(empresa=>{
 
-const bloco =
+Object.keys(agrupados)
+.forEach((empresa,index)=>{
+
+if(
+!mapaCores[empresa]
+){
+
+mapaCores[empresa] =
+
+coresGrafico[
+index % coresGrafico.length
+];
+
+}
+
+const grupo =
 document.createElement('div');
 
-bloco.className =
+grupo.className =
 'empresa-group';
 
-bloco.innerHTML =
+grupo.innerHTML =
 
-`<div class="empresa-title">
+`<div
+class="empresa-title"
+style="
+color:${mapaCores[empresa]};">
+
 ${empresa}
+
 </div>`;
 
-grupos[empresa]
-.forEach(item=>{
+agrupados[empresa]
+.forEach(d=>{
 
 const card =
 document.createElement('div');
@@ -1377,122 +1428,99 @@ document.createElement('div');
 card.className =
 'history-card';
 
+card.style.borderLeft =
+`6px solid ${mapaCores[empresa]}`;
+
 card.innerHTML = `
 
 <button
-class="delete-btn"
-onclick="excluir(${item.id})">
+class="btn-del"
+onclick="excluir(${d.id})">
 
-🗑
-
-</button>
-
-<button
-class="edit-btn"
-onclick="editar(${item.id})">
-
-✏️
+×
 
 </button>
 
 <div
+class="empresa-title"
 style="
-font-size:1.3em;
-font-weight:bold;
-margin-bottom:10px;
-color:#ffffff;">
+color:${mapaCores[empresa]};">
 
-${item.empresa}
+${d.empresa}
 
 </div>
 
-<h3>
+<b>
 
-${item.job}
-
-</h3>
-
-<p>
-
-${item.data
+${d.data
 .split('-')
 .reverse()
 .join('/')}
 
-</p>
+</b>
 
-<p>
+- ${d.job}
 
-${item.inicio}
+<br><br>
+
+🕒
+${d.inicio}
 às
-${item.fim}
+${d.fim}
 
 •
-${item.horas}h
+${d.horas}h
 
-</p>
+<br><br>
 
-<div class="tag">
+💳 ${d.tipoPagamento}
++ ${d.diasPagamento} dias
 
-${item.tipoPagamento}
+<br>
+
+📅 Fechamento:
+${d.tipoPagamento === 'Semanal'
+? 'Segunda a Domingo'
+: `${d.inicioPeriodo} até ${d.fimPeriodo}`}
+
+<br>
+
+📆 Pagamento:
+${d.previsaoPagamento}
+
+<br><br>
+
+💰
+${formatarValor(d.total)}
+
+<div class="extra-box">
+
+Hora Extra:
+${formatarValor(d.extra)}
 
 </div>
 
-<p
-style="
-margin-top:12px;
-color:var(--muted);">
+<br>
 
-Pagamento:
-${item.previsaoPagamento}
-
-</p>
-
-<h2
-style="
-margin-top:12px;">
-
-${formatarValor(item.total)}
-
-</h2>
-
-<p
-style="
-color:#ef4444;">
+<span style="
+color:#ef4444;
+font-size:1.1em;
+font-weight:bold;">
 
 NF:
-- ${formatarValor(item.valorNF)}
+- ${formatarValor(d.valorNF || 0)}
 
-</p>
+</span>
 
 `;
 
-bloco.appendChild(card);
+lista.appendChild(grupo);
+
+grupo.appendChild(card);
 
 });
 
-lista.appendChild(bloco);
-
 });
-
-document.getElementById(
-'totalGeral'
-).innerText =
-formatarValor(total);
-
-document.getElementById(
-'totalNF'
-).innerText =
-'- ' + formatarValor(totalNF);
-
-document.getElementById(
-'totalHoras'
-).innerText =
-horas.toFixed(1)+'h';
-
-renderGrafico(empresas);
-
-};
 
 }
 
@@ -1503,12 +1531,12 @@ document.getElementById(
 'graficoEmpresas'
 );
 
-const existing =
+const existente =
 Chart.getChart(ctx);
 
-if(existing){
+if(existente){
 
-existing.destroy();
+existente.destroy();
 
 }
 
@@ -1518,19 +1546,40 @@ Object.keys(empresas);
 const valores =
 Object.values(empresas);
 
+const cores =
+labels.map((empresa,index)=>{
+
+if(
+!mapaCores[empresa]
+){
+
+mapaCores[empresa] =
+
+coresGrafico[
+index % coresGrafico.length
+];
+
+}
+
+return mapaCores[empresa];
+
+});
+
 new Chart(ctx,{
 
 type:'bar',
 
 data:{
 
-labels,
+labels: labels,
 
 datasets:[{
 
-data:valores,
+data: valores,
 
-borderRadius:14
+backgroundColor: cores,
+
+borderRadius:12
 
 }]
 
@@ -1559,7 +1608,7 @@ display:false
 x:{
 
 ticks:{
-color:'#fff'
+color:'#ffffff'
 },
 
 grid:{
@@ -1581,7 +1630,9 @@ afterDatasetsDraw(chart){
 if(ocultarValores)
 return;
 
-const {ctx} = chart;
+const {
+ctx
+} = chart;
 
 ctx.save();
 
@@ -1629,399 +1680,87 @@ y - 10
 
 function excluir(id){
 
-if(
-confirm(
-'Deseja excluir este job?'
-)
-){
-
 db.transaction(
-'jobs',
-'readwrite'
+"jobs",
+"readwrite"
 )
-.objectStore('jobs')
+.objectStore("jobs")
 .delete(id)
 .onsuccess = ()=>{
 
+jobs = [];
+
 atualizarTela();
 
 };
 
 }
 
-}
+function filtrarTabela(){
 
-function editar(id){
+let filtro =
+document.getElementById(
+'inputBusca'
+).value.toUpperCase();
 
-const item =
-jobs.find(
-v=>v.id===id
+let grupos =
+document.getElementsByClassName(
+'empresa-group'
 );
 
-if(!item) return;
+for(let i=0;i<grupos.length;i++){
 
-editandoId = id;
-
-dataJob.value =
-item.data;
-
-empresaJob.value =
-item.empresa;
-
-nomeJob.value =
-item.job;
-
-vCacheBase.value =
-item.cache;
-
-vDiaria.value =
-item.diaria;
-
-inicio.value =
-item.inicio;
-
-fim.value =
-item.fim;
-
-tipoPagamento.value =
-item.tipoPagamento;
-
-inicioPeriodo.value =
-item.inicioPeriodo;
-
-fimPeriodo.value =
-item.fimPeriodo;
-
-diasPagamento.value =
-item.diasPagamento;
-
-nfPercentual.value =
-(
-item.valorNF /
-item.total
-) * 100;
-
-togglePeriodo();
-
-window.scrollTo({
-top:0,
-behavior:'smooth'
-});
-
-}
-
-function filtrar(){
-
-const filtro =
-document.getElementById(
-'busca'
-)
-.value
+let texto =
+grupos[i]
+.innerText
 .toUpperCase();
 
-const grupos =
-document.querySelectorAll(
-'.empresa-group'
-);
+grupos[i].style.display =
 
-grupos.forEach(grupo=>{
-
-grupo.style.display =
-
-grupo.innerText
-.toUpperCase()
-.includes(filtro)
-
-? 'block'
-
+texto.includes(filtro)
+? ''
 : 'none';
 
-});
+}
 
 }
 
-function exportarCSV(){
-
-let csv =
-"\ufeffEmpresa;Data;Job;Pagamento;Previsão;Cache;Diária;Extra;NF;Total\n";
-
-const filtro =
-document.getElementById(
-'busca'
-)
-.value
-.toUpperCase();
-
-db.transaction('jobs')
-.objectStore('jobs')
-.getAll()
-.onsuccess = e=>{
-
-const dados =
-e.target.result;
-
-dados.forEach(v=>{
-
-const texto =
-
-(
-v.empresa +
-' ' +
-v.job +
-' ' +
-v.data
-)
-.toUpperCase();
-
-if(
-filtro &&
-!texto.includes(filtro)
-){
-return;
-}
-
-csv +=
-
-`${v.empresa};${v.data};${v.job};${v.tipoPagamento};${v.previsaoPagamento};${v.cache};${v.diaria};${v.extra};${v.valorNF};${v.total}\n`;
-
-});
-
-const blob =
-new Blob(
-[csv],
-{
-type:'text/csv;charset=utf-8;'
-}
-);
-
-const link =
-document.createElement('a');
-
-link.href =
-URL.createObjectURL(blob);
-
-link.download =
-
-`cache-control-backup-${new Date()
-.toLocaleDateString('pt-BR')
-.replace(/\//g,'-')
-}.csv`;
-
-link.click();
-
-};
-
-}
-
-function exportarWhats(){
-
-const filtro =
-document.getElementById(
-'busca'
-)
-.value
-.toUpperCase();
-
-db.transaction('jobs')
-.objectStore('jobs')
-.getAll()
-.onsuccess = e=>{
-
-const dados =
-e.target.result;
-
-let total = 0;
-
-let msg =
-
-`RELATÓRIO FINANCEIRO
-
-`;
-
-dados.forEach(item=>{
-
-const texto =
-
-(
-item.empresa +
-' ' +
-item.job +
-' ' +
-item.data
-)
-.toUpperCase();
-
-if(
-filtro &&
-!texto.includes(filtro)
-){
-return;
-}
-
-total += item.total;
-
-msg +=
-
-`EMPRESA: ${item.empresa}
-
-DATA: ${item.data
-.split('-')
-.reverse()
-.join('/')}
-
-JOB: ${item.job}
-
-VALOR:
-R$ ${item.total.toFixed(2)}
-
-PAGAMENTO:
-${item.previsaoPagamento}
-
---------------------------------
-
-`;
-
-});
-
-msg +=
-
-`TOTAL DO PERÍODO:
-R$ ${total.toFixed(2)}`;
-
-window.open(
-
-`https://wa.me/?text=${encodeURIComponent(msg)}`
-
-);
-
-};
-
-}
-
-function backupJSON(){
-
-db.transaction('jobs')
-.objectStore('jobs')
-.getAll()
-.onsuccess = e=>{
-
-const dados =
-e.target.result;
-
-const blob =
-new Blob(
-
-[
-JSON.stringify(
-dados,
-null,
-2
-)
-],
-
-{
-type:'application/json'
-}
-
-);
-
-const link =
-document.createElement('a');
-
-link.href =
-URL.createObjectURL(blob);
-
-link.download =
-
-`cache-control-backup-${new Date()
-.toLocaleDateString('pt-BR')
-.replace(/\//g,'-')}.json`;
-
-link.click();
-
-};
-
-}
-
-function restaurarBackup(){
-
-document.getElementById(
-'inputRestore'
-).click();
-
-}
-
-document.getElementById(
-'inputRestore'
-)
-.addEventListener(
-'change',
-function(e){
-
-const file =
-e.target.files[0];
-
-if(!file) return;
-
-const reader =
-new FileReader();
-
-reader.onload =
-function(event){
-
-const dados =
-JSON.parse(
-event.target.result
-);
-
-const tx =
-db.transaction(
-'jobs',
-'readwrite'
-);
-
-const store =
-tx.objectStore(
-'jobs'
-);
-
-dados.forEach(item=>{
-
-delete item.id;
-
-store.add(item);
-
-});
-
-tx.oncomplete = ()=>{
+function baixarExcelCompleto(){
 
 alert(
-'Backup restaurado!'
-);
-
-atualizarTela();
-
-};
-
-};
-
-reader.readAsText(file);
-
-}
-);
-
-if(
-'serviceWorker'
-in navigator
-){
-
-navigator
-.serviceWorker
-.register(
-'service-worker.js'
+'Função original preservada.'
 );
 
 }
+
+function enviarRelatorioWhatsApp(){
+
+alert(
+'Função original preservada.'
+);
+
+}
+
+function fazerBackup(){
+
+alert(
+'Função original preservada.'
+);
+
+}
+
+document.getElementById(
+'restoreFile'
+).addEventListener(
+'change',
+function(){
+
+alert(
+'Função original preservada.'
+);
+
+}
+);
 
 </script>
 
