@@ -383,10 +383,8 @@
 </head>
 <body>
 
-<!-- PAINEL MASTER DE AUTENTICAÇÃO -->
 <div id="loginScreen" style="position:fixed; inset:0; background:var(--dark-pure); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; padding:15px;">
     
-    <!-- BOTÃO DE RESET EM CASO DE TRAVAMENTO NO CELULAR -->
     <button onclick="emergencyReset()" style="background:var(--danger); color:white; border:none; padding:10px 15px; border-radius:10px; font-weight:bold; font-size:0.8em; margin-bottom:20px; width:100%; max-width:400px; box-shadow:0 4px 10px rgba(239,68,68,0.3);">⚠️ Forçar Reset de Emergência (Celular)</button>
 
     <div style="background:var(--card); padding:25px; border-radius:28px; width:100%; max-width:400px; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6); border: 1px solid var(--border-color);">
@@ -416,22 +414,18 @@
     </div>
 </div>
 
-<!-- HEADER DA APLICAÇÃO -->
 <div class="header">
     <h2>FADER LIVRE</h2>
     <p>SISTEMA CONTROLADOR DE CACHÊS</p>
 </div>
 
-<!-- NAVEGAÇÃO ENTRE MÓDULOS -->
 <div class="tab-container">
     <button class="tab-button active" id="tabJobsBtn" onclick="alternarAba('abaJobs', event)">💼 Lançamentos</button>
     <button class="tab-button" id="tabEmpresasBtn" onclick="alternarAba('abaEmpresas', event)">🏢 Empresas</button>
 </div>
 
-<!-- SEÇÃO DE LANÇAMENTOS (JOBS) -->
 <div id="abaJobs" class="app-section active">
     
-    <!-- PAINEL DE PERFORMANCE INDICADORES -->
     <div class="dashboard">
         <div class="dashboard-card">
             <button class="eye-button" id="eyeButton" onclick="toggleValores()">👁️</button>
@@ -439,18 +433,17 @@
             <div id="vTotalSemana" class="total-geral">R$ 0,00</div>
         </div>
         <div class="dashboard-card">
-            <div class="dashboard-title" style="color:var(--danger)">Provisões e Impostos (NF)</div>
+            <div class="dashboard-title" style="color:var(--danger)">Imposto NF</div>
             <div id="vTotalNF" class="total-nf">- R$ 0,00</div>
         </div>
         <div class="dashboard-card">
-            <div class="dashboard-title" style="color:var(--primary)">Horas Homem Alocadas</div>
+            <div class="dashboard-title" style="color:var(--primary)">Horas Trabalhadas</div>
             <div id="vTotalHoras" class="total-horas">0.0h</div>
         </div>
     </div>
 
-    <!-- ENTRADA DE DADOS: PRESTAÇÃO DE SERVIÇOS -->
     <div class="input-group">
-        <h3><span id="formJobTitle">💼 Novo Job Executado</span></h3>
+        <h3><span id="formJobTitle">💼 Job</span></h3>
         <input type="hidden" id="editJobId" value="">
 
         <label>Empresa Tomadora do Serviço</label>
@@ -480,17 +473,15 @@
         </div>
     </div>
 
-    <!-- PAINEL GRÁFICO BUSINESS INTELLIGENCE -->
     <div class="input-group">
-        <h3>📊 Faturamento por Player Contratante</h3>
+        <h3>📊 Faturamento por contratante</h3>
         <div class="chart-container">
             <canvas id="graficoEmpresas"></canvas>
         </div>
     </div>
 
-    <!-- HISTÓRICO GERAL DE PROCESSOS -->
     <div class="input-group">
-        <div class="section-title" style="margin:0 0 20px 0;">📋 Livro de Registros</div>
+        <div class="section-title" style="margin:0 0 20px 0;">📋 Registros</div>
         
         <div class="toggle-filter-container">
             <button id="btnFiltroAberto" class="btn-filter active" onclick="definirFiltroVisualizacao('aberto')">Período Aberto</button>
@@ -508,9 +499,12 @@
         
         <div id="listaHistorico"></div>
     </div>
+    
+    <div style="margin-top: 10px; margin-bottom: 25px;">
+        <button class="btn btn-whats" onclick="enviarRelatorioWhatsApp()">💬 Enviar para Whatsapp</button>
+    </div>
 </div>
 
-<!-- SEÇÃO DE CONFIGURAÇÃO DE EMPRESAS (MATRIZ) -->
 <div id="abaEmpresas" class="app-section">
     <div class="input-group">
         <h2 id="formEmpresaTitle">🏢 Nova Empresa e Regras</h2>
@@ -537,7 +531,6 @@
             <option value="Mensal">Mensal</option>
         </select>
 
-        <!-- SUBFORMULÁRIO: REGRAS MENSAL / QUINZENAL -->
         <div id="cadPeriodoPersonalizado" style="display:none; padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color);">
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                 <div>
@@ -551,7 +544,6 @@
             </div>
         </div>
 
-        <!-- SUBFORMULÁRIO: REGRAS SEMANAL -->
         <div id="cadPeriodoSemanalBox" style="padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color); display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div>
                 <label>Dia Inicial</label>
@@ -600,20 +592,18 @@
         <h3>🏢 Empresas Cadastradas</h3>
         <div id="listaEmpresasCadastradas"></div>
     </div>
-</div>
 
-<!-- NÚCLEO DE EXPORTAÇÃO, BACKUP E INTEGRAÇÃO EXTERNA -->
-<div class="input-group" style="border-color:var(--border-hover); background: linear-gradient(180deg, var(--card) 0%, #152238 100%);">
-    <h2>⚡ Central Avançada de Exportação</h2>
-    <p style="color:var(--muted); font-size:0.85em; margin-bottom:15px;">Gere faturamentos estruturados ou realize backups locais de segurança.</p>
-    
-    <div style="display:flex; flex-direction:column; gap:5px;">
-        <button class="btn btn-whats" onclick="enviarRelatorioWhatsApp()">💬 Transmitir via WhatsApp</button>
-        <button class="btn btn-export" onclick="baixarExcelCompleto()">📊 Exportar Planilha (.CSV)</button>
-        <button class="btn btn-export" style="background:#5c258d;" onclick="fazerBackup()">💾 Gerar Cópia de Segurança (.JSON)</button>
-        <button class="btn btn-cancel" style="background:var(--dark-pure); border:1px solid var(--border-color);" onclick="document.getElementById('restoreFile').click()">📥 Importar Backup (.JSON)</button>
+    <div class="input-group" style="border-color:var(--border-hover); background: linear-gradient(180deg, var(--card) 0%, #152238 100%); margin-top:20px;">
+        <h2>⚡ Central Avançada de Exportação</h2>
+        <p style="color:var(--muted); font-size:0.85em; margin-bottom:15px;">Gere faturamentos estruturados ou realize backups locais de segurança.</p>
+        
+        <div style="display:flex; flex-direction:column; gap:5px;">
+            <button class="btn btn-export" onclick="baixarExcelCompleto()">📊 Exportar Planilha (.CSV)</button>
+            <button class="btn btn-export" style="background:#5c258d;" onclick="fazerBackup()">💾 Gerar Cópia de Segurança (.JSON)</button>
+            <button class="btn btn-cancel" style="background:var(--dark-pure); border:1px solid var(--border-color);" onclick="document.getElementById('restoreFile').click()">📥 Importar Backup (.JSON)</button>
+        </div>
+        <input type="file" id="restoreFile" accept=".json" style="display:none;">
     </div>
-    <input type="file" id="restoreFile" accept=".json" style="display:none;">
 </div>
 
 <script>
@@ -1069,7 +1059,7 @@ function filtrarTabela(){
 }
 
 function limparCampos(){
-    document.getElementById("formJobTitle").innerText = "💼 Novo Job Executado";
+    document.getElementById("formJobTitle").innerText = "💼 Job";
     document.getElementById("editJobId").value = "";
     document.getElementById("empresaJob").value = "";
     document.getElementById("nomeJob").value = "";
@@ -1131,31 +1121,54 @@ function atualizarTela(){
 function renderGrafico(dict){
     const ctx = document.getElementById("graficoEmpresas");
     if(!ctx) return;
+    
     const labels = Object.keys(dict), values = Object.values(dict);
     const colors = labels.map(lbl => mapaCores[lbl]);
-    if(window.chartInstance) window.chartInstance.destroy();
-    if(labels.length === 0) return;
 
-    window.chartInstance = new Chart(ctx, {
-        type: "bar",
-        data: { labels: labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 8 }] },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { display: false }, x: { ticks: { color: "#94a3b8" } } }
-        }
-    });
+    if(window.chartInstance) {
+        window.chartInstance.data.labels = labels;
+        window.chartInstance.data.datasets[0].data = values;
+        window.chartInstance.data.datasets[0].backgroundColor = colors;
+        window.chartInstance.update();
+    } else {
+        if(labels.length === 0) return;
+        window.chartInstance = new Chart(ctx, {
+            type: "bar",
+            data: { labels: labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 8 }] },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { display: false }, x: { ticks: { color: "#94a3b8" } } }
+            }
+        });
+    }
 }
 
 function enviarRelatorioWhatsApp(){
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").getAll().onsuccess = function(event) {
-        const ativos = event.target.result.filter(item => obterStatusPeriodo(item) === "aberto");
-        if(ativos.length === 0) { alert("Nenhum registro ativo."); return; }
-        let msg = "*FADER LIVRE - EXTRATO CACHÊ CONTROL*\n\n";
-        ativos.forEach(j => {
-            msg += `🏢 *${j.empresa}* - ${j.data.split("-").reverse().join("/")}\n📌 Job: ${j.job}\n💰 Total: R$ ${j.total.toFixed(2)}\n\n`;
+        const filtrados = event.target.result.filter(item => {
+            const status = obterStatusPeriodo(item);
+            return (filtroVisualizacao === "aberto" && status === "aberto") || 
+                   (filtroVisualizacao === "arquivado" && (status === "arquivado" || status === "pago"));
         });
+
+        if(filtrados.length === 0) { alert("Nenhum registro encontrado no filtro atual."); return; }
+        
+        let msg = "*FADER LIVRE - EXTRATO CACHÊ CONTROL*\n\n";
+        let totaisPorEmpresa = {};
+
+        filtrados.forEach(j => {
+            msg += `*${j.empresa}* - ${j.data.split("-").reverse().join("/")}\nJob: ${j.job}\nTotal: R$ ${j.total.toFixed(2)}\n\n`;
+            totaisPorEmpresa[j.empresa] = (totaisPorEmpresa[j.empresa] || 0) + j.total;
+        });
+
+        msg += "--------------------------------------\n";
+        msg += "*FATURAMENTO TOTAL POR CONTRATANTE:*\n";
+        for (const [empresa, total] of Object.entries(totaisPorEmpresa)) {
+            msg += `${empresa}: R$ ${total.toFixed(2)}\n`;
+        }
+        
         window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
     };
 }
@@ -1174,5 +1187,4 @@ function baixarExcelCompleto(){
 }
 </script>
 </body>
-    
 </html>
