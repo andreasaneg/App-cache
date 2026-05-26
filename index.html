@@ -56,15 +56,6 @@
             margin-bottom: 25px;
             position: relative;
         }
-        .header img {
-            width: 110px;
-            height: 110px;
-            border-radius: 24px;
-            border: 3px solid var(--primary);
-            object-fit: cover;
-            margin-bottom: 12px;
-            box-shadow: 0 10px 25px -5px var(--primary-glow);
-        }
         .header h2 {
             font-size: 1.6em;
             font-weight: 800;
@@ -219,16 +210,6 @@
             padding-right: 85px;
         }
         
-        .extra-box {
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 12px;
-            background: rgba(56, 189, 248, 0.08);
-            color: var(--blue);
-            font-weight: 700;
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            font-size: 0.9em;
-        }
         .btn-del {
             position: absolute;
             top: 15px;
@@ -384,7 +365,6 @@
 <body>
 
 <div id="loginScreen" style="position:fixed; inset:0; background:var(--dark-pure); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; padding:15px;">
-    
     <button onclick="emergencyReset()" style="background:var(--danger); color:white; border:none; padding:10px 15px; border-radius:10px; font-weight:bold; font-size:0.8em; margin-bottom:20px; width:100%; max-width:400px; box-shadow:0 4px 10px rgba(239,68,68,0.3);">⚠️ Forçar Reset de Emergência (Celular)</button>
 
     <div style="background:var(--card); padding:25px; border-radius:28px; width:100%; max-width:400px; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6); border: 1px solid var(--border-color);">
@@ -429,16 +409,16 @@
     <div class="dashboard">
         <div class="dashboard-card">
             <button class="eye-button" id="eyeButton" onclick="toggleValores()">👁️</button>
-            <div class="dashboard-title" style="color:var(--blue)">Horas Trabalhadas</div>
-            <div id="vTotalHoras" class="total-horas">0.0h</div>
+            <div class="dashboard-title" style="color:var(--primary)">Job</div>
+            <div id="vTotalSemana" class="total-geral">R$ 0,00</div>
         </div>
         <div class="dashboard-card">
             <div class="dashboard-title" style="color:var(--danger)">Imposto NF</div>
             <div id="vTotalNF" class="total-nf">- R$ 0,00</div>
         </div>
         <div class="dashboard-card">
-            <div class="dashboard-title" style="color:var(--primary)">Job</div>
-            <div id="vTotalSemana" class="total-geral">R$ 0,00</div>
+            <div class="dashboard-title" style="color:var(--blue)">Horas Trabalhadas</div>
+            <div id="vTotalHoras" class="total-horas">0.0h</div>
         </div>
     </div>
 
@@ -607,24 +587,20 @@
 </div>
 
 <script>
-// Declarações Globais de Estado do Ecossistema
 let db = null;
 let ocultarValores = false;
 let filtroVisualizacao = "aberto"; 
 let mapaCores = {};
-let empresaSelecionadaCache = null; 
 
-// RESET DE EMERGÊNCIA ADAPTADO PARA SMARTPHONES
 function emergencyReset() {
-    if(confirm("Deseja forçar o reset de emergência? Isso vai limpar os travamentos de segurança e reiniciar o aplicativo.")) {
+    if(confirm("Deseja forçar o reset de emergência?")) {
         localStorage.clear();
         let deleteRequest = indexedDB.deleteDatabase("CacheFinal_V33");
         deleteRequest.onsuccess = function() {
-            alert("Sistema redefinido com sucesso! O aplicativo vai reiniciar limpo agora.");
+            alert("Sistema redefinido! O aplicativo vai reiniciar.");
             window.location.reload();
         };
         deleteRequest.onerror = function() {
-            alert("Erro ao limpar banco, reiniciando apenas credenciais.");
             window.location.reload();
         };
     }
@@ -651,22 +627,21 @@ function cadastrarSenha(){
     const email = document.getElementById("emailRecuperacao").value;
     
     if(!novaSenha || novaSenha.trim() === "" || !email || email.trim() === ""){
-        alert("Todos os campos de segurança devem ser preenchidos.");
+        alert("Todos os campos devem ser preenchidos.");
         return;
     }
     
     localStorage.setItem("senha_cache_control", novaSenha.trim());
     localStorage.setItem("email_cache_control", email.trim());
-    alert("Credenciais registradas com sucesso!");
+    alert("Credenciais registradas!");
     window.location.reload();
 }
 
 function login(){
     const senha = document.getElementById("senhaInput").value;
-    
     if(!senhaSalva){
         if(senha.trim().length < 4) {
-            alert("Defina uma senha inicial de pelo menos 4 caracteres.");
+            alert("Defina uma senha de pelo menos 4 caracteres.");
             return;
         }
         localStorage.setItem("senha_cache_control", senha.trim());
@@ -674,7 +649,6 @@ function login(){
         document.getElementById("loginScreen").style.display = "none";
         return;
     }
-
     if(senha === senhaSalva){
         document.getElementById("loginScreen").style.display = "none";
     } else {
@@ -691,7 +665,7 @@ function recuperarSenha(){
     alert("Instruções locais enviadas para: " + email);
 }
 
-// INICIALIZAÇÃO DO INDEXEDDB
+// CONEXÃO INDEXEDDB
 const requestDB = indexedDB.open("CacheFinal_V33", 1);
 
 requestDB.onupgradeneeded = function(event) {
@@ -728,7 +702,6 @@ function formatarValor(valor){
     return Number(valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-// BACKUP AUTOMÁTICO SILENCIOSO
 function ejecutarBackupAutomatico() {
     if(!db) return;
     const txJ = db.transaction("jobs", "readonly");
@@ -793,9 +766,10 @@ function alternarAba(abaId, event) {
     if(abaId === 'abaEmpresas') atualizarListaEmpresas(); else atualizarTela();
 }
 
+// CORREÇÃO VISUAL DO FILTRO ("aberto")
 function definirFiltroVisualizacao(tipo) {
     filtroVisualizacao = tipo;
-    document.getElementById("btnFiltroAberto").classList.toggle("active", tipo === 'abento' || tipo === 'aberto');
+    document.getElementById("btnFiltroAberto").classList.toggle("active", tipo === 'aberto');
     document.getElementById("btnFiltroArquivado").classList.toggle("active", tipo === 'arquivado');
     atualizarTela();
 }
@@ -814,16 +788,13 @@ function alterarPeriodoPagamentoCadastro(){
 function gerenciarAutocomplete(textoBusca) {
     const container = document.getElementById("autocompleteContainer");
     container.innerHTML = "";
-    if(!db || !textoBusca || textoBusca.trim() === "") { empresaSelecionadaCache = null; return; }
+    if(!db || !textoBusca || textoBusca.trim() === "") return;
 
     const tx = db.transaction("empresas", "readonly");
     tx.objectStore("empresas").getAll().onsuccess = function(event) {
         const todasEmpresas = event.target.result;
         const queryLimpa = textoBusca.toLowerCase().trim();
         const filtradas = todasEmpresas.filter(emp => emp.nome.toLowerCase().includes(queryLimpa));
-        const correspondenciaExata = todasEmpresas.find(emp => emp.nome.toLowerCase() === queryLimpa);
-
-        if(correspondenciaExata) empresaSelecionadaCache = correspondenciaExata;
 
         if(filtradas.length > 0) {
             const listaDiv = document.createElement("div");
@@ -835,7 +806,6 @@ function gerenciarAutocomplete(textoBusca) {
                 itemDiv.onclick = function() {
                     document.getElementById("empresaJob").value = empresaInstancia.nome;
                     container.innerHTML = "";
-                    empresaSelecionadaCache = empresaInstancia;
                 };
                 listaDiv.appendChild(itemDiv);
             });
@@ -979,7 +949,7 @@ function calcularDataPagamentoReal(dataFechamento, diasUteis) {
     return objetoPagamento;
 }
 
-// ARQUITETURA CORRIGIDA: SALVAMENTO E EDIÇÃO DE JOBS
+// ARQUITETURA CORRIGIDA E ASSEGURADA: GRAVAÇÃO E ATUALIZAÇÃO SEM CONFLITO DE TRANSAÇÃO
 function salvarJob(){
     const dataInput = document.getElementById("dataJob").value;
     const inputNomeEmpresa = document.getElementById("empresaJob").value.trim();
@@ -987,16 +957,20 @@ function salvarJob(){
     
     if(!dataInput || !inputNomeEmpresa) { alert("Data e Empresa são obrigatórios."); return; }
 
+    // Etapa 1: Captura os parâmetros isoladamente (Transação 1 - Leitura)
     const txBusca = db.transaction("empresas", "readonly");
-    txBusca.objectStore("empresas").getAll().onsuccess = function(event) {
+    const storeBusca = txBusca.objectStore("empresas");
+    
+    storeBusca.getAll().onsuccess = function(event) {
         const todasEmpresas = event.target.result;
         const empresaEncontrada = todasEmpresas.find(emp => emp.nome.toLowerCase() === inputNomeEmpresa.toLowerCase());
 
         if(!empresaEncontrada) {
-            alert("A empresa '" + inputNomeEmpresa + "' não está cadastrada no sistema. Cadastre-la na aba 'Empresas' primeiro.");
+            alert("A empresa '" + inputNomeEmpresa + "' não está cadastrada no sistema. Cadastre-a na aba 'Empresas' primeiro.");
             return;
         }
 
+        // Executa cálculos matemáticos de faturamento fora da escuta do banco
         const cacheBase = parseFloat(empresaEncontrada.cacheBase || 0);
         const diaria = parseFloat(empresaEncontrada.diaria || 0);
         const percentualNF = parseFloat(empresaEncontrada.nfPercentual || 0);
@@ -1027,14 +1001,17 @@ function salvarJob(){
             previsaoPagamento: calcularPagamento(dataInput, empresaEncontrada.tipoPagamento, empresaEncontrada.diasPagamento, empresaEncontrada.inicioPeriodo, empresaEncontrada.fimPeriodo, empresaEncontrada.inicioSemana, empresaEncontrada.fimSemana)
         };
 
-        // Correção de Edição vs Novo Lançamento
-        if(idEdicao && idEdicao !== "") {
+        // Injeta a chave primária numérica caso o gatilho seja de Edição de Registro
+        if(idEdicao && idEdicao.trim() !== "") {
             payloadJob.id = parseInt(idEdicao);
         }
 
+        // Etapa 2: Abre uma transação limpa e isolada exclusivamente para gravação (Transação 2 - Escrita)
         const txGravar = db.transaction("jobs", "readwrite");
-        const store = txGravar.objectStore("jobs");
-        const req = (idEdicao && idEdicao !== "") ? store.put(payloadJob) : store.add(payloadJob);
+        const storeGravar = txGravar.objectStore("jobs");
+        
+        // Se houver idEdicao usa .put(), do contrário usa .add() para criar novo autoincremento
+        const req = (idEdicao && idEdicao.trim() !== "") ? storeGravar.put(payloadJob) : storeGravar.add(payloadJob);
 
         req.onsuccess = function() {
             alert("Lançamento processado com sucesso!");
@@ -1043,8 +1020,8 @@ function salvarJob(){
             limparCampos();
         };
         
-        req.onerror = function() {
-            alert("Erro interno ao tentar salvar no banco de dados.");
+        req.onerror = function(err) {
+            alert("Erro crítico ao tentar persistir dados no banco local.");
         };
     };
 }
@@ -1097,7 +1074,6 @@ function limparCampos(){
     document.getElementById("empresaJob").value = "";
     document.getElementById("nomeJob").value = "";
     document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
-    empresaSelecionadaCache = null;
 }
 
 function atualizarTela(){
@@ -1181,7 +1157,6 @@ function renderGrafico(dict){
     }
 }
 
-// MODIFICAÇÃO DO RELATÓRIO DO WHATSAPP (CONFORME REQUISITADO)
 function enviarRelatorioWhatsApp(){
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").getAll().onsuccess = function(event) {
@@ -1202,7 +1177,7 @@ function enviarRelatorioWhatsApp(){
             return true;
         });
 
-        if(filtrados.length === 0) { alert("Nenhum registro encontrado para exportação no filtro atual."); return; }
+        if(filtrados.length === 0) { alert("Nenhum registro encontrado no filtro atual."); return; }
         
         let msg = "FADER LIVRE - EXTRATO CACHÊ CONTROL\n";
         if(caixaBuscaAtiva && termoBusca !== "") {
@@ -1218,7 +1193,7 @@ function enviarRelatorioWhatsApp(){
         });
 
         msg += "--------------------------------------\n";
-        msg += `Total: R$ ${totalGeralFiltrado.toFixed(2)}\n`; // Ajustado estritamente para apenas "Total"
+        msg += `Total: R$ ${totalGeralFiltrado.toFixed(2)}\n`;
         
         window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
     };
