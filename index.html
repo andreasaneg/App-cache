@@ -803,48 +803,6 @@ value="20:00">
 
 </div>
 
-<div style="display:none;">
-
-<input type="number" id="vCacheBase">
-
-<input type="number" id="vDiaria">
-
-<select id="tipoPagamento"><option value="Semanal">Semanal</option><option value="Quinzenal">Quinzenal</option><option value="Mensal">Mensal</option></select>
-
-<input type="number" id="inicioPeriodo" value="1">
-
-<input type="number" id="fimPeriodo" value="15">
-
-<select id="inicioSemana"><option value="1">Segunda-feira</option></select>
-
-<select id="fimSemana"><option value="0">Domingo</option></select>
-
-<input type="number" id="diasPagamento" value="5">
-
-<input type="number" id="nfPercentual" value="0">
-
-</div>
-
-<div id="wrapperCamposOpcionais" style="display:none; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
-
-<div>
-
-<label>Cachê (Editar valor)</label>
-
-<input type="number" id="vCacheBaseEdicao">
-
-</div>
-
-<div>
-
-<label>Diária (Editar valor)</label>
-
-<input type="number" id="vDiariaEdicao">
-
-</div>
-
-</div>
-
 <button
 class="btn btn-save"
 onclick="salvarJob()">
@@ -1125,8 +1083,10 @@ style="display:none;">
 
 let db;
 let ocultarValores = false;
-let filtroVisualizacao = "aberto"; // 'aberto' ou 'arquivado'
+let filtroVisualizacao = "aberto"; 
 let mapaCores = {};
+let empresaSelecionadaCache = null; // Armazena a configuração completa da empresa ativa
+
 let coresGrafico = [
 '#38bdf8','#10b981','#f59e0b','#ef4444',
 '#8b5cf6','#ec4899','#14b8a6','#f97316'
@@ -1329,12 +1289,6 @@ atualizarTela();
 
 }
 
-function alterarPeriodoPagamento(){
-
-const tipo = document.getElementById("tipoPagamento").value;
-
-}
-
 function alterarPeriodoPagamentoCadastro(){
 
 const tipo = document.getElementById("cadTipoPagamento").value;
@@ -1352,7 +1306,13 @@ const container = document.getElementById("autocompleteContainer");
 
 container.innerHTML = "";
 
-if(!db || !texto.trim()) return;
+if(!db || !texto.trim()) {
+
+empresaSelecionadaCache = null;
+
+return;
+
+}
 
 const tx = db.transaction("empresas", "readonly");
 
@@ -1361,6 +1321,20 @@ tx.objectStore("empresas").getAll().onsuccess = e => {
 const empresas = e.target.result;
 
 const filtradas = empresas.filter(emp => emp.nome.toLowerCase().includes(texto.toLowerCase().trim()));
+
+// Busca exata em tempo de digitação para garantir que funcione mesmo sem clicar
+
+const buscaExata = empresas.find(emp => emp.nome.toLowerCase() === texto.toLowerCase().trim());
+
+if(buscaExata) {
+
+empresaSelecionadaCache = buscaExata;
+
+} else {
+
+empresaSelecionadaCache = null;
+
+}
 
 if(filtradas.length > 0) {
 
@@ -1382,7 +1356,7 @@ document.getElementById("empresaJob").value = emp.nome;
 
 container.innerHTML = "";
 
-aplicarConfiguracoesEmpresa(emp);
+empresaSelecionadaCache = emp;
 
 };
 
@@ -1395,34 +1369,6 @@ container.appendChild(listaDiv);
 }
 
 };
-
-}
-
-function aplicarConfiguracoesEmpresa(achou) {
-
-document.getElementById("tipoPagamento").value = achou.tipoPagamento;
-
-document.getElementById("inicioPeriodo").value = achou.inicioPeriodo;
-
-document.getElementById("fimPeriodo").value = achou.fimPeriodo;
-
-document.getElementById("inicioSemana").value = achou.inicioSemana || 1;
-
-document.getElementById("fimSemana").value = achou.fimSemana || 0;
-
-document.getElementById("diasPagamento").value = achou.diasPagamento;
-
-document.getElementById("nfPercentual").value = achou.nfPercentual;
-
-document.getElementById("vCacheBase").value = achou.cacheBase || 0;
-
-document.getElementById("vDiaria").value = achou.diaria || 0;
-
-document.getElementById("vCacheBaseEdicao").value = achou.cacheBase || 0;
-
-document.getElementById("vDiariaEdicao").value = achou.diaria || 0;
-
-document.getElementById("wrapperCamposOpcionais").style.display = "grid";
 
 }
 
@@ -1656,11 +1602,21 @@ const nomeEmpresaInput = empresaJob.value.trim();
 
 if(!nomeEmpresaInput) return alert("Insira o nome de uma empresa");
 
-const cache = parseFloat(document.getElementById("vCacheBaseEdicao").value || 0);
+// BUG CORRIGIDO: Busca os valores da empresa ativa diretamente do cache carregado do banco de dados
 
-const diaria = parseFloat(document.getElementById("vDiariaEdicao").value || 0);
+if(!empresaSelecionadaCache || empresaSelecionadaCache.nome.toLowerCase() !== nomeEmpresaInput.toLowerCase()) {
 
-const nf = parseFloat(nfPercentual.value||0);
+alert("Por favor, selecione uma empresa cadastrada válida na lista de sugestões.");
+
+return;
+
+}
+
+const cache = parseFloat(empresaSelecionadaCache.cacheBase || 0);
+
+const diaria = parseFloat(empresaSelecionadaCache.diaria || 0);
+
+const nf = parseFloat(empresaSelecionadaCache.nfPercentual || 0);
 
 const campoInicio = document.getElementById("inicio").value;
 
@@ -1686,7 +1642,7 @@ const item = {
 
 data:dt,
 
-empresa:nomeEmpresaInput,
+empresa:empresaSelecionadaCache.nome,
 
 job:nomeJob.value||"Sem Nome",
 
@@ -1698,19 +1654,19 @@ horas:horas.toFixed(1),
 
 inicio:campoInicio,fim:campoFim,
 
-tipoPagamento:tipoPagamento.value,
+tipoPagamento:empresaSelecionadaCache.tipoPagamento,
 
-diasPagamento:parseInt(diasPagamento.value||0),
+diasPagamento:parseInt(empresaSelecionadaCache.diasPagamento||0),
 
-inicioPeriodo:parseInt(inicioPeriodo.value||1),
+inicioPeriodo:parseInt(empresaSelecionadaCache.inicioPeriodo||1),
 
-fimPeriodo:parseInt(fimPeriodo.value||15),
+fimPeriodo:parseInt(empresaSelecionadaCache.fimPeriodo||15),
 
-inicioSemana:parseInt(document.getElementById("inicioSemana").value||1),
+inicioSemana:parseInt(empresaSelecionadaCache.inicioSemana||1),
 
-fimSemana:parseInt(document.getElementById("fimSemana").value||0),
+fimSemana:parseInt(empresaSelecionadaCache.fimSemana||0),
 
-previsaoPagamento: calcularPagamento(dt,tipoPagamento.value,diasPagamento.value,inicioPeriodo.value,fimPeriodo.value,document.getElementById("inicioSemana").value,document.getElementById("fimSemana").value)
+previsaoPagamento: calcularPagamento(dt,empresaSelecionadaCache.tipoPagamento,empresaSelecionadaCache.diasPagamento,empresaSelecionadaCache.inicioPeriodo,empresaSelecionadaCache.fimPeriodo,empresaSelecionadaCache.inicioSemana,empresaSelecionadaCache.fimSemana)
 
 };
 
@@ -2154,15 +2110,7 @@ document.getElementById("inicio").value="08:00";
 
 document.getElementById("fim").value="20:00";
 
-document.getElementById("vCacheBase").value="0";
-
-document.getElementById("vDiaria").value="0";
-
-document.getElementById("vCacheBaseEdicao").value="";
-
-document.getElementById("vDiariaEdicao").value="";
-
-document.getElementById("wrapperCamposOpcionais").style.display="none";
+empresaSelecionadaCache = null;
 
 }
 
