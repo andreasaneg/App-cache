@@ -742,7 +742,7 @@ function formatarValor(valor){
     return Number(valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-// FUNÇÃO DE BACKUP AUTOMÁTICO SILENCIOSO (PREPARADA PARA APK NATÍVO)
+// FUNÇÃO DE BACKUP AUTOMÁTICO SILENCIOSO
 function ejecutarBackupAutomatico() {
     if(!db) return;
     const txJ = db.transaction("jobs", "readonly");
@@ -837,7 +837,7 @@ function gerenciarAutocomplete(textoBusca) {
         const filtradas = todasEmpresas.filter(emp => emp.nome.toLowerCase().includes(queryLimpa));
         const correspondenciaExata = todasEmpresas.find(emp => emp.nome.toLowerCase() === queryLimpa);
 
-        if(correspondenciaExata) empresaSelecionadaCache = correspondenciaExata; else empresaSelecionadaCache = null;
+        if(correspondenciaExata) empresaSelecionadaCache = correspondenciaExata;
 
         if(filtradas.length > 0) {
             const listaDiv = document.createElement("div");
@@ -912,6 +912,7 @@ function carregarEmpresaParaEdicao(id) {
     };
 }
 
+// RESTANTE DO CÓDIGO E CORREÇÃO DO SALVAR JOB...
 function deletarEmpresa(id) {
     if(confirm("Deseja remover permanentemente esta empresa?")) {
         const tx = db.transaction("empresas", "readwrite");
@@ -993,64 +994,73 @@ function calcularDataPagamentoReal(dataFechamento, diasUteis) {
     return objetoPagamento;
 }
 
-function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana){
-    let dataFechamento = calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana);
-    let dataFaturamento = calcularDataPagamentoReal(dataFechamento, diasUteis);
-    return dataFaturamento.toLocaleDateString("pt-BR");
-}
-
+// CORREÇÃO EFETIVA DO SISTEMA DE GRAVAÇÃO (SALVAR JOB)
 function salvarJob(){
     const dataInput = document.getElementById("dataJob").value;
     const inputNomeEmpresa = document.getElementById("empresaJob").value.trim();
     const idEdicao = document.getElementById("editJobId").value;
     
     if(!dataInput || !inputNomeEmpresa) { alert("Data e Empresa são obrigatórios."); return; }
-    if(!empresaSelecionadaCache || empresaSelecionadaCache.nome.toLowerCase() !== inputNomeEmpresa.toLowerCase()) {
-        alert("Selecione uma empresa válida da lista.");
-        return;
-    }
 
-    const cacheBase = parseFloat(empresaSelecionadaCache.cacheBase || 0);
-    const diaria = parseFloat(empresaSelecionadaCache.diaria || 0);
-    const percentualNF = parseFloat(empresaSelecionadaCache.nfPercentual || 0);
-    
-    const sInicio = document.getElementById("inicio").value;
-    const sFim = document.getElementById("fim").value;
-    const arrI = sInicio.split(":"); const arrF = sFim.split(":");
-    
-    let difMinutos = (parseInt(arrF[0]) * 60 + parseInt(arrF[1])) - (parseInt(arrI[0]) * 60 + parseInt(arrI[1]));
-    if(difMinutos < 0) difMinutos += 1440;
-    
-    const tHoras = difMinutos / 60;
-    const vExtras = Math.max(0, tHoras - 12);
-    const cHoraReg = cacheBase / 12;
-    const rExtras = vExtras * cHoraReg;
-    const fBruto = cacheBase + diaria + rExtras;
-    const imposto = fBruto * (percentualNF / 100);
+    // Faz a varredura interna no banco para coletar os dados reais da empresa cadastrada
+    const txBusca = db.transaction("empresas", "readonly");
+    txBusca.objectStore("empresas").getAll().onsuccess = function(event) {
+        const todasEmpresas = event.target.result;
+        const empresaEncontrada = todasEmpresas.find(emp => emp.nome.toLowerCase() === inputNomeEmpresa.toLowerCase());
 
-    const payloadJob = {
-        data: dataInput, empresa: empresaSelecionadaCache.nome,
-        job: document.getElementById("nomeJob").value || "Job Operacional",
-        cache: cacheBase, diaria: diaria, extra: rExtras, total: fBruto, valorNF: imposto,
-        horas: tHoras.toFixed(1), inicio: sInicio, fim: sFim,
-        tipoPagamento: empresaSelecionadaCache.tipoPagamento, diasPagamento: parseInt(empresaSelecionadaCache.diasPagamento || 0),
-        inicioPeriodo: parseInt(empresaSelecionadaCache.inicioPeriodo || 1), fimPeriodo: parseInt(empresaSelecionadaCache.fimPeriodo || 15),
-        inicioSemana: parseInt(empresaSelecionadaCache.inicioSemana || 1), fimSemana: parseInt(empresaSelecionadaCache.fimSemana || 0),
-        previsaoPagamento: calcularPagamento(dataInput, empresaSelecionadaCache.tipoPagamento, empresaSelecionadaCache.diasPagamento, empresaSelecionadaCache.inicioPeriodo, empresaSelecionadaCache.fimPeriodo, empresaSelecionadaCache.inicioSemana, empresaSelecionadaCache.fimSemana)
+        if(!empresaEncontrada) {
+            alert("A empresa '" + inputNomeEmpresa + "' não está cadastrada no sistema. Por favor, cadastre-a na aba 'Empresas' primeiro.");
+            return;
+        }
+
+        const cacheBase = parseFloat(empresaEncontrada.cacheBase || 0);
+        const diaria = parseFloat(empresaEncontrada.diaria || 0);
+        const percentualNF = parseFloat(empresaEncontrada.nfPercentual || 0);
+        
+        const sInicio = document.getElementById("inicio").value;
+        const sFim = document.getElementById("fim").value;
+        const arrI = sInicio.split(":"); const arrF = sFim.split(":");
+        
+        let difMinutos = (parseInt(arrF[0]) * 60 + parseInt(arrF[1])) - (parseInt(arrI[0]) * 60 + parseInt(arrI[1]));
+        if(difMinutos < 0) difMinutos += 1440;
+        
+        const tHoras = difMinutos / 60;
+        const vExtras = Math.max(0, tHoras - 12);
+        const cHoraReg = cacheBase / 12;
+        const rExtras = vExtras * cHoraReg;
+        const fBruto = cacheBase + diaria + rExtras;
+        const imposto = fBruto * (percentualNF / 100);
+
+        const payloadJob = {
+            data: dataInput, empresa: empresaEncontrada.nome,
+            job: document.getElementById("nomeJob").value || "Job Operacional",
+            cache: cacheBase, diaria: diaria, extra: rExtras, total: fBruto, valorNF: imposto,
+            horas: tHoras.toFixed(1), inicio: sInicio, fim: sFim,
+            tipoPagamento: empresaEncontrada.tipoPagamento, diasPagamento: parseInt(empresaEncontrada.diasPagamento || 0),
+            inicioPeriodo: parseInt(empresaEncontrada.inicioPeriodo || 1), fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 15),
+            inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1), fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
+            previsaoPagamento: calcularPagamento(dataInput, empresaEncontrada.tipoPagamento, empresaEncontrada.diasPagamento, empresaEncontrada.inicioPeriodo, empresaEncontrada.fimPeriodo, empresaEncontrada.inicioSemana, empresaEncontrada.fimSemana)
+        };
+
+        if(idEdicao) payloadJob.id = parseInt(idEdicao);
+
+        const txGravar = db.transaction("jobs", "readwrite");
+        const store = txGravar.objectStore("jobs");
+        const req = idEdicao ? store.put(payloadJob) : store.add(payloadJob);
+
+        req.onsuccess = function() {
+            alert("Lançamento processado com sucesso!");
+            executarBackupAutomatico();
+            atualizarTela();
+            limparCampos();
+        };
     };
+}
 
-    if(idEdicao) payloadJob.id = parseInt(idEdicao);
-
-    const tx = db.transaction("jobs", "readwrite");
-    const store = tx.objectStore("jobs");
-    const req = idEdicao ? store.put(payloadJob) : store.add(payloadJob);
-
-    req.onsuccess = function() {
-        alert("Lançamento processado!");
-        executarBackupAutomatico();
-        atualizarTela();
-        limparCampos();
-    };
+function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana){
+    let dataFechamento = calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana);
+    let dataFaturamento = calcularDataPagamentoReal(dataFechamento, diasUteis);
+    return dataFaturamento.toLocaleDateString("pt-BR");
 }
 
 function carregarJobParaEdicao(id) {
@@ -1065,11 +1075,6 @@ function carregarJobParaEdicao(id) {
         document.getElementById("nomeJob").value = item.job;
         document.getElementById("inicio").value = item.inicio;
         document.getElementById("fim").value = item.fim;
-        empresaSelecionadaCache = {
-            nome: item.empresa, cacheBase: item.cache, diaria: item.diaria, tipoPagamento: item.tipoPagamento,
-            diasPagamento: item.diasPagamento, inicioPeriodo: item.inicioPeriodo, fimPeriodo: item.fimPeriodo,
-            inicioSemana: item.inicioSemana, fimSemana: item.fimSemana, nfPercentual: (item.total > 0 ? (item.valorNF / item.total) * 100 : 0)
-        };
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 }
@@ -1152,7 +1157,6 @@ function atualizarTela(){
         document.getElementById("vTotalHoras").innerText = tHoras.toFixed(1) + "h";
         renderGrafico(dictGrafico);
         
-        // Mantém consistência visual se houver texto digitado previamente na busca
         if(document.getElementById("searchBox").style.display === "block"){
             filtrarTabela();
         }
@@ -1188,7 +1192,6 @@ function renderGrafico(dict){
 function enviarRelatorioWhatsApp(){
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").getAll().onsuccess = function(event) {
-        // 1. Obter o termo digitado no filtro de busca (se o campo estiver visível e preenchido)
         const termoBusca = document.getElementById("inputBusca").value.toUpperCase().trim();
         const caixaBuscaAtiva = document.getElementById("searchBox").style.display === "block";
 
@@ -1199,7 +1202,6 @@ function enviarRelatorioWhatsApp(){
             
             if (!passaFiltroAbas) return false;
 
-            // Se o usuário estiver usando a busca por texto, filtra pelo termo
             if (caixaBuscaAtiva && termoBusca !== "") {
                 const stringDoCard = `${item.empresa} ${item.job} ${item.data}`.toUpperCase();
                 return stringDoCard.includes(termoBusca);
@@ -1226,7 +1228,6 @@ function enviarRelatorioWhatsApp(){
 
         msg += "--------------------------------------\n";
         
-        // Se filtramos especificamente por uma empresa, exibe o resumo unificado simplificado
         if(caixaBuscaAtiva && termoBusca !== "") {
             msg += `TOTAL DA CONSULTA: R$ ${totalGeralFiltrado.toFixed(2)}\n`;
         } else {
