@@ -354,6 +354,7 @@
 </head>
 <body>
 
+<!-- PAINEL MASTER DE AUTENTICAÇÃO -->
 <div id="loginScreen" style="position:fixed; inset:0; background:var(--dark-pure); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; padding:15px;">
     <button onclick="emergencyReset()" style="background:var(--danger); color:white; border:none; padding:10px 15px; border-radius:10px; font-weight:bold; font-size:0.8em; margin-bottom:20px; width:100%; max-width:400px; box-shadow:0 4px 10px rgba(239,68,68,0.3);">⚠️ Forçar Reset de Emergência (Celular)</button>
 
@@ -384,18 +385,22 @@
     </div>
 </div>
 
+<!-- HEADER DA APLICAÇÃO -->
 <div class="header">
     <h2>FADER LIVRE</h2>
     <p>SISTEMA CONTROLADOR DE CACHÊS</p>
 </div>
 
+<!-- NAVEGAÇÃO ENTRE MÓDULOS -->
 <div class="tab-container">
     <button class="tab-button active" id="tabJobsBtn" onclick="alternarAba('abaJobs', event)">💼 Lançamentos</button>
     <button class="tab-button" id="tabEmpresasBtn" onclick="alternarAba('abaEmpresas', event)">🏢 Empresas</button>
 </div>
 
+<!-- SEÇÃO DE LANÇAMENTOS (JOBS) -->
 <div id="abaJobs" class="app-section active">
     
+    <!-- DASHBOARD -->
     <div class="dashboard">
         <div class="dashboard-card">
             <button class="eye-button" id="eyeButton" onclick="toggleValores()">👁️</button>
@@ -412,6 +417,7 @@
         </div>
     </div>
 
+    <!-- ENTRADA DE DADOS -->
     <div class="input-group">
         <h3><span id="formJobTitle">💼 Job</span></h3>
         <input type="hidden" id="editJobId" value="">
@@ -450,6 +456,7 @@
         </div>
     </div>
 
+    <!-- HISTÓRICO GERAL -->
     <div class="input-group">
         <div class="section-title" style="margin:0 0 20px 0;">📋 Registros</div>
         
@@ -475,6 +482,7 @@
     </div>
 </div>
 
+<!-- SEÇÃO DE CONFIGURAÇÃO DE EMPRESAS -->
 <div id="abaEmpresas" class="app-section">
     <div class="input-group">
         <h2 id="formEmpresaTitle">🏢 Nova Empresa e Regras</h2>
@@ -937,93 +945,66 @@ function calcularDataPagamentoReal(dataFechamento, diasUteis) {
     return objetoPagamento;
 }
 
-// BUSCA ISOLADA VIA PROMISE (EVITA TRAVAMENTO DE TRANSAÇÃO DO INDEXEDDB)
-function buscarDiretrizesEmpresa(nomeProcurado) {
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction("empresas", "readonly");
-        const store = tx.objectStore("empresas");
-        const req = store.getAll();
-        
-        req.onsuccess = function(event) {
-            const todas = event.target.result;
-            const encontrada = todas.find(emp => emp.nome.toLowerCase() === nomeProcurado.toLowerCase());
-            resolve(encontrada || null);
-        };
-        req.onerror = function() { reject(null); };
-    });
-}
-
-// SALVAR TOTALMENTE ASSÍNCRONO E SEGURO (CORRIGIDO)
-async function salvarJob(){
+function salvarJob(){
     const dataInput = document.getElementById("dataJob").value;
     const inputNomeEmpresa = document.getElementById("empresaJob").value.trim();
     const idEdicao = document.getElementById("editJobId").value;
     
     if(!dataInput || !inputNomeEmpresa) { alert("Data e Empresa são obrigatórios."); return; }
 
-    // Chamada isolada fora do processo de gravação do banco
-    const empresaEncontrada = await buscarDiretrizesEmpresa(inputNomeEmpresa);
+    const transacaoEmpresa = db.transaction("empresas", "readonly");
+    transacaoEmpresa.objectStore("empresas").getAll().onsuccess = function(event) {
+        const todasEmpresas = event.target.result;
+        const empresaEncontrada = todasEmpresas.find(emp => emp.nome.toLowerCase() === inputNomeEmpresa.toLowerCase());
 
-    if(!empresaEncontrada) {
-        alert("A empresa '" + inputNomeEmpresa + "' não existe no banco. Cadastre-a primeiro na aba Empresas.");
-        return;
-    }
+        if(!empresaEncontrada) {
+            alert("A empresa '" + inputNomeEmpresa + "' não existe no banco. Cadastre-a primeiro na aba Empresas.");
+            return;
+        }
 
-    const cacheBase = parseFloat(empresaEncontrada.cacheBase || 0);
-    const diaria = parseFloat(empresaEncontrada.diaria || 0);
-    const percentualNF = parseFloat(empresaEncontrada.nfPercentual || 0);
-    
-    const sInicio = document.getElementById("inicio").value;
-    const sFim = document.getElementById("fim").value;
-    const arrI = sInicio.split(":"); const arrF = sFim.split(":");
-    
-    let difMinutos = (parseInt(arrF[0]) * 60 + parseInt(arrF[1])) - (parseInt(arrI[0]) * 60 + parseInt(arrI[1]));
-    if(difMinutos < 0) difMinutos += 1440;
-    
-    const tHoras = difMinutos / 60;
-    const vExtras = Math.max(0, tHoras - 12);
-    const cHoraReg = cacheBase / 12;
-    const rExtras = vExtras * cHoraReg;
-    const fBruto = cacheBase + diaria + rExtras;
-    const imposto = fBruto * (percentualNF / 100);
+        const cacheBase = parseFloat(empresaEncontrada.cacheBase || 0);
+        const diaria = parseFloat(empresaEncontrada.diaria || 0);
+        const percentualNF = parseFloat(empresaEncontrada.nfPercentual || 0);
+        
+        const sInicio = document.getElementById("inicio").value;
+        const sFim = document.getElementById("fim").value;
+        const arrI = sInicio.split(":"); const arrF = sFim.split(":");
+        
+        let difMinutos = (parseInt(arrF[0]) * 60 + parseInt(arrF[1])) - (parseInt(arrI[0]) * 60 + parseInt(arrI[1]));
+        if(difMinutos < 0) difMinutos += 1440;
+        
+        const tHoras = difMinutos / 60;
+        const vExtras = Math.max(0, tHoras - 12);
+        const cHoraReg = cacheBase / 12;
+        const rExtras = vExtras * cHoraReg;
+        const fBruto = cacheBase + diaria + rExtras;
+        const imposto = fBruto * (percentualNF / 100);
 
-    const payloadJob = {
-        data: dataInput, 
-        empresa: empresaEncontrada.nome,
-        job: document.getElementById("nomeJob").value || "Job Operacional",
-        cache: cacheBase, diaria: diaria, extra: rExtras, total: fBruto, valorNF: imposto,
-        horas: tHoras.toFixed(1), inicio: sInicio, fim: sFim,
-        tipoPagamento: empresaEncontrada.tipoPagamento, diasPagamento: parseInt(empresaEncontrada.diasPagamento || 0),
-        inicioPeriodo: parseInt(empresaEncontrada.inicioPeriodo || 1), fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 15),
-        inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1), fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
-        previsaoPagamento: calcularPagamento(dataInput, empresaEncontrada.tipoPagamento, empresaEncontrada.diasPagamento, empresaEncontrada.inicioPeriodo, empresaEncontrada.fimPeriodo, empresaEncontrada.inicioSemana, empresaEncontrada.fimSemana)
+        const payloadJob = {
+            data: dataInput, 
+            empresa: empresaEncontrada.nome,
+            job: document.getElementById("nomeJob").value || "Job Operacional",
+            cache: cacheBase, diaria: diaria, extra: rExtras, total: fBruto, valorNF: imposto,
+            horas: tHoras.toFixed(1), inicio: sInicio, fim: sFim,
+            tipoPagamento: empresaEncontrada.tipoPagamento, diasPagamento: parseInt(empresaEncontrada.diasPagamento || 0),
+            inicioPeriodo: parseInt(empresaEncontrada.inicioPeriodo || 1), fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 15),
+            inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1), fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
+            previsaoPagamento: calcularPagamento(dataInput, empresaEncontrada.tipoPagamento, empresaEncontrada.diasPagamento, empresaEncontrada.inicioPeriodo, empresaEncontrada.fimPeriodo, empresaEncontrada.inicioSemana, empresaEncontrada.fimSemana)
+        };
+
+        if(idEdicao) payloadJob.id = parseInt(idEdicao);
+
+        const txGravar = db.transaction("jobs", "readwrite");
+        const storeGravar = txGravar.objectStore("jobs");
+        const requisicaoFinal = idEdicao ? storeGravar.put(payloadJob) : storeGravar.add(payloadJob);
+
+        requisicaoFinal.onsuccess = function() {
+            alert("Lançamento processado com sucesso!");
+            executarBackupAutomatico();
+            atualizarTela();
+            limparCampos();
+        };
     };
-
-    // Abertura limpa da transação apenas para escrita imediata
-    const txGravar = db.transaction("jobs", "readwrite");
-    const storeGravar = txGravar.objectStore("jobs");
-
-    if(idEdicao && idEdicao.trim() !== "") {
-        payloadJob.id = parseInt(idEdicao);
-        const reqPut = storeGravar.put(payloadJob);
-        reqPut.onsuccess = finalizaSalvamento;
-        reqPut.onerror = erroSalvamento;
-    } else {
-        const reqAdd = storeGravar.add(payloadJob);
-        reqAdd.onsuccess = finalizaSalvamento;
-        reqAdd.onerror = erroSalvamento;
-    }
-}
-
-function finalizaSalvamento() {
-    alert("Lançamento processado com sucesso!");
-    executarBackupAutomatico();
-    atualizarTela();
-    limparCampos();
-}
-
-function erroSalvamento() {
-    alert("Erro crítico ao tentar persistir dados no banco de dados local.");
 }
 
 function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana){
