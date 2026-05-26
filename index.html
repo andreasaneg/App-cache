@@ -346,6 +346,27 @@ z-index: 10;
 
 }
 
+.btn-edit-inline{
+
+position:absolute;
+
+top:10px;
+right:50px;
+
+background:none;
+
+border:none;
+
+color:var(--blue);
+
+font-size:1.3em;
+
+cursor:pointer;
+
+z-index: 10;
+
+}
+
 .chart-container{
 
 height:320px;
@@ -897,6 +918,8 @@ placeholder="Buscar empresa, job ou data...">
 
 <h2>🏢 Cadastro de Condições da Empresa</h2>
 
+<input type="hidden" id="cadIdEmpresa" value="">
+
 <label>Nome da Empresa</label>
 
 <input type="text" id="cadNomeEmpresa" placeholder="Ex: FADER LIVRE">
@@ -939,7 +962,7 @@ placeholder="Buscar empresa, job ou data...">
 
 <div>
 
-<label>Início do período</label>
+<label>Início do período (Dia do mês)</label>
 
 <input type="number" id="cadInicioPeriodo" min="1" max="31" value="1">
 
@@ -947,7 +970,7 @@ placeholder="Buscar empresa, job ou data...">
 
 <div>
 
-<label>Fim do período</label>
+<label>Fim do período (Dia do mês)</label>
 
 <input type="number" id="cadFimPeriodo" min="1" max="31" value="15">
 
@@ -957,7 +980,7 @@ placeholder="Buscar empresa, job ou data...">
 
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+<div id="cadPeriodoSemanalBox" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
 
 <div>
 
@@ -1017,13 +1040,13 @@ placeholder="Buscar empresa, job ou data...">
 
 <input type="number" id="cadNfPercentual" value="0">
 
-<button class="btn btn-save" onclick="salvarEmpresa()">💾 SALVAR EMPRESA</button>
+<button class="btn btn-save" onclick="salvarEmpresa()">💾 SALVAR CONFIGURAÇÃO</button>
 
 </div>
 
 <div class="input-group">
 
-<h3>Empresas Cadastradas</h3>
+<h3>🏢 Empresas Cadastradas e Prazos</h3>
 
 <div id="listaEmpresasCadastradas"></div>
 
@@ -1085,7 +1108,7 @@ let db;
 let ocultarValores = false;
 let filtroVisualizacao = "aberto"; 
 let mapaCores = {};
-let empresaSelecionadaCache = null; // Armazena a configuração completa da empresa ativa
+let empresaSelecionadaCache = null; 
 
 let coresGrafico = [
 '#38bdf8','#10b981','#f59e0b','#ef4444',
@@ -1138,7 +1161,6 @@ document.getElementById("senhaInput").value;
 
 if(!senhaSalva){
 
-// primeiro acesso
 localStorage.setItem("senha_cache_control", senha);
 document.getElementById("loginScreen").style.display="none";
 return;
@@ -1267,7 +1289,9 @@ document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('ac
 
 document.getElementById(abaId).classList.add('active');
 
-event.currentTarget.classList.add('active');
+if(event && event.currentTarget) {
+    event.currentTarget.classList.add('active');
+}
 
 if(abaId === 'abaEmpresas') {
 
@@ -1293,8 +1317,9 @@ function alterarPeriodoPagamentoCadastro(){
 
 const tipo = document.getElementById("cadTipoPagamento").value;
 
-document.getElementById("cadPeriodoPersonalizado").style.display =
-(tipo==="Quinzenal"||tipo==="Mensal") ? "block":"none";
+document.getElementById("cadPeriodoPersonalizado").style.display = (tipo==="Quinzenal"||tipo==="Mensal") ? "block" : "none";
+
+document.getElementById("cadPeriodoSemanalBox").style.display = (tipo==="Semanal") ? "grid" : "none";
 
 }
 
@@ -1321,8 +1346,6 @@ tx.objectStore("empresas").getAll().onsuccess = e => {
 const empresas = e.target.result;
 
 const filtradas = empresas.filter(emp => emp.nome.toLowerCase().includes(texto.toLowerCase().trim()));
-
-// Busca exata em tempo de digitação para garantir que funcione mesmo sem clicar
 
 const buscaExata = empresas.find(emp => emp.nome.toLowerCase() === texto.toLowerCase().trim());
 
@@ -1372,11 +1395,13 @@ container.appendChild(listaDiv);
 
 }
 
-/* ================= FLUXO CADASTRO EMPRESA ================= */
+/* ================= FLUXO CADASTRO/EDIÇÃO EMPRESA ================= */
 
 function salvarEmpresa() {
 
 const nome = document.getElementById("cadNomeEmpresa").value.trim();
+
+const idExistente = document.getElementById("cadIdEmpresa").value;
 
 if(!nome) return alert("Digite o nome da empresa");
 
@@ -1404,13 +1429,23 @@ nfPercentual: parseFloat(document.getElementById("cadNfPercentual").value || 0)
 
 };
 
+if(idExistente) {
+
+item.id = parseInt(idExistente);
+
+}
+
 const tx = db.transaction("empresas", "readwrite");
 
 const store = tx.objectStore("empresas");
 
-store.add(item).onsuccess = () => {
+const requestSalvar = idExistente ? store.put(item) : store.add(item);
 
-alert("Empresa cadastrada com sucesso!");
+requestSalvar.onsuccess = () => {
+
+alert(idExistente ? "Configurações atualizadas com sucesso!" : "Empresa cadastrada com sucesso!");
+
+document.getElementById("cadIdEmpresa").value = "";
 
 document.getElementById("cadNomeEmpresa").value = "";
 
@@ -1432,6 +1467,8 @@ if(!db) return;
 
 const container = document.getElementById("listaEmpresasCadastradas");
 
+if(!container) return;
+
 container.innerHTML = "";
 
 const tx = db.transaction("empresas", "readonly");
@@ -1452,11 +1489,11 @@ lista.forEach(emp => {
 
 const div = document.createElement("div");
 
-div.style.background = "#0f172a";
+div.style.background = "#1e293b";
 
-div.style.padding = "12px";
+div.style.padding = "15px";
 
-div.style.borderRadius = "10px";
+div.style.borderRadius = "14px";
 
 div.style.marginBottom = "10px";
 
@@ -1464,17 +1501,33 @@ div.style.border = "1px solid #334155";
 
 div.style.position = "relative";
 
+let detalhePeriodo = "";
+
+if(emp.tipoPagamento === "Semanal") {
+
+detalhePeriodo = `Semanal (Fechamento no Domingo)`;
+
+} else {
+
+detalhePeriodo = `${emp.tipoPagamento} (Dias ${emp.inicioPeriodo} a ${emp.fimPeriodo})`;
+
+}
+
 div.innerHTML = `
 
-<strong>${emp.nome}</strong><br>
+<div style="font-size:1.1em; font-weight:bold; color:var(--primary); margin-bottom:5px;">${emp.nome}</div>
 
-<small style="color:var(--muted)">
+<small style="color:var(--text); line-height: 1.5;">
 
-Cachê: R$ ${emp.cacheBase.toFixed(2)} | Diária: R$ ${emp.diaria.toFixed(2)} <br>
+💰 <b>Cachê Padrão:</b> R$ ${emp.cacheBase.toFixed(2)} | 🚗 <b>Diária:</b> R$ ${emp.diaria.toFixed(2)} <br>
 
-Prazo: ${emp.tipoPagamento} | +${emp.diasPagamento} dias | NF: ${emp.nfPercentual}%
+📅 <b>Modelo:</b> ${detalhePeriodo} <br>
+
+⏱️ <b>Liberação:</b> +${emp.diasPagamento} dias úteis | 📄 <b>NF:</b> ${emp.nfPercentual}%
 
 </small>
+
+<button class="btn-edit-inline" onclick="carregarEmpresaParaEdicao(${emp.id})">✏️</button>
 
 <button class="btn-del" onclick="deletarEmpresa(${emp.id})">🗑️</button>
 
@@ -1483,6 +1536,46 @@ Prazo: ${emp.tipoPagamento} | +${emp.diasPagamento} dias | NF: ${emp.nfPercentua
 container.appendChild(div);
 
 });
+
+};
+
+}
+
+function carregarEmpresaParaEdicao(id) {
+
+const tx = db.transaction("empresas", "readonly");
+
+tx.objectStore("empresas").get(id).onsuccess = e => {
+
+const emp = e.target.result;
+
+if(!emp) return;
+
+document.getElementById("cadIdEmpresa").value = emp.id;
+
+document.getElementById("cadNomeEmpresa").value = emp.nome;
+
+document.getElementById("cadCacheBase").value = emp.cacheBase;
+
+document.getElementById("cadDiaria").value = emp.diaria;
+
+document.getElementById("cadTipoPagamento").value = emp.tipoPagamento;
+
+document.getElementById("cadInicioPeriodo").value = emp.inicioPeriodo || 1;
+
+document.getElementById("cadFimPeriodo").value = emp.fimPeriodo || 15;
+
+document.getElementById("cadInicioSemana").value = emp.inicioSemana || 1;
+
+document.getElementById("cadFimSemana").value = emp.fimSemana || 0;
+
+document.getElementById("cadDiasPagamento").value = emp.diasPagamento || 0;
+
+document.getElementById("cadNfPercentual").value = emp.nfPercentual || 0;
+
+alterarPeriodoPagamentoCadastro();
+
+window.scrollTo({top: 0, behavior: 'smooth'});
 
 };
 
@@ -1542,7 +1635,7 @@ let fechamento = new Date(data);
 
 if (tipo === "Semanal") {
 
-let alvoFim = parseInt(fimSemana);
+let alvoFim = parseInt(fimSemana !== undefined ? fimSemana : 0);
 
 let diasAteFechamento = (alvoFim - data.getDay() + 7) % 7;
 
@@ -1554,13 +1647,17 @@ fechamento.setDate(data.getDate() + diasAteFechamento);
 
 let dia = data.getDate();
 
-if (dia >= inicioPeriodo && dia <= fimPeriodo) {
+let iniP = parseInt(inicioPeriodo || 1);
 
-fechamento = new Date(data.getFullYear(), data.getMonth(), fimPeriodo);
+let fimP = parseInt(fimPeriodo || 15);
+
+if (dia >= iniP && dia <= fimP) {
+
+fechamento = new Date(data.getFullYear(), data.getMonth(), fimP);
 
 } else {
 
-fechamento = new Date(data.getFullYear(), data.getMonth() + 1, fimPeriodo);
+fechamento = new Date(data.getFullYear(), data.getMonth() + 1, fimP);
 
 }
 
@@ -1601,8 +1698,6 @@ if(!dt) return alert("Selecione data");
 const nomeEmpresaInput = empresaJob.value.trim();
 
 if(!nomeEmpresaInput) return alert("Insira o nome de uma empresa");
-
-// BUG CORRIGIDO: Busca os valores da empresa ativa diretamente do cache carregado do banco de dados
 
 if(!empresaSelecionadaCache || empresaSelecionadaCache.nome.toLowerCase() !== nomeEmpresaInput.toLowerCase()) {
 
@@ -1844,6 +1939,8 @@ if(!db) return;
 
 const lista = document.getElementById("listaHistorico");
 
+if(!lista) return;
+
 lista.innerHTML = "";
 
 let totalGeralDashboard = 0;
@@ -1985,6 +2082,8 @@ renderGrafico(empresasGrafico);
 function renderGrafico(empresas){
 
 const ctx = document.getElementById("graficoEmpresas");
+
+if(!ctx) return;
 
 const labels = Object.keys(empresas);
 
