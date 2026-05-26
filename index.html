@@ -48,7 +48,6 @@
             overflow-x: hidden;
         }
 
-        /* Estrutura de Layout e Header */
         .header {
             text-align: center;
             border-bottom: 2px solid var(--primary);
@@ -72,7 +71,6 @@
             text-transform: uppercase;
         }
         
-        /* Dashboard Cards Múltiplos */
         .dashboard {
             display: grid;
             grid-template-columns: 1fr;
@@ -120,7 +118,6 @@
             justify-content: center;
         }
         
-        /* Formulários e Grupos de Input */
         .input-group {
             background: var(--card);
             border: 1px solid var(--border-color);
@@ -166,7 +163,6 @@
             box-shadow: 0 0 0 3px var(--primary-glow);
         }
         
-        /* Botões Globais do Sistema */
         .btn {
             width: 100%;
             border: none;
@@ -190,7 +186,6 @@
         .btn-search { background: #0ea5e9; color: white; }
         .btn-cancel { background: #334155; color: #f8fafc; }
         
-        /* Listas e Histórico de Cards */
         .history-card {
             background: var(--card);
             border-radius: 20px;
@@ -244,7 +239,6 @@
             z-index: 10;
         }
         
-        /* Componentes Especiais e Utilitários */
         .chart-container {
             height: 300px;
             margin-top: 15px;
@@ -261,7 +255,6 @@
             color: #ffffff;
         }
         
-        /* Sistema de Abas */
         .tab-container {
             display: flex;
             gap: 8px;
@@ -295,7 +288,6 @@
         .app-section { display: none; }
         .app-section.active { display: block; }
         
-        /* Autocomplete Customizado */
         .autocomplete-list {
             position: absolute;
             z-index: 100;
@@ -314,7 +306,6 @@
             border-bottom: 1px solid var(--border-color);
         }
         
-        /* Badges de Estado */
         .badge-status {
             display: inline-flex;
             align-items: center;
@@ -329,7 +320,6 @@
         .status-fechado { background: rgba(234, 88, 12, 0.15); color: #fb923c; border: 1px solid rgba(234, 88, 12, 0.3); }
         .status-pago { background: rgba(22, 163, 74, 0.15); color: #4ade80; border: 1px solid rgba(22, 163, 74, 0.3); }
         
-        /* Filtro de Histórico */
         .toggle-filter-container {
             display: flex;
             gap: 8px;
@@ -665,7 +655,6 @@ function recuperarSenha(){
     alert("Instruções locais enviadas para: " + email);
 }
 
-// CONEXÃO INDEXEDDB
 const requestDB = indexedDB.open("CacheFinal_V33", 1);
 
 requestDB.onupgradeneeded = function(event) {
@@ -766,7 +755,6 @@ function alternarAba(abaId, event) {
     if(abaId === 'abaEmpresas') atualizarListaEmpresas(); else atualizarTela();
 }
 
-// CORREÇÃO VISUAL DO FILTRO ("aberto")
 function definirFiltroVisualizacao(tipo) {
     filtroVisualizacao = tipo;
     document.getElementById("btnFiltroAberto").classList.toggle("active", tipo === 'aberto');
@@ -949,81 +937,93 @@ function calcularDataPagamentoReal(dataFechamento, diasUteis) {
     return objetoPagamento;
 }
 
-// ARQUITETURA CORRIGIDA E ASSEGURADA: GRAVAÇÃO E ATUALIZAÇÃO SEM CONFLITO DE TRANSAÇÃO
-function salvarJob(){
+// BUSCA ISOLADA VIA PROMISE (EVITA TRAVAMENTO DE TRANSAÇÃO DO INDEXEDDB)
+function buscarDiretrizesEmpresa(nomeProcurado) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction("empresas", "readonly");
+        const store = tx.objectStore("empresas");
+        const req = store.getAll();
+        
+        req.onsuccess = function(event) {
+            const todas = event.target.result;
+            const encontrada = todas.find(emp => emp.nome.toLowerCase() === nomeProcurado.toLowerCase());
+            resolve(encontrada || null);
+        };
+        req.onerror = function() { reject(null); };
+    });
+}
+
+// SALVAR TOTALMENTE ASSÍNCRONO E SEGURO (CORRIGIDO)
+async function salvarJob(){
     const dataInput = document.getElementById("dataJob").value;
     const inputNomeEmpresa = document.getElementById("empresaJob").value.trim();
     const idEdicao = document.getElementById("editJobId").value;
     
     if(!dataInput || !inputNomeEmpresa) { alert("Data e Empresa são obrigatórios."); return; }
 
-    // Etapa 1: Captura os parâmetros isoladamente (Transação 1 - Leitura)
-    const txBusca = db.transaction("empresas", "readonly");
-    const storeBusca = txBusca.objectStore("empresas");
+    // Chamada isolada fora do processo de gravação do banco
+    const empresaEncontrada = await buscarDiretrizesEmpresa(inputNomeEmpresa);
+
+    if(!empresaEncontrada) {
+        alert("A empresa '" + inputNomeEmpresa + "' não existe no banco. Cadastre-a primeiro na aba Empresas.");
+        return;
+    }
+
+    const cacheBase = parseFloat(empresaEncontrada.cacheBase || 0);
+    const diaria = parseFloat(empresaEncontrada.diaria || 0);
+    const percentualNF = parseFloat(empresaEncontrada.nfPercentual || 0);
     
-    storeBusca.getAll().onsuccess = function(event) {
-        const todasEmpresas = event.target.result;
-        const empresaEncontrada = todasEmpresas.find(emp => emp.nome.toLowerCase() === inputNomeEmpresa.toLowerCase());
+    const sInicio = document.getElementById("inicio").value;
+    const sFim = document.getElementById("fim").value;
+    const arrI = sInicio.split(":"); const arrF = sFim.split(":");
+    
+    let difMinutos = (parseInt(arrF[0]) * 60 + parseInt(arrF[1])) - (parseInt(arrI[0]) * 60 + parseInt(arrI[1]));
+    if(difMinutos < 0) difMinutos += 1440;
+    
+    const tHoras = difMinutos / 60;
+    const vExtras = Math.max(0, tHoras - 12);
+    const cHoraReg = cacheBase / 12;
+    const rExtras = vExtras * cHoraReg;
+    const fBruto = cacheBase + diaria + rExtras;
+    const imposto = fBruto * (percentualNF / 100);
 
-        if(!empresaEncontrada) {
-            alert("A empresa '" + inputNomeEmpresa + "' não está cadastrada no sistema. Cadastre-a na aba 'Empresas' primeiro.");
-            return;
-        }
-
-        // Executa cálculos matemáticos de faturamento fora da escuta do banco
-        const cacheBase = parseFloat(empresaEncontrada.cacheBase || 0);
-        const diaria = parseFloat(empresaEncontrada.diaria || 0);
-        const percentualNF = parseFloat(empresaEncontrada.nfPercentual || 0);
-        
-        const sInicio = document.getElementById("inicio").value;
-        const sFim = document.getElementById("fim").value;
-        const arrI = sInicio.split(":"); const arrF = sFim.split(":");
-        
-        let difMinutos = (parseInt(arrF[0]) * 60 + parseInt(arrF[1])) - (parseInt(arrI[0]) * 60 + parseInt(arrI[1]));
-        if(difMinutos < 0) difMinutos += 1440;
-        
-        const tHoras = difMinutos / 60;
-        const vExtras = Math.max(0, tHoras - 12);
-        const cHoraReg = cacheBase / 12;
-        const rExtras = vExtras * cHoraReg;
-        const fBruto = cacheBase + diaria + rExtras;
-        const imposto = fBruto * (percentualNF / 100);
-
-        const payloadJob = {
-            data: dataInput, 
-            empresa: empresaEncontrada.nome,
-            job: document.getElementById("nomeJob").value || "Job Operacional",
-            cache: cacheBase, diaria: diaria, extra: rExtras, total: fBruto, valorNF: imposto,
-            horas: tHoras.toFixed(1), inicio: sInicio, fim: sFim,
-            tipoPagamento: empresaEncontrada.tipoPagamento, diasPagamento: parseInt(empresaEncontrada.diasPagamento || 0),
-            inicioPeriodo: parseInt(empresaEncontrada.inicioPeriodo || 1), fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 15),
-            inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1), fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
-            previsaoPagamento: calcularPagamento(dataInput, empresaEncontrada.tipoPagamento, empresaEncontrada.diasPagamento, empresaEncontrada.inicioPeriodo, empresaEncontrada.fimPeriodo, empresaEncontrada.inicioSemana, empresaEncontrada.fimSemana)
-        };
-
-        // Injeta a chave primária numérica caso o gatilho seja de Edição de Registro
-        if(idEdicao && idEdicao.trim() !== "") {
-            payloadJob.id = parseInt(idEdicao);
-        }
-
-        // Etapa 2: Abre uma transação limpa e isolada exclusivamente para gravação (Transação 2 - Escrita)
-        const txGravar = db.transaction("jobs", "readwrite");
-        const storeGravar = txGravar.objectStore("jobs");
-        
-        // Se houver idEdicao usa .put(), do contrário usa .add() para criar novo autoincremento
-        const req = (idEdicao && idEdicao.trim() !== "") ? storeGravar.put(payloadJob) : storeGravar.add(payloadJob);
-
-        req.onsuccess = function() {
-            alert("Lançamento processado com sucesso!");
-            executarBackupAutomatico();
-            atualizarTela();
-            limparCampos();
-        };
-        
-        req.onerror = function(err) {
-            alert("Erro crítico ao tentar persistir dados no banco local.");
-        };
+    const payloadJob = {
+        data: dataInput, 
+        empresa: empresaEncontrada.nome,
+        job: document.getElementById("nomeJob").value || "Job Operacional",
+        cache: cacheBase, diaria: diaria, extra: rExtras, total: fBruto, valorNF: imposto,
+        horas: tHoras.toFixed(1), inicio: sInicio, fim: sFim,
+        tipoPagamento: empresaEncontrada.tipoPagamento, diasPagamento: parseInt(empresaEncontrada.diasPagamento || 0),
+        inicioPeriodo: parseInt(empresaEncontrada.inicioPeriodo || 1), fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 15),
+        inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1), fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
+        previsaoPagamento: calcularPagamento(dataInput, empresaEncontrada.tipoPagamento, empresaEncontrada.diasPagamento, empresaEncontrada.inicioPeriodo, empresaEncontrada.fimPeriodo, empresaEncontrada.inicioSemana, empresaEncontrada.fimSemana)
     };
+
+    // Abertura limpa da transação apenas para escrita imediata
+    const txGravar = db.transaction("jobs", "readwrite");
+    const storeGravar = txGravar.objectStore("jobs");
+
+    if(idEdicao && idEdicao.trim() !== "") {
+        payloadJob.id = parseInt(idEdicao);
+        const reqPut = storeGravar.put(payloadJob);
+        reqPut.onsuccess = finalizaSalvamento;
+        reqPut.onerror = erroSalvamento;
+    } else {
+        const reqAdd = storeGravar.add(payloadJob);
+        reqAdd.onsuccess = finalizaSalvamento;
+        reqAdd.onerror = erroSalvamento;
+    }
+}
+
+function finalizaSalvamento() {
+    alert("Lançamento processado com sucesso!");
+    executarBackupAutomatico();
+    atualizarTela();
+    limparCampos();
+}
+
+function erroSalvamento() {
+    alert("Erro crítico ao tentar persistir dados no banco de dados local.");
 }
 
 function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana){
