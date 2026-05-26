@@ -383,8 +383,10 @@
 </head>
 <body>
 
+<!-- PAINEL MASTER DE AUTENTICAÇÃO -->
 <div id="loginScreen" style="position:fixed; inset:0; background:var(--dark-pure); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; padding:15px;">
     
+    <!-- BOTÃO DE RESET EM CASO DE TRAVAMENTO NO CELULAR -->
     <button onclick="emergencyReset()" style="background:var(--danger); color:white; border:none; padding:10px 15px; border-radius:10px; font-weight:bold; font-size:0.8em; margin-bottom:20px; width:100%; max-width:400px; box-shadow:0 4px 10px rgba(239,68,68,0.3);">⚠️ Forçar Reset de Emergência (Celular)</button>
 
     <div style="background:var(--card); padding:25px; border-radius:28px; width:100%; max-width:400px; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6); border: 1px solid var(--border-color);">
@@ -414,34 +416,39 @@
     </div>
 </div>
 
+<!-- HEADER DA APLICAÇÃO -->
 <div class="header">
     <h2>FADER LIVRE</h2>
     <p>SISTEMA CONTROLADOR DE CACHÊS</p>
 </div>
 
+<!-- NAVEGAÇÃO ENTRE MÓDULOS -->
 <div class="tab-container">
     <button class="tab-button active" id="tabJobsBtn" onclick="alternarAba('abaJobs', event)">💼 Lançamentos</button>
     <button class="tab-button" id="tabEmpresasBtn" onclick="alternarAba('abaEmpresas', event)">🏢 Empresas</button>
 </div>
 
+<!-- SEÇÃO DE LANÇAMENTOS (JOBS) -->
 <div id="abaJobs" class="app-section active">
     
+    <!-- PAINEL DE PERFORMANCE INDICADORES -->
     <div class="dashboard">
         <div class="dashboard-card">
             <button class="eye-button" id="eyeButton" onclick="toggleValores()">👁️</button>
-            <div class="dashboard-title" style="color:var(--blue)">Rendimento Bruto (Aberto)</div>
-            <div id="vTotalSemana" class="total-geral">R$ 0,00</div>
+            <div class="dashboard-title" style="color:var(--blue)">Horas Trabalhadas</div>
+            <div id="vTotalHoras" class="total-horas">0.0h</div>
         </div>
         <div class="dashboard-card">
             <div class="dashboard-title" style="color:var(--danger)">Imposto NF</div>
             <div id="vTotalNF" class="total-nf">- R$ 0,00</div>
         </div>
         <div class="dashboard-card">
-            <div class="dashboard-title" style="color:var(--primary)">Horas Trabalhadas</div>
-            <div id="vTotalHoras" class="total-horas">0.0h</div>
+            <div class="dashboard-title" style="color:var(--primary)">Job</div>
+            <div id="vTotalSemana" class="total-geral">R$ 0,00</div>
         </div>
     </div>
 
+    <!-- ENTRADA DE DADOS: PRESTAÇÃO DE SERVIÇOS -->
     <div class="input-group">
         <h3><span id="formJobTitle">💼 Job</span></h3>
         <input type="hidden" id="editJobId" value="">
@@ -473,6 +480,7 @@
         </div>
     </div>
 
+    <!-- PAINEL GRÁFICO BUSINESS INTELLIGENCE -->
     <div class="input-group">
         <h3>📊 Faturamento por contratante</h3>
         <div class="chart-container">
@@ -480,6 +488,7 @@
         </div>
     </div>
 
+    <!-- HISTÓRICO GERAL DE PROCESSOS -->
     <div class="input-group">
         <div class="section-title" style="margin:0 0 20px 0;">📋 Registros</div>
         
@@ -489,7 +498,7 @@
         </div>
         
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
-            <button class="btn btn-search" style="margin:0;" onclick="abrirBusca()">🔍 Ativar Busca</button>
+            <button class="btn btn-search" id="btnBuscaTexto" style="margin:0;" onclick="abrirBusca()">🔍 Filtrar Empresas</button>
             <button class="btn btn-export" style="margin:0; background:var(--border-color);" onclick="limparBusca()">❌ Limpar Filtro</button>
         </div>
         
@@ -500,11 +509,13 @@
         <div id="listaHistorico"></div>
     </div>
     
+    <!-- ENVIAR PARA WHATSAPP -->
     <div style="margin-top: 10px; margin-bottom: 25px;">
         <button class="btn btn-whats" onclick="enviarRelatorioWhatsApp()">💬 Enviar para Whatsapp</button>
     </div>
 </div>
 
+<!-- SEÇÃO DE CONFIGURAÇÃO DE EMPRESAS (MATRIZ) -->
 <div id="abaEmpresas" class="app-section">
     <div class="input-group">
         <h2 id="formEmpresaTitle">🏢 Nova Empresa e Regras</h2>
@@ -531,6 +542,7 @@
             <option value="Mensal">Mensal</option>
         </select>
 
+        <!-- SUBFORMULÁRIO: REGRAS MENSAL / QUINZENAL -->
         <div id="cadPeriodoPersonalizado" style="display:none; padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color);">
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                 <div>
@@ -544,6 +556,7 @@
             </div>
         </div>
 
+        <!-- SUBFORMULÁRIO: REGRAS SEMANAL -->
         <div id="cadPeriodoSemanalBox" style="padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color); display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div>
                 <label>Dia Inicial</label>
@@ -593,14 +606,15 @@
         <div id="listaEmpresasCadastradas"></div>
     </div>
 
+    <!-- CENTRAL DE EXPORTAÇÃO E BACKUPS MOVIDA PARA ABA EMPRESAS -->
     <div class="input-group" style="border-color:var(--border-hover); background: linear-gradient(180deg, var(--card) 0%, #152238 100%); margin-top:20px;">
         <h2>⚡ Central Avançada de Exportação</h2>
         <p style="color:var(--muted); font-size:0.85em; margin-bottom:15px;">Gere faturamentos estruturados ou realize backups locais de segurança.</p>
         
         <div style="display:flex; flex-direction:column; gap:5px;">
-            <button class="btn btn-export" onclick="baixarExcelCompleto()">📊 Exportar Planilha (.CSV)</button>
+            <button class="btn btn-export" onclick="baixarExcelCompleto()">📊 Exportar para Excel (.CSV)</button>
             <button class="btn btn-export" style="background:#5c258d;" onclick="fazerBackup()">💾 Gerar Cópia de Segurança (.JSON)</button>
-            <button class="btn btn-cancel" style="background:var(--dark-pure); border:1px solid var(--border-color);" onclick="document.getElementById('restoreFile').click()">📥 Importar Backup (.JSON)</button>
+            <button class="btn btn-cancel" style="background:var(--dark-pure); border:1px solid var(--border-color);" onclick="document.getElementById('restoreFile').click()">📥 Importar Cópia de Segurança (.JSON)</button>
         </div>
         <input type="file" id="restoreFile" accept=".json" style="display:none;">
     </div>
@@ -618,8 +632,6 @@ let empresaSelecionadaCache = null;
 function emergencyReset() {
     if(confirm("Deseja forçar o reset de emergência? Isso vai limpar os travamentos de segurança e reiniciar o aplicativo.")) {
         localStorage.clear();
-        
-        // Protocolo de destruição e recriação limpa do banco de dados IndexedDB
         let deleteRequest = indexedDB.deleteDatabase("CacheFinal_V33");
         deleteRequest.onsuccess = function() {
             alert("Sistema redefinido com sucesso! O aplicativo vai reiniciar limpo agora.");
@@ -730,6 +742,21 @@ function formatarValor(valor){
     return Number(valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
+// FUNÇÃO DE BACKUP AUTOMÁTICO SILENCIOSO (PREPARADA PARA APK NATÍVO)
+function ejecutarBackupAutomatico() {
+    if(!db) return;
+    const txJ = db.transaction("jobs", "readonly");
+    txJ.objectStore("jobs").getAll().onsuccess = function(e_jobs) {
+        const dadosJobs = e_jobs.target.result;
+        const txE = db.transaction("empresas", "readonly");
+        txE.objectStore("empresas").getAll().onsuccess = function(e_empresas) {
+            const dadosEmpresas = e_empresas.target.result;
+            const payloadBackup = { jobs: dadosJobs, empresas: dadosEmpresas, dataBackup: new Date().toISOString() };
+            localStorage.setItem("fader_livre_auto_backup", JSON.stringify(payloadBackup));
+        };
+    };
+}
+
 function fazerBackup(){
     const transacaoJobs = db.transaction("jobs", "readonly");
     transacaoJobs.objectStore("jobs").getAll().onsuccess = function(e_jobs) {
@@ -762,6 +789,7 @@ document.getElementById("restoreFile").addEventListener("change", function(event
                     dadosRestaurados.empresas.forEach(item => txE.objectStore("empresas").put(item));
                     txE.oncomplete = function() {
                         alert("Banco de dados restaurado!");
+                        executarBackupAutomatico();
                         window.location.reload();
                     };
                 };
@@ -781,7 +809,7 @@ function alternarAba(abaId, event) {
 
 function definirFiltroVisualizacao(tipo) {
     filtroVisualizacao = tipo;
-    document.getElementById("btnFiltroAberto").classList.toggle("active", tipo === 'aberto');
+    document.getElementById("btnFiltroAberto").classList.toggle("active", tipo === 'abento' || tipo === 'aberto');
     document.getElementById("btnFiltroArquivado").classList.toggle("active", tipo === 'arquivado');
     atualizarTela();
 }
@@ -856,6 +884,7 @@ function salvarEmpresa() {
 
     requisicao.onsuccess = function() {
         alert("Diretrizes salvas!");
+        executarBackupAutomatico();
         limparCamposEmpresa();
         atualizarListaEmpresas();
     };
@@ -886,7 +915,10 @@ function carregarEmpresaParaEdicao(id) {
 function deletarEmpresa(id) {
     if(confirm("Deseja remover permanentemente esta empresa?")) {
         const tx = db.transaction("empresas", "readwrite");
-        tx.objectStore("empresas").delete(id).onsuccess = () => atualizarListaEmpresas();
+        tx.objectStore("empresas").delete(id).onsuccess = () => {
+            executarBackupAutomatico();
+            atualizarListaEmpresas();
+        };
     }
 }
 
@@ -1015,6 +1047,7 @@ function salvarJob(){
 
     req.onsuccess = function() {
         alert("Lançamento processado!");
+        executarBackupAutomatico();
         atualizarTela();
         limparCampos();
     };
@@ -1044,7 +1077,10 @@ function carregarJobParaEdicao(id) {
 function deletarJob(id) {
     if(confirm("Excluir definitivamente este lançamento?")) {
         const tx = db.transaction("jobs", "readwrite");
-        tx.objectStore("jobs").delete(id).onsuccess = () => atualizarTela();
+        tx.objectStore("jobs").delete(id).onsuccess = () => {
+            executarBackupAutomatico();
+            atualizarTela();
+        };
     }
 }
 
@@ -1115,6 +1151,11 @@ function atualizarTela(){
         document.getElementById("vTotalNF").innerText = "- " + formatarValor(tNF);
         document.getElementById("vTotalHoras").innerText = tHoras.toFixed(1) + "h";
         renderGrafico(dictGrafico);
+        
+        // Mantém consistência visual se houver texto digitado previamente na busca
+        if(document.getElementById("searchBox").style.display === "block"){
+            filtrarTabela();
+        }
     };
 }
 
@@ -1147,26 +1188,52 @@ function renderGrafico(dict){
 function enviarRelatorioWhatsApp(){
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").getAll().onsuccess = function(event) {
+        // 1. Obter o termo digitado no filtro de busca (se o campo estiver visível e preenchido)
+        const termoBusca = document.getElementById("inputBusca").value.toUpperCase().trim();
+        const caixaBuscaAtiva = document.getElementById("searchBox").style.display === "block";
+
         const filtrados = event.target.result.filter(item => {
             const status = obterStatusPeriodo(item);
-            return (filtroVisualizacao === "aberto" && status === "aberto") || 
-                   (filtroVisualizacao === "arquivado" && (status === "arquivado" || status === "pago"));
+            const passaFiltroAbas = (filtroVisualizacao === "aberto" && status === "aberto") || 
+                                   (filtroVisualizacao === "arquivado" && (status === "arquivado" || status === "pago"));
+            
+            if (!passaFiltroAbas) return false;
+
+            // Se o usuário estiver usando a busca por texto, filtra pelo termo
+            if (caixaBuscaAtiva && termoBusca !== "") {
+                const stringDoCard = `${item.empresa} ${item.job} ${item.data}`.toUpperCase();
+                return stringDoCard.includes(termoBusca);
+            }
+            return true;
         });
 
-        if(filtrados.length === 0) { alert("Nenhum registro encontrado no filtro atual."); return; }
+        if(filtrados.length === 0) { alert("Nenhum registro encontrado para exportação no filtro atual."); return; }
         
-        let msg = "*FADER LIVRE - EXTRATO CACHÊ CONTROL*\n\n";
+        let msg = "FADER LIVRE - EXTRATO CACHÊ CONTROL\n";
+        if(caixaBuscaAtiva && termoBusca !== "") {
+            msg += `FILTRO ATIVO: "${termoBusca}"\n`;
+        }
+        msg += "--------------------------------------\n\n";
+        
         let totaisPorEmpresa = {};
+        let totalGeralFiltrado = 0;
 
         filtrados.forEach(j => {
-            msg += `*${j.empresa}* - ${j.data.split("-").reverse().join("/")}\nJob: ${j.job}\nTotal: R$ ${j.total.toFixed(2)}\n\n`;
+            msg += `${j.empresa} - ${j.data.split("-").reverse().join("/")}\nJob: ${j.job}\nTotal: R$ ${j.total.toFixed(2)}\n\n`;
             totaisPorEmpresa[j.empresa] = (totaisPorEmpresa[j.empresa] || 0) + j.total;
+            totalGeralFiltrado += j.total;
         });
 
         msg += "--------------------------------------\n";
-        msg += "*FATURAMENTO TOTAL POR CONTRATANTE:*\n";
-        for (const [empresa, total] of Object.entries(totaisPorEmpresa)) {
-            msg += `${empresa}: R$ ${total.toFixed(2)}\n`;
+        
+        // Se filtramos especificamente por uma empresa, exibe o resumo unificado simplificado
+        if(caixaBuscaAtiva && termoBusca !== "") {
+            msg += `TOTAL DA CONSULTA: R$ ${totalGeralFiltrado.toFixed(2)}\n`;
+        } else {
+            msg += "TOTAL DOS JOBS REGISTRADOS POR EMPRESA:\n";
+            for (const [empresa, total] of Object.entries(totaisPorEmpresa)) {
+                msg += `${empresa}: R$ ${total.toFixed(2)}\n`;
+            }
         }
         
         window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
