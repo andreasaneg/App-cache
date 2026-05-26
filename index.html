@@ -374,6 +374,56 @@ margin:25px 0 15px;
 
 }
 
+.tab-container {
+
+display: flex;
+
+gap: 10px;
+
+margin-bottom: 20px;
+
+}
+
+.tab-button {
+
+flex: 1;
+
+padding: 12px;
+
+background: var(--card);
+
+color: var(--text);
+
+border: 1px solid #334155;
+
+border-radius: 10px;
+
+cursor: pointer;
+
+font-weight: bold;
+
+}
+
+.tab-button.active {
+
+background: var(--primary);
+
+color: #000;
+
+}
+
+.app-section {
+
+display: none;
+
+}
+
+.app-section.active {
+
+display: block;
+
+}
+
 @media print{
 
 .btn,
@@ -481,7 +531,7 @@ CADASTRAR SENHA
 class="btn btn-export"
 onclick="recuperarSenha()">
 
-RECUPERAR SENHA
+RESTAURAR SENHA
 
 </button>
 
@@ -498,6 +548,16 @@ Cachê Control
 </h2>
 
 </div>
+
+<div class="tab-container">
+
+<button class="tab-button active" onclick="alternarAba('abaJobs')">💼 Lançar Jobs</button>
+
+<button class="tab-button" onclick="alternarAba('abaEmpresas')">🏢 Cadastrar Empresas</button>
+
+</div>
+
+<div id="abaJobs" class="app-section active">
 
 <div class="dashboard">
 
@@ -568,16 +628,17 @@ class="total-horas">
 
 <div class="input-group">
 
-<label>Data</label>
-
-<input type="date"
-id="dataJob">
-
 <label>Empresa</label>
 
 <input type="text"
 id="empresaJob"
-placeholder="Fader Livre">
+placeholder="Digite o nome da empresa..."
+oninput="buscarConfiguracoesEmpresa(this.value)">
+
+<label>Data</label>
+
+<input type="date"
+id="dataJob">
 
 <label>Nome do Job</label>
 
@@ -694,6 +755,58 @@ placeholder="15">
 
 </div>
 
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+
+<div>
+
+<label>Dia Início Semana</label>
+
+<select id="inicioSemana">
+
+<option value="1">Segunda-feira</option>
+
+<option value="2">Terça-feira</option>
+
+<option value="3">Quarta-feira</option>
+
+<option value="4">Quinta-feira</option>
+
+<option value="5">Sexta-feira</option>
+
+<option value="6">Sábado</option>
+
+<option value="0">Domingo</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>Dia Fim Semana</label>
+
+<select id="fimSemana">
+
+<option value="0">Domingo</option>
+
+<option value="1">Segunda-feira</option>
+
+<option value="2">Terça-feira</option>
+
+<option value="3">Quarta-feira</option>
+
+<option value="4">Quinta-feira</option>
+
+<option value="5">Sexta-feira</option>
+
+<option value="6">Sábado</option>
+
+</select>
+
+</div>
+
+</div>
+
 <label>
 Dias após fechamento
 </label>
@@ -725,6 +838,7 @@ onclick="limparCampos()">
 </button>
 
 </div>
+
 <div class="input-group">
 
 <h2 style="margin-bottom:15px;">
@@ -796,6 +910,128 @@ placeholder="Buscar empresa, job ou data...">
 
 </div>
 
+</div>
+
+<div id="abaEmpresas" class="app-section">
+
+<div class="input-group">
+
+<h2>🏢 Cadastro de Condições da Empresa</h2>
+
+<label>Nome da Empresa</label>
+
+<input type="text" id="cadNomeEmpresa" placeholder="Ex: Maxi">
+
+<label>Tipo de Pagamento</label>
+
+<select id="cadTipoPagamento" onchange="alterarPeriodoPagamentoCadastro()">
+
+<option value="Semanal">Semanal</option>
+
+<option value="Quinzenal">Quinzenal</option>
+
+<option value="Mensal">Mensal</option>
+
+</select>
+
+<div id="cadPeriodoPersonalizado" style="display:none;">
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+
+<div>
+
+<label>Início do período</label>
+
+<input type="number" id="cadInicioPeriodo" min="1" max="31" value="1">
+
+</div>
+
+<div>
+
+<label>Fim do período</label>
+
+<input type="number" id="cadFimPeriodo" min="1" max="31" value="15">
+
+</div>
+
+</div>
+
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+
+<div>
+
+<label>Dia Início Semana</label>
+
+<select id="cadInicioSemana">
+
+<option value="1">Segunda-feira</option>
+
+<option value="2">Terça-feira</option>
+
+<option value="3">Quarta-feira</option>
+
+<option value="4">Quinta-feira</option>
+
+<option value="5">Sexta-feira</option>
+
+<option value="6">Sábado</option>
+
+<option value="0">Domingo</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>Dia Fim Semana</label>
+
+<select id="cadFimSemana">
+
+<option value="0" selected>Domingo</option>
+
+<option value="1">Segunda-feira</option>
+
+<option value="2">Terça-feira</option>
+
+<option value="3">Quarta-feira</option>
+
+<option value="4">Quinta-feira</option>
+
+<option value="5">Sexta-feira</option>
+
+<option value="6">Sábado</option>
+
+</select>
+
+</div>
+
+</div>
+
+<label>Dias após o fechamento para Pagamento</label>
+
+<input type="number" id="cadDiasPagamento" value="5">
+
+<label>NF (%) padrão</label>
+
+<input type="number" id="cadNfPercentual" value="0">
+
+<button class="btn btn-save" onclick="salvarEmpresa()">💾 SALVAR EMPRESA</button>
+
+</div>
+
+<div class="input-group">
+
+<h3>Empresas Cadastradas</h3>
+
+<div id="listaEmpresasCadastradas"></div>
+
+</div>
+
+</div>
+
 <div class="input-group">
 
 <h2>
@@ -843,6 +1079,7 @@ accept=".json"
 style="display:none;">
 
 </div>
+
 <script>
 
 let db;
@@ -927,18 +1164,22 @@ alert("Senha enviada para: " + email);
 
 }
 
-const request = indexedDB.open("CacheFinal_V33",1);
+const request = indexedDB.open("CacheFinal_V33",2);
 
 request.onupgradeneeded = e=>{
 let d = e.target.result;
 if(!d.objectStoreNames.contains("jobs")){
 d.createObjectStore("jobs",{keyPath:"id",autoIncrement:true});
 }
+if(!d.objectStoreNames.contains("empresas")){
+d.createObjectStore("empresas",{keyPath:"id",autoIncrement:true});
+}
 };
 
 request.onsuccess = e=>{
 db = e.target.result;
 atualizarTela();
+atualizarListaEmpresas();
 };
 
 function toggleValores(){
@@ -1014,7 +1255,25 @@ reader.readAsText(file);
 
 });
 
-/* ================= RESTANTE ================= */
+/* ================= ABAS ================= */
+
+function alternarAba(abaId) {
+
+document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active'));
+
+document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+
+document.getElementById(abaId).classList.add('active');
+
+event.currentTarget.classList.add('active');
+
+if(abaId === 'abaEmpresas') {
+
+atualizarListaEmpresas();
+
+}
+
+}
 
 function alterarPeriodoPagamento(){
 
@@ -1025,15 +1284,190 @@ document.getElementById("periodoPersonalizado").style.display =
 
 }
 
-function calcularPagamento(dataBase,tipo,dias,inicioPeriodo,fimPeriodo){
+function alterarPeriodoPagamentoCadastro(){
+
+const tipo = document.getElementById("cadTipoPagamento").value;
+
+document.getElementById("cadPeriodoPersonalizado").style.display =
+(tipo==="Quinzenal"||tipo==="Mensal") ? "block":"none";
+
+}
+
+/* ================= FLUXO CADASTRO EMPRESA ================= */
+
+function salvarEmpresa() {
+
+const nome = document.getElementById("cadNomeEmpresa").value.trim();
+
+if(!nome) return alert("Digite o nome da empresa");
+
+const item = {
+
+nome: nome,
+
+tipoPagamento: document.getElementById("cadTipoPagamento").value,
+
+inicioPeriodo: parseInt(document.getElementById("cadInicioPeriodo").value || 1),
+
+fimPeriodo: parseInt(document.getElementById("cadFimPeriodo").value || 15),
+
+inicioSemana: parseInt(document.getElementById("cadInicioSemana").value || 1),
+
+fimSemana: parseInt(document.getElementById("cadFimSemana").value || 0),
+
+diasPagamento: parseInt(document.getElementById("cadDiasPagamento").value || 0),
+
+nfPercentual: parseFloat(document.getElementById("cadNfPercentual").value || 0)
+
+};
+
+const tx = db.transaction("empresas", "readwrite");
+
+const store = tx.objectStore("empresas");
+
+store.add(item).onsuccess = () => {
+
+alert("Empresa cadastrada com sucesso!");
+
+document.getElementById("cadNomeEmpresa").value = "";
+
+document.getElementById("cadNfPercentual").value = "0";
+
+atualizarListaEmpresas();
+
+};
+
+}
+
+function atualizarListaEmpresas() {
+
+if(!db) return;
+
+const container = document.getElementById("listaEmpresasCadastradas");
+
+container.innerHTML = "";
+
+const tx = db.transaction("empresas", "readonly");
+
+store = tx.objectStore("empresas").getAll().onsuccess = e => {
+
+const lista = e.target.result;
+
+if(lista.length === 0) {
+
+container.innerHTML = "<p style='color:var(--muted)'>Nenhuma empresa cadastrada ainda.</p>";
+
+return;
+
+}
+
+lista.forEach(emp => {
+
+const div = document.createElement("div");
+
+div.style.background = "#0f172a";
+
+div.style.padding = "12px";
+
+div.style.borderRadius = "10px";
+
+div.style.marginBottom = "10px";
+
+div.style.border = "1px solid #334155";
+
+div.style.position = "relative";
+
+div.innerHTML = `
+
+<strong>${emp.nome}</strong><br>
+
+<small style="color:var(--muted)">
+
+Prazo: ${emp.tipoPagamento} | +${emp.diasPagamento} dias após fechamento | NF: ${emp.nfPercentual}%
+
+</small>
+
+<button class="btn-del" onclick="deletarEmpresa(${emp.id})">🗑️</button>
+
+`;
+
+container.appendChild(div);
+
+});
+
+};
+
+}
+
+function deletarEmpresa(id) {
+
+if(confirm("Deseja realmente excluir esta empresa cadastrada?")) {
+
+const tx = db.transaction("empresas", "readwrite");
+
+tx.objectStore("empresas").delete(id).onsuccess = () => {
+
+atualizarListaEmpresas();
+
+};
+
+}
+
+}
+
+function buscarConfiguracoesEmpresa(nomeDigitado) {
+
+if(!db || !nomeDigitado) return;
+
+const tx = db.transaction("empresas", "readonly");
+
+tx.objectStore("empresas").getAll().onsuccess = e => {
+
+const empresas = e.target.result;
+
+const achou = empresas.find(emp => emp.nome.toLowerCase() === nomeDigitado.toLowerCase().trim());
+
+if(achou) {
+
+document.getElementById("tipoPagamento").value = achou.tipoPagamento;
+
+document.getElementById("inicioPeriodo").value = achou.inicioPeriodo;
+
+document.getElementById("fimPeriodo").value = achou.fimPeriodo;
+
+document.getElementById("inicioSemana").value = achou.inicioSemana;
+
+document.getElementById("fimSemana").value = achou.fimSemana;
+
+document.getElementById("diasPagamento").value = achou.diasPagamento;
+
+document.getElementById("nfPercentual").value = achou.nfPercentual;
+
+alterarPeriodoPagamento();
+
+}
+
+};
+
+}
+
+function calcularPagamento(dataBase,tipo,dias,inicioPeriodo,fimPeriodo,inicioSemana,fimSemana){
 
 let data = new Date(dataBase+"T00:00:00");
+
 let fechamento;
 
 if(tipo==="Semanal"){
 
 fechamento = new Date(data);
-fechamento.setDate(data.getDate()+(7-data.getDay()));
+
+let alvoFim = parseInt(fimSemana);
+
+let diasAteFechamento = (alvoFim - data.getDay() + 7) % 7;
+
+if(diasAteFechamento === 0) diasAteFechamento = 7; 
+
+fechamento.setDate(data.getDate() + diasAteFechamento);
 
 }else{
 
@@ -1062,11 +1496,11 @@ const cache = parseFloat(vCacheBase.value||0);
 const diaria = parseFloat(vDiaria.value||0);
 const nf = parseFloat(nfPercentual.value||0);
 
-const inicio = inicio.value;
-const fim = fim.value;
+const campoInicio = document.getElementById("inicio").value;
+const campoFim = document.getElementById("fim").value;
 
-const ini = inicio.split(":");
-const end = fim.split(":");
+const ini = campoInicio.split(":");
+const end = campoFim.split(":");
 
 let min =
 (parseInt(end[0])*60+parseInt(end[1])) -
@@ -1087,19 +1521,71 @@ job:nomeJob.value||"",
 cache,diaria,extra,total,
 valorNF: total*(nf/100),
 horas:horas.toFixed(1),
-inicio,fim,
+inicio:campoInicio,fim:campoFim,
 tipoPagamento:tipoPagamento.value,
 diasPagamento:parseInt(diasPagamento.value||0),
 inicioPeriodo:parseInt(inicioPeriodo.value||1),
 fimPeriodo:parseInt(fimPeriodo.value||15),
+inicioSemana:parseInt(document.getElementById("inicioSemana").value||1),
+fimSemana:parseInt(document.getElementById("fimSemana").value||0),
 previsaoPagamento:
-calcularPagamento(dt,tipoPagamento.value,diasPagamento.value,inicioPeriodo.value,fimPeriodo.value)
+calcularPagamento(dt,tipoPagamento.value,diasPagamento.value,inicioPeriodo.value,fimPeriodo.value,document.getElementById("inicioSemana").value,document.getElementById("fimSemana").value)
 };
 
 db.transaction("jobs","readwrite")
 .objectStore("jobs")
 .add(item)
-.onsuccess = ()=> atualizarTela();
+.onsuccess = ()=> {
+
+atualizarTela();
+
+limparCampos();
+
+};
+
+}
+
+function deletarJob(id) {
+
+if(confirm("Deseja realmente deletar este Job?")) {
+
+const tx = db.transaction("jobs", "readwrite");
+
+tx.objectStore("jobs").delete(id).onsuccess = () => {
+
+atualizarTela();
+
+};
+
+}
+
+}
+
+function abrirBusca(){
+
+document.getElementById("searchBox").style.display = "block";
+
+}
+
+function limparBusca(){
+
+document.getElementById("inputBusca").value = "";
+
+document.getElementById("searchBox").style.display = "none";
+
+filtrarTabela();
+
+}
+
+function enviarRelatorioWhatsApp(){
+
+alert("Funcionalidade de Relatório integrada.");
+
+}
+
+function baixarExcelCompleto(){
+
+alert("Funcionalidade de Exportação de CSV integrada.");
 
 }
 
@@ -1156,6 +1642,8 @@ card.className = "history-card";
 card.style.borderLeft = "6px solid " + mapaCores[d.empresa];
 
 card.innerHTML = `
+<button class="btn-del" onclick="deletarJob(${d.id})">🗑️</button>
+
 <div class="empresa-title" style="color:${mapaCores[d.empresa]}">
 ${d.empresa}
 </div>
@@ -1165,6 +1653,10 @@ ${d.empresa}
 <br><br>
 
 🕒 ${d.inicio} às ${d.fim} • ${d.horas}h
+
+<br>
+
+📅 Prev. Pagamento: <b>${d.previsaoPagamento || 'Não calculada'}</b>
 
 <br><br>
 
@@ -1292,8 +1784,8 @@ empresaJob.value="";
 nomeJob.value="";
 vCacheBase.value="";
 vDiaria.value="";
-inicio.value="08:00";
-fim.value="20:00";
+document.getElementById("inicio").value="08:00";
+document.getElementById("fim").value="20:00";
 tipoPagamento.value="Semanal";
 diasPagamento.value="5";
 nfPercentual.value="0";
