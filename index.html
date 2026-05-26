@@ -184,6 +184,8 @@ padding:16px;
 
 margin-bottom:15px;
 
+position: relative;
+
 }
 
 label{
@@ -340,6 +342,8 @@ font-size:1.5em;
 
 cursor:pointer;
 
+z-index: 10;
+
 }
 
 .chart-container{
@@ -424,11 +428,137 @@ display: block;
 
 }
 
+.autocomplete-list {
+
+position: absolute;
+
+z-index: 100;
+
+background: #1e293b;
+
+border: 1px solid #334155;
+
+border-radius: 10px;
+
+width: calc(100% - 32px);
+
+max-height: 200px;
+
+overflow-y: auto;
+
+margin-top: -10px;
+
+margin-bottom: 15px;
+
+box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+
+}
+
+.autocomplete-item {
+
+padding: 12px;
+
+cursor: pointer;
+
+border-bottom: 1px solid #334155;
+
+}
+
+.autocomplete-item:hover {
+
+background: #0f172a;
+
+color: var(--primary);
+
+}
+
+.badge-status {
+
+display: inline-block;
+
+padding: 4px 8px;
+
+border-radius: 6px;
+
+font-size: 0.75em;
+
+font-weight: bold;
+
+text-transform: uppercase;
+
+margin-top: 5px;
+
+}
+
+.status-aberto {
+
+background: #0284c7;
+
+color: #fff;
+
+}
+
+.status-fechado {
+
+background: #ea580c;
+
+color: #fff;
+
+}
+
+.status-pago {
+
+background: #16a34a;
+
+color: #fff;
+
+}
+
+.toggle-filter-container {
+
+display: flex;
+
+gap: 10px;
+
+margin-bottom: 15px;
+
+}
+
+.btn-filter {
+
+flex: 1;
+
+padding: 10px;
+
+border-radius: 10px;
+
+border: 1px solid #334155;
+
+background: #0f172a;
+
+color: #fff;
+
+font-weight: bold;
+
+cursor: pointer;
+
+}
+
+.btn-filter.active {
+
+background: #475569;
+
+border-color: var(--primary);
+
+}
+
 @media print{
 
 .btn,
 .search-box,
-.btn-del{
+.btn-del,
+.tab-container,
+.toggle-filter-container{
 
 display:none !important;
 
@@ -632,8 +762,11 @@ class="total-horas">
 
 <input type="text"
 id="empresaJob"
-placeholder="Digite o nome da empresa..."
-oninput="buscarConfiguracoesEmpresa(this.value)">
+placeholder="Ex: FADER LIVRE"
+autocomplete="off"
+oninput="gerenciarAutocomplete(this.value)">
+
+<div id="autocompleteContainer"></div>
 
 <label>Data</label>
 
@@ -646,35 +779,7 @@ id="dataJob">
 id="nomeJob"
 placeholder="Ex: Comercial">
 
-<div style="
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;">
-
-<div>
-
-<label>Cachê</label>
-
-<input type="number"
-id="vCacheBase">
-
-</div>
-
-<div>
-
-<label>Diária</label>
-
-<input type="number"
-id="vDiaria">
-
-</div>
-
-</div>
-
-<div style="
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;">
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
 
 <div>
 
@@ -698,128 +803,47 @@ value="20:00">
 
 </div>
 
-<label>Tipo de Pagamento</label>
+<div style="display:none;">
 
-<select
-id="tipoPagamento"
-onchange="alterarPeriodoPagamento()">
+<input type="number" id="vCacheBase">
 
-<option value="Semanal">
-Semanal
-</option>
+<input type="number" id="vDiaria">
 
-<option value="Quinzenal">
-Quinzenal
-</option>
+<select id="tipoPagamento"><option value="Semanal">Semanal</option><option value="Quinzenal">Quinzenal</option><option value="Mensal">Mensal</option></select>
 
-<option value="Mensal">
-Mensal
-</option>
+<input type="number" id="inicioPeriodo" value="1">
 
-</select>
+<input type="number" id="fimPeriodo" value="15">
 
-<div
-id="periodoPersonalizado"
-style="display:none;">
+<select id="inicioSemana"><option value="1">Segunda-feira</option></select>
 
-<div style="
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;">
+<select id="fimSemana"><option value="0">Domingo</option></select>
+
+<input type="number" id="diasPagamento" value="5">
+
+<input type="number" id="nfPercentual" value="0">
+
+</div>
+
+<div id="wrapperCamposOpcionais" style="display:none; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
 
 <div>
 
-<label>Início do período</label>
+<label>Cachê (Editar valor)</label>
 
-<input type="number"
-id="inicioPeriodo"
-min="1"
-max="31"
-placeholder="1">
+<input type="number" id="vCacheBaseEdicao">
 
 </div>
 
 <div>
 
-<label>Fim do período</label>
+<label>Diária (Editar valor)</label>
 
-<input type="number"
-id="fimPeriodo"
-min="1"
-max="31"
-placeholder="15">
+<input type="number" id="vDiariaEdicao">
 
 </div>
 
 </div>
-
-</div>
-
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-
-<div>
-
-<label>Dia Início Semana</label>
-
-<select id="inicioSemana">
-
-<option value="1">Segunda-feira</option>
-
-<option value="2">Terça-feira</option>
-
-<option value="3">Quarta-feira</option>
-
-<option value="4">Quinta-feira</option>
-
-<option value="5">Sexta-feira</option>
-
-<option value="6">Sábado</option>
-
-<option value="0">Domingo</option>
-
-</select>
-
-</div>
-
-<div>
-
-<label>Dia Fim Semana</label>
-
-<select id="fimSemana">
-
-<option value="0">Domingo</option>
-
-<option value="1">Segunda-feira</option>
-
-<option value="2">Terça-feira</option>
-
-<option value="3">Quarta-feira</option>
-
-<option value="4">Quinta-feira</option>
-
-<option value="5">Sexta-feira</option>
-
-<option value="6">Sábado</option>
-
-</select>
-
-</div>
-
-</div>
-
-<label>
-Dias após fechamento
-</label>
-
-<input type="number"
-id="diasPagamento"
-value="5">
-
-<label>NF (%)</label>
-
-<input type="number"
-id="nfPercentual"
-value="0">
 
 <button
 class="btn btn-save"
@@ -843,7 +867,7 @@ onclick="limparCampos()">
 
 <h2 style="margin-bottom:15px;">
 
-Financeiro
+Financeiro (Período Atual)
 
 </h2>
 
@@ -857,24 +881,21 @@ Financeiro
 
 <div class="input-group">
 
-<div style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:15px;">
-
 <div class="section-title">
 
-Todos os Jobs
+Visualizar Histórico
 
 </div>
 
+<div class="toggle-filter-container">
+
+<button id="btnFiltroAberto" class="btn-filter active" onclick="definirFiltroVisualizacao('aberto')">Período Aberto</button>
+
+<button id="btnFiltroArquivado" class="btn-filter" onclick="definirFiltroVisualizacao('arquivado')">Arquivados</button>
+
 </div>
 
-<div style="
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;">
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
 
 <button
 class="btn btn-search"
@@ -920,7 +941,27 @@ placeholder="Buscar empresa, job ou data...">
 
 <label>Nome da Empresa</label>
 
-<input type="text" id="cadNomeEmpresa" placeholder="Ex: Maxi">
+<input type="text" id="cadNomeEmpresa" placeholder="Ex: FADER LIVRE">
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+
+<div>
+
+<label>Valor do Cachê Padrão</label>
+
+<input type="number" id="cadCacheBase" placeholder="Ex: 500">
+
+</div>
+
+<div>
+
+<label>Valor da Diária Padrão</label>
+
+<input type="number" id="cadDiaria" placeholder="Ex: 100">
+
+</div>
+
+</div>
 
 <label>Tipo de Pagamento</label>
 
@@ -1084,6 +1125,7 @@ style="display:none;">
 
 let db;
 let ocultarValores = false;
+let filtroVisualizacao = "aberto"; // 'aberto' ou 'arquivado'
 let mapaCores = {};
 let coresGrafico = [
 '#38bdf8','#10b981','#f59e0b','#ef4444',
@@ -1275,12 +1317,21 @@ atualizarListaEmpresas();
 
 }
 
+function definirFiltroVisualizacao(tipo) {
+
+filtroVisualizacao = tipo;
+
+document.getElementById("btnFiltroAberto").classList.toggle("active", tipo === 'aberto');
+
+document.getElementById("btnFiltroArquivado").classList.toggle("active", tipo === 'arquivado');
+
+atualizarTela();
+
+}
+
 function alterarPeriodoPagamento(){
 
 const tipo = document.getElementById("tipoPagamento").value;
-
-document.getElementById("periodoPersonalizado").style.display =
-(tipo==="Quinzenal"||tipo==="Mensal") ? "block":"none";
 
 }
 
@@ -1290,6 +1341,88 @@ const tipo = document.getElementById("cadTipoPagamento").value;
 
 document.getElementById("cadPeriodoPersonalizado").style.display =
 (tipo==="Quinzenal"||tipo==="Mensal") ? "block":"none";
+
+}
+
+/* ================= AUTOCOMPLETE INTELIGENTE ================= */
+
+function gerenciarAutocomplete(texto) {
+
+const container = document.getElementById("autocompleteContainer");
+
+container.innerHTML = "";
+
+if(!db || !texto.trim()) return;
+
+const tx = db.transaction("empresas", "readonly");
+
+tx.objectStore("empresas").getAll().onsuccess = e => {
+
+const empresas = e.target.result;
+
+const filtradas = empresas.filter(emp => emp.nome.toLowerCase().includes(texto.toLowerCase().trim()));
+
+if(filtradas.length > 0) {
+
+const listaDiv = document.createElement("div");
+
+listaDiv.className = "autocomplete-list";
+
+filtradas.forEach(emp => {
+
+const item = document.createElement("div");
+
+item.className = "autocomplete-item";
+
+item.innerText = emp.nome;
+
+item.onclick = () => {
+
+document.getElementById("empresaJob").value = emp.nome;
+
+container.innerHTML = "";
+
+aplicarConfiguracoesEmpresa(emp);
+
+};
+
+listaDiv.appendChild(item);
+
+});
+
+container.appendChild(listaDiv);
+
+}
+
+};
+
+}
+
+function aplicarConfiguracoesEmpresa(achou) {
+
+document.getElementById("tipoPagamento").value = achou.tipoPagamento;
+
+document.getElementById("inicioPeriodo").value = achou.inicioPeriodo;
+
+document.getElementById("fimPeriodo").value = achou.fimPeriodo;
+
+document.getElementById("inicioSemana").value = achou.inicioSemana || 1;
+
+document.getElementById("fimSemana").value = achou.fimSemana || 0;
+
+document.getElementById("diasPagamento").value = achou.diasPagamento;
+
+document.getElementById("nfPercentual").value = achou.nfPercentual;
+
+document.getElementById("vCacheBase").value = achou.cacheBase || 0;
+
+document.getElementById("vDiaria").value = achou.diaria || 0;
+
+document.getElementById("vCacheBaseEdicao").value = achou.cacheBase || 0;
+
+document.getElementById("vDiariaEdicao").value = achou.diaria || 0;
+
+document.getElementById("wrapperCamposOpcionais").style.display = "grid";
 
 }
 
@@ -1304,6 +1437,10 @@ if(!nome) return alert("Digite o nome da empresa");
 const item = {
 
 nome: nome,
+
+cacheBase: parseFloat(document.getElementById("cadCacheBase").value || 0),
+
+diaria: parseFloat(document.getElementById("cadDiaria").value || 0),
 
 tipoPagamento: document.getElementById("cadTipoPagamento").value,
 
@@ -1331,6 +1468,10 @@ alert("Empresa cadastrada com sucesso!");
 
 document.getElementById("cadNomeEmpresa").value = "";
 
+document.getElementById("cadCacheBase").value = "";
+
+document.getElementById("cadDiaria").value = "";
+
 document.getElementById("cadNfPercentual").value = "0";
 
 atualizarListaEmpresas();
@@ -1349,7 +1490,7 @@ container.innerHTML = "";
 
 const tx = db.transaction("empresas", "readonly");
 
-store = tx.objectStore("empresas").getAll().onsuccess = e => {
+tx.objectStore("empresas").getAll().onsuccess = e => {
 
 const lista = e.target.result;
 
@@ -1383,7 +1524,9 @@ div.innerHTML = `
 
 <small style="color:var(--muted)">
 
-Prazo: ${emp.tipoPagamento} | +${emp.diasPagamento} dias após fechamento | NF: ${emp.nfPercentual}%
+Cachê: R$ ${emp.cacheBase.toFixed(2)} | Diária: R$ ${emp.diaria.toFixed(2)} <br>
+
+Prazo: ${emp.tipoPagamento} | +${emp.diasPagamento} dias | NF: ${emp.nfPercentual}%
 
 </small>
 
@@ -1415,126 +1558,168 @@ atualizarListaEmpresas();
 
 }
 
-function buscarConfiguracoesEmpresa(nomeDigitado) {
+/* ================= LÓGICA DE PRAZOS E ARQUIVAMENTO ================= */
 
-if(!db || !nomeDigitado) return;
+function obterStatusPeriodo(d) {
 
-const tx = db.transaction("empresas", "readonly");
+let dataJobObj = new Date(d.data + "T00:00:00");
 
-tx.objectStore("empresas").getAll().onsuccess = e => {
+let dataAtual = new Date();
 
-const empresas = e.target.result;
+dataAtual.setHours(0,0,0,0);
 
-const achou = empresas.find(emp => emp.nome.toLowerCase() === nomeDigitado.toLowerCase().trim());
+let dataFechamento = calcularDataFechamentoReal(d.data, d.tipoPagamento, d.inicioPeriodo, d.fimPeriodo, d.inicioSemana, d.fimSemana);
 
-if(achou) {
+let dataPrevistaPag = calcularDataPagamentoReal(dataFechamento, d.diasPagamento);
 
-document.getElementById("tipoPagamento").value = achou.tipoPagamento;
+if (dataAtual > dataPrevistaPag) {
 
-document.getElementById("inicioPeriodo").value = achou.inicioPeriodo;
+return "pago";
 
-document.getElementById("fimPeriodo").value = achou.fimPeriodo;
+} else if (dataAtual > dataFechamento) {
 
-document.getElementById("inicioSemana").value = achou.inicioSemana;
+return "arquivado";
 
-document.getElementById("fimSemana").value = achou.fimSemana;
+} else {
 
-document.getElementById("diasPagamento").value = achou.diasPagamento;
-
-document.getElementById("nfPercentual").value = achou.nfPercentual;
-
-alterarPeriodoPagamento();
+return "aberto";
 
 }
 
-};
-
 }
 
-function calcularPagamento(dataBase,tipo,dias,inicioPeriodo,fimPeriodo,inicioSemana,fimSemana){
+function calcularDataFechamentoReal(dataBase, tipo, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana) {
 
-let data = new Date(dataBase+"T00:00:00");
+let data = new Date(dataBase + "T00:00:00");
 
-let fechamento;
+let fechamento = new Date(data);
 
-if(tipo==="Semanal"){
-
-fechamento = new Date(data);
+if (tipo === "Semanal") {
 
 let alvoFim = parseInt(fimSemana);
 
 let diasAteFechamento = (alvoFim - data.getDay() + 7) % 7;
 
-if(diasAteFechamento === 0) diasAteFechamento = 7; 
+if (diasAteFechamento === 0) diasAteFechamento = 7;
 
 fechamento.setDate(data.getDate() + diasAteFechamento);
 
-}else{
+} else {
 
 let dia = data.getDate();
 
-fechamento = (dia>=inicioPeriodo && dia<=fimPeriodo)
-? new Date(data.getFullYear(),data.getMonth(),fimPeriodo)
-: new Date(data.getFullYear(),data.getMonth()+1,fimPeriodo);
+if (dia >= inicioPeriodo && dia <= fimPeriodo) {
+
+fechamento = new Date(data.getFullYear(), data.getMonth(), fimPeriodo);
+
+} else {
+
+fechamento = new Date(data.getFullYear(), data.getMonth() + 1, fimPeriodo);
 
 }
 
-fechamento.setDate(fechamento.getDate()+Number(dias));
+}
 
-return fechamento.toLocaleDateString("pt-BR");
+return fechamento;
 
 }
 
-/* ================= CRUD ================= */
+function calcularDataPagamentoReal(dataFechamento, dias) {
+
+let pagamento = new Date(dataFechamento);
+
+pagamento.setDate(pagamento.getDate() + Number(dias));
+
+return pagamento;
+
+}
+
+function calcularPagamento(dataBase,tipo,dias,inicioPeriodo,fimPeriodo,inicioSemana,fimSemana){
+
+let fechamento = calcularDataFechamentoReal(dataBase, tipo, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana);
+
+let pagamento = calcularDataPagamentoReal(fechamento, dias);
+
+return pagamento.toLocaleDateString("pt-BR");
+
+}
+
+/* ================= CRUD JOBS ================= */
 
 function salvarJob(){
 
 const dt = dataJob.value;
+
 if(!dt) return alert("Selecione data");
 
-const cache = parseFloat(vCacheBase.value||0);
-const diaria = parseFloat(vDiaria.value||0);
+const nomeEmpresaInput = empresaJob.value.trim();
+
+if(!nomeEmpresaInput) return alert("Insira o nome de uma empresa");
+
+const cache = parseFloat(document.getElementById("vCacheBaseEdicao").value || 0);
+
+const diaria = parseFloat(document.getElementById("vDiariaEdicao").value || 0);
+
 const nf = parseFloat(nfPercentual.value||0);
 
 const campoInicio = document.getElementById("inicio").value;
+
 const campoFim = document.getElementById("fim").value;
 
 const ini = campoInicio.split(":");
+
 const end = campoFim.split(":");
 
-let min =
-(parseInt(end[0])*60+parseInt(end[1])) -
-(parseInt(ini[0])*60+parseInt(ini[1]));
+let min = (parseInt(end[0])*60+parseInt(end[1])) - (parseInt(ini[0])*60+parseInt(ini[1]));
 
 if(min<0) min+=1440;
 
 const horas = min/60;
+
 const extraHoras = Math.max(0,horas-12);
+
 const extra = extraHoras*(cache/12);
 
 const total = cache+diaria+extra;
 
 const item = {
+
 data:dt,
-empresa:empresaJob.value||"Fader Livre",
-job:nomeJob.value||"",
+
+empresa:nomeEmpresaInput,
+
+job:nomeJob.value||"Sem Nome",
+
 cache,diaria,extra,total,
+
 valorNF: total*(nf/100),
+
 horas:horas.toFixed(1),
+
 inicio:campoInicio,fim:campoFim,
+
 tipoPagamento:tipoPagamento.value,
+
 diasPagamento:parseInt(diasPagamento.value||0),
+
 inicioPeriodo:parseInt(inicioPeriodo.value||1),
+
 fimPeriodo:parseInt(fimPeriodo.value||15),
+
 inicioSemana:parseInt(document.getElementById("inicioSemana").value||1),
+
 fimSemana:parseInt(document.getElementById("fimSemana").value||0),
-previsaoPagamento:
-calcularPagamento(dt,tipoPagamento.value,diasPagamento.value,inicioPeriodo.value,fimPeriodo.value,document.getElementById("inicioSemana").value,document.getElementById("fimSemana").value)
+
+previsaoPagamento: calcularPagamento(dt,tipoPagamento.value,diasPagamento.value,inicioPeriodo.value,fimPeriodo.value,document.getElementById("inicioSemana").value,document.getElementById("fimSemana").value)
+
 };
 
 db.transaction("jobs","readwrite")
+
 .objectStore("jobs")
+
 .add(item)
+
 .onsuccess = ()=> {
 
 atualizarTela();
@@ -1577,15 +1762,115 @@ filtrarTabela();
 
 }
 
+/* ================= ENVIOS E FILTROS SAZONAIS ================= */
+
 function enviarRelatorioWhatsApp(){
 
-alert("Funcionalidade de Relatório integrada.");
+if(!db) return;
+
+const tx = db.transaction("jobs", "readonly");
+
+tx.objectStore("jobs").getAll().onsuccess = e => {
+
+const todosJobs = e.target.result;
+
+const abertosDoPeriodo = todosJobs.filter(d => obterStatusPeriodo(d) === "aberto");
+
+if(abertosDoPeriodo.length === 0) {
+
+alert("Não há registros no período em aberto para enviar.");
+
+return;
+
+}
+
+let relatoriosPorEmpresa = {};
+
+abertosDoPeriodo.forEach(j => {
+
+if(!relatoriosPorEmpresa[j.empresa]) relatoriosPorEmpresa[j.empresa] = [];
+
+relatoriosPorEmpresa[j.empresa].push(j);
+
+});
+
+let mensagemCompleta = "RELATÓRIO DE PRESTAÇÃO DE SERVIÇOS\n\n";
+
+for(let emp in relatoriosPorEmpresa) {
+
+mensagemCompleta += `EMPRESA: ${emp.toUpperCase()}\n`;
+
+let totalGeralEmpresa = 0;
+
+relatoriosPorEmpresa[emp].forEach(j => {
+
+const dataFormatada = j.data.split("-").reverse().join("/");
+
+mensagemCompleta += `Data: ${dataFormatada} - Job: ${j.job}\n`;
+
+mensagemCompleta += `Horário: ${j.inicio} às ${j.fim} (${j.horas}h)\n`;
+
+mensagemCompleta += `Valor Cache: R$ ${j.cache.toFixed(2)}\n`;
+
+mensagemCompleta += `Valor Diaria: R$ ${j.diaria.toFixed(2)}\n`;
+
+if(j.extra > 0) mensagemCompleta += `Hora Extra: R$ ${j.extra.toFixed(2)}\n`;
+
+mensagemCompleta += `Subtotal: R$ ${j.total.toFixed(2)}\n`;
+
+mensagemCompleta += "---------------------------\n";
+
+totalGeralEmpresa += j.total;
+
+});
+
+mensagemCompleta += `VALOR TOTAL DO PERÍODO: R$ ${totalGeralEmpresa.toFixed(2)}\n\n`;
+
+}
+
+const url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(mensagemCompleta);
+
+window.open(url, "_blank");
+
+};
 
 }
 
 function baixarExcelCompleto(){
 
-alert("Funcionalidade de Exportação de CSV integrada.");
+if(!db) return;
+
+const tx = db.transaction("jobs", "readonly");
+
+tx.objectStore("jobs").getAll().onsuccess = e => {
+
+const dados = e.target.result;
+
+if(dados.length === 0) return alert("Não há dados para exportar");
+
+let csv = "ID;Data;Empresa;Job;Inicio;Fim;Horas;Cache Base;Diaria;Extra;Total;Valor NF;Previsao Pagamento;Status\n";
+
+dados.forEach(d => {
+
+const status = obterStatusPeriodo(d);
+
+csv += `${d.id};${d.data};${d.empresa};${d.job};${d.inicio};${d.fim};${d.horas};${d.cache};${d.diaria};${d.extra};${d.total};${d.valorNF};${d.previsaoPagamento};${status}\n`;
+
+});
+
+const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+
+const url = URL.createObjectURL(blob);
+
+const a = document.createElement("a");
+
+a.href = url;
+
+a.download = "cache_control_relatorio_" + new Date().toISOString().split("T")[0] + ".csv";
+
+a.click();
+
+};
 
 }
 
@@ -1605,13 +1890,16 @@ const lista = document.getElementById("listaHistorico");
 
 lista.innerHTML = "";
 
-let total = 0;
-let totalNF = 0;
-let totalHoras = 0;
+let totalGeralDashboard = 0;
 
-let empresas = {};
+let totalNfDashboard = 0;
+
+let totalHorasDashboard = 0;
+
+let empresasGrafico = {};
 
 const tx = db.transaction("jobs","readonly");
+
 const store = tx.objectStore("jobs");
 
 store.getAll().onsuccess = e=>{
@@ -1620,35 +1908,75 @@ const dados = e.target.result.reverse();
 
 dados.forEach(d=>{
 
-total += d.total || 0;
-totalNF += d.valorNF || 0;
-totalHoras += parseFloat(d.horas || 0);
+const statusDoJob = obterStatusPeriodo(d);
 
-if(!empresas[d.empresa]){
-empresas[d.empresa] = 0;
+let deveMostrarNoHistorico = false;
+
+if (filtroVisualizacao === "aberto" && statusDoJob === "aberto") {
+
+deveMostrarNoHistorico = true;
+
+} else if (filtroVisualizacao === "arquivado" && (statusDoJob === "arquivado" || statusDoJob === "pago")) {
+
+deveMostrarNoHistorico = true;
+
 }
 
-empresas[d.empresa] += d.total;
+if (statusDoJob === "aberto") {
+
+totalGeralDashboard += d.total || 0;
+
+totalNfDashboard += d.valorNF || 0;
+
+totalHorasDashboard += parseFloat(d.horas || 0);
+
+if(!empresasGrafico[d.empresa]){
+
+empresasGrafico[d.empresa] = 0;
+
+}
+
+empresasGrafico[d.empresa] += d.total;
+
+}
 
 if(!mapaCores[d.empresa]){
-mapaCores[d.empresa] =
-coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
+
+mapaCores[d.empresa] = coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
+
 }
 
-/* CARD */
+if (deveMostrarNoHistorico) {
 
 const card = document.createElement("div");
+
 card.className = "history-card";
+
 card.style.borderLeft = "6px solid " + mapaCores[d.empresa];
 
+let badgeHtml = "";
+
+if (statusDoJob === "aberto") badgeHtml = `<span class="badge-status status-aberto">Período Aberto</span>`;
+
+if (statusDoJob === "arquivado") badgeHtml = `<span class="badge-status status-fechado">Período Fechado (Aguardando Pgto)</span>`;
+
+if (statusDoJob === "pago") badgeHtml = `<span class="badge-status status-pago">Pago ✓</span>`;
+
 card.innerHTML = `
+
 <button class="btn-del" onclick="deletarJob(${d.id})">🗑️</button>
 
 <div class="empresa-title" style="color:${mapaCores[d.empresa]}">
+
 ${d.empresa}
+
 </div>
 
 <b>${d.data.split("-").reverse().join("/")}</b> - ${d.job}
+
+<br>
+
+${badgeHtml}
 
 <br><br>
 
@@ -1663,30 +1991,34 @@ ${d.empresa}
 💰 Total: ${formatarValor(d.total)}
 
 <div class="extra-box">
+
 Hora Extra: ${formatarValor(d.extra)}
+
 </div>
 
 <p style="color:#ef4444">
+
 NF: - ${formatarValor(d.valorNF)}
+
 </p>
+
 `;
 
 lista.appendChild(card);
+
+}
 
 });
 
 /* DASHBOARD */
 
-document.getElementById("vTotalSemana").innerText =
-formatarValor(total);
+document.getElementById("vTotalSemana").innerText = formatarValor(totalGeralDashboard);
 
-document.getElementById("vTotalNF").innerText =
-"- " + formatarValor(totalNF);
+document.getElementById("vTotalNF").innerText = "- " + formatarValor(totalNfDashboard);
 
-document.getElementById("vTotalHoras").innerText =
-totalHoras.toFixed(1) + "h";
+document.getElementById("vTotalHoras").innerText = totalHorasDashboard.toFixed(1) + "h";
 
-renderGrafico(empresas);
+renderGrafico(empresasGrafico);
 
 };
 
@@ -1699,12 +2031,21 @@ function renderGrafico(empresas){
 const ctx = document.getElementById("graficoEmpresas");
 
 const labels = Object.keys(empresas);
+
 const values = Object.values(empresas);
 
 const colors = labels.map(e=>mapaCores[e]);
 
 if(window.chartInstance){
+
 window.chartInstance.destroy();
+
+}
+
+if(labels.length === 0) {
+
+return; 
+
 }
 
 window.chartInstance = new Chart(ctx,{
@@ -1712,26 +2053,43 @@ window.chartInstance = new Chart(ctx,{
 type:"bar",
 
 data:{
+
 labels:labels,
+
 datasets:[{
+
 data:values,
+
 backgroundColor:colors,
+
 borderRadius:12
+
 }]
+
 },
 
 options:{
+
 responsive:true,
+
 maintainAspectRatio:false,
+
 plugins:{legend:{display:false}},
+
 scales:{
+
 y:{display:false},
+
 x:{ticks:{color:"#fff"},grid:{display:false}}
+
 }
+
 },
 
 plugins:[{
+
 id:"values",
+
 afterDatasetsDraw(chart){
 
 if(ocultarValores) return;
@@ -1741,11 +2099,15 @@ const {ctx} = chart;
 chart.data.datasets[0].data.forEach((v,i)=>{
 
 const meta = chart.getDatasetMeta(0);
+
 const x = meta.data[i].x;
+
 const y = meta.data[i].y;
 
 ctx.fillStyle = "#fff";
+
 ctx.textAlign = "center";
+
 ctx.font = "bold 13px Arial";
 
 ctx.fillText(formatarValor(v),x,y-10);
@@ -1753,6 +2115,7 @@ ctx.fillText(formatarValor(v),x,y-10);
 });
 
 }
+
 }]
 
 });
@@ -1768,7 +2131,9 @@ const f = inputBusca.value.toUpperCase();
 document.querySelectorAll(".history-card").forEach(card=>{
 
 card.style.display =
+
 card.innerText.toUpperCase().includes(f)
+
 ? "block":"none";
 
 });
@@ -1780,17 +2145,24 @@ card.innerText.toUpperCase().includes(f)
 function limparCampos(){
 
 dataJob.value="";
-empresaJob.value="";
-nomeJob.value="";
-vCacheBase.value="";
-vDiaria.value="";
-document.getElementById("inicio").value="08:00";
-document.getElementById("fim").value="20:00";
-tipoPagamento.value="Semanal";
-diasPagamento.value="5";
-nfPercentual.value="0";
 
-document.getElementById("periodoPersonalizado").style.display="none";
+empresaJob.value="";
+
+nomeJob.value="";
+
+document.getElementById("inicio").value="08:00";
+
+document.getElementById("fim").value="20:00";
+
+document.getElementById("vCacheBase").value="0";
+
+document.getElementById("vDiaria").value="0";
+
+document.getElementById("vCacheBaseEdicao").value="";
+
+document.getElementById("vDiariaEdicao").value="";
+
+document.getElementById("wrapperCamposOpcionais").style.display="none";
 
 }
 
