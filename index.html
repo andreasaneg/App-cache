@@ -33,26 +33,26 @@
 
 /* Cores do tema Claro - Melhorado */
 body.light-mode {
---primary: #1d4ed8; /* Um azul mais forte */
---primary-hover: #1e40af;
---primary-glow: rgba(29, 78, 216, 0.2);
---bg: #ffffff; /* Fundo branco puro */
---card: #f8fafc; /* Card um pouco cinza */
---card-hover: #e2e8f0;
---text: #1a202c; /* Texto muito escuro para alto contraste */
---text-secondary: #4a5568;
---danger: #ef4444;
---danger-hover: #dc2626;
---danger-glow: rgba(239, 68, 68, 0.15);
---muted: #718096;
---blue: #3b82f6;
---blue-hover: #2563eb;
---blue-glow: rgba(59, 130, 246, 0.2);
---warning: #f59e0b;
---success: #10b981; /* Verde um pouco mais suave */
---dark-pure: #edf2f7; /* Para inputs e similares */
---border-color: #cbd5e1;
---border-hover: #a0aec0;
+--primary: #0277bd; /* Azul primário mais vibrante e contrastante */
+--primary-hover: #01579b;
+--primary-glow: rgba(2, 119, 189, 0.2);
+--bg: #fdfdfd; /* Fundo quase branco para máxima clareza */
+--card: #ffffff; /* Card branco puro */
+--card-hover: #f0f0f0;
+--text: #212121; /* Texto muito escuro para alto contraste */
+--text-secondary: #616161;
+--danger: #d32f2f; /* Vermelho mais forte */
+--danger-hover: #c62828;
+--danger-glow: rgba(211, 47, 47, 0.15);
+--muted: #757575; /* Cinza médio */
+--blue: #1976d2; /* Azul para destaque */
+--blue-hover: #1565c0;
+--blue-glow: rgba(25, 118, 210, 0.2);
+--warning: #fbc02d; /* Amarelo mais vibrante */
+--success: #388e3c; /* Verde mais forte */
+--dark-pure: #e0e0e0; /* Para inputs e elementos de fundo secundário */
+--border-color: #bdbdbd; /* Borda mais visível */
+--border-hover: #9e9e9e;
 }
 
 * {
@@ -212,9 +212,9 @@ border-left: 6px solid var(--primary);
 box-shadow: 0 4px 10px -1px rgba(0,0,0,0.2);
 }
 .empresa-title {
-font-size: 1.3em; /* Aumentado */
+font-size: 1.3em;
 font-weight: 800;
-margin-bottom: 8px; /* Ajuste para espaçamento */
+margin-bottom: 8px;
 display: flex;
 justify-content: space-between;
 align-items: center;
@@ -364,6 +364,9 @@ margin: 4px 0;
 .meta-text b { color: var(--text); }
 
 /* Estilos adicionais para os registros de job */
+.history-card div.empresa-title { /* Garante que o título do job card seja primário */
+    color: var(--primary) !important;
+}
 .history-card div[style*="font-weight:900"] {
     font-size: 1.2em !important; /* Aumentado para Total Bruto */
     margin-top: 15px !important;
@@ -371,6 +374,12 @@ margin: 4px 0;
 .history-card div[style*="font-size:0.8em"] { /* Para Imposto NF */
     font-size: 1em !important; /* Aumentado */
     color: var(--danger) !important;
+    margin-top: 5px !important;
+}
+.history-card .valor-liquido {
+    font-size: 1.1em !important; /* Aumentado */
+    font-weight: 900;
+    color: var(--success) !important; /* Cor de sucesso para valor líquido */
     margin-top: 5px !important;
 }
 .config-group {
@@ -470,10 +479,10 @@ input:checked + .slider:before {
 <div class="dashboard">
 <div class="dashboard-card">
 <button class="eye-button" id="eyeButton" onclick="toggleValores()">👁️</button>
-<div class="dashboard-title">Job</div>
+<div class="dashboard-title">Total Bruto</div>
 <div id="vTotalSemana" class="total-geral">R$ 0,00</div>
 </div>
-<div class="dashboard-card">
+<div class="dashboard-card" id="dashboardNfCard">
 <div class="dashboard-title">Imposto NF</div>
 <div id="vTotalNF" class="total-nf">- R$ 0,00</div>
 </div>
@@ -757,7 +766,7 @@ function initializeSettings() {
         } catch(e) {
             console.error("Erro ao definir dataJob inicial:", e);
         }
-        atualizarTela();
+        atualizarTela(); // Esta função agora também atualiza a visibilidade da NF
         atualizarListaEmpresas();
         checkAndRequestNotificationPermission();
         checkDuePayments();
@@ -1178,6 +1187,7 @@ function salvarEmpresa() {
         atualizarListaEmpresas();
         // Limpa o status de notificação de jobs se as regras da empresa mudarem, para reavaliar datas de pagamento
         localStorage.removeItem('job_notifications_status');
+        atualizarTela(); // Força atualização da aba jobs para verificar visibilidade da NF
     };
     requisicao.onerror = function(e) {
         console.error("Erro ao salvar empresa:", e);
@@ -1228,6 +1238,7 @@ function deletarEmpresa(id) {
             atualizarListaEmpresas();
             // Também limpa o status de notificação se uma empresa associada for deletada
             localStorage.removeItem('job_notifications_status');
+            atualizarTela(); // Força atualização da aba jobs para verificar visibilidade da NF
         };
         tx.onerror = (e) => { console.error("Erro ao deletar empresa:", e); alert("Erro ao deletar a empresa."); };
     }
@@ -1548,72 +1559,99 @@ function atualizarTela(){
     let tBruto = 0, tNF = 0, tHoras = 0;
     let dictGrafico = {};
 
-    const tx = db.transaction("jobs", "readonly");
-    tx.objectStore("jobs").getAll().onsuccess = function(event) {
-        // Ordena por data (mais recente primeiro)
-        const matriz = event.target.result.sort((a, b) => new Date(b.data) - new Date(a.data));
+    // Primeiro, verifica se há alguma empresa com custo de NF
+    const txE = db.transaction("empresas", "readonly");
+    txE.objectStore("empresas").getAll().onsuccess = function(e_empresas) {
+        const todasEmpresas = e_empresas.target.result;
+        let hasNFCost = todasEmpresas.some(emp => emp.nfPercentual > 0);
 
-        matriz.forEach(reg => {
-            const status = obterStatusPeriodo(reg); // O status é recalculado para cada registro
+        // Condicionalmente mostra/oculta o card de NF no dashboard
+        const dashboardNfCard = document.getElementById("dashboardNfCard");
+        if (dashboardNfCard) {
+            dashboardNfCard.style.display = hasNFCost ? 'block' : 'none';
+        }
 
-            // Soma apenas os valores de jobs em "Período Aberto" para o Dashboard
-            if (status === "aberto") {
-                tBruto += reg.total || 0;
-                tNF += reg.valorNF || 0;
-                tHoras += parseFloat(reg.horas || 0);
-                dictGrafico[reg.empresa] = (dictGrafico[reg.empresa] || 0) + reg.total;
-            }
+        // Agora processa os jobs, ciente da visibilidade do custo de NF
+        const tx = db.transaction("jobs", "readonly");
+        tx.objectStore("jobs").getAll().onsuccess = function(event) {
+            // Ordena por data (mais recente primeiro)
+            const matriz = event.target.result.sort((a, b) => new Date(b.data) - new Date(a.data));
 
-            if(!mapaCores[reg.empresa]) mapaCores[reg.empresa] = coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
+            matriz.forEach(reg => {
+                const status = obterStatusPeriodo(reg); // O status é recalculado para cada registro
 
-            // Verifica o filtro de visualização para exibir o card
-            let shouldDisplayCard = (filtroVisualizacao === "aberto" && status === "aberto") ||
-                                    (filtroVisualizacao === "arquivado" && (status === "arquivado" || status === "pago"));
-
-            if (shouldDisplayCard) {
-                const card = document.createElement("div");
-                card.className = "history-card";
-                card.style.borderLeft = "6px solid " + mapaCores[reg.empresa];
-
-                let badge = '';
+                // Soma apenas os valores de jobs em "Período Aberto" para o Dashboard
                 if (status === "aberto") {
-                    badge = `<span class="badge-status status-aberto">Aberto</span>`;
-                } else if (status === "arquivado") {
-                    badge = `<span class="badge-status status-fechado">Aguardando</span>`;
-                } else { // status === "pago"
-                    badge = `<span class="badge-status status-pago">Quitado ✓</span>`;
+                    tBruto += reg.total || 0;
+                    tNF += reg.valorNF || 0;
+                    tHoras += parseFloat(reg.horas || 0);
+                    dictGrafico[reg.empresa] = (dictGrafico[reg.empresa] || 0) + reg.total;
                 }
 
-                let dFmt = reg.data.split("-").reverse().join("/");
-                card.innerHTML = `
-                    <button class="btn-del" onclick="deletarJob(${reg.id})">🗑️</button>
-                    <button class="btn-edit-inline" onclick="carregarJobParaEdicao(${reg.id})">✏️</button>
-                    <div class="empresa-title">${reg.empresa}</div>
-                    <div class="meta-text">📅 ${dFmt} | 📌 ${reg.job}</div>
-                    <div>${badge}</div>
-                    <div class="meta-text" style="margin-top:8px;">🕒 Horários: ${reg.inicio} às ${reg.fim} (${reg.horas}h)</div>
-                    <div class="meta-text">💰 Cachê: ${formatarValor(reg.cache)}</div>
-                    <div class="meta-text">🚗 Diária / Logística: ${formatarValor(reg.diaria)}</div>
-                    <div class="meta-text">⚡ Horas Extras: ${formatarValor(reg.extra)}</div>
-                    <div class="meta-text">🗓️ Previsão de Recebimento: <b>${reg.previsaoPagamento}</b></div>
-                    <div style="margin-top:10px; font-weight:900;">Total Bruto: <span>${formatarValor(reg.total)}</span></div>
-                    <div style="font-size:0.8em; color:var(--danger);">Imposto NF: <span>- ${formatarValor(reg.valorNF)}</span></div>
-                `;
-                painel.appendChild(card);
+                if(!mapaCores[reg.empresa]) mapaCores[reg.empresa] = coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
+
+                // Verifica o filtro de visualização para exibir o card
+                let shouldDisplayCard = (filtroVisualizacao === "aberto" && status === "aberto") ||
+                                        (filtroVisualizacao === "arquivado" && (status === "arquivado" || status === "pago"));
+
+                if (shouldDisplayCard) {
+                    const card = document.createElement("div");
+                    card.className = "history-card";
+                    card.style.borderLeft = "6px solid " + mapaCores[reg.empresa];
+
+                    let badge = '';
+                    if (status === "aberto") {
+                        badge = `<span class="badge-status status-aberto">Aberto</span>`;
+                    } else if (status === "arquivado") {
+                        badge = `<span class="badge-status status-fechado">Aguardando</span>`;
+                    } else { // status === "pago"
+                        badge = `<span class="badge-status status-pago">Quitado ✓</span>`;
+                    }
+
+                    let dFmt = reg.data.split("-").reverse().join("/");
+                    
+                    let impostoNFHtml = '';
+                    let valorLiquidoHtml = '';
+
+                    // Exibe Imposto NF e Valor Líquido apenas se houver custo de NF para alguma empresa
+                    if (hasNFCost && reg.valorNF > 0) {
+                        const valorLiquido = reg.total - reg.valorNF;
+                        impostoNFHtml = `<div style="font-size:0.8em; color:var(--danger);">Imposto NF: <span>- ${formatarValor(reg.valorNF)}</span></div>`;
+                        valorLiquidoHtml = `<div class="valor-liquido" style="margin-top:5px; font-weight:900; color:var(--success);">Valor Líquido: <span>${formatarValor(valorLiquido)}</span></div>`;
+                    }
+
+                    card.innerHTML = `
+                        <button class="btn-del" onclick="deletarJob(${reg.id})">🗑️</button>
+                        <button class="btn-edit-inline" onclick="carregarJobParaEdicao(${reg.id})">✏️</button>
+                        <div class="empresa-title">${reg.empresa}</div>
+                        <div class="meta-text">📅 ${dFmt} | 📌 ${reg.job}</div>
+                        <div>${badge}</div>
+                        <div class="meta-text" style="margin-top:8px;">🕒 Horários: ${reg.inicio} às ${reg.fim} (${reg.horas}h)</div>
+                        <div class="meta-text">💰 Cachê: ${formatarValor(reg.cache)}</div>
+                        <div class="meta-text">🚗 Diária / Logística: ${formatarValor(reg.diaria)}</div>
+                        <div class="meta-text">⚡ Horas Extras: ${formatarValor(reg.extra)}</div>
+                        <div class="meta-text">🗓️ Previsão de Recebimento: <b>${reg.previsaoPagamento}</b></div>
+                        <div style="margin-top:10px; font-weight:900;">Total Bruto: <span>${formatarValor(reg.total)}</span></div>
+                        ${impostoNFHtml}
+                        ${valorLiquidoHtml}
+                    `;
+                    painel.appendChild(card);
+                }
+            });
+
+            document.getElementById("vTotalSemana").innerText = formatarValor(tBruto);
+            document.getElementById("vTotalNF").innerText = "- " + formatarValor(tNF); // Ainda atualiza o valor mesmo se o card estiver oculto
+            document.getElementById("vTotalHoras").innerText = tHoras.toFixed(1) + "h";
+
+            renderGrafico(dictGrafico);
+
+            if(document.getElementById("searchBox").style.display === "block"){
+                filtrarTabela();
             }
-        });
-
-        document.getElementById("vTotalSemana").innerText = formatarValor(tBruto);
-        document.getElementById("vTotalNF").innerText = "- " + formatarValor(tNF);
-        document.getElementById("vTotalHoras").innerText = tHoras.toFixed(1) + "h";
-
-        renderGrafico(dictGrafico);
-
-        if(document.getElementById("searchBox").style.display === "block"){
-            filtrarTabela();
-        }
+        };
+        tx.onerror = (e) => { console.error("Erro ao atualizar tela (jobs):", e); };
     };
-    tx.onerror = (e) => { console.error("Erro ao atualizar tela:", e); };
+    txE.onerror = (e) => { console.error("Erro ao buscar empresas para visibilidade NF:", e); };
 }
 
 function renderGrafico(dict){
@@ -1724,18 +1762,20 @@ function enviarRelatorioWhatsApp(){
 
         let totalGeralBrutoFiltrado = 0; // Novo total para o bruto
         filtrados.forEach(j => {
+            const valorLiquido = j.total - j.valorNF; // Calcula o valor líquido
             msg += `*${j.empresa}* - ${j.data.split("-").reverse().join("/")}\n`;
             msg += `Job: ${j.job}\n`;
             msg += `Cachê: R$ ${j.cache.toFixed(2)}\n`;
             msg += `Diária / Logística: R$ ${j.diaria.toFixed(2)}\n`;
             msg += `Horas Extras: R$ ${j.extra.toFixed(2)}\n`;
-            msg += `*Total Bruto: R$ ${j.total.toFixed(2)}*\n`;
+            msg += `Total: R$ ${j.total.toFixed(2)}\n`; // "Total Bruto" para "Total"
+            msg += `Valor Líquido: R$ ${valorLiquido.toFixed(2)}\n`; // Novo campo Valor Líquido
             msg += `Previsão de Pagamento: ${j.previsaoPagamento}\n\n`;
             totalGeralBrutoFiltrado += j.total;
         });
 
         msg += "--------------------------------------\n";
-        msg += `*TOTAL GERAL BRUTO: R$ ${totalGeralBrutoFiltrado.toFixed(2)}*\n`;
+        msg += `*TOTAL GERAL: R$ ${totalGeralBrutoFiltrado.toFixed(2)}*\n`; // "TOTAL GERAL BRUTO" para "TOTAL GERAL"
         msg += `Relatório gerado em: ${new Date().toLocaleDateString("pt-BR")}\n`;
 
         window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
@@ -1749,9 +1789,10 @@ function baixarExcelCompleto(){
         // Ordena por data (mais recente primeiro) para o CSV também
         const jobsOrdenados = event.target.result.sort((a, b) => new Date(b.data) - new Date(a.data));
 
-        let csv = "ID;Data;Empresa;Job;Cache;Diaria;Horas Extras;Total Bruto;Imposto NF;Previsao Pagamento\n";
+        let csv = "ID;Data;Empresa;Job;Cache;Diaria;Horas Extras;Total Bruto;Imposto NF;Valor Liquido;Previsao Pagamento\n";
         jobsOrdenados.forEach(i => {
-            csv += `${i.id};${i.data};${i.empresa};${i.job};${i.cache.toFixed(2)};${i.diaria.toFixed(2)};${i.extra.toFixed(2)};${i.total.toFixed(2)};${i.valorNF.toFixed(2)};${i.previsaoPagamento}\n`;
+            const valorLiquido = i.total - i.valorNF;
+            csv += `${i.id};${i.data};${i.empresa};${i.job};${i.cache.toFixed(2)};${i.diaria.toFixed(2)};${i.extra.toFixed(2)};${i.total.toFixed(2)};${i.valorNF.toFixed(2)};${valorLiquido.toFixed(2)};${i.previsaoPagamento}\n`;
         });
 
         const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
