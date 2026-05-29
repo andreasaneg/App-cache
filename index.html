@@ -31,28 +31,28 @@
 --border-hover: #475569;
 }
 
-/* Cores do tema Claro */
+/* Cores do tema Claro - Melhorado */
 body.light-mode {
---primary: #22c55e;
---primary-hover: #16a34a;
---primary-glow: rgba(34, 197, 94, 0.2);
---bg: #f8fafc;
---card: #ffffff;
---card-hover: #f1f5f9;
---text: #1e293b;
---text-secondary: #475569;
+--primary: #1d4ed8; /* Um azul mais forte */
+--primary-hover: #1e40af;
+--primary-glow: rgba(29, 78, 216, 0.2);
+--bg: #ffffff; /* Fundo branco puro */
+--card: #f8fafc; /* Card um pouco cinza */
+--card-hover: #e2e8f0;
+--text: #1a202c; /* Texto muito escuro para alto contraste */
+--text-secondary: #4a5568;
 --danger: #ef4444;
 --danger-hover: #dc2626;
 --danger-glow: rgba(239, 68, 68, 0.15);
---muted: #64748b;
---blue: #0ea5e9;
---blue-hover: #0284c7;
---blue-glow: rgba(14, 165, 233, 0.2);
+--muted: #718096;
+--blue: #3b82f6;
+--blue-hover: #2563eb;
+--blue-glow: rgba(59, 130, 246, 0.2);
 --warning: #f59e0b;
---success: #16a34a;
---dark-pure: #e2e8f0;
---border-color: #e2e8f0;
---border-hover: #cbd5e1;
+--success: #10b981; /* Verde um pouco mais suave */
+--dark-pure: #edf2f7; /* Para inputs e similares */
+--border-color: #cbd5e1;
+--border-hover: #a0aec0;
 }
 
 * {
@@ -117,7 +117,7 @@ font-weight: 700;
 text-transform: uppercase;
 margin-bottom: 8px;
 letter-spacing: 1px;
-color: var(--text-secondary); /* Ajustado para ser mais consistente */
+color: var(--text-secondary);
 }
 .total-geral { font-size: 2em; font-weight: 900; color: var(--blue); }
 .total-nf { font-size: 2em; font-weight: 900; color: var(--danger); }
@@ -130,8 +130,8 @@ width: 46px;
 height: 46px;
 border: none;
 border-radius: 14px;
-background: var(--border-color); /* Ajustado */
-color: var(--text); /* Ajustado */
+background: var(--border-color);
+color: var(--text);
 font-size: 1.3em;
 cursor: pointer;
 display: flex;
@@ -150,7 +150,7 @@ box-shadow: 0 4px 15px -3px rgba(0,0,0,0.2);
 .input-group h2, .input-group h3 {
 font-size: 1.2em;
 margin-bottom: 18px;
-color: var(--text); /* Ajustado */
+color: var(--text);
 display: flex;
 align-items: center;
 gap: 10px;
@@ -172,7 +172,7 @@ padding: 14px;
 border-radius: 14px;
 border: 1px solid var(--border-color);
 background: var(--dark-pure);
-color: var(--text); /* Ajustado */
+color: var(--text);
 margin-bottom: 15px;
 font-size: 16px;
 }
@@ -198,10 +198,10 @@ text-transform: uppercase;
 letter-spacing: 1px;
 }
 .btn-save { background: var(--primary); color: var(--dark-pure); }
-.btn-export { background: var(--border-color); color: var(--text); } /* Ajustado */
+.btn-export { background: var(--border-color); color: var(--text); }
 .btn-whats { background: #25D366; color: var(--dark-pure); }
-.btn-search { background: var(--blue); color: var(--text); } /* Ajustado */
-.btn-cancel { background: var(--card-hover); color: var(--text); } /* Ajustado */
+.btn-search { background: var(--blue); color: var(--text); }
+.btn-cancel { background: var(--card-hover); color: var(--text); }
 .history-card {
 background: var(--card);
 border-radius: 20px;
@@ -212,14 +212,14 @@ border-left: 6px solid var(--primary);
 box-shadow: 0 4px 10px -1px rgba(0,0,0,0.2);
 }
 .empresa-title {
-font-size: 1.2em;
+font-size: 1.3em; /* Aumentado */
 font-weight: 800;
-margin-bottom: 6px;
+margin-bottom: 8px; /* Ajuste para espaçamento */
 display: flex;
 justify-content: space-between;
 align-items: center;
 padding-right: 85px;
-color: var(--primary); /* Ajustado */
+color: var(--primary);
 }
 .btn-del {
 position: absolute;
@@ -266,7 +266,7 @@ margin-bottom: 15px;
 font-size: 1.2em;
 font-weight: 800;
 margin: 25px 0 15px;
-color: var(--text); /* Ajustado */
+color: var(--text);
 }
 .tab-container {
 display: flex;
@@ -356,21 +356,22 @@ background: #334155;
 color: #ffffff;
 }
 .meta-text {
-font-size: 0.9em; /* Aumentado */
+font-size: 1em; /* Aumentado */
 color: var(--muted);
 line-height: 1.6;
 margin: 4px 0;
 }
-.meta-text b { color: var(--text); } /* Ajustado */
+.meta-text b { color: var(--text); }
 
 /* Estilos adicionais para os registros de job */
 .history-card div[style*="font-weight:900"] {
-    font-size: 1.1em !important; /* Aumentado para Total Bruto */
-    margin-top: 12px !important;
+    font-size: 1.2em !important; /* Aumentado para Total Bruto */
+    margin-top: 15px !important;
 }
-.history-card div[style*="font-size:0.8em"] {
-    font-size: 0.9em !important; /* Aumentado para Imposto NF */
+.history-card div[style*="font-size:0.8em"] { /* Para Imposto NF */
+    font-size: 1em !important; /* Aumentado */
     color: var(--danger) !important;
+    margin-top: 5px !important;
 }
 .config-group {
     background: var(--dark-pure);
@@ -469,15 +470,15 @@ input:checked + .slider:before {
 <div class="dashboard">
 <div class="dashboard-card">
 <button class="eye-button" id="eyeButton" onclick="toggleValores()">👁️</button>
-<div class="dashboard-title" style="color:var(--primary)">Job</div>
+<div class="dashboard-title">Job</div>
 <div id="vTotalSemana" class="total-geral">R$ 0,00</div>
 </div>
 <div class="dashboard-card">
-<div class="dashboard-title" style="color:var(--danger)">Imposto NF</div>
+<div class="dashboard-title">Imposto NF</div>
 <div id="vTotalNF" class="total-nf">- R$ 0,00</div>
 </div>
 <div class="dashboard-card">
-<div class="dashboard-title" style="color:var(--blue)">Horas Trabalhadas</div>
+<div class="dashboard-title">Horas Trabalhadas</div>
 <div id="vTotalHoras" class="total-horas">0.0h</div>
 </div>
 </div>
@@ -523,7 +524,7 @@ input:checked + .slider:before {
 <button class="btn btn-export" style="margin:0; background:var(--border-color);" onclick="limparBusca()">❌ Limpar Filtro</button>
 </div>
 <div id="searchBox" class="search-box">
-<input type="text" id="inputBusca" onkeyup="filtrarTabela()" placeholder="Busque por nomes, projetos, datas...">
+<input type="text" id="inputBusca" onkeyup="filtrarTabela()" onkeydown="handleEnterKey(event)" placeholder="Busque por nomes, projetos, datas...">
 </div>
 <div id="listaHistorico"></div>
 </div>
@@ -554,7 +555,7 @@ input:checked + .slider:before {
 <option value="Mensal">Mensal</option>
 </select>
 <div id="cadPeriodoPersonalizado" style="display:none; padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color);">
-<div id="quinzenalPeriodos" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+<div id="quinzenalPeriodos" style="display:none; grid-template-columns:1fr 1fr; gap:12px;">
     <!-- Campos para a 1ª quinzena -->
     <div>
         <label>Dia Inicial (1ª Quinzena)</label>
@@ -571,20 +572,15 @@ input:checked + .slider:before {
         <p style="font-size:0.75em; color:var(--muted); margin-top:5px;">O início da 2ª quinzena será o dia seguinte ao final da 1ª quinzena.</p>
     </div>
 </div>
-<div id="mensalPeriodos" style="display:none; padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color);">
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-    <div>
-        <label>Dia Inicial do Ciclo</label>
-        <input type="number" id="cadInicioPeriodo" min="1" max="31" value="1">
-    </div>
-    <div>
+<div id="mensalPeriodos" style="display:none; grid-template-columns:1fr 1fr; gap:12px;">
+<div style="grid-column: span 2;">
         <label>Dia Final do Ciclo</label>
         <input type="number" id="cadFimPeriodo" min="1" max="31" value="30">
+        <p style="font-size:0.75em; color:var(--muted); margin-top:5px;">O início do ciclo mensal é sempre o dia 1. Defina apenas o dia final.</p>
     </div>
 </div>
 </div>
-</div>
-<div id="cadPeriodoSemanalBox" style="padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color); display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+<div id="cadPeriodoSemanalBox" style="display:none; padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color); display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
 <div>
 <label>Dia Inicial</label>
 <select id="cadInicioSemana" style="margin:0;">
@@ -671,6 +667,21 @@ input:checked + .slider:before {
 </div>
 
 <div class="config-group">
+    <h4>✋ Autenticação Biométrica</h4>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <label for="biometricToggle" style="margin-bottom: 0; color: var(--muted);">Ativar Biometria / Reconhecimento Facial</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="biometricToggle" disabled> <!-- Disabled as not implemented -->
+            <span class="slider"></span>
+        </label>
+    </div>
+    <p style="font-size:0.8em; color:var(--danger); margin-top: 5px;">
+        **Atenção:** A ativação da biometria nativa não é suportada nesta versão web do aplicativo por motivos de segurança e arquitetura.
+        Esta funcionalidade exigiria um desenvolvimento complexo com Service Workers ou wrappers nativos.
+    </p>
+</div>
+
+<div class="config-group">
     <h4>🔐 Gerenciamento de Chave Master</h4>
     <label for="oldMasterPassword">Chave Master Antiga</label>
     <input type="password" id="oldMasterPassword" placeholder="••••••••">
@@ -691,7 +702,7 @@ let ocultarValores = false;
 let filtroVisualizacao = "aberto";
 let mapaCores = {};
 let BASE_HOURS = 12; // Agora configurável
-let NOTIFICATION_CHECK_HOUR = 9; // Hora padrão para verificar notificações (9 AM)
+let NOTIFICATION_CHECK_HOUR_FLOAT = 9; // Hora padrão para verificar notificações (9 AM), em float
 
 const coresGrafico = [
 '#38bdf8', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
@@ -729,7 +740,7 @@ function initializeSettings() {
     const savedNotificationHour = localStorage.getItem('notification_check_hour');
     if (savedNotificationHour) {
         const [hour, minute] = savedNotificationHour.split(':').map(Number);
-        NOTIFICATION_CHECK_HOUR = hour + (minute / 60); // Convert to float hours
+        NOTIFICATION_CHECK_HOUR_FLOAT = hour + (minute / 60); // Convert to float hours
         document.getElementById('notificationCheckHour').value = savedNotificationHour;
     }
 
@@ -780,7 +791,7 @@ function updateNotificationCheckHour(value) {
     const minute = parseInt(minuteStr);
 
     if (!isNaN(hour) && !isNaN(minute) && hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
-        NOTIFICATION_CHECK_HOUR = hour + (minute / 60);
+        NOTIFICATION_CHECK_HOUR_FLOAT = hour + (minute / 60);
         localStorage.setItem('notification_check_hour', value);
         alert(`Horário de verificação de notificações atualizado para ${value}.`);
     } else {
@@ -935,12 +946,10 @@ requestDB.onupgradeneeded = function(event) {
 
 requestDB.onsuccess = function(event) {
     db = event.target.result;
-    // Apenas executa initializeSettings() ao carregar o corpo, que por sua vez cuida de tudo.
-    // O código aqui pode ser removido pois initializeSettings já foi chamado no onload.
+    // initializeSettings() no body onload já lida com a lógica de atualização pós-login/primeiro acesso.
+    // Este bloco é principalmente para garantir que o 'db' esteja disponível globalmente
+    // e para qualquer caso onde initializeSettings não tenha sido chamado imediatamente.
     if(document.getElementById("loginScreen").style.display === "none") {
-         // Este bloco é para garantir que se o login já estiver ok, as telas são atualizadas
-         // Mas o initializeSettings() no body onload já lida com isso.
-         // Mantido para compatibilidade, mas o initializeSettings já o chama.
          atualizarTela();
          atualizarListaEmpresas();
     }
@@ -970,7 +979,7 @@ function executarBackupAutomatico() {
         const dadosJobs = e_jobs.target.result;
         const txE = db.transaction("empresas", "readonly");
         txE.objectStore("empresas").getAll().onsuccess = function(e_empresas) {
-            const dadosEmpresas = e_empresar.target.result;
+            const dadosEmpresas = e_empresas.target.result;
             const payloadBackup = { jobs: dadosJobs, empresas: dadosEmpresas, dataBackup: new Date().toISOString() };
             localStorage.setItem("fader_livre_auto_backup", JSON.stringify(payloadBackup));
             console.log("Backup automático realizado.");
@@ -1068,9 +1077,16 @@ function definirFiltroVisualizacao(tipo) {
     atualizarTela();
 }
 
+function handleEnterKey(event) {
+    if (event.key === 'Enter') {
+        event.target.blur(); // Remove o foco do input, fechando o teclado virtual
+    }
+}
+
+
 function alterarPeriodoPagamentoCadastro(){
     const tipo = document.getElementById("cadTipoPagamento").value;
-    // Esconde todos os blocos primeiro
+    // Esconde todos os blocos relevantes primeiro
     document.getElementById("cadPeriodoPersonalizado").style.display = "none";
     document.getElementById("cadPeriodoSemanalBox").style.display = "none";
     document.getElementById("quinzenalPeriodos").style.display = "none";
@@ -1080,7 +1096,7 @@ function alterarPeriodoPagamentoCadastro(){
     if(tipo === "Semanal") {
         document.getElementById("cadPeriodoSemanalBox").style.display = "grid";
     } else { // Quinzenal ou Mensal
-        document.getElementById("cadPeriodoPersonalizado").style.display = "block";
+        document.getElementById("cadPeriodoPersonalizado").style.display = "block"; // Mostra o container geral
         if (tipo === "Quinzenal") {
             document.getElementById("quinzenalPeriodos").style.display = "grid";
         } else if (tipo === "Mensal") {
@@ -1145,7 +1161,6 @@ function salvarEmpresa() {
             payloadEmpresa.fimPrimeiraQuinzena = parseInt(document.getElementById("cadFimPrimeiraQuinzena").value || 15);
             payloadEmpresa.fimSegundaQuinzena = parseInt(document.getElementById("cadFimSegundaQuinzena").value || 30);
         } else { // Mensal
-            payloadEmpresa.inicioPeriodo = parseInt(document.getElementById("cadInicioPeriodo").value || 1);
             payloadEmpresa.fimPeriodo = parseInt(document.getElementById("cadFimPeriodo").value || 30);
         }
     }
@@ -1191,7 +1206,6 @@ function carregarEmpresaParaEdicao(id) {
         document.getElementById("cadFimSegundaQuinzena").value = dados.fimSegundaQuinzena || 30;
 
         // Preenche campos de Mensal
-        document.getElementById("cadInicioPeriodo").value = dados.inicioPeriodo || 1;
         document.getElementById("cadFimPeriodo").value = dados.fimPeriodo || 30;
 
         // Preenche campos de Semanal
@@ -1222,7 +1236,8 @@ function deletarEmpresa(id) {
 function atualizarListaEmpresas() {
     if(!db) return;
     const container = document.getElementById("listaEmpresasCadastradas");
-    container.innerHTML = "";
+    container.innerHTML = ""; // Limpa completamente antes de redesenhar
+
     const tx = db.transaction("empresas", "readonly");
     tx.objectStore("empresas").getAll().onsuccess = function(e) {
         const colecao = e.target.result;
@@ -1256,8 +1271,7 @@ function limparCamposEmpresa(){
     document.getElementById("cadTipoPagamento").value = "Semanal";
 
     // Resetar campos de Quinzenal/Mensal
-    document.getElementById("cadInicioPeriodo").value = "1";
-    document.getElementById("cadFimPeriodo").value = "30"; // Alterado para 30 como padrão mensal
+    document.getElementById("cadFimPeriodo").value = "30"; // Padrão mensal
 
     // Resetar campos de Quinzenal específicos
     document.getElementById("cadInicioPrimeiraQuinzena").value = "1";
@@ -1282,13 +1296,12 @@ function obterStatusPeriodo(instanciaJob) {
     let dataFechamento = calcularDataFechamentoReal(
         instanciaJob.data,
         instanciaJob.tipoPagamento,
-        instanciaJob.inicioPeriodo, // para mensal antigo
-        instanciaJob.fimPeriodo, // para mensal antigo
-        instanciaJob.inicioSemana,
-        instanciaJob.fimSemana,
-        instanciaJob.inicioPrimeiraQuinzena, // para quinzenal novo
-        instanciaJob.fimPrimeiraQuinzena, // para quinzenal novo
-        instanciaJob.fimSegundaQuinzena // para quinzenal novo
+        instanciaJob.fimPeriodo, // para mensal
+        instanciaJob.inicioSemana, // para semanal
+        instanciaJob.fimSemana, // para semanal
+        instanciaJob.inicioPrimeiraQuinzena, // para quinzenal
+        instanciaJob.fimPrimeiraQuinzena, // para quinzenal
+        instanciaJob.fimSegundaQuinzena // para quinzenal
     );
     let dataLiquidacao = calcularDataPagamentoReal(dataFechamento, instanciaJob.diasPagamento);
 
@@ -1297,7 +1310,7 @@ function obterStatusPeriodo(instanciaJob) {
     return "aberto";
 }
 
-function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana, inicioPrimeiraQuinzena, fimPrimeiraQuinzena, fimSegundaQuinzena) {
+function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, fimPeriodoMensal, inicioSemana, fimSemana, inicioPrimeiraQuinzena, fimPrimeiraQuinzena, fimSegundaQuinzena) {
     let objetoData = new Date(dataPrestacao + "T00:00:00"); // Garante que a hora seja 00:00
     let objetoFechamento = new Date(objetoData);
 
@@ -1341,7 +1354,7 @@ function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fim
 
     } else { // Mensal
         let diaCorrente = objetoData.getDate();
-        let pFim = parseInt(fimPeriodo || 30); // Usa o fimPeriodo para mensal (valor padrão alterado para 30)
+        let pFim = parseInt(fimPeriodoMensal || 30); // Usa o fimPeriodo para mensal (valor padrão alterado para 30)
 
         if (diaCorrente <= pFim) {
             objetoFechamento = new Date(objetoData.getFullYear(), objetoData.getMonth(), pFim);
@@ -1413,13 +1426,12 @@ function salvarJob(){
             dataInput,
             empresaEncontrada.tipoPagamento,
             empresaEncontrada.diasPagamento,
-            empresaEncontrada.inicioPeriodo,
-            empresaEncontrada.fimPeriodo,
-            empresaEncontrada.inicioSemana,
-            empresaEncontrada.fimSemana,
-            empresaEncontrada.inicioPrimeiraQuinzena,
-            empresaEncontrada.fimPrimeiraQuinzena,
-            empresaEncontrada.fimSegundaQuinzena
+            empresaEncontrada.fimPeriodo, // para mensal
+            empresaEncontrada.inicioSemana, // para semanal
+            empresaEncontrada.fimSemana, // para semanal
+            empresaEncontrada.inicioPrimeiraQuinzena, // para quinzenal
+            empresaEncontrada.fimPrimeiraQuinzena, // para quinzenal
+            empresaEncontrada.fimSegundaQuinzena // para quinzenal
         );
 
 
@@ -1437,7 +1449,6 @@ function salvarJob(){
             fim: sFim,
             tipoPagamento: empresaEncontrada.tipoPagamento,
             diasPagamento: parseInt(empresaEncontrada.diasPagamento || 0),
-            inicioPeriodo: parseInt(empresaEncontrada.inicioPeriodo || 1),
             fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 30), // Padrão mensal
             inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1),
             fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
@@ -1468,8 +1479,8 @@ function salvarJob(){
     transacaoEmpresa.onerror = (e) => { console.error("Erro ao buscar empresas para salvar job:", e); alert("Erro ao buscar dados da empresa para salvar o job."); };
 }
 
-function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana, inicioPrimeiraQuinzena, fimPrimeiraQuinzena, fimSegundaQuinzena){
-    let dataFechamento = calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana, inicioPrimeiraQuinzena, fimPrimeiraQuinzena, fimSegundaQuinzena);
+function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, fimPeriodoMensal, inicioSemana, fimSemana, inicioPrimeiraQuinzena, fimPrimeiraQuinzena, fimSegundaQuinzena){
+    let dataFechamento = calcularDataFechamentoReal(dataPrestacao, tipoCiclo, fimPeriodoMensal, inicioSemana, fimSemana, inicioPrimeiraQuinzena, fimPrimeiraQuinzena, fimSegundaQuinzena);
     let dataFaturamento = calcularDataPagamentoReal(dataFechamento, diasUteis);
     return dataFaturamento.toLocaleDateString("pt-BR");
 }
@@ -1577,7 +1588,7 @@ function atualizarTela(){
                 card.innerHTML = `
                     <button class="btn-del" onclick="deletarJob(${reg.id})">🗑️</button>
                     <button class="btn-edit-inline" onclick="carregarJobParaEdicao(${reg.id})">✏️</button>
-                    <div class="empresa-title" style="color:${mapaCores[reg.empresa]}">${reg.empresa}</div>
+                    <div class="empresa-title">${reg.empresa}</div>
                     <div class="meta-text">📅 ${dFmt} | 📌 ${reg.job}</div>
                     <div>${badge}</div>
                     <div class="meta-text" style="margin-top:8px;">🕒 Horários: ${reg.inicio} às ${reg.fim} (${reg.horas}h)</div>
@@ -1814,7 +1825,7 @@ function checkDuePayments() {
         jobs.forEach(job => {
             // Recalcula a data de pagamento para garantir precisão
             const dataFechamentoTemp = calcularDataFechamentoReal(
-                job.data, job.tipoPagamento, job.inicioPeriodo, job.fimPeriodo,
+                job.data, job.tipoPagamento, job.fimPeriodo,
                 job.inicioSemana, job.fimSemana, job.inicioPrimeiraQuinzena,
                 job.fimPrimeiraQuinzena, job.fimSegundaQuinzena
             );
