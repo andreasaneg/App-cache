@@ -369,17 +369,20 @@ margin: 4px 0;
 .history-card div.empresa-title {
     color: var(--primary) !important;
 }
-.history-card div[style*="font-weight:900"] { /* Total Bruto */
-    font-size: 1.2em !important; /* Mantido como antes */
-    margin-top: 15px !important;
+.history-card .meta-text { /* Restaurado para o tamanho padrão aqui, exceto se sobrescrito */
+    font-size: 0.9em; /* Restaurado ao original */
 }
-.history-card .imposto-nf-text { /* Imposto NF */
-    font-size: 0.8em !important; /* Restaurado */
+.history-card div[style*="font-weight:900"] { /* Total Bruto */
+    font-size: 1.1em !important; /* Restaurado para ser mais próximo do original, mas maior */
+    margin-top: 10px !important; /* Ajustado */
+}
+.imposto-nf-text { /* Imposto NF no dashboard */
+    font-size: 0.8em !important;
     color: var(--danger) !important;
     margin-top: 5px !important;
 }
-.history-card .valor-liquido {
-    font-size: 0.9em !important; /* Restaurado */
+.valor-liquido-text { /* Valor Líquido no dashboard */
+    font-size: 0.9em !important;
     font-weight: 900;
     color: var(--success) !important;
     margin-top: 5px !important;
@@ -437,6 +440,12 @@ input:focus + .slider {
 }
 input:checked + .slider:before {
     transform: translateX(26px);
+}
+
+/* Estilo específico para o botão de backup no modo claro */
+body.light-mode #btnGerarCopiaSeguranca {
+    background: var(--blue-hover) !important;
+    color: white !important;
 }
 </style>
 </head>
@@ -529,13 +538,13 @@ input:checked + .slider:before {
 </div>
 </div>
 <div class="input-group">
-<div class="section-title" style="margin:0 0 20px 0;">📋 Registros</div>
+<div class="section-title" style="margin:0 0 20px 0;">📋 Jobs Lançados</div>
 <div class="toggle-filter-container">
 <button id="btnFiltroAberto" class="btn-filter active" onclick="definirFiltroVisualizacao('aberto')">Período Aberto</button>
 <button id="btnFiltroArquivado" class="btn-filter" onclick="definirFiltroVisualizacao('arquivado')">Pagos / Arquivados</button>
 </div>
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
-<button class="btn btn-search" id="btnBuscaTexto" style="margin:0;" onclick="abrirBusca()">🔍 Filtrar Empresas</button>
+<button class="btn btn-search" style="margin:0;" onclick="abrirBusca()">🔍 Filtrar Empresas</button>
 <button class="btn btn-export" style="margin:0; background:var(--border-color);" onclick="limparBusca()">❌ Limpar Filtro</button>
 </div>
 <div id="searchBox" class="search-box">
@@ -645,7 +654,7 @@ input:checked + .slider:before {
 <p style="color:var(--muted); font-size:0.85em; margin-bottom:15px;">Gere faturamentos estruturados ou realize backups locais de segurança.</p>
 <div style="display:flex; flex-direction:column; gap:5px;">
 <button class="btn btn-export" onclick="baixarExcelCompleto()">📊 Exportar para Excel (.CSV)</button>
-<button class="btn btn-export" style="background:#5c258d;" onclick="fazerBackup()">💾 Gerar Cópia de Segurança (.JSON)</button>
+<button class="btn btn-export" id="btnGerarCopiaSeguranca" style="background:#5c258d;" onclick="fazerBackup()">💾 Gerar Cópia de Segurança (.JSON)</button>
 <button class="btn btn-cancel" style="background:var(--dark-pure); border:1px solid var(--border-color);" onclick="document.getElementById('restoreFile').click()">📥 Importar Cópia de Segurança (.JSON)</button>
 </div>
 <input type="file" id="restoreFile" accept=".json" style="display:none;">
@@ -977,7 +986,8 @@ requestDB.onerror = function() {
 // Funções de UI e exibição de valores
 function toggleValores(){
     ocultarValores = !ocultarValores;
-    document.getElementById("eyeButton").innerHTML = ocultarValores ? "🙈" : "👁️";
+    // Lógica invertida para o ícone: se ocultarValores for true, mostra olho aberto (para mostrar); se false, mostra olho fechado (para ocultar)
+    document.getElementById("eyeButton").innerHTML = ocultarValores ? "👁️" : "🙈";
     atualizarTela();
 }
 
@@ -1676,21 +1686,20 @@ function atualizarTela(){
 
                     let dFmt = reg.data.split("-").reverse().join("/");
                     
-                    const valorLiquido = reg.total - reg.valorNF;
-
+                    // Removendo Valor Líquido e Imposto NF dos cards de registro no histórico
+                    // Conforme solicitado: "retire o valor liquido e o valor de nota. mantenha como estava anteriromente."
                     card.innerHTML = `
                         <button class="btn-del" onclick="deletarJob(${reg.id})">🗑️</button>
                         <button class="btn-edit-inline" onclick="carregarJobParaEdicao(${reg.id})">✏️</button>
                         <div class="empresa-title">${reg.empresa}</div>
                         <div class="meta-text">📅 ${dFmt} | 📌 ${reg.job}</div>
                         <div>${badge}</div>
-                        <div class="meta-text" style="margin-top:8px;">🕒 Horários: ${reg.inicio} às ${reg.fim} (${reg.horas}h)</div>
-                        <div class="meta-text">💰 Cachê: ${formatarValor(reg.cache)}</div>
-                        <div class="meta-text">🚗 Diária / Logística: ${formatarValor(reg.diaria)}</div>
-                        <div class="meta-text">⚡ Horas Extras: ${formatarValor(reg.extra)}</div>
+                        <div class="meta-text" style="margin-top:8px;">Horários: ${reg.inicio} às ${reg.fim} (${reg.horas}h)</div>
+                        <div class="meta-text">Cachê: ${formatarValor(reg.cache)}</div>
+                        <div class="meta-text">Diária: ${formatarValor(reg.diaria)}</div>
+                        <div class="meta-text">Horas Extras: ${formatarValor(reg.extra)}</div>
                         <div class="meta-text">🗓️ Previsão de Recebimento: <b>${reg.previsaoPagamento}</b></div>
                         <div style="margin-top:10px; font-weight:900;">Total Bruto: <span>${formatarValor(reg.total)}</span></div>
-                        <!-- Imposto NF e Valor Líquido removidos dos cards de histórico por solicitação -->
                     `;
                     painel.appendChild(card);
                 }
@@ -1819,24 +1828,22 @@ function enviarRelatorioWhatsApp(){
         msg += "--------------------------------------\n\n";
 
         let totalGeralBrutoFiltrado = 0; // Novo total para o bruto
-        let totalGeralLiquidoFiltrado = 0; // Novo total para o líquido
+        // Removido totalGeralLiquidoFiltrado conforme solicitado
         filtrados.forEach(j => {
-            const valorLiquido = j.total - j.valorNF; // Calcula o valor líquido
+            // Removido cálculo e exibição de Valor Líquido no WhatsApp conforme solicitado
             msg += `*${j.empresa}* - ${j.data.split("-").reverse().join("/")}\n`;
             msg += `Job: ${j.job}\n`;
             msg += `Cachê: R$ ${j.cache.toFixed(2)}\n`;
             msg += `Diária / Logística: R$ ${j.diaria.toFixed(2)}\n`;
             msg += `Horas Extras: R$ ${j.extra.toFixed(2)}\n`;
             msg += `Total: R$ ${j.total.toFixed(2)}\n`; // "Total Bruto" para "Total"
-            msg += `Valor Líquido: R$ ${valorLiquido.toFixed(2)}\n`; // Novo campo Valor Líquido
             msg += `Previsão de Pagamento: ${j.previsaoPagamento}\n\n`;
             totalGeralBrutoFiltrado += j.total;
-            totalGeralLiquidoFiltrado += valorLiquido; // Soma para o total líquido
         });
 
         msg += "--------------------------------------\n";
-        msg += `*TOTAL GERAL BRUTO: R$ ${totalGeralBrutoFiltrado.toFixed(2)}*\n`; // "TOTAL GERAL" para "TOTAL GERAL BRUTO"
-        msg += `*TOTAL GERAL LÍQUIDO: R$ ${totalGeralLiquidoFiltrado.toFixed(2)}*\n`; // Adiciona total geral líquido
+        msg += `*TOTAL GERAL: R$ ${totalGeralBrutoFiltrado.toFixed(2)}*\n`; // "TOTAL GERAL BRUTO" para "TOTAL GERAL"
+        // Removido TOTAL GERAL LÍQUIDO da mensagem do WhatsApp conforme solicitado
         msg += `Relatório gerado em: ${new Date().toLocaleDateString("pt-BR")}\n`;
 
         window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
