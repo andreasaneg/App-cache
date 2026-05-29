@@ -7,8 +7,9 @@
 <title>FADER LIVRE - CACHÊ CONTROL v3.0 ERP MASTER</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
+/* Cores do tema Escuro (padrão) */
 :root {
---primary: #10b981; /* Cor primária padrão */
+--primary: #10b981;
 --primary-hover: #059669;
 --primary-glow: rgba(16, 185, 129, 0.2);
 --bg: #0f172a;
@@ -29,6 +30,31 @@
 --border-color: #334155;
 --border-hover: #475569;
 }
+
+/* Cores do tema Claro */
+body.light-mode {
+--primary: #22c55e;
+--primary-hover: #16a34a;
+--primary-glow: rgba(34, 197, 94, 0.2);
+--bg: #f8fafc;
+--card: #ffffff;
+--card-hover: #f1f5f9;
+--text: #1e293b;
+--text-secondary: #475569;
+--danger: #ef4444;
+--danger-hover: #dc2626;
+--danger-glow: rgba(239, 68, 68, 0.15);
+--muted: #64748b;
+--blue: #0ea5e9;
+--blue-hover: #0284c7;
+--blue-glow: rgba(14, 165, 233, 0.2);
+--warning: #f59e0b;
+--success: #16a34a;
+--dark-pure: #e2e8f0;
+--border-color: #e2e8f0;
+--border-hover: #cbd5e1;
+}
+
 * {
 box-sizing: border-box;
 margin: 0;
@@ -56,7 +82,7 @@ position: relative;
 font-size: 1.6em;
 font-weight: 800;
 letter-spacing: 1px;
-color: #ffffff;
+color: var(--text);
 text-transform: uppercase;
 }
 .header p {
@@ -91,6 +117,7 @@ font-weight: 700;
 text-transform: uppercase;
 margin-bottom: 8px;
 letter-spacing: 1px;
+color: var(--text-secondary); /* Ajustado para ser mais consistente */
 }
 .total-geral { font-size: 2em; font-weight: 900; color: var(--blue); }
 .total-nf { font-size: 2em; font-weight: 900; color: var(--danger); }
@@ -103,8 +130,8 @@ width: 46px;
 height: 46px;
 border: none;
 border-radius: 14px;
-background: #334155;
-color: white;
+background: var(--border-color); /* Ajustado */
+color: var(--text); /* Ajustado */
 font-size: 1.3em;
 cursor: pointer;
 display: flex;
@@ -123,7 +150,7 @@ box-shadow: 0 4px 15px -3px rgba(0,0,0,0.2);
 .input-group h2, .input-group h3 {
 font-size: 1.2em;
 margin-bottom: 18px;
-color: #ffffff;
+color: var(--text); /* Ajustado */
 display: flex;
 align-items: center;
 gap: 10px;
@@ -145,7 +172,7 @@ padding: 14px;
 border-radius: 14px;
 border: 1px solid var(--border-color);
 background: var(--dark-pure);
-color: white;
+color: var(--text); /* Ajustado */
 margin-bottom: 15px;
 font-size: 16px;
 }
@@ -171,10 +198,10 @@ text-transform: uppercase;
 letter-spacing: 1px;
 }
 .btn-save { background: var(--primary); color: var(--dark-pure); }
-.btn-export { background: #475569; color: white; }
+.btn-export { background: var(--border-color); color: var(--text); } /* Ajustado */
 .btn-whats { background: #25D366; color: var(--dark-pure); }
-.btn-search { background: #0ea5e9; color: white; }
-.btn-cancel { background: #334155; color: #f8fafc; }
+.btn-search { background: var(--blue); color: var(--text); } /* Ajustado */
+.btn-cancel { background: var(--card-hover); color: var(--text); } /* Ajustado */
 .history-card {
 background: var(--card);
 border-radius: 20px;
@@ -192,6 +219,7 @@ display: flex;
 justify-content: space-between;
 align-items: center;
 padding-right: 85px;
+color: var(--primary); /* Ajustado */
 }
 .btn-del {
 position: absolute;
@@ -238,7 +266,7 @@ margin-bottom: 15px;
 font-size: 1.2em;
 font-weight: 800;
 margin: 25px 0 15px;
-color: #ffffff;
+color: var(--text); /* Ajustado */
 }
 .tab-container {
 display: flex;
@@ -287,6 +315,10 @@ box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.7);
 padding: 14px;
 cursor: pointer;
 border-bottom: 1px solid var(--border-color);
+color: var(--text);
+}
+.autocomplete-item:last-child {
+border-bottom: none;
 }
 .badge-status {
 display: inline-flex;
@@ -329,7 +361,7 @@ color: var(--muted);
 line-height: 1.6;
 margin: 4px 0;
 }
-.meta-text b { color: #ffffff; }
+.meta-text b { color: var(--text); } /* Ajustado */
 
 /* Estilos adicionais para os registros de job */
 .history-card div[style*="font-weight:900"] {
@@ -352,14 +384,56 @@ margin: 4px 0;
     margin-bottom: 10px;
     font-size: 1em;
 }
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    transition: .4s;
+    border-radius: 34px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: var(--primary);
+}
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--primary);
+}
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
 </style>
 </head>
-<body onload="carregarTema()">
+<body onload="initializeSettings()">
 <div id="loginScreen" style="position:fixed; inset:0; background:var(--dark-pure); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; padding:15px;">
 <button onclick="emergencyReset()" style="background:var(--danger); color:white; border:none; padding:10px 15px; border-radius:10px; font-weight:bold; font-size:0.8em; margin-bottom:20px; width:100%; max-width:400px; box-shadow:0 4px 10px rgba(239,68,68,0.3);">⚠️ Forçar Reset de Emergência (Celular)</button>
 <div style="background:var(--card); padding:25px; border-radius:28px; width:100%; max-width:400px; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6); border: 1px solid var(--border-color);">
 <div style="text-align:center; margin-bottom:20px;">
-<h2 style="color:#ffffff; margin-top:10px; font-size:1.4em; font-weight:800;">Acesso Identificado</h2>
+<h2 style="color:var(--text); margin-top:10px; font-size:1.4em; font-weight:800;">Acesso Identificado</h2>
 <p style="color:var(--muted); font-size:0.8em; margin-top:4px; letter-spacing:1px;">Cachê Control ERP v3.0</p>
 </div>
 <label>Chave Codificada de Segurança</label>
@@ -497,6 +571,18 @@ margin: 4px 0;
         <p style="font-size:0.75em; color:var(--muted); margin-top:5px;">O início da 2ª quinzena será o dia seguinte ao final da 1ª quinzena.</p>
     </div>
 </div>
+<div id="mensalPeriodos" style="display:none; padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color);">
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+    <div>
+        <label>Dia Inicial do Ciclo</label>
+        <input type="number" id="cadInicioPeriodo" min="1" max="31" value="1">
+    </div>
+    <div>
+        <label>Dia Final do Ciclo</label>
+        <input type="number" id="cadFimPeriodo" min="1" max="31" value="30">
+    </div>
+</div>
+</div>
 </div>
 <div id="cadPeriodoSemanalBox" style="padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color); display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
 <div>
@@ -557,24 +643,45 @@ margin: 4px 0;
 <div id="abaConfiguracoes" class="app-section">
 <div class="input-group">
 <h3>⚙️ Configurações do Aplicativo</h3>
+
 <div class="config-group">
-    <h4>🎨 Tema do Aplicativo</h4>
-    <label for="themeColorPicker">Cor Primária do Tema:</label>
-    <input type="color" id="themeColorPicker" onchange="mudarCorTema(this.value)" style="width: 100%; height: 40px; margin-bottom: 10px; padding: 5px;">
-    <p style="color:var(--muted); font-size:0.8em;">Altere a cor principal de destaque do aplicativo.</p>
+    <h4>💡 Modo de Exibição</h4>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <label for="themeToggle" style="margin-bottom: 0;">Modo Escuro / Modo Claro</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+            <span class="slider"></span>
+        </label>
+    </div>
+    <p style="font-size:0.8em; color:var(--muted); margin-top: 5px;">Alterne entre o tema escuro e claro do aplicativo.</p>
 </div>
+
 <div class="config-group">
-    <h4>🌟 Outras Personalizações (Sugestões)</h4>
-    <p style="color:var(--muted); font-size:0.9em; margin-bottom: 10px;">Aqui poderiam ser adicionadas mais opções:</p>
-    <ul>
-        <li style="color:var(--muted); font-size:0.85em; margin-bottom:5px;">- Alternar entre Modo Claro / Modo Escuro</li>
-        <li style="color:var(--muted); font-size:0.85em; margin-bottom:5px;">- Definir Horas Padrão de Trabalho (além das 12h)</li>
-        <li style="color:var(--muted); font-size:0.85em; margin-bottom:5px;">- Configurar Notificações (horário, tipos)</li>
-        <li style="color:var(--muted); font-size:0.85em; margin-bottom:5px;">- Personalizar Relatórios (campos a incluir/excluir)</li>
-        <li style="color:var(--muted); font-size:0.85em; margin-bottom:5px;">- Gerenciamento de Senha Master (Alterar, Resetar com e-mail)</li>
-    </ul>
-    <p style="color:var(--muted); font-size:0.8em; margin-top: 15px;">(Estas opções são apenas sugestões e não estão implementadas nesta versão.)</p>
+    <h4>💰 Horas Padrão de Trabalho</h4>
+    <label for="baseHoursInput">Horas base para cálculo de cachê (padrão 12h)</label>
+    <input type="number" id="baseHoursInput" min="1" value="12" onchange="updateBaseHours(this.value)">
+    <p style="font-size:0.8em; color:var(--muted); margin-top: 5px;">Defina a quantidade de horas consideradas como "jornada normal" para o cálculo do cachê.</p>
 </div>
+
+<div class="config-group">
+    <h4>🔔 Notificações de Pagamento</h4>
+    <label for="notificationCheckHour">Horário para verificar pagamentos (HH:MM)</label>
+    <input type="time" id="notificationCheckHour" value="09:00" onchange="updateNotificationCheckHour(this.value)">
+    <p style="font-size:0.8em; color:var(--muted); margin-top: 5px;">O aplicativo verificará por pagamentos vencendo a partir deste horário, quando for aberto ou focado.</p>
+</div>
+
+<div class="config-group">
+    <h4>🔐 Gerenciamento de Chave Master</h4>
+    <label for="oldMasterPassword">Chave Master Antiga</label>
+    <input type="password" id="oldMasterPassword" placeholder="••••••••">
+    <label for="newMasterPassword">Nova Chave Master</label>
+    <input type="password" id="newMasterPassword" placeholder="••••••••">
+    <label for="confirmNewMasterPassword">Confirmar Nova Chave Master</label>
+    <input type="password" id="confirmNewMasterPassword" placeholder="••••••••">
+    <button class="btn btn-save" onclick="changeMasterPassword()" style="background: var(--blue); margin-top: 10px;">🔒 Alterar Chave Master</button>
+    <p style="font-size:0.8em; color:var(--danger); margin-top: 5px;">**Atenção:** A chave é armazenada localmente em texto simples. Use este recurso com cautela.</p>
+</div>
+
 </div>
 </div>
 <script>
@@ -583,7 +690,9 @@ let db = null;
 let ocultarValores = false;
 let filtroVisualizacao = "aberto";
 let mapaCores = {};
-const BASE_HOURS = 12; // Constante para as horas base do cachê
+let BASE_HOURS = 12; // Agora configurável
+let NOTIFICATION_CHECK_HOUR = 9; // Hora padrão para verificar notificações (9 AM)
+
 const coresGrafico = [
 '#38bdf8', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
 '#ec4899', '#14b8a6', '#f97316', '#a855f7', '#06b6d4'
@@ -596,6 +705,125 @@ const coresGrafico = [
 // Elas devem ser enviadas para um servidor, onde seriam hash-eadas e comparadas.
 // Considere esta versão APENAS para uso LOCAL e não para dados sensíveis ou acesso online.
 const senhaSalva = localStorage.getItem("senha_cache_control");
+
+// Funções de inicialização de configurações
+function initializeSettings() {
+    // Carregar tema
+    const savedTheme = localStorage.getItem('app_theme') || 'dark';
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+        document.getElementById('themeToggle').checked = true;
+    } else {
+        document.body.classList.remove('light-mode');
+        document.getElementById('themeToggle').checked = false;
+    }
+
+    // Carregar horas base
+    const savedBaseHours = localStorage.getItem('base_hours');
+    if (savedBaseHours) {
+        BASE_HOURS = parseFloat(savedBaseHours);
+        document.getElementById('baseHoursInput').value = BASE_HOURS;
+    }
+
+    // Carregar horário de verificação de notificações
+    const savedNotificationHour = localStorage.getItem('notification_check_hour');
+    if (savedNotificationHour) {
+        const [hour, minute] = savedNotificationHour.split(':').map(Number);
+        NOTIFICATION_CHECK_HOUR = hour + (minute / 60); // Convert to float hours
+        document.getElementById('notificationCheckHour').value = savedNotificationHour;
+    }
+
+
+    // Restante da inicialização do app (original)
+    if(!senhaSalva){
+        document.getElementById("senhaInput").placeholder = "Defina sua chave no primeiro acesso";
+    }
+
+    // Se a tela de login não estiver visível (já logado ou primeiro acesso sem senha)
+    if(document.getElementById("loginScreen").style.display === "none") {
+        try {
+            document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
+        } catch(e) {
+            console.error("Erro ao definir dataJob inicial:", e);
+        }
+        atualizarTela();
+        atualizarListaEmpresas();
+        checkAndRequestNotificationPermission();
+        checkDuePayments();
+    }
+}
+
+// Funções de Configurações
+function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    const currentTheme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
+    localStorage.setItem('app_theme', currentTheme);
+}
+
+function updateBaseHours(value) {
+    const newHours = parseFloat(value);
+    if (!isNaN(newHours) && newHours > 0) {
+        BASE_HOURS = newHours;
+        localStorage.setItem('base_hours', newHours);
+        alert(`Horas base atualizadas para ${newHours}. Novos jobs ou jobs editados usarão este valor.`);
+        // Não atualizamos a tela automaticamente aqui para não forçar recálculo de todos os jobs.
+        // O valor é aplicado em novos jobs e ao editar jobs existentes.
+    } else {
+        alert("Por favor, insira um número válido e maior que zero para as horas base.");
+        document.getElementById('baseHoursInput').value = BASE_HOURS; // Reverte para o valor atual
+    }
+}
+
+function updateNotificationCheckHour(value) {
+    const [hourStr, minuteStr] = value.split(':');
+    const hour = parseInt(hourStr);
+    const minute = parseInt(minuteStr);
+
+    if (!isNaN(hour) && !isNaN(minute) && hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
+        NOTIFICATION_CHECK_HOUR = hour + (minute / 60);
+        localStorage.setItem('notification_check_hour', value);
+        alert(`Horário de verificação de notificações atualizado para ${value}.`);
+    } else {
+        alert("Por favor, insira um horário válido (HH:MM).");
+        document.getElementById('notificationCheckHour').value = localStorage.getItem('notification_check_hour') || '09:00';
+    }
+}
+
+
+function changeMasterPassword() {
+    const oldPassword = document.getElementById('oldMasterPassword').value;
+    const newPassword = document.getElementById('newMasterPassword').value;
+    const confirmNewPassword = document.getElementById('confirmNewMasterPassword').value;
+    const currentSavedPassword = localStorage.getItem("senha_cache_control");
+
+    if (!oldPassword || !newPassword || !confirmNewPassword) {
+        alert("Todos os campos de senha devem ser preenchidos.");
+        return;
+    }
+
+    if (oldPassword !== currentSavedPassword) {
+        alert("A Chave Master Antiga está incorreta.");
+        return;
+    }
+
+    if (newPassword.trim().length < 4) {
+        alert("A Nova Chave Master deve ter pelo menos 4 caracteres.");
+        return;
+    }
+
+    if (newPassword !== confirmNewPassword) {
+        alert("A Nova Chave Master e a confirmação não coincidem.");
+        return;
+    }
+
+    localStorage.setItem("senha_cache_control", newPassword.trim());
+    alert("Chave Master alterada com sucesso!");
+    // Limpa os campos após a alteração
+    document.getElementById('oldMasterPassword').value = '';
+    document.getElementById('newMasterPassword').value = '';
+    document.getElementById('confirmNewMasterPassword').value = '';
+}
+
 
 // Lógica de autenticação e reset
 function emergencyReset() {
@@ -613,10 +841,6 @@ function emergencyReset() {
     }
 }
 
-// Verifica se há senha salva para mostrar o placeholder correto
-if(!senhaSalva){
-    document.getElementById("senhaInput").placeholder = "Defina sua chave no primeiro acesso";
-}
 
 function toggleCadastroSenha(){
     const box = document.getElementById("novaSenhaBox");
@@ -648,7 +872,9 @@ function cadastrarSenha(){
 
 function login(){
     const senha = document.getElementById("senhaInput").value;
-    if(!senhaSalva){ // Primeiro acesso, cadastra a senha
+    const currentSavedPassword = localStorage.getItem("senha_cache_control"); // Busca a senha na hora do login
+
+    if(!currentSavedPassword){ // Primeiro acesso, cadastra a senha
         if(senha.trim().length < 4) {
             alert("Defina uma Chave Master de pelo menos 4 caracteres no primeiro acesso.");
             return;
@@ -663,7 +889,7 @@ function login(){
         return;
     }
 
-    if(senha === senhaSalva){
+    if(senha === currentSavedPassword){
         document.getElementById("loginScreen").style.display = "none";
         checkAndRequestNotificationPermission(); // Solicita permissão de notificação em logins bem-sucedidos
         checkDuePayments(); // Verifica pagamentos em logins bem-sucedidos
@@ -709,17 +935,14 @@ requestDB.onupgradeneeded = function(event) {
 
 requestDB.onsuccess = function(event) {
     db = event.target.result;
-    try {
-        document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
-    } catch(e) {
-        console.error("Erro ao definir dataJob inicial:", e);
-    }
-    // Apenas atualiza e verifica se o login foi bem-sucedido ou se não é necessário
+    // Apenas executa initializeSettings() ao carregar o corpo, que por sua vez cuida de tudo.
+    // O código aqui pode ser removido pois initializeSettings já foi chamado no onload.
     if(document.getElementById("loginScreen").style.display === "none") {
-        atualizarTela();
-        atualizarListaEmpresas();
-        checkAndRequestNotificationPermission(); // Solicita permissão de notificação ao carregar o app se já logado
-        checkDuePayments(); // Verifica pagamentos ao carregar o app se já logado
+         // Este bloco é para garantir que se o login já estiver ok, as telas são atualizadas
+         // Mas o initializeSettings() no body onload já lida com isso.
+         // Mantido para compatibilidade, mas o initializeSettings já o chama.
+         atualizarTela();
+         atualizarListaEmpresas();
     }
 };
 
@@ -747,7 +970,7 @@ function executarBackupAutomatico() {
         const dadosJobs = e_jobs.target.result;
         const txE = db.transaction("empresas", "readonly");
         txE.objectStore("empresas").getAll().onsuccess = function(e_empresas) {
-            const dadosEmpresas = e_empresas.target.result;
+            const dadosEmpresas = e_empresar.target.result;
             const payloadBackup = { jobs: dadosJobs, empresas: dadosEmpresas, dataBackup: new Date().toISOString() };
             localStorage.setItem("fader_livre_auto_backup", JSON.stringify(payloadBackup));
             console.log("Backup automático realizado.");
@@ -826,15 +1049,15 @@ function alternarAba(abaId, event) {
     if(event) event.currentTarget.classList.add('active');
     if(abaId === 'abaEmpresas') {
         atualizarListaEmpresas();
+        alterarPeriodoPagamentoCadastro(); // Garante que a interface de cadastro de empresa esteja correta
     } else if (abaId === 'abaJobs') {
         atualizarTela();
     } else if (abaId === 'abaConfiguracoes') {
         // Nada específico para atualizar na aba de configurações por enquanto
-        // Garante que o color picker exiba a cor atual
-        const savedColor = localStorage.getItem('primary_theme_color');
-        if (savedColor) {
-            document.getElementById('themeColorPicker').value = savedColor;
-        }
+        // Garante que os valores iniciais dos inputs estejam corretos
+        document.getElementById('themeToggle').checked = document.body.classList.contains('light-mode');
+        document.getElementById('baseHoursInput').value = BASE_HOURS;
+        document.getElementById('notificationCheckHour').value = localStorage.getItem('notification_check_hour') || '09:00';
     }
 }
 
@@ -847,16 +1070,22 @@ function definirFiltroVisualizacao(tipo) {
 
 function alterarPeriodoPagamentoCadastro(){
     const tipo = document.getElementById("cadTipoPagamento").value;
-    if(tipo === "Quinzenal" || tipo === "Mensal") {
-        document.getElementById("cadPeriodoPersonalizado").style.display = "block";
-        document.getElementById("cadPeriodoSemanalBox").style.display = "none";
-        // Ajusta a visibilidade dos campos específicos para quinzenal
-        document.getElementById("quinzenalPeriodos").style.display = (tipo === "Quinzenal") ? "grid" : "none";
+    // Esconde todos os blocos primeiro
+    document.getElementById("cadPeriodoPersonalizado").style.display = "none";
+    document.getElementById("cadPeriodoSemanalBox").style.display = "none";
+    document.getElementById("quinzenalPeriodos").style.display = "none";
+    document.getElementById("mensalPeriodos").style.display = "none";
 
-    } else { // Semanal
-        document.getElementById("cadPeriodoPersonalizado").style.display = "none";
+
+    if(tipo === "Semanal") {
         document.getElementById("cadPeriodoSemanalBox").style.display = "grid";
-        document.getElementById("quinzenalPeriodos").style.display = "none";
+    } else { // Quinzenal ou Mensal
+        document.getElementById("cadPeriodoPersonalizado").style.display = "block";
+        if (tipo === "Quinzenal") {
+            document.getElementById("quinzenalPeriodos").style.display = "grid";
+        } else if (tipo === "Mensal") {
+            document.getElementById("mensalPeriodos").style.display = "grid";
+        }
     }
 }
 
@@ -911,13 +1140,13 @@ function salvarEmpresa() {
         payloadEmpresa.inicioSemana = parseInt(document.getElementById("cadInicioSemana").value || 1);
         payloadEmpresa.fimSemana = parseInt(document.getElementById("cadFimSemana").value || 0);
     } else { // Quinzenal ou Mensal
-        payloadEmpresa.inicioPeriodo = parseInt(document.getElementById("cadInicioPeriodo").value || 1);
-        payloadEmpresa.fimPeriodo = parseInt(document.getElementById("cadFimPeriodo").value || 15);
-
         if (tipoPagamento === "Quinzenal") {
             payloadEmpresa.inicioPrimeiraQuinzena = parseInt(document.getElementById("cadInicioPrimeiraQuinzena").value || 1);
             payloadEmpresa.fimPrimeiraQuinzena = parseInt(document.getElementById("cadFimPrimeiraQuinzena").value || 15);
             payloadEmpresa.fimSegundaQuinzena = parseInt(document.getElementById("cadFimSegundaQuinzena").value || 30);
+        } else { // Mensal
+            payloadEmpresa.inicioPeriodo = parseInt(document.getElementById("cadInicioPeriodo").value || 1);
+            payloadEmpresa.fimPeriodo = parseInt(document.getElementById("cadFimPeriodo").value || 30);
         }
     }
 
@@ -956,14 +1185,14 @@ function carregarEmpresaParaEdicao(id) {
         document.getElementById("cadDiaria").value = dados.diaria;
         document.getElementById("cadTipoPagamento").value = dados.tipoPagamento;
 
-        // Preenche campos de Quinzenal/Mensal
-        document.getElementById("cadInicioPeriodo").value = dados.inicioPeriodo || 1;
-        document.getElementById("cadFimPeriodo").value = dados.fimPeriodo || 15;
-
         // Preenche campos de Quinzenal específicos
         document.getElementById("cadInicioPrimeiraQuinzena").value = dados.inicioPrimeiraQuinzena || 1;
         document.getElementById("cadFimPrimeiraQuinzena").value = dados.fimPrimeiraQuinzena || 15;
         document.getElementById("cadFimSegundaQuinzena").value = dados.fimSegundaQuinzena || 30;
+
+        // Preenche campos de Mensal
+        document.getElementById("cadInicioPeriodo").value = dados.inicioPeriodo || 1;
+        document.getElementById("cadFimPeriodo").value = dados.fimPeriodo || 30;
 
         // Preenche campos de Semanal
         document.getElementById("cadInicioSemana").value = dados.inicioSemana || 1;
@@ -1005,7 +1234,7 @@ function atualizarListaEmpresas() {
             const card = document.createElement("div");
             card.style = "background:var(--card); padding:15px; border-radius:20px; margin-bottom:10px; border:1px solid var(--border-color); position:relative;";
             card.innerHTML = `
-                <div style="font-size:1.1em; font-weight:800; color:var(--primary); margin-bottom:5px;">${empresaItem.nome}</div>
+                <div class="empresa-title">${empresaItem.nome}</div>
                 <div class="meta-text">💰 <b>Base:</b> R$ ${empresaItem.cacheBase.toFixed(2)} | 🚗 <b>Diária:</b> R$ ${empresaItem.diaria.toFixed(2)}</div>
                 <div class="meta-text">📅 <b>Ciclo:</b> ${empresaItem.tipoPagamento} | 📄 <b>NF:</b> ${empresaItem.nfPercentual}%</div>
                 <button class="btn-edit-inline" onclick="carregarEmpresaParaEdicao(${empresaItem.id})">✏️</button>
@@ -1028,7 +1257,7 @@ function limparCamposEmpresa(){
 
     // Resetar campos de Quinzenal/Mensal
     document.getElementById("cadInicioPeriodo").value = "1";
-    document.getElementById("cadFimPeriodo").value = "15";
+    document.getElementById("cadFimPeriodo").value = "30"; // Alterado para 30 como padrão mensal
 
     // Resetar campos de Quinzenal específicos
     document.getElementById("cadInicioPrimeiraQuinzena").value = "1";
@@ -1053,8 +1282,8 @@ function obterStatusPeriodo(instanciaJob) {
     let dataFechamento = calcularDataFechamentoReal(
         instanciaJob.data,
         instanciaJob.tipoPagamento,
-        instanciaJob.inicioPeriodo, // para mensal/quinzenal antigo
-        instanciaJob.fimPeriodo, // para mensal/quinzenal antigo
+        instanciaJob.inicioPeriodo, // para mensal antigo
+        instanciaJob.fimPeriodo, // para mensal antigo
         instanciaJob.inicioSemana,
         instanciaJob.fimSemana,
         instanciaJob.inicioPrimeiraQuinzena, // para quinzenal novo
@@ -1091,33 +1320,28 @@ function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fim
 
         let p1Inicio = parseInt(inicioPrimeiraQuinzena || 1);
         let p1Fim = parseInt(fimPrimeiraQuinzena || 15);
-        let p2Fim = parseInt(fimSegundaQuinzena || 30);
+        let p2Fim = parseInt(fimSegundaQuinzena || 30); // Usado como fim da segunda quinzena
 
         if (diaCorrente >= p1Inicio && diaCorrente <= p1Fim) {
             // Está na primeira quinzena
             objetoFechamento = new Date(ano, mes, p1Fim);
         } else {
-            // Está na segunda quinzena ou passou da segunda quinzena do mês anterior
-            // Considera o dia seguinte ao fim da primeira quinzena como início da segunda
-            let p2Inicio = p1Fim + 1;
-
-            if (diaCorrente >= p2Inicio && diaCorrente <= p2Fim) {
-                // Está na segunda quinzena
+            // Se o job caiu após a primeira quinzena e antes ou no fim da segunda.
+            // O início da 2a quinzena é p1Fim + 1
+            if (diaCorrente > p1Fim && diaCorrente <= p2Fim) {
+                // Está na segunda quinzena do mês atual
                 objetoFechamento = new Date(ano, mes, p2Fim);
-            } else if (diaCorrente < p1Inicio) {
-                // A data do job é antes do início da primeira quinzena (pertence à quinzena anterior do mês anterior)
-                // Ou, se passou do fim da segunda quinzena, deve ir para a primeira quinzena do próximo mês.
-                // Simplificação: se não caiu na 1a ou 2a quinzena deste mês, assume-se que é a primeira quinzena do próximo mês.
-                objetoFechamento = new Date(ano, mes + 1, p1Fim);
-            } else { // diaCorrente > p2Fim
-                // Passou do fim da segunda quinzena, vai para a primeira quinzena do próximo mês.
+            } else {
+                // Se o job é do início do mês, mas já passou a primeira quinzena desse mês,
+                // ou se o job já passou a segunda quinzena,
+                // assume-se que se refere ao próximo ciclo (próxima primeira quinzena).
                 objetoFechamento = new Date(ano, mes + 1, p1Fim);
             }
         }
 
-    } else { // Mensal (usa o período antigo)
+    } else { // Mensal
         let diaCorrente = objetoData.getDate();
-        let pFim = parseInt(fimPeriodo || 15); // Usa o fimPeriodo para mensal
+        let pFim = parseInt(fimPeriodo || 30); // Usa o fimPeriodo para mensal (valor padrão alterado para 30)
 
         if (diaCorrente <= pFim) {
             objetoFechamento = new Date(objetoData.getFullYear(), objetoData.getMonth(), pFim);
@@ -1214,7 +1438,7 @@ function salvarJob(){
             tipoPagamento: empresaEncontrada.tipoPagamento,
             diasPagamento: parseInt(empresaEncontrada.diasPagamento || 0),
             inicioPeriodo: parseInt(empresaEncontrada.inicioPeriodo || 1),
-            fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 15),
+            fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 30), // Padrão mensal
             inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1),
             fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
             inicioPrimeiraQuinzena: parseInt(empresaEncontrada.inicioPrimeiraQuinzena || 1),
@@ -1402,12 +1626,32 @@ function renderGrafico(dict){
                 window.chartInstance = null;
             }
             const container = ctx.parentNode;
-            container.innerHTML = "<p style='color:var(--muted); text-align:center;'>Nenhum dado de faturamento para exibir.</p>";
-            // Re-adiciona o canvas para que o gráfico possa ser criado no futuro
-            const newCanvas = document.createElement('canvas');
-            newCanvas.id = 'graficoEmpresas';
-            container.appendChild(newCanvas);
+            // Verifica se o container já não tem a mensagem de "nenhum dado" e o canvas
+            if (!container.querySelector('p.no-data-message')) {
+                const noDataMessage = document.createElement('p');
+                noDataMessage.className = 'no-data-message';
+                noDataMessage.style = 'color:var(--muted); text-align:center;';
+                noDataMessage.innerText = 'Nenhum dado de faturamento para exibir.';
+                container.appendChild(noDataMessage);
+
+                // Remova o canvas existente se houver um, para evitar duplicatas ou elementos vazios
+                const existingCanvas = container.querySelector('#graficoEmpresas');
+                if (existingCanvas) {
+                    existingCanvas.remove();
+                }
+
+                // Cria um novo canvas para que o gráfico possa ser criado no futuro se houver dados
+                const newCanvas = document.createElement('canvas');
+                newCanvas.id = 'graficoEmpresas';
+                container.appendChild(newCanvas);
+            }
             return;
+        } else {
+            // Se houver dados e uma mensagem de "nenhum dado" estiver presente, remova-a
+            const noDataMessage = ctx.parentNode.querySelector('p.no-data-message');
+            if (noDataMessage) {
+                noDataMessage.remove();
+            }
         }
         window.chartInstance = new Chart(ctx, {
             type: "bar",
@@ -1468,7 +1712,6 @@ function enviarRelatorioWhatsApp(){
         msg += "--------------------------------------\n\n";
 
         let totalGeralBrutoFiltrado = 0; // Novo total para o bruto
-        let totalGeralNFFiltrado = 0; // Novo total para o NF
         filtrados.forEach(j => {
             msg += `*${j.empresa}* - ${j.data.split("-").reverse().join("/")}\n`;
             msg += `Job: ${j.job}\n`;
@@ -1476,15 +1719,12 @@ function enviarRelatorioWhatsApp(){
             msg += `Diária / Logística: R$ ${j.diaria.toFixed(2)}\n`;
             msg += `Horas Extras: R$ ${j.extra.toFixed(2)}\n`;
             msg += `*Total Bruto: R$ ${j.total.toFixed(2)}*\n`;
-            msg += `Imposto NF: - R$ ${j.valorNF.toFixed(2)}\n`;
             msg += `Previsão de Pagamento: ${j.previsaoPagamento}\n\n`;
             totalGeralBrutoFiltrado += j.total;
-            totalGeralNFFiltrado += j.valorNF;
         });
 
         msg += "--------------------------------------\n";
         msg += `*TOTAL GERAL BRUTO: R$ ${totalGeralBrutoFiltrado.toFixed(2)}*\n`;
-        msg += `TOTAL IMPOSTO NF: - R$ ${totalGeralNFFiltrado.toFixed(2)}\n`; // Adiciona total de NF
         msg += `Relatório gerado em: ${new Date().toLocaleDateString("pt-BR")}\n`;
 
         window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
@@ -1555,12 +1795,16 @@ function checkDuePayments() {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Zera a hora para comparação de data
 
-    // Verifica se já passou das 9 AM quando a função é chamada
-    const currentHour = new Date().getHours();
-    if (currentHour < 9) {
-        // Se ainda não são 9 AM, não notificamos ainda.
-        // A notificação será disparada quando o usuário abrir/focar o app após as 9 AM.
-        // Para uma notificação exata às 9 AM, mesmo com o app fechado, precisaria de Service Worker.
+    // Obtém a hora de verificação configurada
+    const [configHourStr, configMinuteStr] = (localStorage.getItem('notification_check_hour') || '09:00').split(':');
+    const configHour = parseInt(configHourStr);
+    const configMinute = parseInt(configMinuteStr);
+
+    // Verifica se já passou da hora configurada no dia atual
+    const now = new Date();
+    if (now.getHours() < configHour || (now.getHours() === configHour && now.getMinutes() < configMinute)) {
+        // Se ainda não são a hora configurada, não notificamos ainda.
+        // A notificação será disparada quando o usuário abrir/focar o app após essa hora.
         return;
     }
 
@@ -1591,50 +1835,6 @@ document.addEventListener('visibilitychange', () => {
 });
 window.addEventListener('focus', checkDuePayments);
 
-// Funções de personalização de tema
-function carregarTema() {
-    const savedColor = localStorage.getItem('primary_theme_color');
-    if (savedColor) {
-        document.documentElement.style.setProperty('--primary', savedColor);
-        document.documentElement.style.setProperty('--primary-hover', darkenColor(savedColor, 10)); // Calcula um hover dinâmico
-        document.documentElement.style.setProperty('--primary-glow', hexToRgba(savedColor, 0.2)); // Calcula um glow dinâmico
-    }
-}
-
-function mudarCorTema(newColor) {
-    document.documentElement.style.setProperty('--primary', newColor);
-    document.documentElement.style.setProperty('--primary-hover', darkenColor(newColor, 10));
-    document.documentElement.style.setProperty('--primary-glow', hexToRgba(newColor, 0.2));
-    localStorage.setItem('primary_theme_color', newColor);
-}
-
-// Funções auxiliares para calcular cores dinamicamente (hover e glow)
-function darkenColor(hex, percent) {
-    let f = parseInt(hex.slice(1), 16),
-        t = percent < 0 ? 0 : 255,
-        p = percent < 0 ? percent * -1 : percent,
-        R = f >> 16,
-        G = (f >> 8) & 0x00ff,
-        B = f & 0x0000ff;
-    return "#" + (
-        0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 +
-        (Math.round((t - G) * p) + G) * 0x100 +
-        (Math.round((t - B) * p) + B)
-    ).toString(16).slice(1);
-}
-
-function hexToRgba(hex, alpha) {
-    let c;
-    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
-        c= hex.substring(1).split('');
-        if(c.length===3){
-            c= [c[0], c[0], c[1], c[1], c[2], c[2]];
-        }
-        c= '0x'+c.join('');
-        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
-    }
-    throw new Error('Bad Hex');
-}
 </script>
 </body>
 </html>
