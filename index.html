@@ -369,24 +369,22 @@ margin: 4px 0;
 .history-card div.empresa-title {
     color: var(--primary) !important;
 }
-.history-card .meta-text { /* Restaurado para o tamanho padrão aqui, exceto se sobrescrito */
-    font-size: 0.9em; /* Restaurado ao original */
+/* Estilos dos meta-text restaurados para o padrão original */
+.history-card .meta-text {
+    font-size: 0.85em; /* Restaurado ao original para os meta-text */
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 4px 0;
 }
-.history-card div[style*="font-weight:900"] { /* Total Bruto */
-    font-size: 1.1em !important; /* Restaurado para ser mais próximo do original, mas maior */
-    margin-top: 10px !important; /* Ajustado */
+.history-card .meta-text b {
+    color: var(--text);
 }
-.imposto-nf-text { /* Imposto NF no dashboard */
-    font-size: 0.8em !important;
-    color: var(--danger) !important;
-    margin-top: 5px !important;
+.history-card div[style*="font-weight:900"] { /* Total Bruto nos cards de histórico */
+    font-size: 1.1em !important; /* Mantido como ajustado */
+    margin-top: 10px !important;
 }
-.valor-liquido-text { /* Valor Líquido no dashboard */
-    font-size: 0.9em !important;
-    font-weight: 900;
-    color: var(--success) !important;
-    margin-top: 5px !important;
-}
+/* Remove estilos específicos para imposto-nf-text e valor-liquido-text nos cards de histórico */
+
 .config-group {
     background: var(--dark-pure);
     border-radius: 16px;
@@ -447,6 +445,11 @@ body.light-mode #btnGerarCopiaSeguranca {
     background: var(--blue-hover) !important;
     color: white !important;
 }
+
+/* Estilo específico para o botão de busca no modo claro */
+body.light-mode #btnBuscaTexto {
+    color: white !important;
+}
 </style>
 </head>
 <body onload="initializeSettings()">
@@ -489,7 +492,7 @@ body.light-mode #btnGerarCopiaSeguranca {
 <div id="abaJobs" class="app-section active">
 <div class="dashboard">
 <div class="dashboard-card">
-<button class="eye-button" id="eyeButton" onclick="toggleValores()">👁️</button>
+<button class="eye-button" id="eyeButton" onclick="toggleValores()">🙈</button> <!-- Ícone inicial ajustado -->
 <div class="dashboard-title">Total Bruto</div>
 <div id="vTotalSemana" class="total-geral">R$ 0,00</div>
 </div>
@@ -509,12 +512,12 @@ body.light-mode #btnGerarCopiaSeguranca {
 <div class="input-group">
 <h3><span id="formJobTitle">💼 Job</span></h3>
 <input type="hidden" id="editJobId" value="">
-<label>Empresa Tomadora do Serviço</label>
+<label>Empresa</label> <!-- Alterado -->
 <input type="text" id="empresaJob" placeholder="Digite para pesquisar..." autocomplete="off" oninput="gerenciarAutocomplete(this.value)">
 <div id="autocompleteContainer"></div>
-<label>Data Oficial da Prestação</label>
+<label>Data</label> <!-- Alterado -->
 <input type="date" id="dataJob">
-<label>Designação do Job / Linha de Production</label>
+<label>Job</label> <!-- Alterado -->
 <input type="text" id="nomeJob" placeholder="Ex: Direção de Fotografia - VT Refresco">
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
 <div>
@@ -544,7 +547,7 @@ body.light-mode #btnGerarCopiaSeguranca {
 <button id="btnFiltroArquivado" class="btn-filter" onclick="definirFiltroVisualizacao('arquivado')">Pagos / Arquivados</button>
 </div>
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
-<button class="btn btn-search" style="margin:0;" onclick="abrirBusca()">🔍 Filtrar Empresas</button>
+<button class="btn btn-search" id="btnBuscaTexto" style="margin:0;" onclick="abrirBusca()">🔍 Filtrar Empresas</button>
 <button class="btn btn-export" style="margin:0; background:var(--border-color);" onclick="limparBusca()">❌ Limpar Filtro</button>
 </div>
 <div id="searchBox" class="search-box">
@@ -722,7 +725,7 @@ body.light-mode #btnGerarCopiaSeguranca {
 <script>
 // Declaração de variáveis globais
 let db = null;
-let ocultarValores = false;
+let ocultarValores = false; // Define como false por padrão para mostrar os valores no início
 let filtroVisualizacao = "aberto";
 let mapaCores = {};
 let BASE_HOURS = 12; // Agora configurável
@@ -785,6 +788,8 @@ function initializeSettings() {
         atualizarListaEmpresas();
         checkAndRequestNotificationPermission();
         checkDuePayments();
+        // Define o ícone do olho na inicialização
+        document.getElementById("eyeButton").innerHTML = ocultarValores ? "🙈" : "👁️";
     }
 }
 
@@ -986,8 +991,8 @@ requestDB.onerror = function() {
 // Funções de UI e exibição de valores
 function toggleValores(){
     ocultarValores = !ocultarValores;
-    // Lógica invertida para o ícone: se ocultarValores for true, mostra olho aberto (para mostrar); se false, mostra olho fechado (para ocultar)
-    document.getElementById("eyeButton").innerHTML = ocultarValores ? "👁️" : "🙈";
+    // Lógica para o ícone do olho: se ocultarValores for true, mostra olho fechado (valores ocultos); se false, mostra olho aberto (valores visíveis)
+    document.getElementById("eyeButton").innerHTML = ocultarValores ? "🙈" : "👁️";
     atualizarTela();
 }
 
@@ -1686,8 +1691,7 @@ function atualizarTela(){
 
                     let dFmt = reg.data.split("-").reverse().join("/");
                     
-                    // Removendo Valor Líquido e Imposto NF dos cards de registro no histórico
-                    // Conforme solicitado: "retire o valor liquido e o valor de nota. mantenha como estava anteriromente."
+                    // Restaurando os campos de detalhes do job, sem imposto NF e Valor Líquido explicitamente nos cards de histórico
                     card.innerHTML = `
                         <button class="btn-del" onclick="deletarJob(${reg.id})">🗑️</button>
                         <button class="btn-edit-inline" onclick="carregarJobParaEdicao(${reg.id})">✏️</button>
