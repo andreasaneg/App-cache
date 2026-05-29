@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
---primary: #10b981;
+--primary: #10b981; /* Cor primária padrão */
 --primary-hover: #059669;
 --primary-glow: rgba(16, 185, 129, 0.2);
 --bg: #0f172a;
@@ -324,15 +324,37 @@ background: #334155;
 color: #ffffff;
 }
 .meta-text {
-font-size: 0.85em;
+font-size: 0.9em; /* Aumentado */
 color: var(--muted);
 line-height: 1.6;
 margin: 4px 0;
 }
 .meta-text b { color: #ffffff; }
+
+/* Estilos adicionais para os registros de job */
+.history-card div[style*="font-weight:900"] {
+    font-size: 1.1em !important; /* Aumentado para Total Bruto */
+    margin-top: 12px !important;
+}
+.history-card div[style*="font-size:0.8em"] {
+    font-size: 0.9em !important; /* Aumentado para Imposto NF */
+    color: var(--danger) !important;
+}
+.config-group {
+    background: var(--dark-pure);
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+}
+.config-group h4 {
+    color: var(--text);
+    margin-bottom: 10px;
+    font-size: 1em;
+}
 </style>
 </head>
-<body>
+<body onload="carregarTema()">
 <div id="loginScreen" style="position:fixed; inset:0; background:var(--dark-pure); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; padding:15px;">
 <button onclick="emergencyReset()" style="background:var(--danger); color:white; border:none; padding:10px 15px; border-radius:10px; font-weight:bold; font-size:0.8em; margin-bottom:20px; width:100%; max-width:400px; box-shadow:0 4px 10px rgba(239,68,68,0.3);">⚠️ Forçar Reset de Emergência (Celular)</button>
 <div style="background:var(--card); padding:25px; border-radius:28px; width:100%; max-width:400px; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6); border: 1px solid var(--border-color);">
@@ -366,7 +388,8 @@ margin: 4px 0;
 </div>
 <div class="tab-container">
 <button class="tab-button active" id="tabJobsBtn" onclick="alternarAba('abaJobs', event)">💼 Lançamentos</button>
-<button class="tab-button" id="tabEmpresasBtn" onclick="alternarAba('abaEmpresas', event)">🏢 Empresas</button>
+<button class="tab-button" id="tabEmpresasBtn" onclick="alternarAba('abaEmpresas', event)">🏢 Cadastro de Empresas</button>
+<button class="tab-button" id="tabConfiguracoesBtn" onclick="alternarAba('abaConfiguracoes', event)">⚙️ Configurações</button>
 </div>
 <div id="abaJobs" class="app-section active">
 <div class="dashboard">
@@ -457,15 +480,22 @@ margin: 4px 0;
 <option value="Mensal">Mensal</option>
 </select>
 <div id="cadPeriodoPersonalizado" style="display:none; padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color);">
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-<div>
-<label>Dia Inicial do Ciclo</label>
-<input type="number" id="cadInicioPeriodo" min="1" max="31" value="1">
-</div>
-<div>
-<label>Dia Final do Ciclo</label>
-<input type="number" id="cadFimPeriodo" min="1" max="31" value="15">
-</div>
+<div id="quinzenalPeriodos" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+    <!-- Campos para a 1ª quinzena -->
+    <div>
+        <label>Dia Inicial (1ª Quinzena)</label>
+        <input type="number" id="cadInicioPrimeiraQuinzena" min="1" max="31" value="1">
+    </div>
+    <div>
+        <label>Dia Final (1ª Quinzena)</label>
+        <input type="number" id="cadFimPrimeiraQuinzena" min="1" max="31" value="15">
+    </div>
+    <!-- Campo para o dia final da 2ª quinzena -->
+    <div style="grid-column: span 2;">
+        <label>Dia Final (2ª Quinzena)</label>
+        <input type="number" id="cadFimSegundaQuinzena" min="1" max="31" value="30">
+        <p style="font-size:0.75em; color:var(--muted); margin-top:5px;">O início da 2ª quinzena será o dia seguinte ao final da 1ª quinzena.</p>
+    </div>
 </div>
 </div>
 <div id="cadPeriodoSemanalBox" style="padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color); display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -522,6 +552,29 @@ margin: 4px 0;
 <button class="btn btn-cancel" style="background:var(--dark-pure); border:1px solid var(--border-color);" onclick="document.getElementById('restoreFile').click()">📥 Importar Cópia de Segurança (.JSON)</button>
 </div>
 <input type="file" id="restoreFile" accept=".json" style="display:none;">
+</div>
+</div>
+<div id="abaConfiguracoes" class="app-section">
+<div class="input-group">
+<h3>⚙️ Configurações do Aplicativo</h3>
+<div class="config-group">
+    <h4>🎨 Tema do Aplicativo</h4>
+    <label for="themeColorPicker">Cor Primária do Tema:</label>
+    <input type="color" id="themeColorPicker" onchange="mudarCorTema(this.value)" style="width: 100%; height: 40px; margin-bottom: 10px; padding: 5px;">
+    <p style="color:var(--muted); font-size:0.8em;">Altere a cor principal de destaque do aplicativo.</p>
+</div>
+<div class="config-group">
+    <h4>🌟 Outras Personalizações (Sugestões)</h4>
+    <p style="color:var(--muted); font-size:0.9em; margin-bottom: 10px;">Aqui poderiam ser adicionadas mais opções:</p>
+    <ul>
+        <li style="color:var(--muted); font-size:0.85em; margin-bottom:5px;">- Alternar entre Modo Claro / Modo Escuro</li>
+        <li style="color:var(--muted); font-size:0.85em; margin-bottom:5px;">- Definir Horas Padrão de Trabalho (além das 12h)</li>
+        <li style="color:var(--muted); font-size:0.85em; margin-bottom:5px;">- Configurar Notificações (horário, tipos)</li>
+        <li style="color:var(--muted); font-size:0.85em; margin-bottom:5px;">- Personalizar Relatórios (campos a incluir/excluir)</li>
+        <li style="color:var(--muted); font-size:0.85em; margin-bottom:5px;">- Gerenciamento de Senha Master (Alterar, Resetar com e-mail)</li>
+    </ul>
+    <p style="color:var(--muted); font-size:0.8em; margin-top: 15px;">(Estas opções são apenas sugestões e não estão implementadas nesta versão.)</p>
+</div>
 </div>
 </div>
 <script>
@@ -771,7 +824,18 @@ function alternarAba(abaId, event) {
     document.querySelectorAll('.tab-button').forEach(botao => botao.classList.remove('active'));
     document.getElementById(abaId).classList.add('active');
     if(event) event.currentTarget.classList.add('active');
-    if(abaId === 'abaEmpresas') atualizarListaEmpresas(); else atualizarTela();
+    if(abaId === 'abaEmpresas') {
+        atualizarListaEmpresas();
+    } else if (abaId === 'abaJobs') {
+        atualizarTela();
+    } else if (abaId === 'abaConfiguracoes') {
+        // Nada específico para atualizar na aba de configurações por enquanto
+        // Garante que o color picker exiba a cor atual
+        const savedColor = localStorage.getItem('primary_theme_color');
+        if (savedColor) {
+            document.getElementById('themeColorPicker').value = savedColor;
+        }
+    }
 }
 
 function definirFiltroVisualizacao(tipo) {
@@ -786,9 +850,13 @@ function alterarPeriodoPagamentoCadastro(){
     if(tipo === "Quinzenal" || tipo === "Mensal") {
         document.getElementById("cadPeriodoPersonalizado").style.display = "block";
         document.getElementById("cadPeriodoSemanalBox").style.display = "none";
-    } else {
+        // Ajusta a visibilidade dos campos específicos para quinzenal
+        document.getElementById("quinzenalPeriodos").style.display = (tipo === "Quinzenal") ? "grid" : "none";
+
+    } else { // Semanal
         document.getElementById("cadPeriodoPersonalizado").style.display = "none";
         document.getElementById("cadPeriodoSemanalBox").style.display = "grid";
+        document.getElementById("quinzenalPeriodos").style.display = "none";
     }
 }
 
@@ -829,18 +897,29 @@ function salvarEmpresa() {
     const idExistente = document.getElementById("cadIdEmpresa").value;
     if(!nome) { alert("Nome da empresa é obrigatório."); return; }
 
-    const payloadEmpresa = {
+    const tipoPagamento = document.getElementById("cadTipoPagamento").value;
+    let payloadEmpresa = {
         nome: nome,
         cacheBase: parseFloat(document.getElementById("cadCacheBase").value || 0),
         diaria: parseFloat(document.getElementById("cadDiaria").value || 0),
-        tipoPagamento: document.getElementById("cadTipoPagamento").value,
-        inicioPeriodo: parseInt(document.getElementById("cadInicioPeriodo").value || 1),
-        fimPeriodo: parseInt(document.getElementById("cadFimPeriodo").value || 15),
-        inicioSemana: parseInt(document.getElementById("cadInicioSemana").value || 1),
-        fimSemana: parseInt(document.getElementById("cadFimSemana").value || 0),
+        tipoPagamento: tipoPagamento,
         diasPagamento: parseInt(document.getElementById("cadDiasPagamento").value || 0),
         nfPercentual: parseFloat(document.getElementById("cadNfPercentual").value || 0)
     };
+
+    if (tipoPagamento === "Semanal") {
+        payloadEmpresa.inicioSemana = parseInt(document.getElementById("cadInicioSemana").value || 1);
+        payloadEmpresa.fimSemana = parseInt(document.getElementById("cadFimSemana").value || 0);
+    } else { // Quinzenal ou Mensal
+        payloadEmpresa.inicioPeriodo = parseInt(document.getElementById("cadInicioPeriodo").value || 1);
+        payloadEmpresa.fimPeriodo = parseInt(document.getElementById("cadFimPeriodo").value || 15);
+
+        if (tipoPagamento === "Quinzenal") {
+            payloadEmpresa.inicioPrimeiraQuinzena = parseInt(document.getElementById("cadInicioPrimeiraQuinzena").value || 1);
+            payloadEmpresa.fimPrimeiraQuinzena = parseInt(document.getElementById("cadFimPrimeiraQuinzena").value || 15);
+            payloadEmpresa.fimSegundaQuinzena = parseInt(document.getElementById("cadFimSegundaQuinzena").value || 30);
+        }
+    }
 
     if(idExistente) payloadEmpresa.id = parseInt(idExistente);
 
@@ -876,13 +955,23 @@ function carregarEmpresaParaEdicao(id) {
         document.getElementById("cadCacheBase").value = dados.cacheBase;
         document.getElementById("cadDiaria").value = dados.diaria;
         document.getElementById("cadTipoPagamento").value = dados.tipoPagamento;
+
+        // Preenche campos de Quinzenal/Mensal
         document.getElementById("cadInicioPeriodo").value = dados.inicioPeriodo || 1;
         document.getElementById("cadFimPeriodo").value = dados.fimPeriodo || 15;
+
+        // Preenche campos de Quinzenal específicos
+        document.getElementById("cadInicioPrimeiraQuinzena").value = dados.inicioPrimeiraQuinzena || 1;
+        document.getElementById("cadFimPrimeiraQuinzena").value = dados.fimPrimeiraQuinzena || 15;
+        document.getElementById("cadFimSegundaQuinzena").value = dados.fimSegundaQuinzena || 30;
+
+        // Preenche campos de Semanal
         document.getElementById("cadInicioSemana").value = dados.inicioSemana || 1;
         document.getElementById("cadFimSemana").value = dados.fimSemana || 0;
+
         document.getElementById("cadDiasPagamento").value = dados.diasPagamento || 0;
         document.getElementById("cadNfPercentual").value = dados.nfPercentual || 0;
-        alterarPeriodoPagamentoCadastro();
+        alterarPeriodoPagamentoCadastro(); // Reseta a exibição do período
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
     tx.onerror = (e) => { console.error("Erro ao carregar empresa para edição:", e); alert("Erro ao carregar dados da empresa."); };
@@ -936,10 +1025,20 @@ function limparCamposEmpresa(){
     document.getElementById("cadDiaria").value = "";
     document.getElementById("cadNfPercentual").value = "0";
     document.getElementById("cadTipoPagamento").value = "Semanal";
+
+    // Resetar campos de Quinzenal/Mensal
     document.getElementById("cadInicioPeriodo").value = "1";
     document.getElementById("cadFimPeriodo").value = "15";
+
+    // Resetar campos de Quinzenal específicos
+    document.getElementById("cadInicioPrimeiraQuinzena").value = "1";
+    document.getElementById("cadFimPrimeiraQuinzena").value = "15";
+    document.getElementById("cadFimSegundaQuinzena").value = "30";
+
+    // Resetar campos de Semanal
     document.getElementById("cadInicioSemana").value = "1";
     document.getElementById("cadFimSemana").value = "0";
+
     document.getElementById("cadDiasPagamento").value = "5";
     alterarPeriodoPagamentoCadastro(); // Reseta a exibição do período
 }
@@ -954,10 +1053,13 @@ function obterStatusPeriodo(instanciaJob) {
     let dataFechamento = calcularDataFechamentoReal(
         instanciaJob.data,
         instanciaJob.tipoPagamento,
-        instanciaJob.inicioPeriodo,
-        instanciaJob.fimPeriodo,
+        instanciaJob.inicioPeriodo, // para mensal/quinzenal antigo
+        instanciaJob.fimPeriodo, // para mensal/quinzenal antigo
         instanciaJob.inicioSemana,
-        instanciaJob.fimSemana
+        instanciaJob.fimSemana,
+        instanciaJob.inicioPrimeiraQuinzena, // para quinzenal novo
+        instanciaJob.fimPrimeiraQuinzena, // para quinzenal novo
+        instanciaJob.fimSegundaQuinzena // para quinzenal novo
     );
     let dataLiquidacao = calcularDataPagamentoReal(dataFechamento, instanciaJob.diasPagamento);
 
@@ -966,23 +1068,56 @@ function obterStatusPeriodo(instanciaJob) {
     return "aberto";
 }
 
-function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana) {
+function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana, inicioPrimeiraQuinzena, fimPrimeiraQuinzena, fimSegundaQuinzena) {
     let objetoData = new Date(dataPrestacao + "T00:00:00"); // Garante que a hora seja 00:00
     let objetoFechamento = new Date(objetoData);
 
     if (tipoCiclo === "Semanal") {
-        let diaAlvoCorte = parseInt(fimSemana !== undefined ? fimSemana : 0); // Convert to number
-        let diasParaFimDeSemana = diaAlvoCorte - objetoData.getDay();
-        
-        // Se o dia do job for o dia de corte, o fechamento é no próprio dia.
-        // Caso contrário, calcula-se os dias para o próximo dia de corte.
-        if (diasParaFimDeSemana < 0) {
-            diasParaFimDeSemana += 7; // Avança para a próxima ocorrência do dia de corte
+        let diaAlvoCorte = parseInt(fimSemana !== undefined ? fimSemana : 0); // Convert to number (0=Dom, 1=Seg...)
+        let diaDaSemanaDoJob = objetoData.getDay(); // 0=Dom, 1=Seg...
+        let diasParaFimDeSemana;
+
+        if (diaDaSemanaDoJob === diaAlvoCorte) {
+            diasParaFimDeSemana = 0; // Se o dia do job já é o dia de corte
+        } else {
+            diasParaFimDeSemana = (diaAlvoCorte - diaDaSemanaDoJob + 7) % 7;
         }
         objetoFechamento.setDate(objetoData.getDate() + diasParaFimDeSemana);
-    } else { // Quinzenal ou Mensal
+
+    } else if (tipoCiclo === "Quinzenal") {
         let diaCorrente = objetoData.getDate();
-        let pFim = parseInt(fimPeriodo || 15);
+        let ano = objetoData.getFullYear();
+        let mes = objetoData.getMonth(); // Mês é 0-indexado
+
+        let p1Inicio = parseInt(inicioPrimeiraQuinzena || 1);
+        let p1Fim = parseInt(fimPrimeiraQuinzena || 15);
+        let p2Fim = parseInt(fimSegundaQuinzena || 30);
+
+        if (diaCorrente >= p1Inicio && diaCorrente <= p1Fim) {
+            // Está na primeira quinzena
+            objetoFechamento = new Date(ano, mes, p1Fim);
+        } else {
+            // Está na segunda quinzena ou passou da segunda quinzena do mês anterior
+            // Considera o dia seguinte ao fim da primeira quinzena como início da segunda
+            let p2Inicio = p1Fim + 1;
+
+            if (diaCorrente >= p2Inicio && diaCorrente <= p2Fim) {
+                // Está na segunda quinzena
+                objetoFechamento = new Date(ano, mes, p2Fim);
+            } else if (diaCorrente < p1Inicio) {
+                // A data do job é antes do início da primeira quinzena (pertence à quinzena anterior do mês anterior)
+                // Ou, se passou do fim da segunda quinzena, deve ir para a primeira quinzena do próximo mês.
+                // Simplificação: se não caiu na 1a ou 2a quinzena deste mês, assume-se que é a primeira quinzena do próximo mês.
+                objetoFechamento = new Date(ano, mes + 1, p1Fim);
+            } else { // diaCorrente > p2Fim
+                // Passou do fim da segunda quinzena, vai para a primeira quinzena do próximo mês.
+                objetoFechamento = new Date(ano, mes + 1, p1Fim);
+            }
+        }
+
+    } else { // Mensal (usa o período antigo)
+        let diaCorrente = objetoData.getDate();
+        let pFim = parseInt(fimPeriodo || 15); // Usa o fimPeriodo para mensal
 
         if (diaCorrente <= pFim) {
             objetoFechamento = new Date(objetoData.getFullYear(), objetoData.getMonth(), pFim);
@@ -997,8 +1132,9 @@ function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fim
 
 function calcularDataPagamentoReal(dataFechamento, diasUteis) {
     let objetoPagamento = new Date(dataFechamento);
-    // Para incluir o dia de pagamento como o N-ésimo dia (ex: 5º dia), adicionamos diasUteis - 1
-    objetoPagamento.setDate(objetoPagamento.getDate() + Number(diasUteis)); // Ajustado para contar o dia de fechamento como o primeiro dia do prazo
+    // Adiciona exatamente 'diasUteis' dias à data de fechamento.
+    // Se diasUteis for 0, o pagamento é no mesmo dia do fechamento.
+    objetoPagamento.setDate(objetoPagamento.getDate() + Number(diasUteis));
     objetoPagamento.setHours(0,0,0,0); // Garante que o horário seja meia-noite para comparação
     return objetoPagamento;
 }
@@ -1017,7 +1153,7 @@ function salvarJob(){
         const empresaEncontrada = todasEmpresas.find(emp => emp.nome.toLowerCase() === inputNomeEmpresa.toLowerCase());
 
         if(!empresaEncontrada) {
-            alert("A empresa '" + inputNomeEmpresa + "' não existe no banco. Cadastre-a primeiro na aba Empresas.");
+            alert("A empresa '" + inputNomeEmpresa + "' não existe no banco. Cadastre-a primeiro na aba 'Cadastro de Empresas'.");
             return;
         }
 
@@ -1056,7 +1192,10 @@ function salvarJob(){
             empresaEncontrada.inicioPeriodo,
             empresaEncontrada.fimPeriodo,
             empresaEncontrada.inicioSemana,
-            empresaEncontrada.fimSemana
+            empresaEncontrada.fimSemana,
+            empresaEncontrada.inicioPrimeiraQuinzena,
+            empresaEncontrada.fimPrimeiraQuinzena,
+            empresaEncontrada.fimSegundaQuinzena
         );
 
 
@@ -1078,6 +1217,9 @@ function salvarJob(){
             fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 15),
             inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1),
             fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
+            inicioPrimeiraQuinzena: parseInt(empresaEncontrada.inicioPrimeiraQuinzena || 1),
+            fimPrimeiraQuinzena: parseInt(empresaEncontrada.fimPrimeiraQuinzena || 15),
+            fimSegundaQuinzena: parseInt(empresaEncontrada.fimSegundaQuinzena || 30),
             previsaoPagamento: dataPrevisaoPagamento // Usa a previsão de pagamento recalculada
         };
 
@@ -1102,8 +1244,8 @@ function salvarJob(){
     transacaoEmpresa.onerror = (e) => { console.error("Erro ao buscar empresas para salvar job:", e); alert("Erro ao buscar dados da empresa para salvar o job."); };
 }
 
-function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana){
-    let dataFechamento = calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana);
+function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana, inicioPrimeiraQuinzena, fimPrimeiraQuinzena, fimSegundaQuinzena){
+    let dataFechamento = calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana, inicioPrimeiraQuinzena, fimPrimeiraQuinzena, fimSegundaQuinzena);
     let dataFaturamento = calcularDataPagamentoReal(dataFechamento, diasUteis);
     return dataFaturamento.toLocaleDateString("pt-BR");
 }
@@ -1214,8 +1356,8 @@ function atualizarTela(){
                     <div class="empresa-title" style="color:${mapaCores[reg.empresa]}">${reg.empresa}</div>
                     <div class="meta-text">📅 ${dFmt} | 📌 ${reg.job}</div>
                     <div>${badge}</div>
-                    <div class="meta-text" style="margin-top:8px;">🕒 Jornada: ${reg.inicio} às ${reg.fim} (${reg.horas}h)</div>
-                    <div class="meta-text">💰 Cachê Base: ${formatarValor(reg.cache)}</div>
+                    <div class="meta-text" style="margin-top:8px;">🕒 Horários: ${reg.inicio} às ${reg.fim} (${reg.horas}h)</div>
+                    <div class="meta-text">💰 Cachê: ${formatarValor(reg.cache)}</div>
                     <div class="meta-text">🚗 Diária / Logística: ${formatarValor(reg.diaria)}</div>
                     <div class="meta-text">⚡ Horas Extras: ${formatarValor(reg.extra)}</div>
                     <div class="meta-text">🗓️ Previsão de Recebimento: <b>${reg.previsaoPagamento}</b></div>
@@ -1272,7 +1414,26 @@ function renderGrafico(dict){
             data: { labels: labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 8 }] },
             options: {
                 responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { // Melhoria no tooltip para mostrar o valor
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += formatarValor(context.parsed.y);
+                                }
+                                return label;
+                            },
+                            title: function(context) {
+                                return context[0].label; // Mostra o nome da empresa como título
+                            }
+                        }
+                    }
+                },
                 scales: {
                     y: { display: false },
                     x: { ticks: { color: "#94a3b8" } }
@@ -1311,7 +1472,7 @@ function enviarRelatorioWhatsApp(){
         filtrados.forEach(j => {
             msg += `*${j.empresa}* - ${j.data.split("-").reverse().join("/")}\n`;
             msg += `Job: ${j.job}\n`;
-            msg += `Cachê Base: R$ ${j.cache.toFixed(2)}\n`;
+            msg += `Cachê: R$ ${j.cache.toFixed(2)}\n`;
             msg += `Diária / Logística: R$ ${j.diaria.toFixed(2)}\n`;
             msg += `Horas Extras: R$ ${j.extra.toFixed(2)}\n`;
             msg += `*Total Bruto: R$ ${j.total.toFixed(2)}*\n`;
@@ -1337,7 +1498,7 @@ function baixarExcelCompleto(){
         // Ordena por data (mais recente primeiro) para o CSV também
         const jobsOrdenados = event.target.result.sort((a, b) => new Date(b.data) - new Date(a.data));
 
-        let csv = "ID;Data;Empresa;Job;Cache Base;Diaria;Horas Extras;Total Bruto;Imposto NF;Previsao Pagamento\n";
+        let csv = "ID;Data;Empresa;Job;Cache;Diaria;Horas Extras;Total Bruto;Imposto NF;Previsao Pagamento\n";
         jobsOrdenados.forEach(i => {
             csv += `${i.id};${i.data};${i.empresa};${i.job};${i.cache.toFixed(2)};${i.diaria.toFixed(2)};${i.extra.toFixed(2)};${i.total.toFixed(2)};${i.valorNF.toFixed(2)};${i.previsaoPagamento}\n`;
         });
@@ -1408,7 +1569,11 @@ function checkDuePayments() {
         const jobs = event.target.result;
         jobs.forEach(job => {
             // Recalcula a data de pagamento para garantir precisão
-            const dataFechamentoTemp = calcularDataFechamentoReal(job.data, job.tipoPagamento, job.inicioPeriodo, job.fimPeriodo, job.inicioSemana, job.fimSemana);
+            const dataFechamentoTemp = calcularDataFechamentoReal(
+                job.data, job.tipoPagamento, job.inicioPeriodo, job.fimPeriodo,
+                job.inicioSemana, job.fimSemana, job.inicioPrimeiraQuinzena,
+                job.fimPrimeiraQuinzena, job.fimSegundaQuinzena
+            );
             const dataPagamentoObj = calcularDataPagamentoReal(dataFechamentoTemp, job.diasPagamento);
 
             if (dataPagamentoObj.getTime() === today.getTime()) {
@@ -1426,6 +1591,50 @@ document.addEventListener('visibilitychange', () => {
 });
 window.addEventListener('focus', checkDuePayments);
 
+// Funções de personalização de tema
+function carregarTema() {
+    const savedColor = localStorage.getItem('primary_theme_color');
+    if (savedColor) {
+        document.documentElement.style.setProperty('--primary', savedColor);
+        document.documentElement.style.setProperty('--primary-hover', darkenColor(savedColor, 10)); // Calcula um hover dinâmico
+        document.documentElement.style.setProperty('--primary-glow', hexToRgba(savedColor, 0.2)); // Calcula um glow dinâmico
+    }
+}
+
+function mudarCorTema(newColor) {
+    document.documentElement.style.setProperty('--primary', newColor);
+    document.documentElement.style.setProperty('--primary-hover', darkenColor(newColor, 10));
+    document.documentElement.style.setProperty('--primary-glow', hexToRgba(newColor, 0.2));
+    localStorage.setItem('primary_theme_color', newColor);
+}
+
+// Funções auxiliares para calcular cores dinamicamente (hover e glow)
+function darkenColor(hex, percent) {
+    let f = parseInt(hex.slice(1), 16),
+        t = percent < 0 ? 0 : 255,
+        p = percent < 0 ? percent * -1 : percent,
+        R = f >> 16,
+        G = (f >> 8) & 0x00ff,
+        B = f & 0x0000ff;
+    return "#" + (
+        0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 +
+        (Math.round((t - G) * p) + G) * 0x100 +
+        (Math.round((t - B) * p) + B)
+    ).toString(16).slice(1);
+}
+
+function hexToRgba(hex, alpha) {
+    let c;
+    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+        c= hex.substring(1).split('');
+        if(c.length===3){
+            c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+        }
+        c= '0x'+c.join('');
+        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
+    }
+    throw new Error('Bad Hex');
+}
 </script>
 </body>
 </html>
