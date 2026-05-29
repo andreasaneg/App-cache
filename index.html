@@ -122,6 +122,8 @@ color: var(--text-secondary);
 .total-geral { font-size: 2em; font-weight: 900; color: var(--blue); }
 .total-nf { font-size: 2em; font-weight: 900; color: var(--danger); }
 .total-horas { font-size: 2em; font-weight: 900; color: var(--primary); }
+.total-liquido { font-size: 2em; font-weight: 900; color: var(--success); } /* Novo estilo para total líquido */
+
 .eye-button {
 position: absolute;
 top: 15px;
@@ -356,7 +358,7 @@ background: #334155;
 color: #ffffff;
 }
 .meta-text {
-font-size: 1em; /* Aumentado */
+font-size: 0.9em; /* Restaurado para o tamanho anterior */
 color: var(--muted);
 line-height: 1.6;
 margin: 4px 0;
@@ -367,20 +369,17 @@ margin: 4px 0;
 .history-card div.empresa-title {
     color: var(--primary) !important;
 }
-.history-card .meta-text { /* Reverte para o tamanho padrão aqui, exceto se sobrescrito */
-    font-size: 1em; /* Restaurado */
-}
 .history-card div[style*="font-weight:900"] { /* Total Bruto */
-    font-size: 1.2em !important;
+    font-size: 1.2em !important; /* Mantido como antes */
     margin-top: 15px !important;
 }
 .history-card .imposto-nf-text { /* Imposto NF */
-    font-size: 1em !important;
+    font-size: 0.8em !important; /* Restaurado */
     color: var(--danger) !important;
     margin-top: 5px !important;
 }
 .history-card .valor-liquido {
-    font-size: 1.1em !important;
+    font-size: 0.9em !important; /* Restaurado */
     font-weight: 900;
     color: var(--success) !important;
     margin-top: 5px !important;
@@ -488,6 +487,10 @@ input:checked + .slider:before {
 <div class="dashboard-card" id="dashboardNfCard">
 <div class="dashboard-title">Imposto NF</div>
 <div id="vTotalNF" class="total-nf">- R$ 0,00</div>
+</div>
+<div class="dashboard-card" id="dashboardLiquidoCard">
+<div class="dashboard-title">Valor Líquido</div>
+<div id="vTotalLiquido" class="total-liquido">R$ 0,00</div>
 </div>
 <div class="dashboard-card">
 <div class="dashboard-title">Horas Trabalhadas</div>
@@ -1154,26 +1157,82 @@ function salvarEmpresa() {
     const idExistente = document.getElementById("cadIdEmpresa").value;
     if(!nome) { alert("Nome da empresa é obrigatório."); return; }
 
+    const cacheBase = parseFloat(document.getElementById("cadCacheBase").value);
+    if (isNaN(cacheBase) || cacheBase < 0) {
+        alert("Cachê Fixo Padrão deve ser um número válido e não negativo.");
+        return;
+    }
+
+    const diaria = parseFloat(document.getElementById("cadDiaria").value);
+    if (isNaN(diaria) || diaria < 0) {
+        alert("Alimentação / Logística deve ser um número válido e não negativo.");
+        return;
+    }
+
+    const nfPercentual = parseFloat(document.getElementById("cadNfPercentual").value);
+    if (isNaN(nfPercentual) || nfPercentual < 0 || nfPercentual > 100) {
+        alert("Alíquota de Retenção NF deve ser um número válido entre 0 e 100.");
+        return;
+    }
+
+    const diasPagamento = parseInt(document.getElementById("cadDiasPagamento").value);
+    if (isNaN(diasPagamento) || diasPagamento < 0) {
+        alert("Dias Úteis para Liquidação deve ser um número inteiro válido e não negativo.");
+        return;
+    }
+
+
     const tipoPagamento = document.getElementById("cadTipoPagamento").value;
     let payloadEmpresa = {
         nome: nome,
-        cacheBase: parseFloat(document.getElementById("cadCacheBase").value || 0),
-        diaria: parseFloat(document.getElementById("cadDiaria").value || 0),
+        cacheBase: cacheBase,
+        diaria: diaria,
         tipoPagamento: tipoPagamento,
-        diasPagamento: parseInt(document.getElementById("cadDiasPagamento").value || 0),
-        nfPercentual: parseFloat(document.getElementById("cadNfPercentual").value || 0)
+        diasPagamento: diasPagamento,
+        nfPercentual: nfPercentual
     };
 
     if (tipoPagamento === "Semanal") {
-        payloadEmpresa.inicioSemana = parseInt(document.getElementById("cadInicioSemana").value || 1);
-        payloadEmpresa.fimSemana = parseInt(document.getElementById("cadFimSemana").value || 0);
+        const inicioSemana = parseInt(document.getElementById("cadInicioSemana").value);
+        const fimSemana = parseInt(document.getElementById("cadFimSemana").value);
+        if (isNaN(inicioSemana) || isNaN(fimSemana) || inicioSemana < 0 || inicioSemana > 6 || fimSemana < 0 || fimSemana > 6) {
+            alert("Dias de Início e Corte da Semana devem ser números válidos (0=Dom, 6=Sáb).");
+            return;
+        }
+        payloadEmpresa.inicioSemana = inicioSemana;
+        payloadEmpresa.fimSemana = fimSemana;
     } else { // Quinzenal ou Mensal
         if (tipoPagamento === "Quinzenal") {
-            payloadEmpresa.inicioPrimeiraQuinzena = parseInt(document.getElementById("cadInicioPrimeiraQuinzena").value || 1);
-            payloadEmpresa.fimPrimeiraQuinzena = parseInt(document.getElementById("cadFimPrimeiraQuinzena").value || 15);
-            payloadEmpresa.fimSegundaQuinzena = parseInt(document.getElementById("cadFimSegundaQuinzena").value || 30);
+            const inicioPrimeiraQuinzena = parseInt(document.getElementById("cadInicioPrimeiraQuinzena").value);
+            const fimPrimeiraQuinzena = parseInt(document.getElementById("cadFimPrimeiraQuinzena").value);
+            const fimSegundaQuinzena = parseInt(document.getElementById("cadFimSegundaQuinzena").value);
+
+            if (isNaN(inicioPrimeiraQuinzena) || isNaN(fimPrimeiraQuinzena) || isNaN(fimSegundaQuinzena) ||
+                inicioPrimeiraQuinzena < 1 || inicioPrimeiraQuinzena > 31 ||
+                fimPrimeiraQuinzena < 1 || fimPrimeiraQuinzena > 31 ||
+                fimSegundaQuinzena < 1 || fimSegundaQuinzena > 31) {
+                alert("Os dias de início/fim da quinzena devem ser números válidos entre 1 e 31.");
+                return;
+            }
+            if (inicioPrimeiraQuinzena > fimPrimeiraQuinzena) {
+                alert("O Dia Inicial da 1ª Quinzena não pode ser maior que o Dia Final da 1ª Quinzena.");
+                return;
+            }
+            if (fimPrimeiraQuinzena >= fimSegundaQuinzena) {
+                alert("O Dia Final da 1ª Quinzena deve ser menor que o Dia Final da 2ª Quinzena.");
+                return;
+            }
+
+            payloadEmpresa.inicioPrimeiraQuinzena = inicioPrimeiraQuinzena;
+            payloadEmpresa.fimPrimeiraQuinzena = fimPrimeiraQuinzena;
+            payloadEmpresa.fimSegundaQuinzena = fimSegundaQuinzena;
         } else { // Mensal
-            payloadEmpresa.fimPeriodo = parseInt(document.getElementById("cadFimPeriodo").value || 30);
+            const fimPeriodo = parseInt(document.getElementById("cadFimPeriodo").value);
+            if (isNaN(fimPeriodo) || fimPeriodo < 1 || fimPeriodo > 31) {
+                alert("O Dia Final do Ciclo Mensal deve ser um número válido entre 1 e 31.");
+                return;
+            }
+            payloadEmpresa.fimPeriodo = fimPeriodo;
         }
     }
 
@@ -1568,10 +1627,14 @@ function atualizarTela(){
         const todasEmpresas = e_empresas.target.result;
         let hasNFCost = todasEmpresas.some(emp => (emp.nfPercentual > 0 && emp.nfPercentual !== null)); // Verifica se há NF > 0 ou não nula
 
-        // Condicionalmente mostra/oculta o card de NF no dashboard
+        // Condicionalmente mostra/oculta os cards de NF e Valor Líquido no dashboard
         const dashboardNfCard = document.getElementById("dashboardNfCard");
+        const dashboardLiquidoCard = document.getElementById("dashboardLiquidoCard");
         if (dashboardNfCard) {
             dashboardNfCard.style.display = hasNFCost ? 'block' : 'none';
+        }
+        if (dashboardLiquidoCard) {
+            dashboardLiquidoCard.style.display = hasNFCost ? 'block' : 'none';
         }
 
         // Agora processa os jobs, ciente da visibilidade do custo de NF
@@ -1613,7 +1676,7 @@ function atualizarTela(){
 
                     let dFmt = reg.data.split("-").reverse().join("/");
                     
-                    const valorLiquido = reg.total - reg.valorNF; // Valor líquido é sempre calculado e exibido no card
+                    const valorLiquido = reg.total - reg.valorNF;
 
                     card.innerHTML = `
                         <button class="btn-del" onclick="deletarJob(${reg.id})">🗑️</button>
@@ -1627,15 +1690,15 @@ function atualizarTela(){
                         <div class="meta-text">⚡ Horas Extras: ${formatarValor(reg.extra)}</div>
                         <div class="meta-text">🗓️ Previsão de Recebimento: <b>${reg.previsaoPagamento}</b></div>
                         <div style="margin-top:10px; font-weight:900;">Total Bruto: <span>${formatarValor(reg.total)}</span></div>
-                        <div class="imposto-nf-text">Imposto NF: <span>- ${formatarValor(reg.valorNF)}</span></div>
-                        <div class="valor-liquido">Valor Líquido: <span>${formatarValor(valorLiquido)}</span></div>
+                        <!-- Imposto NF e Valor Líquido removidos dos cards de histórico por solicitação -->
                     `;
                     painel.appendChild(card);
                 }
             });
 
             document.getElementById("vTotalSemana").innerText = formatarValor(tBruto);
-            document.getElementById("vTotalNF").innerText = "- " + formatarValor(tNF); // Ainda atualiza o valor mesmo se o card do dashboard estiver oculto
+            document.getElementById("vTotalNF").innerText = "- " + formatarValor(tNF); // Ainda atualiza o valor no JS mesmo se o card do dashboard estiver oculto
+            document.getElementById("vTotalLiquido").innerText = formatarValor(tBruto - tNF); // Atualiza o novo campo
             document.getElementById("vTotalHoras").innerText = tHoras.toFixed(1) + "h";
 
             renderGrafico(dictGrafico);
@@ -1756,6 +1819,7 @@ function enviarRelatorioWhatsApp(){
         msg += "--------------------------------------\n\n";
 
         let totalGeralBrutoFiltrado = 0; // Novo total para o bruto
+        let totalGeralLiquidoFiltrado = 0; // Novo total para o líquido
         filtrados.forEach(j => {
             const valorLiquido = j.total - j.valorNF; // Calcula o valor líquido
             msg += `*${j.empresa}* - ${j.data.split("-").reverse().join("/")}\n`;
@@ -1767,10 +1831,12 @@ function enviarRelatorioWhatsApp(){
             msg += `Valor Líquido: R$ ${valorLiquido.toFixed(2)}\n`; // Novo campo Valor Líquido
             msg += `Previsão de Pagamento: ${j.previsaoPagamento}\n\n`;
             totalGeralBrutoFiltrado += j.total;
+            totalGeralLiquidoFiltrado += valorLiquido; // Soma para o total líquido
         });
 
         msg += "--------------------------------------\n";
-        msg += `*TOTAL GERAL: R$ ${totalGeralBrutoFiltrado.toFixed(2)}*\n`; // "TOTAL GERAL BRUTO" para "TOTAL GERAL"
+        msg += `*TOTAL GERAL BRUTO: R$ ${totalGeralBrutoFiltrado.toFixed(2)}*\n`; // "TOTAL GERAL" para "TOTAL GERAL BRUTO"
+        msg += `*TOTAL GERAL LÍQUIDO: R$ ${totalGeralLiquidoFiltrado.toFixed(2)}*\n`; // Adiciona total geral líquido
         msg += `Relatório gerado em: ${new Date().toLocaleDateString("pt-BR")}\n`;
 
         window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
