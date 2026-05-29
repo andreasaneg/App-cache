@@ -1,589 +1,552 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>FADER LIVRE - CACHÊ CONTROL v3.0 ERP MASTER</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --primary: #10b981;
-            --primary-hover: #059669;
-            --primary-glow: rgba(16, 185, 129, 0.2);
-            --bg: #0f172a;
-            --card: #1e293b;
-            --card-hover: #24334c;
-            --text: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --danger: #ef4444;
-            --danger-hover: #dc2626;
-            --danger-glow: rgba(239, 68, 68, 0.15);
-            --muted: #94a3b8;
-            --blue: #38bdf8;
-            --blue-hover: #0ea5e9;
-            --blue-glow: rgba(56, 189, 248, 0.2);
-            --warning: #f59e0b;
-            --success: #16a34a;
-            --dark-pure: #020617;
-            --border-color: #334155;
-            --border-hover: #475569;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-        }
-
-        body {
-            padding: 15px;
-            padding-bottom: 100px;
-            background: var(--bg);
-            color: var(--text);
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            overflow-x: hidden;
-        }
-
-        .header {
-            text-align: center;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 20px;
-            margin-bottom: 25px;
-            position: relative;
-        }
-        .header h2 {
-            font-size: 1.6em;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: #ffffff;
-            text-transform: uppercase;
-        }
-        .header p {
-            color: var(--primary);
-            font-size: 0.85em;
-            font-weight: 700;
-            margin-top: 6px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-        
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        @media(min-width: 600px) {
-            .dashboard { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-        }
-        .dashboard-card {
-            background: var(--card);
-            border-radius: 24px;
-            padding: 20px;
-            border: 1px solid var(--border-color);
-            position: relative;
-            box-shadow: 0 4px 15px -3px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-        .dashboard-title {
-            font-size: .75em;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
-        
-        .total-geral { font-size: 2em; font-weight: 900; color: var(--blue); }
-        .total-nf { font-size: 2em; font-weight: 900; color: var(--danger); }
-        .total-horas { font-size: 2em; font-weight: 900; color: var(--primary); }
-        
-        .eye-button {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 46px;
-            height: 46px;
-            border: none;
-            border-radius: 14px;
-            background: #334155;
-            color: white;
-            font-size: 1.3em;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .input-group {
-            background: var(--card);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 20px;
-            position: relative;
-            box-shadow: 0 4px 15px -3px rgba(0,0,0,0.2);
-        }
-        .input-group h2, .input-group h3 {
-            font-size: 1.2em;
-            margin-bottom: 18px;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-left: 4px solid var(--primary);
-            padding-left: 10px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 6px;
-            color: var(--muted);
-            font-size: 0.75em;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        input, select {
-            width: 100%;
-            padding: 14px;
-            border-radius: 14px;
-            border: 1px solid var(--border-color);
-            background: var(--dark-pure);
-            color: white;
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-glow);
-        }
-        
-        .btn {
-            width: 100%;
-            border: none;
-            padding: 16px;
-            border-radius: 14px;
-            font-weight: 800;
-            cursor: pointer;
-            margin-bottom: 12px;
-            font-size: 0.95em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .btn-save { background: var(--primary); color: var(--dark-pure); }
-        .btn-export { background: #475569; color: white; }
-        .btn-whats { background: #25D366; color: var(--dark-pure); }
-        .btn-search { background: #0ea5e9; color: white; }
-        .btn-cancel { background: #334155; color: #f8fafc; }
-        
-        .history-card {
-            background: var(--card);
-            border-radius: 20px;
-            padding: 18px;
-            margin-bottom: 15px;
-            position: relative;
-            border-left: 6px solid var(--primary);
-            box-shadow: 0 4px 10px -1px rgba(0,0,0,0.2);
-        }
-        .empresa-title {
-            font-size: 1.2em;
-            font-weight: 800;
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-right: 85px;
-        }
-        
-        .btn-del {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--danger-glow);
-            border: none;
-            color: var(--danger);
-            width: 38px;
-            height: 38px;
-            border-radius: 12px;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-        
-        .btn-edit-inline {
-            position: absolute;
-            top: 15px;
-            right: 58px;
-            background: var(--blue-glow);
-            border: none;
-            color: var(--blue);
-            width: 38px;
-            height: 38px;
-            border-radius: 12px;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-        
-        .chart-container {
-            height: 300px;
-            margin-top: 15px;
-            position: relative;
-        }
-        .search-box {
-            display: none;
-            margin-bottom: 15px;
-        }
-        .section-title {
-            font-size: 1.2em;
-            font-weight: 800;
-            margin: 25px 0 15px;
-            color: #ffffff;
-        }
-        
-        .tab-container {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 25px;
-            background: var(--dark-pure);
-            padding: 6px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-        }
-        .tab-button {
-            flex: 1;
-            padding: 14px 8px;
-            background: transparent;
-            color: var(--muted);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.85em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        .tab-button.active {
-            background: var(--card);
-            color: var(--primary);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        
-        .app-section { display: none; }
-        .app-section.active { display: block; }
-        
-        .autocomplete-list {
-            position: absolute;
-            z-index: 100;
-            background: var(--card);
-            border: 1px solid var(--border-hover);
-            border-radius: 16px;
-            width: calc(100% - 40px);
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: -12px;
-            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.7);
-        }
-        .autocomplete-item {
-            padding: 14px;
-            cursor: pointer;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .badge-status {
-            display: inline-flex;
-            align-items: center;
-            padding: 5px 10px;
-            border-radius: 8px;
-            font-size: 0.75em;
-            font-weight: 800;
-            text-transform: uppercase;
-            margin-top: 8px;
-        }
-        .status-aberto { background: rgba(2, 132, 199, 0.15); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.3); }
-        .status-fechado { background: rgba(234, 88, 12, 0.15); color: #fb923c; border: 1px solid rgba(234, 88, 12, 0.3); }
-        .status-pago { background: rgba(22, 163, 74, 0.15); color: #4ade80; border: 1px solid rgba(22, 163, 74, 0.3); }
-        
-        .toggle-filter-container {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            background: var(--dark-pure);
-            padding: 6px;
-            border-radius: 12px;
-        }
-        .btn-filter {
-            flex: 1;
-            padding: 12px 6px;
-            border-radius: 8px;
-            border: none;
-            background: transparent;
-            color: var(--muted);
-            font-weight: 700;
-            font-size: 0.85em;
-        }
-        .btn-filter.active {
-            background: #334155;
-            color: #ffffff;
-        }
-        
-        .meta-text {
-            font-size: 0.85em;
-            color: var(--muted);
-            line-height: 1.6;
-            margin: 4px 0;
-        }
-        .meta-text b { color: #ffffff; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>FADER LIVRE - CACHÊ CONTROL v3.0 ERP MASTER</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+--primary: #10b981;
+--primary-hover: #059669;
+--primary-glow: rgba(16, 185, 129, 0.2);
+--bg: #0f172a;
+--card: #1e293b;
+--card-hover: #24334c;
+--text: #f8fafc;
+--text-secondary: #cbd5e1;
+--danger: #ef4444;
+--danger-hover: #dc2626;
+--danger-glow: rgba(239, 68, 68, 0.15);
+--muted: #94a3b8;
+--blue: #38bdf8;
+--blue-hover: #0ea5e9;
+--blue-glow: rgba(56, 189, 248, 0.2);
+--warning: #f59e0b;
+--success: #16a34a;
+--dark-pure: #020617;
+--border-color: #334155;
+--border-hover: #475569;
+}
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+body {
+padding: 15px;
+padding-bottom: 100px;
+background: var(--bg);
+color: var(--text);
+font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+overflow-x: hidden;
+}
+.header {
+text-align: center;
+border-bottom: 2px solid var(--primary);
+padding-bottom: 20px;
+margin-bottom: 25px;
+position: relative;
+}
+.header h2 {
+font-size: 1.6em;
+font-weight: 800;
+letter-spacing: 1px;
+color: #ffffff;
+text-transform: uppercase;
+}
+.header p {
+color: var(--primary);
+font-size: 0.85em;
+font-weight: 700;
+margin-top: 6px;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+}
+.dashboard {
+display: grid;
+grid-template-columns: 1fr;
+gap: 15px;
+margin-bottom: 25px;
+}
+@media(min-width: 600px) {
+.dashboard { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+}
+.dashboard-card {
+background: var(--card);
+border-radius: 24px;
+padding: 20px;
+border: 1px solid var(--border-color);
+position: relative;
+box-shadow: 0 4px 15px -3px rgba(0,0,0,0.3);
+overflow: hidden;
+}
+.dashboard-title {
+font-size: .75em;
+font-weight: 700;
+text-transform: uppercase;
+margin-bottom: 8px;
+letter-spacing: 1px;
+}
+.total-geral { font-size: 2em; font-weight: 900; color: var(--blue); }
+.total-nf { font-size: 2em; font-weight: 900; color: var(--danger); }
+.total-horas { font-size: 2em; font-weight: 900; color: var(--primary); }
+.eye-button {
+position: absolute;
+top: 15px;
+right: 15px;
+width: 46px;
+height: 46px;
+border: none;
+border-radius: 14px;
+background: #334155;
+color: white;
+font-size: 1.3em;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.input-group {
+background: var(--card);
+border: 1px solid var(--border-color);
+border-radius: 24px;
+padding: 20px;
+margin-bottom: 20px;
+position: relative;
+box-shadow: 0 4px 15px -3px rgba(0,0,0,0.2);
+}
+.input-group h2, .input-group h3 {
+font-size: 1.2em;
+margin-bottom: 18px;
+color: #ffffff;
+display: flex;
+align-items: center;
+gap: 10px;
+border-left: 4px solid var(--primary);
+padding-left: 10px;
+}
+label {
+display: block;
+margin-bottom: 6px;
+color: var(--muted);
+font-size: 0.75em;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: 1px;
+}
+input, select {
+width: 100%;
+padding: 14px;
+border-radius: 14px;
+border: 1px solid var(--border-color);
+background: var(--dark-pure);
+color: white;
+margin-bottom: 15px;
+font-size: 16px;
+}
+input:focus, select:focus {
+outline: none;
+border-color: var(--primary);
+box-shadow: 0 0 0 3px var(--primary-glow);
+}
+.btn {
+width: 100%;
+border: none;
+padding: 16px;
+border-radius: 14px;
+font-weight: 800;
+cursor: pointer;
+margin-bottom: 12px;
+font-size: 0.95em;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+text-transform: uppercase;
+letter-spacing: 1px;
+}
+.btn-save { background: var(--primary); color: var(--dark-pure); }
+.btn-export { background: #475569; color: white; }
+.btn-whats { background: #25D366; color: var(--dark-pure); }
+.btn-search { background: #0ea5e9; color: white; }
+.btn-cancel { background: #334155; color: #f8fafc; }
+.history-card {
+background: var(--card);
+border-radius: 20px;
+padding: 18px;
+margin-bottom: 15px;
+position: relative;
+border-left: 6px solid var(--primary);
+box-shadow: 0 4px 10px -1px rgba(0,0,0,0.2);
+}
+.empresa-title {
+font-size: 1.2em;
+font-weight: 800;
+margin-bottom: 6px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-right: 85px;
+}
+.btn-del {
+position: absolute;
+top: 15px;
+right: 15px;
+background: var(--danger-glow);
+border: none;
+color: var(--danger);
+width: 38px;
+height: 38px;
+border-radius: 12px;
+font-size: 1em;
+display: flex;
+align-items: center;
+justify-content: center;
+z-index: 10;
+}
+.btn-edit-inline {
+position: absolute;
+top: 15px;
+right: 58px;
+background: var(--blue-glow);
+border: none;
+color: var(--blue);
+width: 38px;
+height: 38px;
+border-radius: 12px;
+font-size: 1em;
+display: flex;
+align-items: center;
+justify-content: center;
+z-index: 10;
+}
+.chart-container {
+height: 300px;
+margin-top: 15px;
+position: relative;
+}
+.search-box {
+display: none;
+margin-bottom: 15px;
+}
+.section-title {
+font-size: 1.2em;
+font-weight: 800;
+margin: 25px 0 15px;
+color: #ffffff;
+}
+.tab-container {
+display: flex;
+gap: 8px;
+margin-bottom: 25px;
+background: var(--dark-pure);
+padding: 6px;
+border-radius: 16px;
+border: 1px solid var(--border-color);
+}
+.tab-button {
+flex: 1;
+padding: 14px 8px;
+background: transparent;
+color: var(--muted);
+border: none;
+border-radius: 12px;
+cursor: pointer;
+font-weight: 700;
+font-size: 0.85em;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+}
+.tab-button.active {
+background: var(--card);
+color: var(--primary);
+box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.app-section { display: none; }
+.app-section.active { display: block; }
+.autocomplete-list {
+position: absolute;
+z-index: 100;
+background: var(--card);
+border: 1px solid var(--border-hover);
+border-radius: 16px;
+width: calc(100% - 40px);
+max-height: 200px;
+overflow-y: auto;
+margin-top: -12px;
+box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.7);
+}
+.autocomplete-item {
+padding: 14px;
+cursor: pointer;
+border-bottom: 1px solid var(--border-color);
+}
+.badge-status {
+display: inline-flex;
+align-items: center;
+padding: 5px 10px;
+border-radius: 8px;
+font-size: 0.75em;
+font-weight: 800;
+text-transform: uppercase;
+margin-top: 8px;
+}
+.status-aberto { background: rgba(2, 132, 199, 0.15); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.3); }
+.status-fechado { background: rgba(234, 88, 12, 0.15); color: #fb923c; border: 1px solid rgba(234, 88, 12, 0.3); }
+.status-pago { background: rgba(22, 163, 74, 0.15); color: #4ade80; border: 1px solid rgba(22, 163, 74, 0.3); }
+.toggle-filter-container {
+display: flex;
+gap: 8px;
+margin-bottom: 20px;
+background: var(--dark-pure);
+padding: 6px;
+border-radius: 12px;
+}
+.btn-filter {
+flex: 1;
+padding: 12px 6px;
+border-radius: 8px;
+border: none;
+background: transparent;
+color: var(--muted);
+font-weight: 700;
+font-size: 0.85em;
+}
+.btn-filter.active {
+background: #334155;
+color: #ffffff;
+}
+.meta-text {
+font-size: 0.85em;
+color: var(--muted);
+line-height: 1.6;
+margin: 4px 0;
+}
+.meta-text b { color: #ffffff; }
+</style>
 </head>
 <body>
-
 <div id="loginScreen" style="position:fixed; inset:0; background:var(--dark-pure); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; padding:15px;">
-    <button onclick="emergencyReset()" style="background:var(--danger); color:white; border:none; padding:10px 15px; border-radius:10px; font-weight:bold; font-size:0.8em; margin-bottom:20px; width:100%; max-width:400px; box-shadow:0 4px 10px rgba(239,68,68,0.3);">⚠️ Forçar Reset de Emergência (Celular)</button>
-
-    <div style="background:var(--card); padding:25px; border-radius:28px; width:100%; max-width:400px; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6); border: 1px solid var(--border-color);">
-        <div style="text-align:center; margin-bottom:20px;">
-            <h2 style="color:#ffffff; margin-top:10px; font-size:1.4em; font-weight:800;">Acesso Identificado</h2>
-            <p style="color:var(--muted); font-size:0.8em; margin-top:4px; letter-spacing:1px;">Cachê Control ERP v3.0</p>
-        </div>
-        
-        <label>Chave Codificada de Segurança</label>
-        <input type="password" id="senhaInput" placeholder="••••••••" style="text-align:center; letter-spacing:6px; font-size:20px;">
-        
-        <div id="novaSenhaBox" style="display:none; margin-top:5px; padding-top:15px; border-top:1px dashed var(--border-color);">
-            <label>Definir Nova Chave Master</label>
-            <input type="password" id="novaSenha" placeholder="Digite uma chave forte">
-            <label>E-mail Corporativo de Recuperação</label>
-            <input type="email" id="emailRecuperacao" placeholder="nome@empresa.com">
-            <button class="btn btn-save" onclick="cadastrarSenha()">💾 Registrar Credenciais</button>
-        </div>
-        
-        <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
-            <button class="btn btn-save" onclick="login()">🔓 Validar Token</button>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <button class="btn btn-cancel" style="font-size:0.8em; padding:12px;" onclick="toggleCadastroSenha()">⚙️ Configurar</button>
-                <button class="btn btn-export" style="font-size:0.8em; padding:12px; background:var(--card); border:1px solid var(--border-color);" onclick="recuperarSenha()">🔑 Resgatar</button>
-            </div>
-        </div>
-    </div>
+<button onclick="emergencyReset()" style="background:var(--danger); color:white; border:none; padding:10px 15px; border-radius:10px; font-weight:bold; font-size:0.8em; margin-bottom:20px; width:100%; max-width:400px; box-shadow:0 4px 10px rgba(239,68,68,0.3);">⚠️ Forçar Reset de Emergência (Celular)</button>
+<div style="background:var(--card); padding:25px; border-radius:28px; width:100%; max-width:400px; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6); border: 1px solid var(--border-color);">
+<div style="text-align:center; margin-bottom:20px;">
+<h2 style="color:#ffffff; margin-top:10px; font-size:1.4em; font-weight:800;">Acesso Identificado</h2>
+<p style="color:var(--muted); font-size:0.8em; margin-top:4px; letter-spacing:1px;">Cachê Control ERP v3.0</p>
 </div>
-
+<label>Chave Codificada de Segurança</label>
+<input type="password" id="senhaInput" placeholder="••••••••" style="text-align:center; letter-spacing:6px; font-size:20px;">
+<div id="novaSenhaBox" style="display:none; margin-top:5px; padding-top:15px; border-top:1px dashed var(--border-color);">
+<label>Definir Nova Chave Master</label>
+<input type="password" id="novaSenha" placeholder="Digite uma chave forte">
+<label>E-mail Corporativo de Recuperação</label>
+<input type="email" id="emailRecuperacao" placeholder="nome@empresa.com">
+<label>Telefone para Recuperação (Opcional)</label>
+<input type="tel" id="telefoneRecuperacao" placeholder="(xx) xxxxx-xxxx">
+<button class="btn btn-save" onclick="cadastrarSenha()">💾 Registrar Credenciais</button>
+</div>
+<div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+<button class="btn btn-save" onclick="login()">🔓 Validar Token</button>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+<button class="btn btn-cancel" style="font-size:0.8em; padding:12px;" onclick="toggleCadastroSenha()">⚙️ Configurar</button>
+<button class="btn btn-export" style="font-size:0.8em; padding:12px; background:var(--card); border:1px solid var(--border-color);" onclick="recuperarSenha()">🔑 Resgatar</button>
+</div>
+</div>
+</div>
+</div>
 <div class="header">
-    <h2>FADER LIVRE</h2>
-    <p>SISTEMA CONTROLADOR DE CACHÊS</p>
+<h2>FADER LIVRE</h2>
+<p>SISTEMA CONTROLADOR DE CACHÊS</p>
 </div>
-
 <div class="tab-container">
-    <button class="tab-button active" id="tabJobsBtn" onclick="alternarAba('abaJobs', event)">💼 Lançamentos</button>
-    <button class="tab-button" id="tabEmpresasBtn" onclick="alternarAba('abaEmpresas', event)">🏢 Empresas</button>
+<button class="tab-button active" id="tabJobsBtn" onclick="alternarAba('abaJobs', event)">💼 Lançamentos</button>
+<button class="tab-button" id="tabEmpresasBtn" onclick="alternarAba('abaEmpresas', event)">🏢 Empresas</button>
 </div>
-
 <div id="abaJobs" class="app-section active">
-    
-    <div class="dashboard">
-        <div class="dashboard-card">
-            <button class="eye-button" id="eyeButton" onclick="toggleValores()">👁️</button>
-            <div class="dashboard-title" style="color:var(--primary)">Job</div>
-            <div id="vTotalSemana" class="total-geral">R$ 0,00</div>
-        </div>
-        <div class="dashboard-card">
-            <div class="dashboard-title" style="color:var(--danger)">Imposto NF</div>
-            <div id="vTotalNF" class="total-nf">- R$ 0,00</div>
-        </div>
-        <div class="dashboard-card">
-            <div class="dashboard-title" style="color:var(--blue)">Horas Trabalhadas</div>
-            <div id="vTotalHoras" class="total-horas">0.0h</div>
-        </div>
-    </div>
-
-    <div class="input-group">
-        <h3><span id="formJobTitle">💼 Job</span></h3>
-        <input type="hidden" id="editJobId" value="">
-
-        <label>Empresa Tomadora do Serviço</label>
-        <input type="text" id="empresaJob" placeholder="Digite para pesquisar..." autocomplete="off" oninput="gerenciarAutocomplete(this.value)">
-        <div id="autocompleteContainer"></div>
-
-        <label>Data Oficial da Prestação</label>
-        <input type="date" id="dataJob">
-
-        <label>Designação do Job / Linha de Production</label>
-        <input type="text" id="nomeJob" placeholder="Ex: Direção de Fotografia - VT Refresco">
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-            <div>
-                <label>Início (Check-in)</label>
-                <input type="time" id="inicio" value="08:00">
-            </div>
-            <div>
-                <label>Fim (Check-out)</label>
-                <input type="time" id="fim" value="20:00">
-            </div>
-        </div>
-        
-        <div style="display:flex; flex-direction:column; gap:5px; margin-top:5px;">
-            <button class="btn btn-save" id="btnSalvarJob" onclick="salvarJob()">💾 Salvar Lançamento</button>
-            <button class="btn btn-cancel" id="btnLimparJob" onclick="limparCampos()">🧹 Limpar</button>
-        </div>
-    </div>
-
-    <div class="input-group">
-        <h3>📊 Faturamento por contratante</h3>
-        <div class="chart-container">
-            <canvas id="graficoEmpresas"></canvas>
-        </div>
-    </div>
-
-    <div class="input-group">
-        <div class="section-title" style="margin:0 0 20px 0;">📋 Registros</div>
-        
-        <div class="toggle-filter-container">
-            <button id="btnFiltroAberto" class="btn-filter active" onclick="definirFiltroVisualizacao('aberto')">Período Aberto</button>
-            <button id="btnFiltroArquivado" class="btn-filter" onclick="definirFiltroVisualizacao('arquivado')">Pagos / Arquivados</button>
-        </div>
-        
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
-            <button class="btn btn-search" id="btnBuscaTexto" style="margin:0;" onclick="abrirBusca()">🔍 Filtrar Empresas</button>
-            <button class="btn btn-export" style="margin:0; background:var(--border-color);" onclick="limparBusca()">❌ Limpar Filtro</button>
-        </div>
-        
-        <div id="searchBox" class="search-box">
-            <input type="text" id="inputBusca" onkeyup="filtrarTabela()" placeholder="Busque por nomes, projetos, datas...">
-        </div>
-        
-        <div id="listaHistorico"></div>
-    </div>
-    
-    <div style="margin-top: 10px; margin-bottom: 25px;">
-        <button class="btn btn-whats" onclick="enviarRelatorioWhatsApp()">💬 Enviar para Whatsapp</button>
-    </div>
+<div class="dashboard">
+<div class="dashboard-card">
+<button class="eye-button" id="eyeButton" onclick="toggleValores()">👁️</button>
+<div class="dashboard-title" style="color:var(--primary)">Job</div>
+<div id="vTotalSemana" class="total-geral">R$ 0,00</div>
 </div>
-
+<div class="dashboard-card">
+<div class="dashboard-title" style="color:var(--danger)">Imposto NF</div>
+<div id="vTotalNF" class="total-nf">- R$ 0,00</div>
+</div>
+<div class="dashboard-card">
+<div class="dashboard-title" style="color:var(--blue)">Horas Trabalhadas</div>
+<div id="vTotalHoras" class="total-horas">0.0h</div>
+</div>
+</div>
+<div class="input-group">
+<h3><span id="formJobTitle">💼 Job</span></h3>
+<input type="hidden" id="editJobId" value="">
+<label>Empresa Tomadora do Serviço</label>
+<input type="text" id="empresaJob" placeholder="Digite para pesquisar..." autocomplete="off" oninput="gerenciarAutocomplete(this.value)">
+<div id="autocompleteContainer"></div>
+<label>Data Oficial da Prestação</label>
+<input type="date" id="dataJob">
+<label>Designação do Job / Linha de Production</label>
+<input type="text" id="nomeJob" placeholder="Ex: Direção de Fotografia - VT Refresco">
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+<div>
+<label>Início (Check-in)</label>
+<input type="time" id="inicio" value="08:00">
+</div>
+<div>
+<label>Fim (Check-out)</label>
+<input type="time" id="fim" value="20:00">
+</div>
+</div>
+<div style="display:flex; flex-direction:column; gap:5px; margin-top:5px;">
+<button class="btn btn-save" id="btnSalvarJob" onclick="salvarJob()">💾 Salvar Lançamento</button>
+<button class="btn btn-cancel" id="btnLimparJob" onclick="limparCampos()">🧹 Limpar</button>
+</div>
+</div>
+<div class="input-group">
+<h3>📊 Faturamento por contratante</h3>
+<div class="chart-container">
+<canvas id="graficoEmpresas"></canvas>
+</div>
+</div>
+<div class="input-group">
+<div class="section-title" style="margin:0 0 20px 0;">📋 Registros</div>
+<div class="toggle-filter-container">
+<button id="btnFiltroAberto" class="btn-filter active" onclick="definirFiltroVisualizacao('aberto')">Período Aberto</button>
+<button id="btnFiltroArquivado" class="btn-filter" onclick="definirFiltroVisualizacao('arquivado')">Pagos / Arquivados</button>
+</div>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+<button class="btn btn-search" id="btnBuscaTexto" style="margin:0;" onclick="abrirBusca()">🔍 Filtrar Empresas</button>
+<button class="btn btn-export" style="margin:0; background:var(--border-color);" onclick="limparBusca()">❌ Limpar Filtro</button>
+</div>
+<div id="searchBox" class="search-box">
+<input type="text" id="inputBusca" onkeyup="filtrarTabela()" placeholder="Busque por nomes, projetos, datas...">
+</div>
+<div id="listaHistorico"></div>
+</div>
+<div style="margin-top: 10px; margin-bottom: 25px;">
+<button class="btn btn-whats" onclick="enviarRelatorioWhatsApp()">💬 Enviar para Whatsapp</button>
+</div>
+</div>
 <div id="abaEmpresas" class="app-section">
-    <div class="input-group">
-        <h2 id="formEmpresaTitle">🏢 Nova Empresa e Regras</h2>
-        <input type="hidden" id="cadIdEmpresa" value="">
-
-        <label>Nome Comercial / Razão Social</label>
-        <input type="text" id="cadNomeEmpresa" placeholder="Ex: FADER LIVRE LTDA">
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-            <div>
-                <label>Cachê Fixo Padrão (12h)</label>
-                <input type="number" id="cadCacheBase" placeholder="R$ 0,00" step="0.01">
-            </div>
-            <div>
-                <label>Alimentação / Logística</label>
-                <input type="number" id="cadDiaria" placeholder="R$ 0,00" step="0.01">
-            </div>
-        </div>
-
-        <label>Matriz de Ciclo de Faturamento</label>
-        <select id="cadTipoPagamento" onchange="alterarPeriodoPagamentoCadastro()">
-            <option value="Semanal" selected>Semanal (Fechamentos Regulares)</option>
-            <option value="Quinzenal">Quinzenal</option>
-            <option value="Mensal">Mensal</option>
-        </select>
-
-        <div id="cadPeriodoPersonalizado" style="display:none; padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color);">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                <div>
-                    <label>Dia Inicial do Ciclo</label>
-                    <input type="number" id="cadInicioPeriodo" min="1" max="31" value="1">
-                </div>
-                <div>
-                    <label>Dia Final do Ciclo</label>
-                    <input type="number" id="cadFimPeriodo" min="1" max="31" value="15">
-                </div>
-            </div>
-        </div>
-
-        <div id="cadPeriodoSemanalBox" style="padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color); display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div>
-                <label>Dia Inicial</label>
-                <select id="cadInicioSemana" style="margin:0;">
-                    <option value="1" selected>Segunda-feira</option>
-                    <option value="2">Terça-feira</option>
-                    <option value="3">Quarta-feira</option>
-                    <option value="4">Quinta-feira</option>
-                    <option value="5">Sexta-feira</option>
-                    <option value="6">Sábado</option>
-                    <option value="0">Domingo</option>
-                </select>
-            </div>
-            <div>
-                <label>Dia de Corte</label>
-                <select id="cadFimSemana" style="margin:0;">
-                    <option value="0" selected>Domingo</option>
-                    <option value="1">Segunda-feira</option>
-                    <option value="2">Terça-feira</option>
-                    <option value="3">Quarta-feira</option>
-                    <option value="4">Quinta-feira</option>
-                    <option value="5">Sexta-feira</option>
-                    <option value="6">Sábado</option>
-                </select>
-            </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-            <div>
-                <label>Dias Úteis para Liquidação</label>
-                <input type="number" id="cadDiasPagamento" value="5" min="0">
-            </div>
-            <div>
-                <label>Alíquota de Retenção NF (%)</label>
-                <input type="number" id="cadNfPercentual" value="0" min="0" max="100" step="0.01">
-            </div>
-        </div>
-
-        <div style="display:flex; flex-direction:column; gap:5px;">
-            <button class="btn btn-save" id="btnSalvarEmpresa" onclick="salvarEmpresa()">💾 Registrar Empresa</button>
-            <button class="btn btn-cancel" onclick="limparCamposEmpresa()">🧹 Limpar Parâmetros</button>
-        </div>
-    </div>
-
-    <div class="input-group">
-        <h3>🏢 Empresas Cadastradas</h3>
-        <div id="listaEmpresasCadastradas"></div>
-    </div>
-
-    <div class="input-group" style="border-color:var(--border-hover); background: linear-gradient(180deg, var(--card) 0%, #152238 100%); margin-top:20px;">
-        <h2>⚡ Central Avançada de Exportação</h2>
-        <p style="color:var(--muted); font-size:0.85em; margin-bottom:15px;">Gere faturamentos estruturados ou realize backups locais de segurança.</p>
-        
-        <div style="display:flex; flex-direction:column; gap:5px;">
-            <button class="btn btn-export" onclick="baixarExcelCompleto()">📊 Exportar para Excel (.CSV)</button>
-            <button class="btn btn-export" style="background:#5c258d;" onclick="fazerBackup()">💾 Gerar Cópia de Segurança (.JSON)</button>
-            <button class="btn btn-cancel" style="background:var(--dark-pure); border:1px solid var(--border-color);" onclick="document.getElementById('restoreFile').click()">📥 Importar Cópia de Segurança (.JSON)</button>
-        </div>
-        <input type="file" id="restoreFile" accept=".json" style="display:none;">
-    </div>
+<div class="input-group">
+<h2 id="formEmpresaTitle">🏢 Nova Empresa e Regras</h2>
+<input type="hidden" id="cadIdEmpresa" value="">
+<label>Nome Comercial / Razão Social</label>
+<input type="text" id="cadNomeEmpresa" placeholder="Ex: FADER LIVRE LTDA">
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+<div>
+<label>Cachê Fixo Padrão (12h)</label>
+<input type="number" id="cadCacheBase" placeholder="R$ 0,00" step="0.01">
 </div>
-
+<div>
+<label>Alimentação / Logística</label>
+<input type="number" id="cadDiaria" placeholder="R$ 0,00" step="0.01">
+</div>
+</div>
+<label>Matriz de Ciclo de Faturamento</label>
+<select id="cadTipoPagamento" onchange="alterarPeriodoPagamentoCadastro()">
+<option value="Semanal" selected>Semanal (Fechamentos Regulares)</option>
+<option value="Quinzenal">Quinzenal</option>
+<option value="Mensal">Mensal</option>
+</select>
+<div id="cadPeriodoPersonalizado" style="display:none; padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color);">
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+<div>
+<label>Dia Inicial do Ciclo</label>
+<input type="number" id="cadInicioPeriodo" min="1" max="31" value="1">
+</div>
+<div>
+<label>Dia Final do Ciclo</label>
+<input type="number" id="cadFimPeriodo" min="1" max="31" value="15">
+</div>
+</div>
+</div>
+<div id="cadPeriodoSemanalBox" style="padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color); display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+<div>
+<label>Dia Inicial</label>
+<select id="cadInicioSemana" style="margin:0;">
+<option value="1" selected>Segunda-feira</option>
+<option value="2">Terça-feira</option>
+<option value="3">Quarta-feira</option>
+<option value="4">Quinta-feira</option>
+<option value="5">Sexta-feira</option>
+<option value="6">Sábado</option>
+<option value="0">Domingo</option>
+</select>
+</div>
+<div>
+<label>Dia de Corte</label>
+<select id="cadFimSemana" style="margin:0;">
+<option value="0" selected>Domingo</option>
+<option value="1">Segunda-feira</option>
+<option value="2">Terça-feira</option>
+<option value="3">Quarta-feira</option>
+<option value="4">Quinta-feira</option>
+<option value="5">Sexta-feira</option>
+<option value="6">Sábado</option>
+</select>
+</div>
+</div>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+<div>
+<label>Dias Úteis para Liquidação</label>
+<input type="number" id="cadDiasPagamento" value="5" min="0">
+</div>
+<div>
+<label>Alíquota de Retenção NF (%)</label>
+<input type="number" id="cadNfPercentual" value="0" min="0" max="100" step="0.01">
+</div>
+</div>
+<div style="display:flex; flex-direction:column; gap:5px;">
+<button class="btn btn-save" id="btnSalvarEmpresa" onclick="salvarEmpresa()">💾 Registrar Empresa</button>
+<button class="btn btn-cancel" onclick="limparCamposEmpresa()">🧹 Limpar Parâmetros</button>
+</div>
+</div>
+<div class="input-group">
+<h3>🏢 Empresas Cadastradas</h3>
+<div id="listaEmpresasCadastradas"></div>
+</div>
+<div class="input-group" style="border-color:var(--border-hover); background: linear-gradient(180deg, var(--card) 0%, #152238 100%); margin-top:20px;">
+<h2>⚡ Central Avançada de Exportação</h2>
+<p style="color:var(--muted); font-size:0.85em; margin-bottom:15px;">Gere faturamentos estruturados ou realize backups locais de segurança.</p>
+<div style="display:flex; flex-direction:column; gap:5px;">
+<button class="btn btn-export" onclick="baixarExcelCompleto()">📊 Exportar para Excel (.CSV)</button>
+<button class="btn btn-export" style="background:#5c258d;" onclick="fazerBackup()">💾 Gerar Cópia de Segurança (.JSON)</button>
+<button class="btn btn-cancel" style="background:var(--dark-pure); border:1px solid var(--border-color);" onclick="document.getElementById('restoreFile').click()">📥 Importar Cópia de Segurança (.JSON)</button>
+</div>
+<input type="file" id="restoreFile" accept=".json" style="display:none;">
+</div>
+</div>
 <script>
+// Declaração de variáveis globais
 let db = null;
 let ocultarValores = false;
-let filtroVisualizacao = "aberto"; 
+let filtroVisualizacao = "aberto";
 let mapaCores = {};
+const BASE_HOURS = 12; // Constante para as horas base do cachê
+const coresGrafico = [
+'#38bdf8', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
+'#ec4899', '#14b8a6', '#f97316', '#a855f7', '#06b6d4'
+];
 
+// !! ATENÇÃO DE SEGURANÇA !!
+// A senha master está sendo armazenada em texto simples no localStorage.
+// Para uma aplicação real (não apenas um protótipo local), isso é uma falha grave de segurança.
+// Em um ambiente de produção, senhas NUNCA devem ser armazenadas no cliente, mesmo que criptografadas.
+// Elas devem ser enviadas para um servidor, onde seriam hash-eadas e comparadas.
+// Considere esta versão APENAS para uso LOCAL e não para dados sensíveis ou acesso online.
+const senhaSalva = localStorage.getItem("senha_cache_control");
+
+// Lógica de autenticação e reset
 function emergencyReset() {
-    if(confirm("Deseja forçar o reset de emergência?")) {
+    if(confirm("Deseja forçar o reset de emergência? Todos os dados serão perdidos. Esta ação é irreversível.")) {
         localStorage.clear();
         let deleteRequest = indexedDB.deleteDatabase("CacheFinal_V33");
         deleteRequest.onsuccess = function() {
@@ -591,20 +554,15 @@ function emergencyReset() {
             window.location.reload();
         };
         deleteRequest.onerror = function() {
+            alert("Erro ao redefinir o banco de dados. Tentando reiniciar o aplicativo.");
             window.location.reload();
         };
     }
 }
 
-const coresGrafico = [
-    '#38bdf8', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', 
-    '#ec4899', '#14b8a6', '#f97316', '#a855f7', '#06b6d4'
-];
-
-const senhaSalva = localStorage.getItem("senha_cache_control");
-
+// Verifica se há senha salva para mostrar o placeholder correto
 if(!senhaSalva){
-    document.getElementById("senhaInput").placeholder = "Defina sua senha no primeiro acesso";
+    document.getElementById("senhaInput").placeholder = "Defina sua chave no primeiro acesso";
 }
 
 function toggleCadastroSenha(){
@@ -615,32 +573,47 @@ function toggleCadastroSenha(){
 function cadastrarSenha(){
     const novaSenha = document.getElementById("novaSenha").value;
     const email = document.getElementById("emailRecuperacao").value;
-    
+    const telefone = document.getElementById("telefoneRecuperacao").value; // Novo campo de telefone
+
     if(!novaSenha || novaSenha.trim() === "" || !email || email.trim() === ""){
-        alert("Todos os campos devem ser preenchidos.");
+        alert("A Chave Master e o E-mail de Recuperação são obrigatórios.");
         return;
     }
-    
+
+    if(novaSenha.trim().length < 4) {
+        alert("Defina uma Chave Master de pelo menos 4 caracteres.");
+        return;
+    }
+
     localStorage.setItem("senha_cache_control", novaSenha.trim());
     localStorage.setItem("email_cache_control", email.trim());
-    alert("Credenciais registradas!");
+    localStorage.setItem("telefone_cache_control", telefone.trim()); // Armazena o telefone
+
+    alert("Credenciais registradas com sucesso!");
     window.location.reload();
 }
 
 function login(){
     const senha = document.getElementById("senhaInput").value;
-    if(!senhaSalva){
+    if(!senhaSalva){ // Primeiro acesso, cadastra a senha
         if(senha.trim().length < 4) {
-            alert("Defina uma senha de pelo menos 4 caracteres.");
+            alert("Defina uma Chave Master de pelo menos 4 caracteres no primeiro acesso.");
             return;
         }
         localStorage.setItem("senha_cache_control", senha.trim());
+        // Default values for email/phone if not set during initial login directly
         localStorage.setItem("email_cache_control", "suporte@faderlivre.com");
+        localStorage.setItem("telefone_cache_control", "");
         document.getElementById("loginScreen").style.display = "none";
+        checkAndRequestNotificationPermission(); // Solicita permissão de notificação no primeiro login
+        checkDuePayments(); // Verifica pagamentos no primeiro login
         return;
     }
+
     if(senha === senhaSalva){
         document.getElementById("loginScreen").style.display = "none";
+        checkAndRequestNotificationPermission(); // Solicita permissão de notificação em logins bem-sucedidos
+        checkDuePayments(); // Verifica pagamentos em logins bem-sucedidos
     } else {
         alert("🚨 Chave Master Incorreta.");
     }
@@ -648,13 +621,27 @@ function login(){
 
 function recuperarSenha(){
     const email = localStorage.getItem("email_cache_control");
-    if(!email){
-        alert("Nenhum e-mail de recuperação configurado.");
-        return;
+    const telefone = localStorage.getItem("telefone_cache_control");
+
+    let recoveryMsg = "Instruções locais enviadas para: ";
+    let hasContact = false;
+
+    if(email && email.trim() !== "") {
+        recoveryMsg += `E-mail: ${email}`;
+        hasContact = true;
     }
-    alert("Instruções locais enviadas para: " + email);
+    if(telefone && telefone.trim() !== "") {
+        recoveryMsg += (hasContact ? " e " : "") + `Telefone: ${telefone}`;
+        hasContact = true;
+    }
+
+    if(!hasContact) {
+        recoveryMsg = "Nenhum dado de recuperação (e-mail ou telefone) configurado. Acesse 'Configurar' para adicionar.";
+    }
+    alert(recoveryMsg);
 }
 
+// Configuração do IndexedDB
 const requestDB = indexedDB.open("CacheFinal_V33", 1);
 
 requestDB.onupgradeneeded = function(event) {
@@ -671,15 +658,23 @@ requestDB.onsuccess = function(event) {
     db = event.target.result;
     try {
         document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
-    } catch(e) {}
-    atualizarTela();
-    atualizarListaEmpresas();
+    } catch(e) {
+        console.error("Erro ao definir dataJob inicial:", e);
+    }
+    // Apenas atualiza e verifica se o login foi bem-sucedido ou se não é necessário
+    if(document.getElementById("loginScreen").style.display === "none") {
+        atualizarTela();
+        atualizarListaEmpresas();
+        checkAndRequestNotificationPermission(); // Solicita permissão de notificação ao carregar o app se já logado
+        checkDuePayments(); // Verifica pagamentos ao carregar o app se já logado
+    }
 };
 
 requestDB.onerror = function() {
-    alert("Erro crítico: Banco de dados recusou conexão.");
+    alert("Erro crítico: Banco de dados recusou conexão. Tente recarregar a página.");
 };
 
+// Funções de UI e exibição de valores
 function toggleValores(){
     ocultarValores = !ocultarValores;
     document.getElementById("eyeButton").innerHTML = ocultarValores ? "🙈" : "👁️";
@@ -691,6 +686,7 @@ function formatarValor(valor){
     return Number(valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
+// Funções de Backup e Restauração
 function executarBackupAutomatico() {
     if(!db) return;
     const txJ = db.transaction("jobs", "readonly");
@@ -701,6 +697,7 @@ function executarBackupAutomatico() {
             const dadosEmpresas = e_empresas.target.result;
             const payloadBackup = { jobs: dadosJobs, empresas: dadosEmpresas, dataBackup: new Date().toISOString() };
             localStorage.setItem("fader_livre_auto_backup", JSON.stringify(payloadBackup));
+            console.log("Backup automático realizado.");
         };
     };
 }
@@ -716,8 +713,9 @@ function fazerBackup(){
             const blob = new Blob([JSON.stringify(pacoteBackup, null, 2)], { type: "application/json" });
             const linkDownload = document.createElement("a");
             linkDownload.href = URL.createObjectURL(blob);
-            linkDownload.download = `fader_livre_backup.json`;
+            linkDownload.download = `fader_livre_backup_${new Date().toISOString().split('T')[0]}.json`; // Nome de arquivo dinâmico
             linkDownload.click();
+            alert("Cópia de segurança gerada com sucesso!");
         };
     };
 }
@@ -725,28 +723,49 @@ function fazerBackup(){
 document.getElementById("restoreFile").addEventListener("change", function(event){
     const arquivo = event.target.files[0];
     if(!arquivo) return;
+
     const leitor = new FileReader();
     leitor.onload = function(){
         try {
             const dadosRestaurados = JSON.parse(leitor.result);
             if(dadosRestaurados.jobs && dadosRestaurados.empresas) {
-                const txJ = db.transaction("jobs", "readwrite");
-                dadosRestaurados.jobs.forEach(item => txJ.objectStore("jobs").put(item));
-                txJ.oncomplete = function() {
-                    const txE = db.transaction("empresas", "readwrite");
-                    dadosRestaurados.empresas.forEach(item => txE.objectStore("empresas").put(item));
-                    txE.oncomplete = function() {
-                        alert("Banco de dados restaurado!");
-                        executarBackupAutomatico();
-                        window.location.reload();
+                // Limpa os dados existentes antes de restaurar
+                const txClearJ = db.transaction("jobs", "readwrite");
+                txClearJ.objectStore("jobs").clear().onsuccess = () => {
+                    const txJ = db.transaction("jobs", "readwrite");
+                    const storeJ = txJ.objectStore("jobs");
+                    dadosRestaurados.jobs.forEach(item => storeJ.put(item));
+                    txJ.oncomplete = function() {
+                        const txClearE = db.transaction("empresas", "readwrite");
+                        txClearE.objectStore("empresas").clear().onsuccess = () => {
+                            const txE = db.transaction("empresas", "readwrite");
+                            const storeE = txE.objectStore("empresas");
+                            dadosRestaurados.empresas.forEach(item => storeE.put(item));
+                            txE.oncomplete = function() {
+                                alert("Banco de dados restaurado com sucesso!");
+                                executarBackupAutomatico();
+                                window.location.reload();
+                            };
+                            txE.onerror = (e) => { console.error("Erro ao restaurar empresas:", e); alert("Erro ao restaurar dados de empresas."); };
+                        };
+                        txClearE.onerror = (e) => { console.error("Erro ao limpar empresas:", e); alert("Erro ao limpar dados de empresas existentes."); };
                     };
+                    txJ.onerror = (e) => { console.error("Erro ao restaurar jobs:", e); alert("Erro ao restaurar dados de jobs."); };
                 };
+                txClearJ.onerror = (e) => { console.error("Erro ao limpar jobs:", e); alert("Erro ao limpar dados de jobs existentes."); };
+            } else {
+                alert("Arquivo de backup inválido: Estrutura esperada (jobs e empresas) não encontrada.");
             }
-        } catch(err) { alert("Arquivo inválido."); }
+        } catch(err) {
+            console.error("Erro ao processar arquivo de backup:", err);
+            alert("Ocorreu um erro ao ler ou processar o arquivo. Verifique se é um JSON válido.");
+        }
     };
     leitor.readAsText(arquivo);
 });
 
+
+// Funções de navegação e filtros
 function alternarAba(abaId, event) {
     document.querySelectorAll('.app-section').forEach(secao => secao.classList.remove('active'));
     document.querySelectorAll('.tab-button').forEach(botao => botao.classList.remove('active'));
@@ -775,7 +794,8 @@ function alterarPeriodoPagamentoCadastro(){
 
 function gerenciarAutocomplete(textoBusca) {
     const container = document.getElementById("autocompleteContainer");
-    container.innerHTML = "";
+    container.innerHTML = ""; // Limpa a lista existente
+
     if(!db || !textoBusca || textoBusca.trim() === "") return;
 
     const tx = db.transaction("empresas", "readonly");
@@ -793,7 +813,7 @@ function gerenciarAutocomplete(textoBusca) {
                 itemDiv.innerText = empresaInstancia.nome;
                 itemDiv.onclick = function() {
                     document.getElementById("empresaJob").value = empresaInstancia.nome;
-                    container.innerHTML = "";
+                    container.innerHTML = ""; // Esconde a lista após seleção
                 };
                 listaDiv.appendChild(itemDiv);
             });
@@ -802,6 +822,8 @@ function gerenciarAutocomplete(textoBusca) {
     };
 }
 
+
+// Funções de CRUD para Empresas
 function salvarEmpresa() {
     const nome = document.getElementById("cadNomeEmpresa").value.trim();
     const idExistente = document.getElementById("cadIdEmpresa").value;
@@ -831,6 +853,12 @@ function salvarEmpresa() {
         executarBackupAutomatico();
         limparCamposEmpresa();
         atualizarListaEmpresas();
+        // Limpa o status de notificação de jobs se as regras da empresa mudarem, para reavaliar datas de pagamento
+        localStorage.removeItem('job_notifications_status');
+    };
+    requisicao.onerror = function(e) {
+        console.error("Erro ao salvar empresa:", e);
+        alert("Erro ao salvar a empresa. Verifique os dados.");
     };
 }
 
@@ -838,7 +866,10 @@ function carregarEmpresaParaEdicao(id) {
     const tx = db.transaction("empresas", "readonly");
     tx.objectStore("empresas").get(id).onsuccess = function(e) {
         const dados = e.target.result;
-        if(!dados) return;
+        if(!dados) {
+            alert("Empresa não encontrada.");
+            return;
+        }
         document.getElementById("formEmpresaTitle").innerHTML = "✏️ Editando: " + dados.nome;
         document.getElementById("cadIdEmpresa").value = dados.id;
         document.getElementById("cadNomeEmpresa").value = dados.nome;
@@ -854,15 +885,19 @@ function carregarEmpresaParaEdicao(id) {
         alterarPeriodoPagamentoCadastro();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
+    tx.onerror = (e) => { console.error("Erro ao carregar empresa para edição:", e); alert("Erro ao carregar dados da empresa."); };
 }
 
 function deletarEmpresa(id) {
-    if(confirm("Deseja remover permanentemente esta empresa?")) {
+    if(confirm("Deseja remover permanentemente esta empresa? Todos os Jobs vinculados a ela permanecerão, mas suas regras de pagamento não serão mais atualizadas por esta empresa.")) {
         const tx = db.transaction("empresas", "readwrite");
         tx.objectStore("empresas").delete(id).onsuccess = () => {
             executarBackupAutomatico();
             atualizarListaEmpresas();
+            // Também limpa o status de notificação se uma empresa associada for deletada
+            localStorage.removeItem('job_notifications_status');
         };
+        tx.onerror = (e) => { console.error("Erro ao deletar empresa:", e); alert("Erro ao deletar a empresa."); };
     }
 }
 
@@ -870,7 +905,6 @@ function atualizarListaEmpresas() {
     if(!db) return;
     const container = document.getElementById("listaEmpresasCadastradas");
     container.innerHTML = "";
-
     const tx = db.transaction("empresas", "readonly");
     tx.objectStore("empresas").getAll().onsuccess = function(e) {
         const colecao = e.target.result;
@@ -891,6 +925,7 @@ function atualizarListaEmpresas() {
             container.appendChild(card);
         });
     };
+    tx.onerror = (e) => { console.error("Erro ao carregar lista de empresas:", e); };
 }
 
 function limparCamposEmpresa(){
@@ -900,49 +935,78 @@ function limparCamposEmpresa(){
     document.getElementById("cadCacheBase").value = "";
     document.getElementById("cadDiaria").value = "";
     document.getElementById("cadNfPercentual").value = "0";
+    document.getElementById("cadTipoPagamento").value = "Semanal";
+    document.getElementById("cadInicioPeriodo").value = "1";
+    document.getElementById("cadFimPeriodo").value = "15";
+    document.getElementById("cadInicioSemana").value = "1";
+    document.getElementById("cadFimSemana").value = "0";
+    document.getElementById("cadDiasPagamento").value = "5";
+    alterarPeriodoPagamentoCadastro(); // Reseta a exibição do período
 }
 
+
+// Funções de cálculo de datas e status
 function obterStatusPeriodo(instanciaJob) {
-    let dataAtual = new Date(); dataAtual.setHours(0,0,0,0);
-    let dataFechamento = calcularDataFechamentoReal(instanciaJob.data, instanciaJob.tipoPagamento, instanciaJob.inicioPeriodo, instanciaJob.fimPeriodo, instanciaJob.inicioSemana, instanciaJob.fimSemana);
+    let dataAtual = new Date();
+    dataAtual.setHours(0,0,0,0); // Zera a hora para comparação de data
+
+    // Re-calcula a data de fechamento e liquidação para garantir que estão atualizadas
+    let dataFechamento = calcularDataFechamentoReal(
+        instanciaJob.data,
+        instanciaJob.tipoPagamento,
+        instanciaJob.inicioPeriodo,
+        instanciaJob.fimPeriodo,
+        instanciaJob.inicioSemana,
+        instanciaJob.fimSemana
+    );
     let dataLiquidacao = calcularDataPagamentoReal(dataFechamento, instanciaJob.diasPagamento);
-    if (dataAtual > dataLiquidacao) return "pago";
-    if (dataAtual > dataFechamento) return "arquivado";
+
+    if (dataAtual.getTime() > dataLiquidacao.getTime()) return "pago"; // Se a data atual passou a liquidação
+    if (dataAtual.getTime() > dataFechamento.getTime()) return "arquivado"; // Se a data atual passou o fechamento, mas não a liquidação
     return "aberto";
 }
 
 function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana) {
-    let objetoData = new Date(dataPrestacao + "T00:00:00");
+    let objetoData = new Date(dataPrestacao + "T00:00:00"); // Garante que a hora seja 00:00
     let objetoFechamento = new Date(objetoData);
+
     if (tipoCiclo === "Semanal") {
-        let diaAlvoCorte = parseInt(fimSemana !== undefined ? fimSemana : 0);
-        let diasRestantes = (diaAlvoCorte - objetoData.getDay() + 7) % 7;
-        if (diasRestantes === 0) diasRestantes = 7;
-        objetoFechamento.setDate(objetoData.getDate() + diasRestantes);
-    } else {
+        let diaAlvoCorte = parseInt(fimSemana !== undefined ? fimSemana : 0); // Convert to number
+        let diasParaFimDeSemana = diaAlvoCorte - objetoData.getDay();
+        if (diasParaFimDeSemana < 0) {
+            diasParaFimDeSemana += 7; // Avança para a próxima ocorrência do dia de corte
+        }
+        objetoFechamento.setDate(objetoData.getDate() + diasParaFimDeSemana);
+    } else { // Quinzenal ou Mensal
         let diaCorrente = objetoData.getDate();
         let pFim = parseInt(fimPeriodo || 15);
+
         if (diaCorrente <= pFim) {
             objetoFechamento = new Date(objetoData.getFullYear(), objetoData.getMonth(), pFim);
         } else {
+            // Se o dia atual é maior que o dia de fim do período, vai para o próximo mês
             objetoFechamento = new Date(objetoData.getFullYear(), objetoData.getMonth() + 1, pFim);
         }
     }
+    objetoFechamento.setHours(0,0,0,0); // Garante que o horário seja meia-noite para comparação
     return objetoFechamento;
 }
 
 function calcularDataPagamentoReal(dataFechamento, diasUteis) {
     let objetoPagamento = new Date(dataFechamento);
-    objetoPagamento.setDate(objetoPagamento.getDate() + Number(diasUteis));
+    // Para incluir o dia de pagamento como o N-ésimo dia (ex: 5º dia), adicionamos diasUteis - 1
+    objetoPagamento.setDate(objetoPagamento.getDate() + Number(diasUteis) - 1);
+    objetoPagamento.setHours(0,0,0,0); // Garante que o horário seja meia-noite para comparação
     return objetoPagamento;
 }
 
+// Funções de CRUD para Jobs
 function salvarJob(){
     const dataInput = document.getElementById("dataJob").value;
     const inputNomeEmpresa = document.getElementById("empresaJob").value.trim();
     const idEdicao = document.getElementById("editJobId").value;
-    
-    if(!dataInput || !inputNomeEmpresa) { alert("Data e Empresa são obrigatórios."); return; }
+
+    if(!dataInput || !inputNomeEmpresa) { alert("Data do job e Nome da Empresa são obrigatórios."); return; }
 
     const transacaoEmpresa = db.transaction("empresas", "readonly");
     transacaoEmpresa.objectStore("empresas").getAll().onsuccess = function(event) {
@@ -957,31 +1021,61 @@ function salvarJob(){
         const cacheBase = parseFloat(empresaEncontrada.cacheBase || 0);
         const diaria = parseFloat(empresaEncontrada.diaria || 0);
         const percentualNF = parseFloat(empresaEncontrada.nfPercentual || 0);
-        
+
         const sInicio = document.getElementById("inicio").value;
         const sFim = document.getElementById("fim").value;
+
+        // Cálculo das horas trabalhadas
         const arrI = sInicio.split(":"); const arrF = sFim.split(":");
-        
-        let difMinutos = (parseInt(arrF[0]) * 60 + parseInt(arrF[1])) - (parseInt(arrI[0]) * 60 + parseInt(arrI[1]));
-        if(difMinutos < 0) difMinutos += 1440;
-        
+        let inicioEmMinutos = parseInt(arrI[0]) * 60 + parseInt(arrI[1]);
+        let fimEmMinutos = parseInt(arrF[0]) * 60 + parseInt(arrF[1]);
+
+        let difMinutos;
+        if (fimEmMinutos < inicioEmMinutos) { // Se o fim for no dia seguinte
+            difMinutos = (24 * 60 - inicioEmMinutos) + fimEmMinutos;
+        } else {
+            difMinutos = fimEmMinutos - inicioEmMinutos;
+        }
+
         const tHoras = difMinutos / 60;
-        const vExtras = Math.max(0, tHoras - 12);
-        const cHoraReg = cacheBase / 12;
+        const vExtras = Math.max(0, tHoras - BASE_HOURS); // Usa a constante BASE_HOURS
+        const cHoraReg = cacheBase / BASE_HOURS;
         const rExtras = vExtras * cHoraReg;
+
         const fBruto = cacheBase + diaria + rExtras;
         const imposto = fBruto * (percentualNF / 100);
 
+        // Recalcular previsão de pagamento com as regras ajustadas
+        const dataPrevisaoPagamento = calcularPagamento(
+            dataInput,
+            empresaEncontrada.tipoPagamento,
+            empresaEncontrada.diasPagamento,
+            empresaEncontrada.inicioPeriodo,
+            empresaEncontrada.fimPeriodo,
+            empresaEncontrada.inicioSemana,
+            empresaEncontrada.fimSemana
+        );
+
+
         const payloadJob = {
-            data: dataInput, 
+            data: dataInput,
             empresa: empresaEncontrada.nome,
             job: document.getElementById("nomeJob").value || "Job Operacional",
-            cache: cacheBase, diaria: diaria, extra: rExtras, total: fBruto, valorNF: imposto,
-            horas: tHoras.toFixed(1), inicio: sInicio, fim: sFim,
-            tipoPagamento: empresaEncontrada.tipoPagamento, diasPagamento: parseInt(empresaEncontrada.diasPagamento || 0),
-            inicioPeriodo: parseInt(empresaEncontrada.inicioPeriodo || 1), fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 15),
-            inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1), fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
-            previsaoPagamento: calcularPagamento(dataInput, empresaEncontrada.tipoPagamento, empresaEncontrada.diasPagamento, empresaEncontrada.inicioPeriodo, empresaEncontrada.fimPeriodo, empresaEncontrada.inicioSemana, empresaEncontrada.fimSemana)
+            cache: cacheBase,
+            diaria: diaria,
+            extra: rExtras,
+            total: fBruto,
+            valorNF: imposto,
+            horas: tHoras.toFixed(1),
+            inicio: sInicio,
+            fim: sFim,
+            tipoPagamento: empresaEncontrada.tipoPagamento,
+            diasPagamento: parseInt(empresaEncontrada.diasPagamento || 0),
+            inicioPeriodo: parseInt(empresaEncontrada.inicioPeriodo || 1),
+            fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 15),
+            inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1),
+            fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
+            previsaoPagamento: dataPrevisaoPagamento // Usa a previsão de pagamento recalculada
         };
 
         if(idEdicao) payloadJob.id = parseInt(idEdicao);
@@ -995,8 +1089,14 @@ function salvarJob(){
             executarBackupAutomatico();
             atualizarTela();
             limparCampos();
+            // Limpa o status de notificação para este job para potencialmente re-notificar se a data mudou
+            let jobNotificationsStatus = JSON.parse(localStorage.getItem('job_notifications_status') || '{}');
+            delete jobNotificationsStatus[payloadJob.id];
+            localStorage.setItem('job_notifications_status', JSON.stringify(jobNotificationsStatus));
         };
+        requisicaoFinal.onerror = (e) => { console.error("Erro ao salvar job:", e); alert("Erro ao salvar o lançamento."); };
     };
+    transacaoEmpresa.onerror = (e) => { console.error("Erro ao buscar empresas para salvar job:", e); alert("Erro ao buscar dados da empresa para salvar o job."); };
 }
 
 function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana){
@@ -1009,7 +1109,10 @@ function carregarJobParaEdicao(id) {
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").get(id).onsuccess = function(event) {
         const item = event.target.result;
-        if(!item) return;
+        if(!item) {
+            alert("Lançamento não encontrado.");
+            return;
+        }
         document.getElementById("formJobTitle").innerText = "✏️ Editando Lançamento";
         document.getElementById("editJobId").value = item.id;
         document.getElementById("empresaJob").value = item.empresa;
@@ -1019,6 +1122,7 @@ function carregarJobParaEdicao(id) {
         document.getElementById("fim").value = item.fim;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
+    tx.onerror = (e) => { console.error("Erro ao carregar job para edição:", e); alert("Erro ao carregar dados do lançamento."); };
 }
 
 function deletarJob(id) {
@@ -1027,13 +1131,17 @@ function deletarJob(id) {
         tx.objectStore("jobs").delete(id).onsuccess = () => {
             executarBackupAutomatico();
             atualizarTela();
+            // Remove do status de notificação se deletado
+            let jobNotificationsStatus = JSON.parse(localStorage.getItem('job_notifications_status') || '{}');
+            delete jobNotificationsStatus[id];
+            localStorage.setItem('job_notifications_status', JSON.stringify(jobNotificationsStatus));
         };
+        tx.onerror = (e) => { console.error("Erro ao deletar job:", e); alert("Erro ao deletar o lançamento."); };
     }
 }
 
 function abrirBusca(){ document.getElementById("searchBox").style.display = "block"; }
 function limparBusca(){ document.getElementById("inputBusca").value = ""; document.getElementById("searchBox").style.display = "none"; filtrarTabela(); }
-
 function filtrarTabela(){
     const termo = document.getElementById("inputBusca").value.toUpperCase().trim();
     document.querySelectorAll(".history-card").forEach(card => {
@@ -1047,38 +1155,56 @@ function limparCampos(){
     document.getElementById("empresaJob").value = "";
     document.getElementById("nomeJob").value = "";
     document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
+    document.getElementById("inicio").value = "08:00"; // Reset para valor padrão
+    document.getElementById("fim").value = "20:00"; // Reset para valor padrão
 }
 
+
+// Atualização da tela principal e gráfico
 function atualizarTela(){
     if(!db) return;
     const painel = document.getElementById("listaHistorico");
     painel.innerHTML = "";
-
     let tBruto = 0, tNF = 0, tHoras = 0;
     let dictGrafico = {};
 
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").getAll().onsuccess = function(event) {
-        const matriz = event.target.result.reverse();
-        matriz.forEach(reg => {
-            const status = obterStatusPeriodo(reg);
-            let check = (filtroVisualizacao === "aberto" && status === "aberto") || (filtroVisualizacao === "arquivado" && (status === "arquivado" || status === "pago"));
+        // Ordena por data (mais recente primeiro)
+        const matriz = event.target.result.sort((a, b) => new Date(b.data) - new Date(a.data));
 
+        matriz.forEach(reg => {
+            const status = obterStatusPeriodo(reg); // O status é recalculado para cada registro
+
+            // Soma apenas os valores de jobs em "Período Aberto" para o Dashboard
             if (status === "aberto") {
-                tBruto += reg.total || 0; tNF += reg.valorNF || 0; tHoras += parseFloat(reg.horas || 0);
+                tBruto += reg.total || 0;
+                tNF += reg.valorNF || 0;
+                tHoras += parseFloat(reg.horas || 0);
                 dictGrafico[reg.empresa] = (dictGrafico[reg.empresa] || 0) + reg.total;
             }
 
             if(!mapaCores[reg.empresa]) mapaCores[reg.empresa] = coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
 
-            if (check) {
+            // Verifica o filtro de visualização para exibir o card
+            let shouldDisplayCard = (filtroVisualizacao === "aberto" && status === "aberto") ||
+                                    (filtroVisualizacao === "arquivado" && (status === "arquivado" || status === "pago"));
+
+            if (shouldDisplayCard) {
                 const card = document.createElement("div");
                 card.className = "history-card";
                 card.style.borderLeft = "6px solid " + mapaCores[reg.empresa];
-                
-                let badge = status === "aberto" ? `<span class="badge-status status-aberto">Aberto</span>` : (status === "arquivado" ? `<span class="badge-status status-fechado">Aguardando</span>` : `<span class="badge-status status-pago">Quitado ✓</span>`);
-                let dFmt = reg.data.split("-").reverse().join("/");
 
+                let badge = '';
+                if (status === "aberto") {
+                    badge = `<span class="badge-status status-aberto">Aberto</span>`;
+                } else if (status === "arquivado") {
+                    badge = `<span class="badge-status status-fechado">Aguardando</span>`;
+                } else { // status === "pago"
+                    badge = `<span class="badge-status status-pago">Quitado ✓</span>`;
+                }
+
+                let dFmt = reg.data.split("-").reverse().join("/");
                 card.innerHTML = `
                     <button class="btn-del" onclick="deletarJob(${reg.id})">🗑️</button>
                     <button class="btn-edit-inline" onclick="carregarJobParaEdicao(${reg.id})">✏️</button>
@@ -1086,8 +1212,12 @@ function atualizarTela(){
                     <div class="meta-text">📅 ${dFmt} | 📌 ${reg.job}</div>
                     <div>${badge}</div>
                     <div class="meta-text" style="margin-top:8px;">🕒 Jornada: ${reg.inicio} às ${reg.fim} (${reg.horas}h)</div>
-                    <div class="meta-text">📆 Recebimento: <b>${reg.previsaoPagamento}</b></div>
-                    <div style="margin-top:10px; font-weight:900;">Bruto: <span>${formatarValor(reg.total)}</span></div>
+                    <div class="meta-text">💰 Cachê Base: ${formatarValor(reg.cache)}</div>
+                    <div class="meta-text">🚗 Diária / Logística: ${formatarValor(reg.diaria)}</div>
+                    <div class="meta-text">⚡ Horas Extras: ${formatarValor(reg.extra)}</div>
+                    <div class="meta-text">🗓️ Previsão de Recebimento: <b>${reg.previsaoPagamento}</b></div>
+                    <div style="margin-top:10px; font-weight:900;">Total Bruto: <span>${formatarValor(reg.total)}</span></div>
+                    <div style="font-size:0.8em; color:var(--danger);">Imposto NF: <span>- ${formatarValor(reg.valorNF)}</span></div>
                 `;
                 painel.appendChild(card);
             }
@@ -1096,19 +1226,22 @@ function atualizarTela(){
         document.getElementById("vTotalSemana").innerText = formatarValor(tBruto);
         document.getElementById("vTotalNF").innerText = "- " + formatarValor(tNF);
         document.getElementById("vTotalHoras").innerText = tHoras.toFixed(1) + "h";
+
         renderGrafico(dictGrafico);
-        
+
         if(document.getElementById("searchBox").style.display === "block"){
             filtrarTabela();
         }
     };
+    tx.onerror = (e) => { console.error("Erro ao atualizar tela:", e); };
 }
 
 function renderGrafico(dict){
     const ctx = document.getElementById("graficoEmpresas");
     if(!ctx) return;
-    
-    const labels = Object.keys(dict), values = Object.values(dict);
+
+    const labels = Object.keys(dict);
+    const values = Object.values(dict);
     const colors = labels.map(lbl => mapaCores[lbl]);
 
     if(window.chartInstance) {
@@ -1117,19 +1250,36 @@ function renderGrafico(dict){
         window.chartInstance.data.datasets[0].backgroundColor = colors;
         window.chartInstance.update();
     } else {
-        if(labels.length === 0) return;
+        if(labels.length === 0) {
+            // Se não há dados, destrua a instância do gráfico para evitar erro ou exiba uma mensagem
+            if(window.chartInstance) {
+                window.chartInstance.destroy();
+                window.chartInstance = null;
+            }
+            const container = ctx.parentNode;
+            container.innerHTML = "<p style='color:var(--muted); text-align:center;'>Nenhum dado de faturamento para exibir.</p>";
+            // Re-adiciona o canvas para que o gráfico possa ser criado no futuro
+            const newCanvas = document.createElement('canvas');
+            newCanvas.id = 'graficoEmpresas';
+            container.appendChild(newCanvas);
+            return;
+        }
         window.chartInstance = new Chart(ctx, {
             type: "bar",
             data: { labels: labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 8 }] },
             options: {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
-                scales: { y: { display: false }, x: { ticks: { color: "#94a3b8" } } }
+                scales: {
+                    y: { display: false },
+                    x: { ticks: { color: "#94a3b8" } }
+                }
             }
         });
     }
 }
 
+// Funções de exportação
 function enviarRelatorioWhatsApp(){
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").getAll().onsuccess = function(event) {
@@ -1138,52 +1288,141 @@ function enviarRelatorioWhatsApp(){
 
         const filtrados = event.target.result.filter(item => {
             const status = obterStatusPeriodo(item);
-            const passaFiltroAbas = (filtroVisualizacao === "aberto" && status === "aberto") || 
-                                   (filtroVisualizacao === "arquivado" && (status === "arquivado" || status === "pago"));
-            
+            const passaFiltroAbas = (filtroVisualizacao === "aberto" && status === "aberto") ||
+                                    (filtroVisualizacao === "arquivado" && (status === "arquivado" || status === "pago"));
             if (!passaFiltroAbas) return false;
-
             if (caixaBuscaAtiva && termoBusca !== "") {
                 const stringDoCard = `${item.empresa} ${item.job} ${item.data}`.toUpperCase();
                 return stringDoCard.includes(termoBusca);
             }
             return true;
-        });
+        }).sort((a, b) => new Date(b.data) - new Date(a.data)); // Ordena por data (mais recente primeiro)
 
-        if(filtrados.length === 0) { alert("Nenhum registro encontrado no filtro atual."); return; }
-        
+        if(filtrados.length === 0) { alert("Nenhum registro encontrado no filtro atual para o relatório."); return; }
+
         let msg = "FADER LIVRE - EXTRATO CACHÊ CONTROL\n";
-        if(caixaBuscaAtiva && termoBusca !== "") {
-            msg += `FILTRO ATIVO: "${termoBusca}"\n`;
-        }
         msg += "--------------------------------------\n\n";
-        
-        let totalGeralFiltrado = 0;
 
+        let totalGeralBrutoFiltrado = 0; // Novo total para o bruto
+        let totalGeralNFFiltrado = 0; // Novo total para o NF
         filtrados.forEach(j => {
-            msg += `${j.empresa} - ${j.data.split("-").reverse().join("/")}\nJob: ${j.job}\nTotal: R$ ${j.total.toFixed(2)}\n\n`;
-            totalGeralFiltrado += j.total;
+            msg += `*${j.empresa}* - ${j.data.split("-").reverse().join("/")}\n`;
+            msg += `Job: ${j.job}\n`;
+            msg += `Cachê Base: R$ ${j.cache.toFixed(2)}\n`;
+            msg += `Diária / Logística: R$ ${j.diaria.toFixed(2)}\n`;
+            msg += `Horas Extras: R$ ${j.extra.toFixed(2)}\n`;
+            msg += `*Total Bruto: R$ ${j.total.toFixed(2)}*\n`;
+            msg += `Imposto NF: - R$ ${j.valorNF.toFixed(2)}\n`;
+            msg += `Previsão de Pagamento: ${j.previsaoPagamento}\n\n`;
+            totalGeralBrutoFiltrado += j.total;
+            totalGeralNFFiltrado += j.valorNF;
         });
 
         msg += "--------------------------------------\n";
-        msg += `Total: R$ ${totalGeralFiltrado.toFixed(2)}\n`;
-        
+        msg += `*TOTAL GERAL BRUTO: R$ ${totalGeralBrutoFiltrado.toFixed(2)}*\n`;
+        msg += `TOTAL IMPOSTO NF: - R$ ${totalGeralNFFiltrado.toFixed(2)}\n`; // Adiciona total de NF
+        msg += `Relatório gerado em: ${new Date().toLocaleDateString("pt-BR")}\n`;
+
         window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
     };
+    tx.onerror = (e) => { console.error("Erro ao gerar relatório WhatsApp:", e); alert("Erro ao gerar relatório para WhatsApp."); };
 }
 
 function baixarExcelCompleto(){
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").getAll().onsuccess = function(event) {
-        let csv = "ID;Data;Empresa;Job;Total;Previsao\n";
-        event.target.result.forEach(i => csv += `${i.id};${i.data};${i.empresa};${i.job};${i.total};${i.previsaoPagamento}\n`);
+        // Ordena por data (mais recente primeiro) para o CSV também
+        const jobsOrdenados = event.target.result.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+        let csv = "ID;Data;Empresa;Job;Cache Base;Diaria;Horas Extras;Total Bruto;Imposto NF;Previsao Pagamento\n";
+        jobsOrdenados.forEach(i => {
+            csv += `${i.id};${i.data};${i.empresa};${i.job};${i.cache.toFixed(2)};${i.diaria.toFixed(2)};${i.extra.toFixed(2)};${i.total.toFixed(2)};${i.valorNF.toFixed(2)};${i.previsaoPagamento}\n`;
+        });
+
         const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = `fader_livre_faturamento.csv`;
+        link.download = `fader_livre_faturamento_${new Date().toISOString().split('T')[0]}.csv`; // Nome de arquivo dinâmico
         link.click();
+        alert("Planilha Excel exportada com sucesso!");
+    };
+    tx.onerror = (e) => { console.error("Erro ao exportar para Excel:", e); alert("Erro ao exportar dados para Excel."); };
+}
+
+
+// Funções de Notificação
+function checkAndRequestNotificationPermission() {
+    if (!("Notification" in window)) {
+        console.log("Este navegador não suporta notificações de desktop.");
+        return;
+    }
+    if (Notification.permission === "default") {
+        Notification.requestPermission();
+    }
+}
+
+// Variável para armazenar o estado das notificações para cada job (job.id: 'YYYY-MM-DD')
+let jobNotificationsStatus = JSON.parse(localStorage.getItem('job_notifications_status') || '{}');
+
+function sendPaymentNotification(job) {
+    if (Notification.permission === "granted") {
+        const todayStr = new Date().toISOString().split('T')[0];
+        // Verifica se já notificou para este job hoje
+        if (jobNotificationsStatus[job.id] === todayStr) {
+            return;
+        }
+
+        const title = "💸 Pagamento de Job Hoje!";
+        const options = {
+            body: `O pagamento para o job "${job.job}" da empresa "${job.empresa}" no valor de ${formatarValor(job.total)} vence hoje!`,
+            icon: 'https://cdn-icons-png.flaticon.com/512/32/32210.png' // Ícone genérico, pode ser substituído por um local
+        };
+        new Notification(title, options);
+
+        // Marca como notificado para hoje
+        jobNotificationsStatus[job.id] = todayStr;
+        localStorage.setItem('job_notifications_status', JSON.stringify(jobNotificationsStatus));
+    }
+}
+
+function checkDuePayments() {
+    if (!db || Notification.permission !== "granted") return;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Zera a hora para comparação de data
+
+    // Verifica se já passou das 9 AM quando a função é chamada
+    const currentHour = new Date().getHours();
+    if (currentHour < 9) {
+        // Se ainda não são 9 AM, não notificamos ainda.
+        // A notificação será disparada quando o usuário abrir/focar o app após as 9 AM.
+        // Para uma notificação exata às 9 AM, mesmo com o app fechado, precisaria de Service Worker.
+        return;
+    }
+
+    const tx = db.transaction("jobs", "readonly");
+    tx.objectStore("jobs").getAll().onsuccess = function(event) {
+        const jobs = event.target.result;
+        jobs.forEach(job => {
+            // Recalcula a data de pagamento para garantir precisão
+            const dataFechamentoTemp = calcularDataFechamentoReal(job.data, job.tipoPagamento, job.inicioPeriodo, job.fimPeriodo, job.inicioSemana, job.fimSemana);
+            const dataPagamentoObj = calcularDataPagamentoReal(dataFechamentoTemp, job.diasPagamento);
+
+            if (dataPagamentoObj.getTime() === today.getTime()) {
+                sendPaymentNotification(job);
+            }
+        });
     };
 }
+
+// Adiciona event listeners para verificar pagamentos quando a aba fica visível ou ganha foco
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        checkDuePayments();
+    }
+});
+window.addEventListener('focus', checkDuePayments);
+
 </script>
 </body>
 </html>
