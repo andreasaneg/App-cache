@@ -973,6 +973,9 @@ function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fim
     if (tipoCiclo === "Semanal") {
         let diaAlvoCorte = parseInt(fimSemana !== undefined ? fimSemana : 0); // Convert to number
         let diasParaFimDeSemana = diaAlvoCorte - objetoData.getDay();
+        
+        // Se o dia do job for o dia de corte, o fechamento é no próprio dia.
+        // Caso contrário, calcula-se os dias para o próximo dia de corte.
         if (diasParaFimDeSemana < 0) {
             diasParaFimDeSemana += 7; // Avança para a próxima ocorrência do dia de corte
         }
@@ -995,7 +998,7 @@ function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fim
 function calcularDataPagamentoReal(dataFechamento, diasUteis) {
     let objetoPagamento = new Date(dataFechamento);
     // Para incluir o dia de pagamento como o N-ésimo dia (ex: 5º dia), adicionamos diasUteis - 1
-    objetoPagamento.setDate(objetoPagamento.getDate() + Number(diasUteis) - 1);
+    objetoPagamento.setDate(objetoPagamento.getDate() + Number(diasUteis)); // Ajustado para contar o dia de fechamento como o primeiro dia do prazo
     objetoPagamento.setHours(0,0,0,0); // Garante que o horário seja meia-noite para comparação
     return objetoPagamento;
 }
