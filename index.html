@@ -3,101 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="description" content="FADER LIVRE - Sistema Controlador de Cachês ERP v4.2">
+    <meta name="description" content="FADER LIVRE - Sistema Controlador de Cachês ERP v4.3">
     <meta name="theme-color" content="#0f172a">
-    <title>FADER LIVRE - CACHÊ CONTROL v4.2</title>
+    <title>FADER LIVRE - CACHÊ CONTROL v4.3</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         :root {
-            --primary: #10b981;
-            --primary-hover: #059669;
-            --primary-glow: rgba(16,185,129,0.2);
-            --bg: #0f172a;
-            --card: #1e293b;
-            --card-hover: #24334c;
-            --dark-pure: #020617;
-            --text: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --muted: #94a3b8;
-            --danger: #ef4444;
-            --danger-hover: #dc2626;
-            --danger-glow: rgba(239,68,68,0.15);
-            --blue: #38bdf8;
-            --blue-hover: #0ea5e9;
-            --blue-glow: rgba(56,189,248,0.2);
-            --warning: #f59e0b;
-            --success: #16a34a;
-            --success-glow: rgba(22,163,74,0.2);
-            --whatsapp: #25D366;
-            --border-color: #334155;
-            --border-hover: #475569;
-            --shadow-sm: 0 4px 10px -1px rgba(0,0,0,0.2);
-            --shadow-md: 0 4px 15px -3px rgba(0,0,0,0.3);
-            --shadow-lg: 0 15px 30px -5px rgba(0,0,0,0.7);
-            --shadow-xl: 0 30px 60px -15px rgba(0,0,0,0.6);
-            --status-aberto-bg: rgba(2,132,199,0.15);
-            --status-aberto-text: #38bdf8;
-            --status-aberto-border: rgba(2,132,199,0.3);
-            --status-fechado-bg: rgba(234,88,12,0.15);
-            --status-fechado-text: #fb923c;
-            --status-fechado-border: rgba(234,88,12,0.3);
-            --status-pago-bg: rgba(22,163,74,0.2);
-            --status-pago-text: #4ade80;
-            --status-pago-border: rgba(22,163,74,0.4);
+            --primary: #10b981; --primary-hover: #059669; --primary-glow: rgba(16,185,129,0.2);
+            --bg: #0f172a; --card: #1e293b; --card-hover: #24334c; --dark-pure: #020617;
+            --text: #f8fafc; --text-secondary: #cbd5e1; --muted: #94a3b8;
+            --danger: #ef4444; --danger-hover: #dc2626; --danger-glow: rgba(239,68,68,0.15);
+            --blue: #38bdf8; --blue-hover: #0ea5e9; --blue-glow: rgba(56,189,248,0.2);
+            --warning: #f59e0b; --success: #16a34a; --success-glow: rgba(22,163,74,0.2);
+            --whatsapp: #25D366; --border-color: #334155; --border-hover: #475569;
+            --shadow-sm: 0 4px 10px -1px rgba(0,0,0,0.2); --shadow-md: 0 4px 15px -3px rgba(0,0,0,0.3);
+            --shadow-lg: 0 15px 30px -5px rgba(0,0,0,0.7); --shadow-xl: 0 30px 60px -15px rgba(0,0,0,0.6);
+            --status-aberto-bg: rgba(2,132,199,0.15); --status-aberto-text: #38bdf8; --status-aberto-border: rgba(2,132,199,0.3);
+            --status-fechado-bg: rgba(234,88,12,0.15); --status-fechado-text: #fb923c; --status-fechado-border: rgba(234,88,12,0.3);
+            --status-pago-bg: rgba(22,163,74,0.2); --status-pago-text: #4ade80; --status-pago-border: rgba(22,163,74,0.4);
         }
         body.light-mode {
-            --primary: #0277bd;
-            --primary-hover: #01579b;
-            --primary-glow: rgba(2,119,189,0.2);
-            --bg: #fafafa;
-            --card: #ffffff;
-            --card-hover: #f0f0f0;
-            --dark-pure: #e8e8e8;
-            --text: #212121;
-            --text-secondary: #616161;
-            --muted: #757575;
-            --danger: #d32f2f;
-            --danger-hover: #c62828;
-            --danger-glow: rgba(211,47,47,0.15);
-            --blue: #1976d2;
-            --blue-hover: #1565c0;
-            --blue-glow: rgba(25,118,210,0.2);
-            --warning: #fbc02d;
-            --success: #388e3c;
-            --border-color: #bdbdbd;
-            --border-hover: #9e9e9e;
-        }
-        body.premium-mode {
-            --bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            --card: rgba(255,255,255,0.08);
-            --card-hover: rgba(255,255,255,0.12);
-            --dark-pure: rgba(0,0,0,0.3);
-            --border-color: rgba(255,255,255,0.15);
-            --border-hover: rgba(255,255,255,0.25);
-            --text: #ffffff;
-            --text-secondary: #b0b0b0;
-            --muted: #888;
+            --primary: #0277bd; --primary-hover: #01579b; --primary-glow: rgba(2,119,189,0.2);
+            --bg: #fafafa; --card: #ffffff; --card-hover: #f0f0f0; --dark-pure: #e8e8e8;
+            --text: #212121; --text-secondary: #616161; --muted: #757575;
+            --danger: #d32f2f; --danger-hover: #c62828; --danger-glow: rgba(211,47,47,0.15);
+            --blue: #1976d2; --blue-hover: #1565c0; --blue-glow: rgba(25,118,210,0.2);
+            --warning: #fbc02d; --success: #388e3c; --border-color: #bdbdbd; --border-hover: #9e9e9e;
         }
         body.light-mode #btnGerarCopiaSeguranca, body.light-mode #btnBuscaTexto { color: white !important; }
-        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;transition:background-color 0.2s ease,border-color 0.2s ease,color 0.2s ease}
-        body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif;-webkit-font-smoothing:antialiased;padding:15px;padding-bottom:100px;background:var(--bg);background-attachment:fixed;color:var(--text);overflow-x:hidden;line-height:1.5}
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif;padding:15px;padding-bottom:100px;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.5}
         .app-header{text-align:center;border-bottom:2px solid var(--primary);padding-bottom:20px;margin-bottom:25px}
-        .app-header h1{font-size:1.6em;font-weight:800;letter-spacing:1px;color:var(--text);text-transform:uppercase}
+        .app-header h1{font-size:1.6em;font-weight:800;letter-spacing:1px;text-transform:uppercase}
         .app-header p{color:var(--primary);font-size:0.85em;font-weight:700;margin-top:6px;letter-spacing:1.5px;text-transform:uppercase}
         .tab-container{display:flex;gap:8px;margin-bottom:25px;background:var(--dark-pure);padding:6px;border-radius:16px;border:1px solid var(--border-color)}
-        .tab-button{flex:1;padding:14px 8px;background:transparent;color:var(--muted);border:none;border-radius:12px;cursor:pointer;font-weight:700;font-size:1em;display:flex;align-items:center;justify-content:center;gap:6px}
+        .tab-button{flex:1;padding:14px 8px;background:transparent;color:var(--muted);border:none;border-radius:12px;cursor:pointer;font-weight:700;font-size:1em}
         .tab-button.active{background:var(--card);color:var(--primary);box-shadow:0 4px 10px rgba(0,0,0,0.3)}
-        .app-section{display:none}
-        .app-section.active{display:block;animation:fadeIn 0.3s ease}
+        .app-section{display:none}.app-section.active{display:block;animation:fadeIn 0.3s ease}
         @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
         .dashboard{display:grid;grid-template-columns:1fr;gap:15px;margin-bottom:25px}
         @media(min-width:600px){.dashboard{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}}
-        .dashboard-card{background:var(--card);border-radius:24px;padding:20px;border:1px solid var(--border-color);position:relative;box-shadow:var(--shadow-md);overflow:hidden}
+        .dashboard-card{background:var(--card);border-radius:24px;padding:20px;border:1px solid var(--border-color);position:relative;box-shadow:var(--shadow-md)}
         .dashboard-title{font-size:0.75em;font-weight:700;text-transform:uppercase;margin-bottom:8px;letter-spacing:1px;color:var(--text-secondary)}
-        .total-geral{font-size:2em;font-weight:900;color:var(--blue)}.total-nf{font-size:2em;font-weight:900;color:var(--danger)}.total-horas{font-size:2em;font-weight:900;color:var(--primary)}.total-liquido{font-size:2em;font-weight:900;color:var(--success)}
+        .total-geral{font-size:2em;font-weight:900;color:var(--blue)}.total-nf{font-size:2em;font-weight:900;color:var(--danger)}
+        .total-horas{font-size:2em;font-weight:900;color:var(--primary)}.total-liquido{font-size:2em;font-weight:900;color:var(--success)}
         .eye-button{position:absolute;top:15px;right:15px;width:46px;height:46px;border:none;border-radius:14px;background:var(--border-color);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:8px}
-        .eye-button:hover{background:var(--border-hover)}
         .eye-button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
         .input-group{background:var(--card);border:1px solid var(--border-color);border-radius:24px;padding:20px;margin-bottom:20px;box-shadow:var(--shadow-sm)}
         .input-group h2,.input-group h3{font-size:1.2em;margin-bottom:18px;color:var(--text);display:flex;align-items:center;gap:10px;border-left:4px solid var(--primary);padding-left:10px}
@@ -105,51 +55,89 @@
         input,select{width:100%;padding:14px;border-radius:14px;border:1px solid var(--border-color);background:var(--dark-pure);color:var(--text);margin-bottom:15px;font-size:16px;font-family:inherit}
         input:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
         .input-row,.time-inputs{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-        .btn{width:100%;border:none;padding:16px;border-radius:14px;font-weight:800;cursor:pointer;margin-bottom:12px;font-size:0.95em;display:flex;align-items:center;justify-content:center;gap:8px;text-transform:uppercase;letter-spacing:1px;font-family:inherit;transition:all 0.2s ease}
-        .btn:active{transform:scale(0.98)}.btn-save{background:var(--primary);color:var(--dark-pure)}.btn-save:hover{background:var(--primary-hover)}.btn-export{background:var(--border-color);color:var(--text)}.btn-whats{background:var(--whatsapp);color:white}.btn-search{background:var(--blue);color:var(--text)}.btn-cancel{background:var(--card-hover);color:var(--text)}.btn-danger-outline{background:var(--danger-glow);color:var(--danger);border:1px solid var(--danger)}.btn-sm{font-size:0.8em;padding:12px}
-        .button-group-vertical{display:flex;flex-direction:column;gap:5px;margin-top:5px}
+        .btn{width:100%;border:none;padding:16px;border-radius:14px;font-weight:800;cursor:pointer;margin-bottom:12px;font-size:0.95em;display:flex;align-items:center;justify-content:center;gap:8px;text-transform:uppercase;letter-spacing:1px;transition:all 0.2s}
+        .btn:active{transform:scale(0.98)}.btn-save{background:var(--primary);color:var(--dark-pure)}
+        .btn-export{background:var(--border-color);color:var(--text)}.btn-whats{background:var(--whatsapp);color:white}
+        .btn-search{background:var(--blue);color:var(--text)}.btn-cancel{background:var(--card-hover);color:var(--text)}
+        .btn-danger-outline{background:var(--danger-glow);color:var(--danger);border:1px solid var(--danger)}
+        .btn-sm{font-size:0.8em;padding:12px}.button-group-vertical{display:flex;flex-direction:column;gap:5px;margin-top:5px}
+
         .history-card{background:var(--card);border-radius:20px;padding:18px;margin-bottom:15px;position:relative;box-shadow:var(--shadow-sm)}
-        .empresa-title{font-size:1.4em;font-weight:800;margin-bottom:8px;padding-right:85px;color:var(--primary)}
-        .btn-del,.btn-edit-inline,.btn-confirm-inline{position:absolute;top:15px;width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;z-index:10;border:none;cursor:pointer;background:transparent;padding:6px}
-        .btn-del{right:15px;color:var(--danger)}.btn-del:hover{background:var(--danger-glow)}.btn-edit-inline{right:58px;color:var(--blue)}.btn-edit-inline:hover{background:var(--blue-glow)}.btn-confirm-inline{right:101px;color:var(--success)}.btn-confirm-inline:hover{background:var(--success-glow)}
-        .btn-del svg,.btn-edit-inline svg,.btn-confirm-inline svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+        .empresa-title{font-size:1.4em;font-weight:800;margin-bottom:8px;color:var(--primary);padding-right:160px}
+
+        .btn-del,.btn-edit-inline,.btn-confirm-inline,.btn-archive-inline{
+            position:absolute;top:15px;width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;z-index:10;border:none;cursor:pointer;background:transparent;padding:6px
+        }
+        .btn-del{right:15px;color:var(--danger)}.btn-edit-inline{right:58px;color:var(--blue)}
+        .btn-confirm-inline{right:101px;color:var(--success)}.btn-archive-inline{right:144px;color:var(--warning)}
+        .btn-del:hover{background:var(--danger-glow)}.btn-edit-inline:hover{background:var(--blue-glow)}
+        .btn-confirm-inline:hover{background:var(--success-glow)}.btn-archive-inline:hover{background:rgba(245,158,11,0.2)}
+        .btn-del svg,.btn-edit-inline svg,.btn-confirm-inline svg,.btn-archive-inline svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
         .badge-status{display:inline-flex;align-items:center;padding:5px 10px;border-radius:8px;font-size:0.8em;font-weight:800;text-transform:uppercase;margin-top:8px}
-        .status-aberto{background:var(--status-aberto-bg);color:var(--status-aberto-text);border:1px solid var(--status-aberto-border)}.status-fechado{background:var(--status-fechado-bg);color:var(--status-fechado-text);border:1px solid var(--status-fechado-border)}.status-pago{background:var(--status-pago-bg);color:var(--status-pago-text);border:1px solid var(--status-pago-border)}
-        .autocomplete-list{position:absolute;z-index:100;background:var(--card);border:1px solid var(--border-hover);border-radius:16px;width:calc(100% - 40px);max-height:200px;overflow-y:auto;margin-top:-12px;box-shadow:var(--shadow-lg)}.autocomplete-item{padding:14px;cursor:pointer;border-bottom:1px solid var(--border-color);color:var(--text)}.autocomplete-item:last-child{border-bottom:none}.autocomplete-item:hover{background:var(--card-hover)}
-        .toggle-filter-container{display:flex;gap:8px;margin-bottom:20px;background:var(--dark-pure);padding:6px;border-radius:12px}.btn-filter{flex:1;padding:12px 6px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:0.85em;cursor:pointer}.btn-filter.active{background:var(--card);color:var(--primary)}
+        .status-aberto{background:var(--status-aberto-bg);color:var(--status-aberto-text);border:1px solid var(--status-aberto-border)}
+        .status-arquivado{background:var(--status-fechado-bg);color:var(--status-fechado-text);border:1px solid var(--status-fechado-border)}
+        .status-pago{background:var(--status-pago-bg);color:var(--status-pago-text);border:1px solid var(--status-pago-border)}
+
+        .autocomplete-list{position:absolute;z-index:100;background:var(--card);border:1px solid var(--border-hover);border-radius:16px;width:calc(100% - 40px);max-height:200px;overflow-y:auto;margin-top:-12px;box-shadow:var(--shadow-lg)}
+        .autocomplete-item{padding:14px;cursor:pointer;border-bottom:1px solid var(--border-color);color:var(--text)}
+        .autocomplete-item:last-child{border-bottom:none}.autocomplete-item:hover{background:var(--card-hover)}
+        .toggle-filter-container{display:flex;gap:8px;margin-bottom:20px;background:var(--dark-pure);padding:6px;border-radius:12px}
+        .btn-filter{flex:1;padding:12px 6px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:0.85em;cursor:pointer}
+        .btn-filter.active{background:var(--card);color:var(--primary)}
         .search-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}.search-box{margin-bottom:15px}
-        .config-group{background:var(--dark-pure);border-radius:16px;padding:15px;margin-bottom:15px;border:1px solid var(--border-color)}.config-group h4{color:var(--text);margin-bottom:10px;font-size:1em}.config-help-text{font-size:0.8em;color:var(--muted);margin-top:5px}.warning-text{font-size:0.8em;color:var(--danger);margin-top:5px}.muted-label{color:var(--muted)}
+        .config-group{background:var(--dark-pure);border-radius:16px;padding:15px;margin-bottom:15px;border:1px solid var(--border-color)}
+        .config-group h4{color:var(--text);margin-bottom:10px;font-size:1em}.config-help-text{font-size:0.8em;color:var(--muted);margin-top:5px}
+        .warning-text{font-size:0.8em;color:var(--danger);margin-top:5px}.muted-label{color:var(--muted)}
         .toggle-row{display:flex;justify-content:space-between;align-items:center}.toggle-row label{margin-bottom:0}
-        .toggle-switch{position:relative;display:inline-block;width:60px;height:34px}.toggle-switch input{opacity:0;width:0;height:0;margin:0}.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:var(--border-color);transition:0.4s;border-radius:34px}.slider:before{position:absolute;content:"";height:26px;width:26px;left:4px;bottom:4px;background-color:white;transition:0.4s;border-radius:50%}input:checked+.slider{background-color:var(--primary)}input:focus+.slider{box-shadow:0 0 1px var(--primary)}input:checked+.slider:before{transform:translateX(26px)}input:disabled+.slider{opacity:0.5;cursor:not-allowed}
+        .toggle-switch{position:relative;display:inline-block;width:60px;height:34px}
+        .toggle-switch input{opacity:0;width:0;height:0;margin:0}
+        .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:var(--border-color);transition:0.4s;border-radius:34px}
+        .slider:before{position:absolute;content:"";height:26px;width:26px;left:4px;bottom:4px;background-color:white;transition:0.4s;border-radius:50%}
+        input:checked+.slider{background-color:var(--primary)}input:focus+.slider{box-shadow:0 0 1px var(--primary)}
+        input:checked+.slider:before{transform:translateX(26px)}input:disabled+.slider{opacity:0.5;cursor:not-allowed}
         .meta-text{font-size:0.95em;color:var(--muted);line-height:1.6;margin:4px 0}.meta-text b{color:var(--text)}
         .chart-container{height:300px;margin-top:15px;position:relative}
-        .login-overlay{position:fixed;inset:0;background:var(--dark-pure);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;padding:15px}.login-container{width:100%;max-width:400px}.emergency-reset-btn{width:100%;max-width:400px;margin-bottom:20px;box-shadow:0 4px 10px rgba(239,68,68,0.3);padding:10px 15px;border-radius:10px;font-weight:bold;font-size:0.8em}
-        .login-card{background:var(--card);padding:25px;border-radius:28px;box-shadow:var(--shadow-xl);border:1px solid var(--border-color)}.login-header{text-align:center;margin-bottom:20px}.login-header h2{color:var(--text);margin-top:10px;font-size:1.4em;font-weight:800}.login-header p{color:var(--muted);font-size:0.8em;margin-top:4px;letter-spacing:1px}.password-input{text-align:center;letter-spacing:6px;font-size:20px}.new-password-box{margin-top:5px;padding-top:15px;border-top:1px dashed var(--border-color)}.login-actions{display:flex;flex-direction:column;gap:10px;margin-top:10px}.login-secondary-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-        .export-central{border-color:var(--border-hover);background:linear-gradient(180deg,var(--card) 0%,var(--card-hover) 100%);margin-top:20px}.description-text{color:var(--muted);font-size:0.85em;margin-bottom:15px}.whatsapp-export{margin-top:10px;margin-bottom:25px}.section-title{font-size:1.2em;font-weight:800;margin:0 0 20px 0;color:var(--text)}
-        .company-card{background:var(--card);padding:15px;border-radius:20px;margin-bottom:10px;border:1px solid var(--border-color);position:relative}.company-card-header{margin-bottom:8px}.company-name{font-size:1.2em;font-weight:800;color:var(--primary)}.company-card-body{margin-bottom:8px}.company-card-actions{position:absolute;top:15px;right:15px;display:flex;gap:5px}
-        @keyframes payConfirm{0%{transform:scale(1)}50%{transform:scale(1.05);background:var(--success-glow)}100%{transform:scale(1)}}.pay-confirmed{animation:payConfirm 0.5s ease}
-        .toast-container{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:10px}.toast{background:var(--card);color:var(--text);padding:16px 20px;border-radius:16px;box-shadow:var(--shadow-lg);border-left:4px solid var(--primary);animation:slideIn 0.3s ease;max-width:350px;font-size:0.9em;font-weight:500;cursor:pointer}.toast.success{border-left-color:var(--success)}.toast.error{border-left-color:var(--danger)}@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+        .login-overlay{position:fixed;inset:0;background:var(--dark-pure);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;padding:15px}
+        .login-container{width:100%;max-width:400px}.emergency-reset-btn{width:100%;margin-bottom:20px;box-shadow:0 4px 10px rgba(239,68,68,0.3);padding:10px 15px;border-radius:10px;font-weight:bold;font-size:0.8em}
+        .login-card{background:var(--card);padding:25px;border-radius:28px;box-shadow:var(--shadow-xl);border:1px solid var(--border-color)}
+        .login-header{text-align:center;margin-bottom:20px}.login-header h2{color:var(--text);font-size:1.4em;font-weight:800}
+        .login-header p{color:var(--muted);font-size:0.8em;margin-top:4px;letter-spacing:1px}
+        .password-input{text-align:center;letter-spacing:6px;font-size:20px}
+        .new-password-box{margin-top:5px;padding-top:15px;border-top:1px dashed var(--border-color)}
+        .login-actions{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+        .login-secondary-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .export-central{border-color:var(--border-hover);background:linear-gradient(180deg,var(--card) 0%,var(--card-hover) 100%);margin-top:20px}
+        .description-text{color:var(--muted);font-size:0.85em;margin-bottom:15px}.whatsapp-export{margin-top:10px;margin-bottom:25px}
+        .section-title{font-size:1.2em;font-weight:800;margin:0 0 20px 0;color:var(--text)}
+
+        .company-card{background:var(--card);padding:15px 60px 15px 15px;border-radius:20px;margin-bottom:10px;border:1px solid var(--border-color);position:relative;min-height:80px}
+        .company-card-header{margin-bottom:5px}.company-name{font-size:1.1em;font-weight:800;color:var(--primary)}
+        .company-card-body{margin-bottom:5px}.company-card-body .meta-text{font-size:0.85em}
+        .company-card-actions{position:absolute;top:10px;right:10px;display:flex;gap:4px}
+
+        .toast-container{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:10px}
+        .toast{background:var(--card);color:var(--text);padding:16px 20px;border-radius:16px;box-shadow:var(--shadow-lg);border-left:4px solid var(--primary);animation:slideIn 0.3s ease;max-width:350px;font-size:0.9em}.toast.success{border-left-color:var(--success)}.toast.error{border-left-color:var(--danger)}
+        @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
         @media(min-width:768px){body{max-width:800px;margin:0 auto;padding:30px;padding-bottom:60px}.dashboard{grid-template-columns:repeat(2,1fr)}}
-        @media(min-width:1024px){body{max-width:1000px}.dashboard{grid-template-columns:repeat(4,1fr)}.tab-container{max-width:600px;margin-left:auto;margin-right:auto}}
-        ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:var(--dark-pure);border-radius:4px}::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:4px}::-webkit-scrollbar-thumb:hover{background:var(--border-hover)}
+        @media(min-width:1024px){body{max-width:1000px}.dashboard{grid-template-columns:repeat(4,1fr)}.tab-container{max-width:600px;margin:0 auto 25px auto}}
         :focus-visible{outline:2px solid var(--primary);outline-offset:2px}
     </style>
 </head>
-<body>
+<body onload="document.getElementById('themeToggle').checked = document.body.classList.contains('light-mode')">
+
+<!-- LOGIN -->
 <div id="loginScreen" class="login-overlay">
     <div class="login-container">
         <button onclick="App.emergencyReset()" class="btn btn-danger-outline emergency-reset-btn">Forçar Reset de Emergência</button>
         <div class="login-card">
-            <div class="login-header"><h2>Acesso Identificado</h2><p>Cachê Control ERP v4.2</p></div>
-            <label for="senhaInput">Chave Codificada de Segurança</label>
-            <input type="password" id="senhaInput" placeholder="••••••••" class="password-input" autocomplete="off">
-            <div id="novaSenhaBox" class="new-password-box" style="display:none;">
-                <label for="novaSenha">Definir Nova Chave Master</label>
-                <input type="password" id="novaSenha" placeholder="Digite uma chave forte" autocomplete="new-password">
-                <label for="emailRecuperacao">E-mail Corporativo de Recuperação</label>
-                <input type="email" id="emailRecuperacao" placeholder="nome@empresa.com" autocomplete="email">
-                <label for="telefoneRecuperacao">Telefone para Recuperação (Opcional)</label>
-                <input type="tel" id="telefoneRecuperacao" placeholder="(xx) xxxxx-xxxx" autocomplete="tel">
+            <div class="login-header"><h2>Acesso Identificado</h2><p>Cachê Control ERP v4.3</p></div>
+            <label for="senhaInput">Chave Codificada</label>
+            <input type="password" id="senhaInput" placeholder="••••••••" class="password-input">
+            <div id="novaSenhaBox" class="new-password-box" style="display:none">
+                <label>Nova Chave</label><input type="password" id="novaSenha" placeholder="Mínimo 4 caracteres">
+                <label>E-mail</label><input type="email" id="emailRecuperacao" placeholder="nome@exemplo.com">
+                <label>Telefone (opcional)</label><input type="tel" id="telefoneRecuperacao" placeholder="(xx) xxxxx-xxxx">
                 <button class="btn btn-save" onclick="App.registerCredentials()">Registrar Credenciais</button>
             </div>
             <div class="login-actions">
@@ -163,19 +151,23 @@
     </div>
 </div>
 
+<!-- HEADER -->
 <header class="app-header"><h1>FADER LIVRE</h1><p>SISTEMA CONTROLADOR DE CACHÊS</p></header>
+
+<!-- TABS -->
 <nav class="tab-container">
     <button class="tab-button active" onclick="App.switchTab('abaJobs', this)">Lançamentos</button>
     <button class="tab-button" onclick="App.switchTab('abaEmpresas', this)">Empresas</button>
     <button class="tab-button" onclick="App.switchTab('abaConfiguracoes', this)">Configurações</button>
 </nav>
 
+<!-- ABA JOBS -->
 <main id="abaJobs" class="app-section active">
     <section class="dashboard">
         <article class="dashboard-card">
-            <button class="eye-button" id="eyeButton" onclick="App.toggleValues()" title="Alternar visibilidade">
+            <button class="eye-button" id="eyeButton" onclick="App.toggleValues()">
                 <svg id="eyeIconOpen" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                <svg id="eyeIconClosed" viewBox="0 0 24 24" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                <svg id="eyeIconClosed" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
             </button>
             <h3 class="dashboard-title">Total Bruto</h3><p id="vTotalSemana" class="total-geral">R$ 0,00</p>
         </article>
@@ -184,342 +176,217 @@
         <article class="dashboard-card"><h3 class="dashboard-title">Horas Trabalhadas</h3><p id="vTotalHoras" class="total-horas">0.0h</p></article>
     </section>
     <section class="input-group">
-        <h3 id="formJobTitle">Job</h3><input type="hidden" id="editJobId" value="">
-        <label for="empresaJob">Empresa</label><input type="text" id="empresaJob" placeholder="Digite para pesquisar..." autocomplete="off" oninput="App.autocomplete(this.value)"><div id="autocompleteContainer"></div>
-        <label for="dataJob">Data</label><input type="date" id="dataJob">
-        <label for="nomeJob">Job</label><input type="text" id="nomeJob" placeholder="Ex: Direção de Fotografia - VT Refresco">
-        <div class="time-inputs"><div><label for="inicio">Início (Check-in)</label><input type="time" id="inicio" value="08:00"></div><div><label for="fim">Fim (Check-out)</label><input type="time" id="fim" value="20:00"></div></div>
+        <h3 id="formJobTitle">Job</h3><input type="hidden" id="editJobId">
+        <label>Empresa</label><input type="text" id="empresaJob" placeholder="Pesquisar..." oninput="App.autocomplete(this.value)"><div id="autocompleteContainer"></div>
+        <label>Data</label><input type="date" id="dataJob">
+        <label>Job</label><input type="text" id="nomeJob" placeholder="Ex: Direção de Fotografia">
+        <div class="time-inputs"><div><label>Início</label><input type="time" id="inicio" value="08:00"></div><div><label>Fim</label><input type="time" id="fim" value="20:00"></div></div>
         <div class="button-group-vertical"><button class="btn btn-save" onclick="App.saveJob()">Salvar Lançamento</button><button class="btn btn-cancel" onclick="App.clearJobForm()">Limpar</button></div>
     </section>
     <section class="input-group"><h3>Faturamento por contratante</h3><div class="chart-container"><canvas id="graficoEmpresas"></canvas></div></section>
     <section class="input-group">
         <h3 class="section-title">Jobs Lançados</h3>
-        <div class="toggle-filter-container"><button id="btnFiltroAberto" class="btn-filter active" onclick="App.setFilter('aberto')">Período Aberto</button><button id="btnFiltroArquivado" class="btn-filter" onclick="App.setFilter('arquivado')">Pagos / Arquivados</button></div>
+        <div class="toggle-filter-container">
+            <button id="btnFiltroAberto" class="btn-filter active" onclick="App.setFilter('aberto')">Período Aberto</button>
+            <button id="btnFiltroArquivado" class="btn-filter" onclick="App.setFilter('arquivado')">Pagos / Arquivados</button>
+        </div>
         <div class="search-controls"><button class="btn btn-search" id="btnBuscaTexto" onclick="App.openSearch()">Filtrar</button><button class="btn btn-export" onclick="App.clearSearch()">Limpar</button></div>
-        <div id="searchBox" class="search-box" style="display:none;"><input type="text" id="inputBusca" onkeyup="App.filterTable()" onkeydown="if(event.key==='Enter')event.target.blur()" placeholder="Busque por nomes, projetos, datas..."></div>
+        <div id="searchBox" class="search-box" style="display:none"><input type="text" id="inputBusca" onkeyup="App.filterTable()" placeholder="Buscar..."></div>
         <div id="listaHistorico"></div>
     </section>
     <div class="whatsapp-export"><button class="btn btn-whats" onclick="App.sendWhatsApp()">Enviar para Whatsapp</button></div>
 </main>
 
+<!-- ABA EMPRESAS -->
 <aside id="abaEmpresas" class="app-section">
     <section class="input-group">
-        <h2 id="formEmpresaTitle">Nova Empresa e Regras</h2><input type="hidden" id="cadIdEmpresa" value="">
-        <label for="cadNomeEmpresa">Nome Comercial / Razão Social</label><input type="text" id="cadNomeEmpresa" placeholder="Ex: FADER LIVRE LTDA">
-        <div class="input-row"><div><label for="cadCacheBase">Cachê Fixo Padrão (12h)</label><input type="number" id="cadCacheBase" placeholder="R$ 0,00" step="0.01" min="0"></div><div><label for="cadDiaria">Alimentação / Logística</label><input type="number" id="cadDiaria" placeholder="R$ 0,00" step="0.01" min="0"></div></div>
-        <label for="cadTipoPagamento">Matriz de Ciclo de Faturamento</label><select id="cadTipoPagamento" onchange="App.updatePeriodUI()"><option value="Semanal" selected>Semanal</option><option value="Quinzenal">Quinzenal</option><option value="Mensal">Mensal</option></select>
+        <h2 id="formEmpresaTitle">Nova Empresa e Regras</h2><input type="hidden" id="cadIdEmpresa">
+        <label>Nome</label><input type="text" id="cadNomeEmpresa" placeholder="Razão Social">
+        <div class="input-row"><div><label>Cachê Base (12h)</label><input type="number" id="cadCacheBase" step="0.01" min="0"></div><div><label>Alimentação/Logística</label><input type="number" id="cadDiaria" step="0.01" min="0"></div></div>
+        <label>Ciclo de Faturamento</label><select id="cadTipoPagamento" onchange="App.updatePeriodUI()"><option value="Semanal">Semanal</option><option value="Quinzenal">Quinzenal</option><option value="Mensal">Mensal</option></select>
         <div id="cadPeriodoContainer"></div>
-        <div class="input-row"><div><label for="cadDiasPagamento">Dias Úteis para Liquidação</label><input type="number" id="cadDiasPagamento" value="5" min="0"></div><div><label for="cadNfPercentual">Alíquota de Retenção NF (%)</label><input type="number" id="cadNfPercentual" value="0" min="0" max="100" step="0.01"></div></div>
+        <div class="input-row"><div><label>Dias p/ Liquidação</label><input type="number" id="cadDiasPagamento" value="5" min="0"></div><div><label>Alíquota NF (%)</label><input type="number" id="cadNfPercentual" value="0" min="0" max="100" step="0.01"></div></div>
         <div class="button-group-vertical"><button class="btn btn-save" onclick="App.saveCompany()">Registrar Empresa</button><button class="btn btn-cancel" onclick="App.clearCompanyForm()">Limpar</button></div>
     </section>
     <section class="input-group"><h3>Empresas Cadastradas</h3><div id="listaEmpresasCadastradas"></div></section>
     <section class="input-group export-central">
-        <h2>Central Avançada de Exportação</h2><p class="description-text">Gere faturamentos estruturados ou realize backups locais de segurança.</p>
-        <div class="button-group-vertical"><button class="btn btn-export" onclick="App.exportCSV()">Exportar para Excel (.CSV)</button><button class="btn btn-export" id="btnGerarCopiaSeguranca" onclick="App.createBackup()">Gerar Cópia de Segurança (.JSON)</button><button class="btn btn-cancel" onclick="document.getElementById('restoreFile').click()">Importar Cópia de Segurança (.JSON)</button></div>
-        <input type="file" id="restoreFile" accept=".json" style="display:none;" onchange="App.restoreBackup(event)">
+        <h2>Central de Exportação</h2>
+        <p class="description-text">Exporte dados ou faça backup de segurança.</p>
+        <div class="button-group-vertical">
+            <button class="btn btn-export" onclick="App.exportCSV()">Exportar para Excel (.CSV)</button>
+            <button class="btn btn-export" id="btnGerarCopiaSeguranca" onclick="App.createBackup()">Gerar Backup (.JSON)</button>
+            <button class="btn btn-cancel" onclick="document.getElementById('restoreFile').click()">Importar Backup (.JSON)</button>
+        </div>
+        <input type="file" id="restoreFile" accept=".json" hidden onchange="App.restoreBackup(event)">
     </section>
 </aside>
 
+<!-- ABA CONFIGURAÇÕES -->
 <aside id="abaConfiguracoes" class="app-section">
     <section class="input-group">
-        <h3>Configurações do Aplicativo</h3>
-        <div class="config-group"><h4>Modo de Exibição</h4><label for="themeSelect">Tema</label><select id="themeSelect" onchange="App.setTheme(this.value)"><option value="dark">Escuro</option><option value="light">Claro</option><option value="premium">Premium (Gradiente)</option></select><p class="config-help-text">Escolha entre tema escuro, claro ou premium com efeito vidro.</p></div>
-        <div class="config-group"><h4>Horas Padrão de Trabalho</h4><label for="baseHoursInput">Horas base para cálculo de cachê (padrão 12h)</label><input type="number" id="baseHoursInput" min="1" max="24" value="12" onchange="App.updateBaseHours(this.value)"></div>
-        <div class="config-group"><h4>Notificações de Pagamento</h4><label for="notificationCheckHour">Horário para verificar pagamentos</label><input type="time" id="notificationCheckHour" value="09:00" onchange="App.updateNotificationHour(this.value)"></div>
-        <div class="config-group"><h4>Autenticação Biométrica</h4><div class="toggle-row"><label for="biometricToggle" class="muted-label">Ativar Biometria</label><label class="toggle-switch"><input type="checkbox" id="biometricToggle" disabled><span class="slider"></span></label></div><p class="warning-text">Não suportado nesta versão web.</p></div>
-        <div class="config-group"><h4>Gerenciamento de Chave Master</h4><label for="oldMasterPassword">Chave Master Antiga</label><input type="password" id="oldMasterPassword" placeholder="••••••••" autocomplete="off"><label for="newMasterPassword">Nova Chave Master</label><input type="password" id="newMasterPassword" placeholder="••••••••" autocomplete="new-password"><label for="confirmNewMasterPassword">Confirmar Nova Chave Master</label><input type="password" id="confirmNewMasterPassword" placeholder="••••••••" autocomplete="new-password"><button class="btn btn-save" onclick="App.changePassword()" style="background:var(--blue)">Alterar Chave Master</button><p class="warning-text">A chave é armazenada localmente.</p></div>
+        <h3>Configurações</h3>
+        <div class="config-group"><h4>Modo de Exibição</h4>
+            <div class="toggle-row"><label>Modo Escuro / Claro</label>
+                <label class="toggle-switch"><input type="checkbox" id="themeToggle" onchange="App.toggleTheme()"><span class="slider"></span></label>
+            </div>
+        </div>
+        <div class="config-group"><h4>Horas Padrão</h4><label>Horas base para cálculo</label><input type="number" id="baseHoursInput" min="1" max="24" value="12" onchange="App.updateBaseHours(this.value)"></div>
+        <div class="config-group"><h4>Notificações</h4><label>Horário de verificação</label><input type="time" id="notificationCheckHour" value="09:00" onchange="App.updateNotificationHour(this.value)"></div>
+        <div class="config-group"><h4>Biometria</h4><p class="warning-text">Não disponível na versão web.</p></div>
+        <div class="config-group"><h4>Alterar Chave</h4>
+            <label>Chave Atual</label><input type="password" id="oldMasterPassword">
+            <label>Nova Chave</label><input type="password" id="newMasterPassword">
+            <label>Confirmar</label><input type="password" id="confirmNewMasterPassword">
+            <button class="btn btn-save" style="background:var(--blue)" onclick="App.changePassword()">Alterar</button>
+        </div>
     </section>
 </aside>
 
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
-const CONFIG = Object.freeze({
-    DB_NAME: 'CacheFinal_V33', DB_VERSION: 1,
-    STORAGE_KEYS: Object.freeze({
-        SENHA:'senha_cache_control',EMAIL:'email_cache_control',TELEFONE:'telefone_cache_control',
-        THEME:'app_theme',BASE_HOURS:'base_hours',NOTIFICATION_HOUR:'notification_check_hour',
-        AUTO_BACKUP:'fader_livre_auto_backup',NOTIFICATIONS_STATUS:'job_notifications_status'
-    }),
-    DEFAULTS: Object.freeze({
-        BASE_HOURS:12,NOTIFICATION_HOUR:'09:00',THEME:'dark',
-        JOB_START_TIME:'08:00',JOB_END_TIME:'20:00',DIAS_PAGAMENTO:5,NF_PERCENTUAL:0
-    }),
-    WEEKDAYS: Object.freeze({0:'Domingo',1:'Segunda-feira',2:'Terça-feira',3:'Quarta-feira',4:'Quinta-feira',5:'Sexta-feira',6:'Sábado'}),
-    CHART_COLORS: Object.freeze(['#38bdf8','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316','#a855f7','#06b6d4'])
-});
+const C = {
+    DB:'CacheFinal_V33', VER:1,
+    KEYS:{ SENHA:'s_cc', EMAIL:'e_cc', TEL:'t_cc', THEME:'theme', HOURS:'hrs', NOTIF:'notif', BACKUP:'bak', NOTIFSTAT:'nstat' },
+    DEF:{ HOURS:12, NOTIF:'09:00', JOB_START:'08:00', JOB_END:'20:00', DIAS:5, NF:0 },
+    WEEKDAYS:['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+    COLORS:['#38bdf8','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316','#a855f7','#06b6d4']
+};
 
 const App = {
-    db:null, ocultarValores:false, filtroVisualizacao:'aberto', colorMap:{}, baseHours:CONFIG.DEFAULTS.BASE_HOURS,
-    notificationHour:CONFIG.DEFAULTS.NOTIFICATION_HOUR, chartInstance:null, currentTheme:CONFIG.DEFAULTS.THEME,
+    db:null, hideVals:false, filter:'aberto', cmap:{}, baseH:C.DEF.HOURS, notifH:C.DEF.NOTIF, chart:null,
 
     init(){
-        console.log('v4.2 init');
-        this.loadSettings();
+        const th = localStorage.getItem(C.KEYS.THEME)||'dark';
+        if(th==='light') document.body.classList.add('light-mode');
+        document.getElementById('themeToggle').checked = (th==='light');
+        this.baseH = parseFloat(localStorage.getItem(C.KEYS.HOURS))||C.DEF.HOURS;
+        this.notifH = localStorage.getItem(C.KEYS.NOTIF)||C.DEF.NOTIF;
+        document.getElementById('baseHoursInput').value = this.baseH;
+        document.getElementById('notificationCheckHour').value = this.notifH;
+        if(!localStorage.getItem(C.KEYS.SENHA)) document.getElementById('senhaInput').placeholder='Crie uma chave';
         this.openDB();
     },
-    loadSettings(){
-        this.currentTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.THEME) || CONFIG.DEFAULTS.THEME;
-        this.applyTheme(this.currentTheme);
-        const ts = document.getElementById('themeSelect'); if(ts) ts.value = this.currentTheme;
-        const savedHours = localStorage.getItem(CONFIG.STORAGE_KEYS.BASE_HOURS);
-        if(savedHours){ this.baseHours=parseFloat(savedHours); document.getElementById('baseHoursInput').value=this.baseHours; }
-        const savedNotif = localStorage.getItem(CONFIG.STORAGE_KEYS.NOTIFICATION_HOUR);
-        if(savedNotif){ this.notificationHour=savedNotif; document.getElementById('notificationCheckHour').value=this.notificationHour; }
-        if(!localStorage.getItem(CONFIG.STORAGE_KEYS.SENHA)) document.getElementById('senhaInput').placeholder='Defina sua chave no primeiro acesso';
-    },
-    applyTheme(theme){
-        document.body.classList.remove('light-mode','premium-mode');
-        if(theme==='light') document.body.classList.add('light-mode');
-        else if(theme==='premium') document.body.classList.add('premium-mode');
-    },
-    setTheme(theme){
-        this.currentTheme=theme;
-        localStorage.setItem(CONFIG.STORAGE_KEYS.THEME, theme);
-        this.applyTheme(theme);
-        this.showToast('Tema alterado para '+(theme==='dark'?'Escuro':theme==='light'?'Claro':'Premium'));
-    },
+
     openDB(){
-        const request = indexedDB.open(CONFIG.DB_NAME, CONFIG.DB_VERSION);
-        request.onupgradeneeded = (event) => {
-            const d = event.target.result;
-            if(!d.objectStoreNames.contains('jobs')) d.createObjectStore('jobs',{keyPath:'id',autoIncrement:true});
-            if(!d.objectStoreNames.contains('empresas')) d.createObjectStore('empresas',{keyPath:'id',autoIncrement:true});
-        };
-        request.onsuccess = (event) => {
-            this.db = event.target.result;
-            console.log('DB ok');
-            if(document.getElementById('loginScreen').style.display==='none') this.initUI();
-        };
-        request.onerror = () => alert('Erro crítico: Banco de dados recusou conexão.');
+        const r = indexedDB.open(C.DB, C.VER);
+        r.onupgradeneeded = e => { const d=e.target.result; if(!d.objectStoreNames.contains('jobs')) d.createObjectStore('jobs',{keyPath:'id',autoIncrement:true}); if(!d.objectStoreNames.contains('empresas')) d.createObjectStore('empresas',{keyPath:'id',autoIncrement:true}); };
+        r.onsuccess = e => { this.db=e.target.result; if(document.getElementById('loginScreen').style.display==='none') this.initUI(); };
+        r.onerror = () => alert('Erro no banco de dados');
     },
+
     initUI(){
-        document.getElementById('dataJob').value = new Date().toISOString().split('T')[0];
-        this.updateEyeIcon();
-        this.updateDashboard();
-        this.updateCompanyList();
-        this.updatePeriodUI();
-        this.requestNotificationPermission();
-        this.checkDuePayments();
-        this.checkOverduePayments();
-    },
-    updateEyeIcon(){
-        document.getElementById('eyeIconOpen').style.display = this.ocultarValores ? 'none':'block';
-        document.getElementById('eyeIconClosed').style.display = this.ocultarValores ? 'block':'none';
-    },
-    showToast(msg,type=''){
-        const container = document.getElementById('toastContainer');
-        const toast = document.createElement('div');
-        toast.className = 'toast '+type;
-        toast.textContent = msg;
-        container.appendChild(toast);
-        setTimeout(()=>{ toast.style.opacity='0'; setTimeout(()=>toast.remove(),300); },4000);
+        document.getElementById('dataJob').value = new Date().toISOString().slice(0,10);
+        this.updateEye(); this.updateDash(); this.updateCoList(); this.updatePeriodUI();
+        this.reqNotif(); this.checkPays(); this.checkOverdue();
     },
 
-    login(){
-        const senha = document.getElementById('senhaInput').value;
-        const senhaSalva = localStorage.getItem(CONFIG.STORAGE_KEYS.SENHA);
-        if(!senhaSalva){
-            if(!senha || senha.trim().length<4){ alert('Defina uma Chave Master de pelo menos 4 caracteres.'); return; }
-            localStorage.setItem(CONFIG.STORAGE_KEYS.SENHA, senha.trim());
-            localStorage.setItem(CONFIG.STORAGE_KEYS.EMAIL, 'suporte@faderlivre.com');
-            localStorage.setItem(CONFIG.STORAGE_KEYS.TELEFONE, '');
-            this.hideLogin(); return;
-        }
-        if(senha===senhaSalva){ this.hideLogin(); }
-        else { alert('Chave Master Incorreta.'); }
-    },
-    hideLogin(){ document.getElementById('loginScreen').style.display='none'; this.initUI(); },
-    toggleRegistration(){
-        const box = document.getElementById('novaSenhaBox');
-        box.style.display = (box.style.display==='none'||box.style.display==='')?'block':'none';
-    },
-    registerCredentials(){
-        const novaSenha = document.getElementById('novaSenha').value;
-        const email = document.getElementById('emailRecuperacao').value;
-        const telefone = document.getElementById('telefoneRecuperacao').value;
-        if(!novaSenha || !email){ alert('Chave Master e E-mail são obrigatórios.'); return; }
-        if(novaSenha.trim().length<4){ alert('Chave Master deve ter pelo menos 4 caracteres.'); return; }
-        localStorage.setItem(CONFIG.STORAGE_KEYS.SENHA, novaSenha.trim());
-        localStorage.setItem(CONFIG.STORAGE_KEYS.EMAIL, email.trim());
-        localStorage.setItem(CONFIG.STORAGE_KEYS.TELEFONE, telefone.trim());
-        alert('Credenciais registradas!'); window.location.reload();
-    },
-    recoverPassword(){
-        const email = localStorage.getItem(CONFIG.STORAGE_KEYS.EMAIL);
-        const telefone = localStorage.getItem(CONFIG.STORAGE_KEYS.TELEFONE);
-        let msg = 'Contatos de recuperação:\n';
-        if(email) msg += 'E-mail: '+email+'\n';
-        if(telefone) msg += 'Telefone: '+telefone+'\n';
-        if(!email && !telefone) msg = 'Nenhum dado configurado.';
-        alert(msg);
-    },
-    changePassword(){
-        const oldPwd = document.getElementById('oldMasterPassword').value;
-        const newPwd = document.getElementById('newMasterPassword').value;
-        const confirmPwd = document.getElementById('confirmNewMasterPassword').value;
-        const currentPwd = localStorage.getItem(CONFIG.STORAGE_KEYS.SENHA);
-        if(!oldPwd||!newPwd||!confirmPwd){ alert('Todos os campos devem ser preenchidos.'); return; }
-        if(oldPwd!==currentPwd){ alert('Chave Master Antiga incorreta.'); return; }
-        if(newPwd.length<4){ alert('Nova Chave deve ter pelo menos 4 caracteres.'); return; }
-        if(newPwd!==confirmPwd){ alert('Nova Chave e confirmação não coincidem.'); return; }
-        localStorage.setItem(CONFIG.STORAGE_KEYS.SENHA, newPwd.trim());
-        alert('Chave Master alterada com sucesso!');
-        document.getElementById('oldMasterPassword').value='';
-        document.getElementById('newMasterPassword').value='';
-        document.getElementById('confirmNewMasterPassword').value='';
-    },
-    emergencyReset(){
-        if(!confirm('⚠️ ATENÇÃO: Isso apagará TODOS os dados permanentemente!\n\nEsta ação é IRREVERSÍVEL.\n\nContinuar?')) return;
-        if(!confirm('Tem certeza ABSOLUTA?')) return;
-        localStorage.clear();
-        const deleteRequest = indexedDB.deleteDatabase(CONFIG.DB_NAME);
-        deleteRequest.onsuccess = () => { alert('Sistema redefinido! Reiniciando...'); window.location.reload(); };
-        deleteRequest.onerror = () => { alert('Erro ao redefinir. Tentando reiniciar...'); window.location.reload(); };
-    },
-
-    switchTab(tabId, btn){
-        document.querySelectorAll('.app-section').forEach(s=>s.classList.remove('active'));
-        document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        if(btn) btn.classList.add('active');
-        if(tabId==='abaEmpresas'){ this.updateCompanyList(); this.updatePeriodUI(); }
-        else if(tabId==='abaJobs'){ this.updateDashboard(); }
-        else if(tabId==='abaConfiguracoes'){
-            document.getElementById('themeSelect').value = this.currentTheme;
-            document.getElementById('baseHoursInput').value = this.baseHours;
-            document.getElementById('notificationCheckHour').value = this.notificationHour;
-        }
-    },
-
-    toggleValues(){ this.ocultarValores=!this.ocultarValores; this.updateEyeIcon(); this.updateDashboard(); },
-
-    formatCurrency(valor){
-        if(this.ocultarValores) return 'R$ •••••';
-        try { return Number(valor).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
-        catch(e){ return 'R$ 0,00'; }
-    },
-    formatDate(dataISO){ if(!dataISO) return ''; const [a,m,d]=dataISO.split('-'); return `${d}/${m}/${a}`; },
-    calcTimeDiff(h1,h2){
-        const [hh1,mm1]=h1.split(':').map(Number); const [hh2,mm2]=h2.split(':').map(Number);
-        let mins1=hh1*60+mm1, mins2=hh2*60+mm2;
-        if(mins2<mins1) mins2+=24*60;
-        return mins2-mins1;
-    },
-    autoBackup(){
-        if(!this.db) return;
-        const txJ = this.db.transaction('jobs','readonly');
-        txJ.objectStore('jobs').getAll().onsuccess = (e) => {
-            const jobs = e.target.result;
-            const txE = this.db.transaction('empresas','readonly');
-            txE.objectStore('empresas').getAll().onsuccess = (e2) => {
-                const empresas = e2.target.result;
-                localStorage.setItem(CONFIG.STORAGE_KEYS.AUTO_BACKUP, JSON.stringify({jobs,empresas,dataBackup:new Date().toISOString()}));
+    updateEye(){ document.getElementById('eyeIconOpen').style.display=this.hideVals?'none':'block'; document.getElementById('eyeIconClosed').style.display=this.hideVals?'block':'none'; },
+    toast(m,t=''){ const c=document.getElementById('toastContainer'); const d=document.createElement('div'); d.className='toast '+t; d.textContent=m; c.appendChild(d); setTimeout(()=>{d.style.opacity='0';setTimeout(()=>d.remove(),300)},3000); },
+    fmt(v){ return this.hideVals?'R$ •••••':Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); },
+    fmtDate(d){ if(!d)return''; const[a,m,dia]=d.split('-'); return`${dia}/${m}/${a}`; },
+    timeDiff(a,b){ const[ah,am]=a.split(':').map(Number),[bh,bm]=b.split(':').map(Number); let t1=ah*60+am, t2=bh*60+bm; if(t2<t1) t2+=1440; return t2-t1; },
+    autoBak(){
+        if(!this.db)return;
+        const t1=this.db.transaction('jobs','readonly'); t1.objectStore('jobs').getAll().onsuccess=e1=>{
+            const t2=this.db.transaction('empresas','readonly'); t2.objectStore('empresas').getAll().onsuccess=e2=>{
+                localStorage.setItem(C.KEYS.BACKUP, JSON.stringify({jobs:e1.target.result, empresas:e2.target.result, ts:new Date().toISOString()}));
             };
         };
     },
 
+    // Auth
+    login(){
+        const pw=document.getElementById('senhaInput').value, saved=localStorage.getItem(C.KEYS.SENHA);
+        if(!saved){ if(!pw||pw.length<4){alert('Mínimo 4 caracteres');return;} localStorage.setItem(C.KEYS.SENHA,pw); localStorage.setItem(C.KEYS.EMAIL,'suporte@faderlivre.com'); this.hideLogin(); }
+        else if(pw===saved) this.hideLogin(); else alert('Chave incorreta');
+    },
+    hideLogin(){ document.getElementById('loginScreen').style.display='none'; this.initUI(); },
+    toggleReg(){ const b=document.getElementById('novaSenhaBox'); b.style.display=b.style.display==='none'?'block':'none'; },
+    regCreds(){
+        const pw=document.getElementById('novaSenha').value, em=document.getElementById('emailRecuperacao').value;
+        if(!pw||!em||pw.length<4){alert('Preencha todos os campos (mín 4 caracteres)');return;}
+        localStorage.setItem(C.KEYS.SENHA,pw); localStorage.setItem(C.KEYS.EMAIL,em);
+        localStorage.setItem(C.KEYS.TEL, document.getElementById('telefoneRecuperacao').value); alert('Registrado!'); location.reload();
+    },
+    recover(){
+        const em=localStorage.getItem(C.KEYS.EMAIL), tel=localStorage.getItem(C.KEYS.TEL);
+        alert(`Contatos:\nE-mail: ${em||'não cadastrado'}\nTelefone: ${tel||'não cadastrado'}`);
+    },
+    changePW(){
+        const old=document.getElementById('oldMasterPassword').value, nw=document.getElementById('newMasterPassword').value, cf=document.getElementById('confirmNewMasterPassword').value;
+        if(old!==localStorage.getItem(C.KEYS.SENHA)){alert('Chave atual incorreta');return;}
+        if(nw.length<4||nw!==cf){alert('Nova chave inválida ou não confere');return;}
+        localStorage.setItem(C.KEYS.SENHA,nw); alert('Alterada!'); document.getElementById('oldMasterPassword').value=document.getElementById('newMasterPassword').value=document.getElementById('confirmNewMasterPassword').value='';
+    },
+    emergencyReset(){
+        if(!confirm('Apagar TODOS os dados?'))return; localStorage.clear(); indexedDB.deleteDatabase(C.DB).onsuccess=()=>location.reload();
+    },
+
+    switchTab(id,btn){
+        document.querySelectorAll('.app-section').forEach(s=>s.classList.remove('active'));
+        document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+        document.getElementById(id).classList.add('active'); if(btn)btn.classList.add('active');
+        if(id==='abaEmpresas'){ this.updateCoList(); this.updatePeriodUI(); }
+        else if(id==='abaJobs') this.updateDash();
+        else if(id==='abaConfiguracoes'){ document.getElementById('themeToggle').checked=document.body.classList.contains('light-mode'); document.getElementById('baseHoursInput').value=this.baseH; document.getElementById('notificationCheckHour').value=this.notifH; }
+    },
+
+    toggleTheme(){ document.body.classList.toggle('light-mode'); localStorage.setItem(C.KEYS.THEME, document.body.classList.contains('light-mode')?'light':'dark'); },
+    updateBaseHours(v){ const h=parseFloat(v); if(h<1||h>24){alert('1-24');return;} this.baseH=h; localStorage.setItem(C.KEYS.HOURS,h); this.toast('Horas base: '+h+'h'); },
+    updateNotifHour(v){ this.notifH=v; localStorage.setItem(C.KEYS.NOTIF,v); this.toast('Notificação: '+v); },
+    toggleValues(){ this.hideVals=!this.hideVals; this.updateEye(); this.updateDash(); },
+
     updatePeriodUI(){
-        const tipo = document.getElementById('cadTipoPagamento').value;
-        const container = document.getElementById('cadPeriodoContainer');
-        if(tipo==='Semanal'){
-            container.innerHTML = `<div class="config-group"><h4>Período Semanal</h4><div class="input-row"><div><label for="cadInicioSemana">Dia de Início</label><select id="cadInicioSemana">${Object.entries(CONFIG.WEEKDAYS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div><div><label for="cadFimSemana">Dia de Corte</label><select id="cadFimSemana">${Object.entries(CONFIG.WEEKDAYS).map(([k,v])=>`<option value="${k}" ${k==='0'?'selected':''}>${v}</option>`).join('')}</select></div></div></div>`;
-        } else if(tipo==='Quinzenal'){
-            container.innerHTML = `<div class="config-group"><h4>Período Quinzenal</h4><div class="input-row"><div><label for="cadInicioPrimeiraQuinzena">Início 1ª Quinzena</label><input type="number" id="cadInicioPrimeiraQuinzena" min="1" max="31" value="1"></div><div><label for="cadFimPrimeiraQuinzena">Fim 1ª Quinzena</label><input type="number" id="cadFimPrimeiraQuinzena" min="1" max="31" value="15"></div></div><label for="cadFimSegundaQuinzena">Fim 2ª Quinzena</label><input type="number" id="cadFimSegundaQuinzena" min="1" max="31" value="30"><p class="config-help-text">Início da 2ª quinzena = dia seguinte ao fim da 1ª.</p></div>`;
-        } else {
-            container.innerHTML = `<div class="config-group"><h4>Período Mensal</h4><label for="cadFimPeriodo">Dia Final do Ciclo</label><input type="number" id="cadFimPeriodo" min="1" max="31" value="30"><p class="config-help-text">Início sempre no dia 1.</p></div>`;
-        }
+        const t=document.getElementById('cadTipoPagamento').value, c=document.getElementById('cadPeriodoContainer');
+        if(t==='Semanal') c.innerHTML = `<div class="config-group"><h4>Período Semanal</h4><div class="input-row"><div><label>Início</label><select id="cadInicioSemana">${C.WEEKDAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}</select></div><div><label>Corte</label><select id="cadFimSemana">${C.WEEKDAYS.map((d,i)=>`<option value="${i}" ${i===0?'selected':''}>${d}</option>`).join('')}</select></div></div></div>`;
+        else if(t==='Quinzenal') c.innerHTML = `<div class="config-group"><h4>Período Quinzenal</h4><div class="input-row"><div><label>Início 1ª</label><input type="number" id="cadInicioPrimeiraQuinzena" value="1" min="1" max="31"></div><div><label>Fim 1ª</label><input type="number" id="cadFimPrimeiraQuinzena" value="15" min="1" max="31"></div></div><label>Fim 2ª</label><input type="number" id="cadFimSegundaQuinzena" value="30" min="1" max="31"><p class="config-help-text">Início 2ª = dia seguinte ao fim da 1ª.</p></div>`;
+        else c.innerHTML = `<div class="config-group"><h4>Período Mensal</h4><label>Dia Final</label><input type="number" id="cadFimPeriodo" value="30" min="1" max="31"><p class="config-help-text">Início sempre dia 1.</p></div>`;
     },
 
     saveCompany(){
-        const nome = document.getElementById('cadNomeEmpresa').value.trim();
-        const idEdicao = document.getElementById('cadIdEmpresa').value;
-        if(!nome){ alert('Nome da empresa é obrigatório.'); return; }
-        const cacheBase = parseFloat(document.getElementById('cadCacheBase').value)||0;
-        const diaria = parseFloat(document.getElementById('cadDiaria').value)||0;
-        const nfPerc = parseFloat(document.getElementById('cadNfPercentual').value)||0;
-        const diasPg = parseInt(document.getElementById('cadDiasPagamento').value)||0;
-        const tipoPg = document.getElementById('cadTipoPagamento').value;
-        if(nfPerc<0||nfPerc>100){ alert('Alíquota NF deve ser entre 0 e 100.'); return; }
-        const payload = { nome, cacheBase, diaria, tipoPagamento:tipoPg, diasPagamento:diasPg, nfPercentual:nfPerc };
-        if(tipoPg==='Semanal'){
-            payload.inicioSemana = parseInt(document.getElementById('cadInicioSemana').value);
-            payload.fimSemana = parseInt(document.getElementById('cadFimSemana').value);
-        } else if(tipoPg==='Quinzenal'){
-            payload.inicioPrimeiraQuinzena = parseInt(document.getElementById('cadInicioPrimeiraQuinzena').value);
-            payload.fimPrimeiraQuinzena = parseInt(document.getElementById('cadFimPrimeiraQuinzena').value);
-            payload.fimSegundaQuinzena = parseInt(document.getElementById('cadFimSegundaQuinzena').value);
-        } else {
-            payload.fimPeriodo = parseInt(document.getElementById('cadFimPeriodo').value);
-        }
-        if(idEdicao) payload.id = parseInt(idEdicao);
-        const tx = this.db.transaction('empresas','readwrite');
-        const store = tx.objectStore('empresas');
-        const req = idEdicao ? store.put(payload) : store.add(payload);
-        req.onsuccess = () => {
-            this.showToast('Empresa salva!','success');
-            this.autoBackup();
-            this.clearCompanyForm();
-            this.updateCompanyList();
-            localStorage.removeItem(CONFIG.STORAGE_KEYS.NOTIFICATIONS_STATUS);
-            this.updateDashboard();
-        };
-        req.onerror = (e) => { console.error(e); this.showToast('Erro ao salvar empresa.','error'); };
+        const nome=document.getElementById('cadNomeEmpresa').value.trim(), idEd=document.getElementById('cadIdEmpresa').value;
+        if(!nome){alert('Nome obrigatório');return;}
+        const payload = { nome, cacheBase:parseFloat(document.getElementById('cadCacheBase').value)||0, diaria:parseFloat(document.getElementById('cadDiaria').value)||0, tipoPagamento:document.getElementById('cadTipoPagamento').value, diasPagamento:parseInt(document.getElementById('cadDiasPagamento').value)||0, nfPercentual:parseFloat(document.getElementById('cadNfPercentual').value)||0 };
+        const t=payload.tipoPagamento;
+        if(t==='Semanal'){ payload.inicioSemana=parseInt(document.getElementById('cadInicioSemana').value); payload.fimSemana=parseInt(document.getElementById('cadFimSemana').value); }
+        else if(t==='Quinzenal'){ payload.inicioPrimeiraQuinzena=parseInt(document.getElementById('cadInicioPrimeiraQuinzena').value); payload.fimPrimeiraQuinzena=parseInt(document.getElementById('cadFimPrimeiraQuinzena').value); payload.fimSegundaQuinzena=parseInt(document.getElementById('cadFimSegundaQuinzena').value); }
+        else payload.fimPeriodo=parseInt(document.getElementById('cadFimPeriodo').value);
+        if(idEd) payload.id=parseInt(idEd);
+        const tx=this.db.transaction('empresas','readwrite'), store=tx.objectStore('empresas');
+        (idEd?store.put(payload):store.add(payload)).onsuccess=()=>{ this.toast('Empresa salva!','success'); this.autoBak(); this.clearCoForm(); this.updateCoList(); this.updateDash(); };
     },
-
     editCompany(id){
-        const tx = this.db.transaction('empresas','readonly');
-        tx.objectStore('empresas').get(id).onsuccess = (e) => {
-            const d = e.target.result;
-            if(!d){ alert('Empresa não encontrada.'); return; }
-            document.getElementById('formEmpresaTitle').textContent = 'Editando: '+d.nome;
-            document.getElementById('cadIdEmpresa').value = d.id;
-            document.getElementById('cadNomeEmpresa').value = d.nome;
-            document.getElementById('cadCacheBase').value = d.cacheBase;
-            document.getElementById('cadDiaria').value = d.diaria;
-            document.getElementById('cadTipoPagamento').value = d.tipoPagamento;
-            document.getElementById('cadNfPercentual').value = d.nfPercentual||0;
-            document.getElementById('cadDiasPagamento').value = d.diasPagamento||0;
+        this.db.transaction('empresas').objectStore('empresas').get(id).onsuccess=e=>{
+            const d=e.target.result; if(!d)return;
+            document.getElementById('formEmpresaTitle').textContent='Editando: '+d.nome;
+            document.getElementById('cadIdEmpresa').value=d.id; document.getElementById('cadNomeEmpresa').value=d.nome;
+            document.getElementById('cadCacheBase').value=d.cacheBase; document.getElementById('cadDiaria').value=d.diaria;
+            document.getElementById('cadTipoPagamento').value=d.tipoPagamento;
+            document.getElementById('cadNfPercentual').value=d.nfPercentual||0;
+            document.getElementById('cadDiasPagamento').value=d.diasPagamento||0;
             this.updatePeriodUI();
             setTimeout(()=>{
-                if(d.tipoPagamento==='Semanal'){
-                    document.getElementById('cadInicioSemana').value = d.inicioSemana||1;
-                    document.getElementById('cadFimSemana').value = d.fimSemana||0;
-                } else if(d.tipoPagamento==='Quinzenal'){
-                    document.getElementById('cadInicioPrimeiraQuinzena').value = d.inicioPrimeiraQuinzena||1;
-                    document.getElementById('cadFimPrimeiraQuinzena').value = d.fimPrimeiraQuinzena||15;
-                    document.getElementById('cadFimSegundaQuinzena').value = d.fimSegundaQuinzena||30;
-                } else {
-                    document.getElementById('cadFimPeriodo').value = d.fimPeriodo||30;
-                }
+                if(d.tipoPagamento==='Semanal'){ document.getElementById('cadInicioSemana').value=d.inicioSemana||1; document.getElementById('cadFimSemana').value=d.fimSemana||0; }
+                else if(d.tipoPagamento==='Quinzenal'){ document.getElementById('cadInicioPrimeiraQuinzena').value=d.inicioPrimeiraQuinzena||1; document.getElementById('cadFimPrimeiraQuinzena').value=d.fimPrimeiraQuinzena||15; document.getElementById('cadFimSegundaQuinzena').value=d.fimSegundaQuinzena||30; }
+                else document.getElementById('cadFimPeriodo').value=d.fimPeriodo||30;
             },100);
-            window.scrollTo({top:0,behavior:'smooth'});
+            scrollTo(0,0);
         };
     },
-
     deleteCompany(id){
-        if(!confirm('Remover permanentemente esta empresa?')) return;
-        const tx = this.db.transaction('empresas','readwrite');
-        tx.objectStore('empresas').delete(id).onsuccess = () => {
-            this.autoBackup(); this.updateCompanyList();
-            localStorage.removeItem(CONFIG.STORAGE_KEYS.NOTIFICATIONS_STATUS);
-            this.updateDashboard();
-        };
+        if(!confirm('Remover empresa?'))return;
+        this.db.transaction('empresas','readwrite').objectStore('empresas').delete(id).onsuccess=()=>{ this.autoBak(); this.updateCoList(); this.updateDash(); };
     },
-
-    updateCompanyList(){
-        if(!this.db) return;
-        const container = document.getElementById('listaEmpresasCadastradas');
-        container.innerHTML = '';
-        const tx = this.db.transaction('empresas','readonly');
-        tx.objectStore('empresas').getAll().onsuccess = (e) => {
-            const empresas = e.target.result;
-            if(empresas.length===0){ container.innerHTML = '<p style="color:var(--muted);text-align:center;padding:10px;">Nenhuma empresa cadastrada.</p>'; return; }
-            empresas.forEach(emp => {
-                const card = document.createElement('div');
-                card.className = 'company-card';
-                card.innerHTML = `
-                    <div class="company-card-header"><span class="company-name">${emp.nome}</span></div>
+    updateCoList(){
+        if(!this.db)return;
+        const c=document.getElementById('listaEmpresasCadastradas'); c.innerHTML='';
+        this.db.transaction('empresas').objectStore('empresas').getAll().onsuccess=e=>{
+            const arr=e.target.result;
+            if(!arr.length){ c.innerHTML='<p style="color:var(--muted);text-align:center">Nenhuma empresa</p>'; return; }
+            arr.forEach(emp=>{
+                const card=document.createElement('div'); card.className='company-card';
+                card.innerHTML = `<div class="company-card-header"><span class="company-name">${emp.nome}</span></div>
                     <div class="company-card-body">
                         <div class="meta-text">Base: R$ ${emp.cacheBase.toFixed(2)} | Diária: R$ ${emp.diaria.toFixed(2)}</div>
                         <div class="meta-text">Ciclo: ${emp.tipoPagamento} | NF: ${emp.nfPercentual}%</div>
@@ -528,489 +395,271 @@ const App = {
                         <button class="btn-edit-inline" onclick="App.editCompany(${emp.id})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
                         <button class="btn-del" onclick="App.deleteCompany(${emp.id})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                     </div>`;
-                container.appendChild(card);
+                c.appendChild(card);
             });
         };
     },
-
-    clearCompanyForm(){
-        document.getElementById('formEmpresaTitle').textContent = 'Nova Empresa e Regras';
-        document.getElementById('cadIdEmpresa').value = '';
-        document.getElementById('cadNomeEmpresa').value = '';
-        document.getElementById('cadCacheBase').value = '';
-        document.getElementById('cadDiaria').value = '';
-        document.getElementById('cadNfPercentual').value = CONFIG.DEFAULTS.NF_PERCENTUAL;
-        document.getElementById('cadTipoPagamento').value = 'Semanal';
-        document.getElementById('cadDiasPagamento').value = CONFIG.DEFAULTS.DIAS_PAGAMENTO;
-        this.updatePeriodUI();
+    clearCoForm(){
+        document.getElementById('formEmpresaTitle').textContent='Nova Empresa e Regras'; document.getElementById('cadIdEmpresa').value='';
+        document.getElementById('cadNomeEmpresa').value=''; document.getElementById('cadCacheBase').value=''; document.getElementById('cadDiaria').value='';
+        document.getElementById('cadNfPercentual').value=C.DEF.NF; document.getElementById('cadTipoPagamento').value='Semanal';
+        document.getElementById('cadDiasPagamento').value=C.DEF.DIAS; this.updatePeriodUI();
     },
-
-    autocomplete(query){
-        const container = document.getElementById('autocompleteContainer');
-        container.innerHTML = '';
-        if(!this.db||!query||query.trim()==='') return;
-        const tx = this.db.transaction('empresas','readonly');
-        tx.objectStore('empresas').getAll().onsuccess = (e) => {
-            const empresas = e.target.result;
-            const filtradas = empresas.filter(emp=>emp.nome.toLowerCase().includes(query.toLowerCase()));
-            if(filtradas.length>0){
-                const lista = document.createElement('div'); lista.className='autocomplete-list';
-                filtradas.forEach(emp=>{
-                    const item = document.createElement('div'); item.className='autocomplete-item'; item.textContent=emp.nome;
-                    item.onclick = () => { document.getElementById('empresaJob').value=emp.nome; container.innerHTML=''; };
-                    lista.appendChild(item);
-                });
-                container.appendChild(lista);
-            }
+    autocomplete(q){
+        const c=document.getElementById('autocompleteContainer'); c.innerHTML=''; if(!this.db||!q||!q.trim())return;
+        this.db.transaction('empresas').objectStore('empresas').getAll().onsuccess=e=>{
+            const arr=e.target.result.filter(x=>x.nome.toLowerCase().includes(q.toLowerCase()));
+            if(!arr.length)return;
+            const l=document.createElement('div'); l.className='autocomplete-list';
+            arr.forEach(x=>{ const d=document.createElement('div'); d.className='autocomplete-item'; d.textContent=x.nome; d.onclick=()=>{document.getElementById('empresaJob').value=x.nome;c.innerHTML='';}; l.appendChild(d); });
+            c.appendChild(l);
         };
     },
 
+    // Jobs
     saveJob(){
-        const dataInput = document.getElementById('dataJob').value;
-        const nomeEmpresa = document.getElementById('empresaJob').value.trim();
-        const idEdicao = document.getElementById('editJobId').value;
-        if(!dataInput||!nomeEmpresa){ alert('Data e Empresa são obrigatórios.'); return; }
-        const txEmp = this.db.transaction('empresas','readonly');
-        txEmp.objectStore('empresas').getAll().onsuccess = (e) => {
-            const empresas = e.target.result;
-            const empresa = empresas.find(emp=>emp.nome.toLowerCase()===nomeEmpresa.toLowerCase());
-            if(!empresa){ alert(`Empresa '${nomeEmpresa}' não encontrada. Cadastre-a primeiro.`); return; }
-            const cacheBase = parseFloat(empresa.cacheBase||0);
-            const diaria = parseFloat(empresa.diaria||0);
-            const percNF = parseFloat(empresa.nfPercentual||0);
-            const sInicio = document.getElementById('inicio').value;
-            const sFim = document.getElementById('fim').value;
-            const difMin = this.calcTimeDiff(sInicio,sFim);
-            const tHoras = difMin/60;
-            const vExtras = Math.max(0, tHoras - this.baseHours);
-            const cHora = this.baseHours>0 ? cacheBase/this.baseHours : 0;
-            const rExtras = vExtras*cHora;
-            const fBruto = cacheBase + diaria + rExtras;
-            const imposto = fBruto*(percNF/100);
-            const previsao = this.calcPaymentDate(dataInput, empresa);
-            const payload = {
-                data:dataInput, empresa:empresa.nome, job:document.getElementById('nomeJob').value||'Job Operacional',
-                cache:cacheBase, diaria:diaria, extra:rExtras, total:fBruto, valorNF:imposto,
-                horas:tHoras.toFixed(1), inicio:sInicio, fim:sFim,
-                tipoPagamento:empresa.tipoPagamento, diasPagamento:parseInt(empresa.diasPagamento||0),
-                fimPeriodo:parseInt(empresa.fimPeriodo||30), inicioSemana:parseInt(empresa.inicioSemana||1),
-                fimSemana:parseInt(empresa.fimSemana||0), inicioPrimeiraQuinzena:parseInt(empresa.inicioPrimeiraQuinzena||1),
-                fimPrimeiraQuinzena:parseInt(empresa.fimPrimeiraQuinzena||15),
-                fimSegundaQuinzena:parseInt(empresa.fimSegundaQuinzena||30),
-                previsaoPagamento:previsao, pago:false
-            };
-            if(idEdicao) payload.id = parseInt(idEdicao);
-            const txSave = this.db.transaction('jobs','readwrite');
-            const store = txSave.objectStore('jobs');
-            const req = idEdicao ? store.put(payload) : store.add(payload);
-            req.onsuccess = () => {
-                this.showToast('Lançamento processado!','success');
-                this.autoBackup(); this.updateDashboard(); this.clearJobForm();
-                const notifStatus = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.NOTIFICATIONS_STATUS)||'{}');
-                delete notifStatus[payload.id||idEdicao];
-                localStorage.setItem(CONFIG.STORAGE_KEYS.NOTIFICATIONS_STATUS, JSON.stringify(notifStatus));
-            };
-            req.onerror = (err) => { console.error(err); this.showToast('Erro ao salvar job.','error'); };
+        const data=document.getElementById('dataJob').value, empNome=document.getElementById('empresaJob').value.trim(), idEd=document.getElementById('editJobId').value;
+        if(!data||!empNome){alert('Data e Empresa obrigatórios');return;}
+        this.db.transaction('empresas').objectStore('empresas').getAll().onsuccess=e=>{
+            const emp=e.target.result.find(x=>x.nome.toLowerCase()===empNome.toLowerCase());
+            if(!emp){alert('Empresa não cadastrada');return;}
+            const cache=parseFloat(emp.cacheBase)||0, diaria=parseFloat(emp.diaria)||0, nf=parseFloat(emp.nfPercentual)||0;
+            const ini=document.getElementById('inicio').value, fim=document.getElementById('fim').value;
+            const mins=this.timeDiff(ini,fim), hrs=mins/60;
+            const extras=Math.max(0,hrs-this.baseH), rate=this.baseH>0?cache/this.baseH:0, valExtras=extras*rate;
+            const bruto=cache+diaria+valExtras, imp=bruto*(nf/100);
+            const previsao=this.calcPayDate(data, emp);
+            const payload = { data, empresa:emp.nome, job:document.getElementById('nomeJob').value||'Job', cache, diaria, extra:valExtras, total:bruto, valorNF:imp, horas:hrs.toFixed(1), inicio:ini, fim, tipoPagamento:emp.tipoPagamento, diasPagamento:parseInt(emp.diasPagamento)||0, fimPeriodo:parseInt(emp.fimPeriodo)||30, inicioSemana:parseInt(emp.inicioSemana)||1, fimSemana:parseInt(emp.fimSemana)||0, inicioPrimeiraQuinzena:parseInt(emp.inicioPrimeiraQuinzena)||1, fimPrimeiraQuinzena:parseInt(emp.fimPrimeiraQuinzena)||15, fimSegundaQuinzena:parseInt(emp.fimSegundaQuinzena)||30, previsaoPagamento:previsao, status:'aberto' };
+            if(idEd) payload.id=parseInt(idEd);
+            const tx=this.db.transaction('jobs','readwrite'), store=tx.objectStore('jobs');
+            (idEd?store.put(payload):store.add(payload)).onsuccess=()=>{ this.toast('Job salvo!','success'); this.autoBak(); this.updateDash(); this.clearJobForm(); };
         };
     },
-
-    confirmPayment(id){
-        if(!confirm('Confirmar que este pagamento foi recebido?')) return;
-        const tx = this.db.transaction('jobs','readwrite');
-        const store = tx.objectStore('jobs');
-        const getReq = store.get(id);
-        getReq.onsuccess = () => {
-            const job = getReq.result;
-            if(job){
-                job.pago = true;
-                const putReq = store.put(job);
-                putReq.onsuccess = () => {
-                    this.autoBackup(); this.updateDashboard();
-                    setTimeout(()=>{
-                        const card = document.querySelector(`.btn-confirm-inline[onclick="App.confirmPayment(${id})"]`)?.closest('.history-card');
-                        if(card){ card.classList.add('pay-confirmed'); setTimeout(()=>card.classList.remove('pay-confirmed'),500); }
-                    },100);
-                };
-            }
-        };
-    },
-
-    calcClosingDate(dataPrestacao, empresa){
-        const data = new Date(dataPrestacao+'T00:00:00');
-        const ano = data.getFullYear(), mes = data.getMonth(), dia = data.getDate();
-        if(empresa.tipoPagamento==='Semanal'){
-            const diaSemana = data.getDay(); const diaCorte = parseInt(empresa.fimSemana||0);
-            let diasAteCorte = diaSemana===diaCorte ? 0 : (diaCorte-diaSemana+7)%7;
-            const fech = new Date(data); fech.setDate(dia+diasAteCorte); fech.setHours(0,0,0,0); return fech;
-        } else if(empresa.tipoPagamento==='Quinzenal'){
-            const p1Ini = parseInt(empresa.inicioPrimeiraQuinzena||1), p1Fim = parseInt(empresa.fimPrimeiraQuinzena||15), p2Fim = parseInt(empresa.fimSegundaQuinzena||30);
-            if(dia>=p1Ini && dia<=p1Fim) return new Date(ano,mes,p1Fim,0,0,0,0);
-            else if(dia>p1Fim && dia<=p2Fim) return new Date(ano,mes,p2Fim,0,0,0,0);
-            else return new Date(ano,mes+1,p1Fim,0,0,0,0);
+    calcCloseDate(dt, emp){
+        const d=new Date(dt+'T00:00:00'), a=d.getFullYear(), m=d.getMonth(), dia=d.getDate();
+        if(emp.tipoPagamento==='Semanal'){
+            const ds=d.getDay(), dc=parseInt(emp.fimSemana)||0; let diff=ds===dc?0:(dc-ds+7)%7;
+            const r=new Date(d); r.setDate(dia+diff); r.setHours(0,0,0,0); return r;
+        } else if(emp.tipoPagamento==='Quinzenal'){
+            const p1i=parseInt(emp.inicioPrimeiraQuinzena)||1, p1f=parseInt(emp.fimPrimeiraQuinzena)||15, p2f=parseInt(emp.fimSegundaQuinzena)||30;
+            if(dia>=p1i&&dia<=p1f) return new Date(a,m,p1f);
+            else if(dia>p1f&&dia<=p2f) return new Date(a,m,p2f);
+            else return new Date(a,m+1,p1f);
         } else {
-            const pFim = parseInt(empresa.fimPeriodo||30);
-            if(dia<=pFim) return new Date(ano,mes,pFim,0,0,0,0);
-            else return new Date(ano,mes+1,pFim,0,0,0,0);
+            const pf=parseInt(emp.fimPeriodo)||30;
+            if(dia<=pf) return new Date(a,m,pf); else return new Date(a,m+1,pf);
         }
     },
-
-    calcPaymentDate(dataPrestacao, empresa){
-        const fechamento = this.calcClosingDate(dataPrestacao, empresa);
-        const pagamento = new Date(fechamento);
-        pagamento.setDate(pagamento.getDate() + Number(empresa.diasPagamento||0));
-        return pagamento.toLocaleDateString('pt-BR');
+    calcPayDate(dt, emp){
+        const fech=this.calcCloseDate(dt, emp); fech.setDate(fech.getDate()+(parseInt(emp.diasPagamento)||0));
+        return fech.toLocaleDateString('pt-BR');
     },
-
-    getJobStatus(job){
-        if(job.pago===true) return 'pago';
-        const hoje = new Date(); hoje.setHours(0,0,0,0);
-        const fechamento = this.calcClosingDate(job.data, job);
-        const liquidacao = new Date(fechamento);
-        liquidacao.setDate(liquidacao.getDate() + Number(job.diasPagamento||0));
-        if(hoje.getTime() > liquidacao.getTime()) return 'pago';
-        if(hoje.getTime() > fechamento.getTime()) return 'arquivado';
-        return 'aberto';
-    },
+    getStatus(job){ return job.status||'aberto'; },
 
     editJob(id){
-        const tx = this.db.transaction('jobs','readonly');
-        tx.objectStore('jobs').get(id).onsuccess = (e) => {
-            const item = e.target.result;
-            if(!item){ alert('Lançamento não encontrado.'); return; }
-            document.getElementById('formJobTitle').textContent = 'Editando Lançamento';
-            document.getElementById('editJobId').value = item.id;
-            document.getElementById('empresaJob').value = item.empresa;
-            document.getElementById('dataJob').value = item.data;
-            document.getElementById('nomeJob').value = item.job;
-            document.getElementById('inicio').value = item.inicio;
-            document.getElementById('fim').value = item.fim;
-            window.scrollTo({top:0,behavior:'smooth'});
+        this.db.transaction('jobs').objectStore('jobs').get(id).onsuccess=e=>{
+            const j=e.target.result; if(!j)return;
+            document.getElementById('formJobTitle').textContent='Editando'; document.getElementById('editJobId').value=j.id;
+            document.getElementById('empresaJob').value=j.empresa; document.getElementById('dataJob').value=j.data;
+            document.getElementById('nomeJob').value=j.job; document.getElementById('inicio').value=j.inicio; document.getElementById('fim').value=j.fim;
+            scrollTo(0,0);
         };
     },
-
     deleteJob(id){
-        if(!confirm('Excluir definitivamente este lançamento?')) return;
-        const tx = this.db.transaction('jobs','readwrite');
-        tx.objectStore('jobs').delete(id).onsuccess = () => {
-            this.autoBackup(); this.updateDashboard();
-            const notifStatus = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.NOTIFICATIONS_STATUS)||'{}');
-            delete notifStatus[id];
-            localStorage.setItem(CONFIG.STORAGE_KEYS.NOTIFICATIONS_STATUS, JSON.stringify(notifStatus));
-        };
+        if(!confirm('Excluir job?'))return;
+        this.db.transaction('jobs','readwrite').objectStore('jobs').delete(id).onsuccess=()=>{ this.autoBak(); this.updateDash(); };
     },
-
+    confirmPay(id){
+        if(!confirm('Confirmar recebimento?'))return;
+        const tx=this.db.transaction('jobs','readwrite'), store=tx.objectStore('jobs');
+        store.get(id).onsuccess=e=>{ const j=e.target.result; if(j){ j.status='pago'; store.put(j).onsuccess=()=>{ this.autoBak(); this.updateDash(); }; } };
+    },
+    archiveJob(id){
+        if(!confirm('Arquivar este job?'))return;
+        const tx=this.db.transaction('jobs','readwrite'), store=tx.objectStore('jobs');
+        store.get(id).onsuccess=e=>{ const j=e.target.result; if(j){ j.status='arquivado'; store.put(j).onsuccess=()=>{ this.autoBak(); this.updateDash(); }; } };
+    },
     clearJobForm(){
-        document.getElementById('formJobTitle').textContent = 'Job';
-        document.getElementById('editJobId').value = '';
-        document.getElementById('empresaJob').value = '';
-        document.getElementById('nomeJob').value = '';
-        document.getElementById('dataJob').value = new Date().toISOString().split('T')[0];
-        document.getElementById('inicio').value = CONFIG.DEFAULTS.JOB_START_TIME;
-        document.getElementById('fim').value = CONFIG.DEFAULTS.JOB_END_TIME;
+        document.getElementById('formJobTitle').textContent='Job'; document.getElementById('editJobId').value='';
+        document.getElementById('empresaJob').value=''; document.getElementById('nomeJob').value='';
+        document.getElementById('dataJob').value=new Date().toISOString().slice(0,10);
+        document.getElementById('inicio').value=C.DEF.JOB_START; document.getElementById('fim').value=C.DEF.JOB_END;
     },
-
-    setFilter(tipo){
-        this.filtroVisualizacao = tipo;
-        document.getElementById('btnFiltroAberto').classList.toggle('active', tipo==='aberto');
-        document.getElementById('btnFiltroArquivado').classList.toggle('active', tipo==='arquivado');
-        this.updateDashboard();
-    },
+    setFilter(t){ this.filter=t; document.getElementById('btnFiltroAberto').classList.toggle('active',t==='aberto'); document.getElementById('btnFiltroArquivado').classList.toggle('active',t==='arquivado'); this.updateDash(); },
     openSearch(){ document.getElementById('searchBox').style.display='block'; document.getElementById('inputBusca').focus(); },
     clearSearch(){ document.getElementById('searchBox').style.display='none'; document.getElementById('inputBusca').value=''; this.filterTable(); },
-    filterTable(){
-        const termo = document.getElementById('inputBusca').value.toUpperCase().trim();
-        document.querySelectorAll('.history-card').forEach(card => {
-            card.style.display = card.textContent.toUpperCase().includes(termo) ? 'block' : 'none';
-        });
-    },
+    filterTable(){ const t=document.getElementById('inputBusca').value.toUpperCase(); document.querySelectorAll('.history-card').forEach(c=>c.style.display=c.textContent.toUpperCase().includes(t)?'block':'none'); },
 
-    updateDashboard(){
-        if(!this.db) return;
-        const txE = this.db.transaction('empresas','readonly');
-        txE.objectStore('empresas').getAll().onsuccess = (eE) => {
-            const empresas = eE.target.result;
-            const hasNF = empresas.some(emp=>emp.nfPercentual>0);
-            document.getElementById('dashboardNfCard').style.display = hasNF?'block':'none';
-            document.getElementById('dashboardLiquidoCard').style.display = hasNF?'block':'none';
-            const tx = this.db.transaction('jobs','readonly');
-            tx.objectStore('jobs').getAll().onsuccess = (e) => {
-                const jobs = e.target.result;
-                jobs.sort((a,b)=>new Date(b.data)-new Date(a.data));
-                let tBruto=0, tNF=0, tHoras=0;
-                const porEmpresa = {};
-                if(Object.keys(this.colorMap).length>20) this.colorMap = {};
-                const container = document.getElementById('listaHistorico');
-                container.innerHTML = '';
-                jobs.forEach(job => {
-                    const status = this.getJobStatus(job);
-                    if(status==='aberto'){
-                        tBruto += job.total||0; tNF += job.valorNF||0; tHoras += parseFloat(job.horas||0);
-                        porEmpresa[job.empresa] = (porEmpresa[job.empresa]||0)+(job.total||0);
-                    }
-                    if(!this.colorMap[job.empresa]){
-                        const idx = Object.keys(this.colorMap).length % CONFIG.CHART_COLORS.length;
-                        this.colorMap[job.empresa] = CONFIG.CHART_COLORS[idx];
-                    }
-                    const deveExibir = (this.filtroVisualizacao==='aberto' && status==='aberto') ||
-                                       (this.filtroVisualizacao==='arquivado' && (status==='arquivado'||status==='pago'));
-                    if(deveExibir){
-                        const card = document.createElement('div');
-                        card.className = 'history-card';
-                        card.style.borderLeft = `6px solid ${this.colorMap[job.empresa]}`;
-                        let badge = '';
-                        if(status==='aberto') badge = '<span class="badge-status status-aberto">Aberto</span>';
-                        else if(status==='arquivado') badge = '<span class="badge-status status-fechado">Aguardando</span>';
-                        else badge = '<span class="badge-status status-pago">Pago</span>';
-                        let confirmBtn = '';
-                        if(status==='pago' && job.pago!==true){
-                            confirmBtn = `<button class="btn-confirm-inline" onclick="App.confirmPayment(${job.id})" title="Confirmar recebimento"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>`;
+    updateDash(){
+        if(!this.db)return;
+        this.db.transaction('empresas').objectStore('empresas').getAll().onsuccess=eE=>{
+            const hasNF=eE.target.result.some(x=>x.nfPercentual>0);
+            document.getElementById('dashboardNfCard').style.display=hasNF?'block':'none';
+            document.getElementById('dashboardLiquidoCard').style.display=hasNF?'block':'none';
+            this.db.transaction('jobs').objectStore('jobs').getAll().onsuccess=e=>{
+                const jobs=e.target.result.sort((a,b)=>new Date(b.data)-new Date(a.data));
+                let tBruto=0,tNF=0,tHoras=0; const porEmp={}; if(Object.keys(this.cmap).length>20)this.cmap={};
+                const container=document.getElementById('listaHistorico'); container.innerHTML='';
+                jobs.forEach(j=>{
+                    const st=this.getStatus(j);
+                    if(st==='aberto'){ tBruto+=j.total||0; tNF+=j.valorNF||0; tHoras+=parseFloat(j.horas)||0; porEmp[j.empresa]=(porEmp[j.empresa]||0)+(j.total||0); }
+                    if(!this.cmap[j.empresa]) this.cmap[j.empresa]=C.COLORS[Object.keys(this.cmap).length%C.COLORS.length];
+                    const show=(this.filter==='aberto'&&st==='aberto')||(this.filter==='arquivado'&&(st==='arquivado'||st==='pago'));
+                    if(show){
+                        const card=document.createElement('div'); card.className='history-card'; card.style.borderLeft=`6px solid ${this.cmap[j.empresa]}`;
+                        const badge = st==='aberto'?'<span class="badge-status status-aberto">Aberto</span>':st==='arquivado'?'<span class="badge-status status-arquivado">Arquivado</span>':'<span class="badge-status status-pago">Pago</span>';
+                        let btns = `<button class="btn-del" onclick="App.deleteJob(${j.id})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+                                   <button class="btn-edit-inline" onclick="App.editJob(${j.id})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>`;
+                        if(st==='aberto'){
+                            btns += `<button class="btn-confirm-inline" onclick="App.confirmPay(${j.id})"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
+                                     <button class="btn-archive-inline" onclick="App.archiveJob(${j.id})"><svg viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></button>`;
                         }
-                        card.innerHTML = `
-                            <button class="btn-del" onclick="App.deleteJob(${job.id})" title="Excluir"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
-                            <button class="btn-edit-inline" onclick="App.editJob(${job.id})" title="Editar"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-                            ${confirmBtn}
-                            <div class="empresa-title">${job.empresa}</div>
-                            <div class="meta-text">${this.formatDate(job.data)} | ${job.job}</div>
-                            <div>${badge}</div>
-                            <div class="meta-text" style="margin-top:8px;">Horários: ${job.inicio} às ${job.fim} (${job.horas}h)</div>
-                            <div class="meta-text">Cachê: ${this.formatCurrency(job.cache)}</div>
-                            <div class="meta-text">Diária: ${this.formatCurrency(job.diaria)}</div>
-                            <div class="meta-text">Horas Extras: ${this.formatCurrency(job.extra)}</div>
-                            <div class="meta-text">Previsão de Recebimento: <b>${job.previsaoPagamento}</b></div>
-                            <div style="margin-top:10px;font-weight:900;">Total Bruto: <span>${this.formatCurrency(job.total)}</span></div>
-                        `;
+                        card.innerHTML = `${btns}
+                            <div class="empresa-title">${j.empresa}</div>
+                            <div class="meta-text">${this.fmtDate(j.data)} | ${j.job}</div><div>${badge}</div>
+                            <div class="meta-text" style="margin-top:8px">Horários: ${j.inicio} às ${j.fim} (${j.horas}h)</div>
+                            <div class="meta-text">Cachê: ${this.fmt(j.cache)}</div><div class="meta-text">Diária: ${this.fmt(j.diaria)}</div>
+                            <div class="meta-text">Horas Extras: ${this.fmt(j.extra)}</div>
+                            <div class="meta-text">Previsão: <b>${j.previsaoPagamento}</b></div>
+                            <div style="margin-top:10px;font-weight:900">Total Bruto: <span>${this.fmt(j.total)}</span></div>`;
                         container.appendChild(card);
                     }
                 });
-                document.getElementById('vTotalSemana').textContent = this.formatCurrency(tBruto);
-                document.getElementById('vTotalNF').textContent = '- ' + this.formatCurrency(tNF);
-                document.getElementById('vTotalLiquido').textContent = this.formatCurrency(tBruto - tNF);
-                document.getElementById('vTotalHoras').textContent = tHoras.toFixed(1)+'h';
-                this.renderChart(porEmpresa);
+                document.getElementById('vTotalSemana').textContent=this.fmt(tBruto);
+                document.getElementById('vTotalNF').textContent='- '+this.fmt(tNF);
+                document.getElementById('vTotalLiquido').textContent=this.fmt(tBruto-tNF);
+                document.getElementById('vTotalHoras').textContent=tHoras.toFixed(1)+'h';
+                this.renderChart(porEmp);
                 if(document.getElementById('searchBox').style.display==='block') this.filterTable();
             };
         };
     },
 
     renderChart(dados){
-        const canvas = document.getElementById('graficoEmpresas');
-        if(!canvas) return;
-        const labels = Object.keys(dados), values = Object.values(dados);
-        const colors = labels.map(l=>this.colorMap[l]||'#94a3b8');
-        if(labels.length===0){
-            if(this.chartInstance){ this.chartInstance.destroy(); this.chartInstance=null; }
-            canvas.style.display='none';
-            const container = canvas.parentElement;
-            if(!container.querySelector('.no-data-msg')){
-                const msg = document.createElement('p'); msg.className='no-data-msg';
-                msg.style.cssText='color:var(--muted);text-align:center;padding:40px 0;'; msg.textContent='Nenhum dado de faturamento para exibir.';
-                container.appendChild(msg);
-            }
+        const canvas=document.getElementById('graficoEmpresas'); if(!canvas)return;
+        const labels=Object.keys(dados), values=Object.values(dados), colors=labels.map(l=>this.cmap[l]||'#94a3b8');
+        if(!labels.length){
+            if(this.chart){this.chart.destroy();this.chart=null;} canvas.style.display='none';
+            const p=canvas.parentElement; if(!p.querySelector('.no-data-msg')){const m=document.createElement('p');m.className='no-data-msg';m.style.cssText='color:var(--muted);text-align:center;padding:40px 0';m.textContent='Sem dados';p.appendChild(m);}
             return;
         }
-        const msgEl = canvas.parentElement.querySelector('.no-data-msg'); if(msgEl) msgEl.remove();
-        canvas.style.display='block';
-        if(this.chartInstance){
-            this.chartInstance.data.labels=labels;
-            this.chartInstance.data.datasets[0].data=values;
-            this.chartInstance.data.datasets[0].backgroundColor=colors;
-            this.chartInstance.update('none');
-        } else {
-            this.chartInstance = new Chart(canvas, {
-                type:'bar',
-                data:{labels,datasets:[{data:values,backgroundColor:colors,borderRadius:8}]},
-                options:{responsive:true,maintainAspectRatio:false,
-                    plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>this.formatCurrency(ctx.parsed.y),title:(ctx)=>ctx[0].label}}},
-                    scales:{y:{display:false,beginAtZero:true},x:{ticks:{color:'#94a3b8'},grid:{display:false}}}
-                }
-            });
-        }
+        const msg=canvas.parentElement.querySelector('.no-data-msg'); if(msg)msg.remove(); canvas.style.display='block';
+        if(this.chart){ this.chart.data.labels=labels; this.chart.data.datasets[0].data=values; this.chart.data.datasets[0].backgroundColor=colors; this.chart.update('none'); }
+        else this.chart=new Chart(canvas,{type:'bar',data:{labels,datasets:[{data:values,backgroundColor:colors,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>this.fmt(ctx.parsed.y)}}},scales:{y:{display:false},x:{ticks:{color:'#94a3b8'}}}}});
     },
 
+    escapeCSV(t){ if(!t)return''; t=String(t); if(t.includes(';')||t.includes('"')||t.includes('\n')) return '"'+t.replace(/"/g,'""')+'"'; return t; },
     exportCSV(){
-        const tx = this.db.transaction('jobs','readonly');
-        tx.objectStore('jobs').getAll().onsuccess = (e) => {
-            const jobs = e.target.result;
-            jobs.sort((a,b)=>new Date(b.data)-new Date(a.data));
-            const empresasMap = {};
-            jobs.forEach(j=>{ if(!empresasMap[j.empresa]) empresasMap[j.empresa]=[]; empresasMap[j.empresa].push(j); });
-            let csv = '\uFEFF';
-            csv += 'FADER LIVRE - RELATORIO DE CACHES\n';
-            csv += `Gerado em: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
-            let totalGeralBruto=0, totalGeralNF=0, totalGeralLiquido=0;
-            Object.keys(empresasMap).sort().forEach(nomeEmpresa => {
-                const jobsEmpresa = empresasMap[nomeEmpresa];
-                csv += `\n${'='.repeat(50)}\nEMPRESA: ${nomeEmpresa}\n${'='.repeat(50)}\n`;
-                csv += 'Data;Job;Horas;Inicio;Fim;Cache;Diaria;Horas Extras;Total Bruto;Imposto NF;Valor Liquido;Previsao Pagamento;Status\n';
-                let subtotalBruto=0, subtotalNF=0;
-                jobsEmpresa.forEach(j=>{
-                    const liq = (j.total||0)-(j.valorNF||0);
-                    const status = this.getJobStatus(j);
-                    const statusTexto = status==='aberto'?'Aberto':status==='arquivado'?'Aguardando':'Pago';
-                    csv += `${this.formatDate(j.data)};${j.job};${j.horas};${j.inicio};${j.fim};${(j.cache||0).toFixed(2).replace('.',',')};${(j.diaria||0).toFixed(2).replace('.',',')};${(j.extra||0).toFixed(2).replace('.',',')};${(j.total||0).toFixed(2).replace('.',',')};${(j.valorNF||0).toFixed(2).replace('.',',')};${liq.toFixed(2).replace('.',',')};${j.previsaoPagamento};${statusTexto}\n`;
-                    subtotalBruto += (j.total||0); subtotalNF += (j.valorNF||0);
+        this.db.transaction('jobs').objectStore('jobs').getAll().onsuccess=e=>{
+            const jobs=e.target.result.sort((a,b)=>new Date(b.data)-new Date(a.data));
+            const map={}; jobs.forEach(j=>{ if(!map[j.empresa])map[j.empresa]=[]; map[j.empresa].push(j); });
+            let csv='\uFEFF'; csv+='FADER LIVRE - RELATORIO DE CACHES\n'; csv+=`Gerado em: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+            let tBr=0,tNf=0,tLq=0;
+            Object.keys(map).sort().forEach(nome=>{
+                const arr=map[nome]; csv+=`\n${'='.repeat(50)}\nEMPRESA: ${nome}\n${'='.repeat(50)}\n`;
+                csv+='Data;Job;Horas;Inicio;Fim;Cache;Diaria;Horas Extras;Total Bruto;Imposto NF;Valor Liquido;Previsao;Status\n';
+                let sBr=0,sNf=0;
+                arr.forEach(j=>{
+                    const liq=(j.total||0)-(j.valorNF||0);
+                    csv+=`${this.fmtDate(j.data)};${this.escapeCSV(j.job)};${j.horas};${j.inicio};${j.fim};${(j.cache||0).toFixed(2).replace('.',',')};${(j.diaria||0).toFixed(2).replace('.',',')};${(j.extra||0).toFixed(2).replace('.',',')};${(j.total||0).toFixed(2).replace('.',',')};${(j.valorNF||0).toFixed(2).replace('.',',')};${liq.toFixed(2).replace('.',',')};${j.previsaoPagamento};${this.getStatus(j)==='pago'?'Pago':this.getStatus(j)==='arquivado'?'Arquivado':'Aberto'}\n`;
+                    sBr+=j.total||0; sNf+=j.valorNF||0;
                 });
-                const subtotalLiquido = subtotalBruto - subtotalNF;
-                csv += `${'—'.repeat(50)}\nSUBTOTAL: Bruto ${subtotalBruto.toFixed(2).replace('.',',')} | NF ${subtotalNF.toFixed(2).replace('.',',')} | Liquido ${subtotalLiquido.toFixed(2).replace('.',',')}\n`;
-                totalGeralBruto+=subtotalBruto; totalGeralNF+=subtotalNF; totalGeralLiquido+=subtotalLiquido;
+                const sLq=sBr-sNf;
+                csv+=`${'—'.repeat(50)}\nSUBTOTAL: Bruto ${sBr.toFixed(2).replace('.',',')} | NF ${sNf.toFixed(2).replace('.',',')} | Liquido ${sLq.toFixed(2).replace('.',',')}\n`;
+                tBr+=sBr; tNf+=sNf; tLq+=sLq;
             });
-            csv += `\n${'='.repeat(50)}\nTOTAL GERAL: Bruto ${totalGeralBruto.toFixed(2).replace('.',',')} | NF ${totalGeralNF.toFixed(2).replace('.',',')} | Liquido ${totalGeralLiquido.toFixed(2).replace('.',',')}\n${'='.repeat(50)}\n`;
-            const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
-            const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
-            a.download = `fader_livre_${new Date().toISOString().split('T')[0]}.csv`; a.click();
-            this.showToast('Planilha exportada!','success');
+            csv+=`\n${'='.repeat(50)}\nTOTAL GERAL: Bruto ${tBr.toFixed(2).replace('.',',')} | NF ${tNf.toFixed(2).replace('.',',')} | Liquido ${tLq.toFixed(2).replace('.',',')}\n${'='.repeat(50)}\n`;
+            const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+            const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`fader_livre_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+            this.toast('CSV exportado!','success');
         };
     },
 
     sendWhatsApp(){
-        const tx = this.db.transaction('jobs','readonly');
-        tx.objectStore('jobs').getAll().onsuccess = (e) => {
-            const jobs = e.target.result;
-            const termo = document.getElementById('inputBusca').value.toUpperCase().trim();
-            const buscaAtiva = document.getElementById('searchBox').style.display==='block';
-            const filtrados = jobs.filter(j=>{
-                const status = this.getJobStatus(j);
-                const passaFiltro = (this.filtroVisualizacao==='aberto'&&status==='aberto')||(this.filtroVisualizacao==='arquivado'&&(status==='arquivado'||status==='pago'));
-                if(!passaFiltro) return false;
-                if(buscaAtiva && termo) return `${j.empresa} ${j.job} ${j.data}`.toUpperCase().includes(termo);
-                return true;
-            });
-            if(filtrados.length===0){ alert('Nenhum registro encontrado.'); return; }
-            filtrados.sort((a,b)=>new Date(b.data)-new Date(a.data));
-            let msg = '*FADER LIVRE - EXTRATO*\n'+'━'.repeat(30)+'\n\n';
-            let total=0;
-            filtrados.forEach(j=>{
-                msg += `*${j.empresa}* - ${this.formatDate(j.data)}\n`;
-                msg += `Job: ${j.job}\nCachê: R$ ${(j.cache||0).toFixed(2)}\nDiária: R$ ${(j.diaria||0).toFixed(2)}\nHoras Extras: R$ ${(j.extra||0).toFixed(2)}\nTotal: R$ ${(j.total||0).toFixed(2)}\nPrevisão: ${j.previsaoPagamento}\n\n`;
-                total += (j.total||0);
-            });
-            msg += '━'.repeat(30)+'\n*TOTAL GERAL: R$ '+total.toFixed(2)+'*\n\nRelatório gerado em: '+new Date().toLocaleDateString('pt-BR')+'\nFADER LIVRE - Cachê Control v4.2';
+        this.db.transaction('jobs').objectStore('jobs').getAll().onsuccess=e=>{
+            const jobs=e.target.result.filter(j=>{ const st=this.getStatus(j); return (this.filter==='aberto'&&st==='aberto')||(this.filter==='arquivado'&&st!=='aberto'); });
+            if(!jobs.length){alert('Nenhum registro');return;}
+            jobs.sort((a,b)=>new Date(b.data)-new Date(a.data));
+            let msg='*FADER LIVRE - EXTRATO*\n'+'━'.repeat(30)+'\n\n', total=0;
+            jobs.forEach(j=>{ msg+=`*${j.empresa}* - ${this.fmtDate(j.data)}\nJob: ${j.job}\nCachê: R$ ${(j.cache||0).toFixed(2)}\nDiária: R$ ${(j.diaria||0).toFixed(2)}\nHoras Extras: R$ ${(j.extra||0).toFixed(2)}\nTotal: R$ ${(j.total||0).toFixed(2)}\nPrevisão: ${j.previsaoPagamento}\n\n`; total+=j.total||0; });
+            msg+='━'.repeat(30)+'\n*TOTAL GERAL: R$ '+total.toFixed(2)+'*\n\n'+new Date().toLocaleDateString('pt-BR');
             window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(msg),'_blank');
         };
     },
 
     createBackup(){
-        const txJ = this.db.transaction('jobs','readonly');
-        txJ.objectStore('jobs').getAll().onsuccess = (eJ) => {
-            const txE = this.db.transaction('empresas','readonly');
-            txE.objectStore('empresas').getAll().onsuccess = (eE) => {
-                const backup = { jobs:eJ.target.result, empresas:eE.target.result, exportadoEm:new Date().toISOString(), versao:'4.2' };
-                const blob = new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
-                const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
-                a.download = `fader_livre_backup_${new Date().toISOString().split('T')[0]}.json`; a.click();
-                this.showToast('Backup gerado!','success');
-            };
-        };
+        const t1=this.db.transaction('jobs'), t2=this.db.transaction('empresas');
+        t1.objectStore('jobs').getAll().onsuccess=e1=>{ t2.objectStore('empresas').getAll().onsuccess=e2=>{
+            const bk={jobs:e1.target.result, empresas:e2.target.result, ts:new Date().toISOString()};
+            const blob=new Blob([JSON.stringify(bk,null,2)],{type:'application/json'});
+            const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
+            this.toast('Backup gerado!','success');
+        };};
     },
 
-    restoreBackup(event){
-        const file = event.target.files[0]; if(!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
+    restoreBackup(ev){
+        const f=ev.target.files[0]; if(!f)return;
+        const r=new FileReader(); r.onload=e=>{
             try{
-                const dados = JSON.parse(e.target.result);
-                if(!dados.jobs||!dados.empresas) throw new Error('Estrutura inválida');
-                if(!confirm(`Restaurar backup?\nJobs: ${dados.jobs.length}\nEmpresas: ${dados.empresas.length}\n\nIsso substituirá TODOS os dados atuais.`)) return;
-                dados.jobs.forEach(j=>{ if(j.pago===undefined) j.pago=false; });
-                const txClearJ = this.db.transaction('jobs','readwrite');
-                txClearJ.objectStore('jobs').clear().onsuccess = () => {
-                    const txJ = this.db.transaction('jobs','readwrite'); const storeJ = txJ.objectStore('jobs');
-                    dados.jobs.forEach(j=>storeJ.put(j));
-                    txJ.oncomplete = () => {
-                        const txClearE = this.db.transaction('empresas','readwrite');
-                        txClearE.objectStore('empresas').clear().onsuccess = () => {
-                            const txE = this.db.transaction('empresas','readwrite'); const storeE = txE.objectStore('empresas');
-                            dados.empresas.forEach(emp=>storeE.put(emp));
-                            txE.oncomplete = () => {
-                                alert('Banco restaurado! Reiniciando...'); this.autoBackup(); window.location.reload();
-                            };
+                const d=JSON.parse(e.target.result);
+                if(!d.jobs||!d.empresas) throw new Error('Inválido');
+                if(!confirm(`Restaurar ${d.jobs.length} jobs e ${d.empresas.length} empresas?`))return;
+                const tx1=this.db.transaction('jobs','readwrite'); tx1.objectStore('jobs').clear().onsuccess=()=>{
+                    const tx2=this.db.transaction('jobs','readwrite'); d.jobs.forEach(j=>tx2.objectStore('jobs').put(j));
+                    tx2.oncomplete=()=>{
+                        const tx3=this.db.transaction('empresas','readwrite'); tx3.objectStore('empresas').clear().onsuccess=()=>{
+                            const tx4=this.db.transaction('empresas','readwrite'); d.empresas.forEach(x=>tx4.objectStore('empresas').put(x));
+                            tx4.oncomplete=()=>{ alert('Restaurado!'); location.reload(); };
                         };
                     };
                 };
-            } catch(err){ alert('Arquivo inválido.'); }
+            }catch(ex){alert('Arquivo inválido');}
         };
-        reader.readAsText(file);
-        event.target.value = '';
+        r.readAsText(f); ev.target.value='';
     },
 
-    requestNotificationPermission(){
-        if(!('Notification' in window)) return;
-        if(Notification.permission==='default') Notification.requestPermission();
-    },
-
-    checkDuePayments(){
-        if(!this.db||Notification.permission!=='granted') return;
-        const agora = new Date();
-        const [hConf] = this.notificationHour.split(':').map(Number);
-        if(agora.getHours() < hConf) return;
-        const hoje = new Date(); hoje.setHours(0,0,0,0);
-        const tx = this.db.transaction('jobs','readonly');
-        tx.objectStore('jobs').getAll().onsuccess = (e) => {
-            const jobs = e.target.result;
-            const notifStatus = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.NOTIFICATIONS_STATUS)||'{}');
-            const hojeStr = new Date().toISOString().split('T')[0];
-            jobs.forEach(job => {
-                if(job.pago===true) return;
-                const fech = this.calcClosingDate(job.data, job);
-                const pag = new Date(fech); pag.setDate(pag.getDate()+Number(job.diasPagamento||0));
-                if(pag.getTime()===hoje.getTime() && notifStatus[job.id]!==hojeStr){
-                    new Notification('Pagamento de Job Hoje', { body:`"${job.job}" - ${job.empresa}\nValor: ${this.formatCurrency(job.total)}`, tag:`job-${job.id}-${hojeStr}`, requireInteraction:true });
-                    notifStatus[job.id] = hojeStr;
+    reqNotif(){ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); },
+    checkPays(){
+        if(!this.db||Notification.permission!=='granted')return;
+        const now=new Date(), h=now.getHours(), m=now.getMinutes(), [ch,cm]=this.notifH.split(':').map(Number);
+        if(h<ch||(h===ch&&m<cm))return;
+        const today=new Date(); today.setHours(0,0,0,0); const todayStr=today.toISOString().slice(0,10);
+        this.db.transaction('jobs').objectStore('jobs').getAll().onsuccess=e=>{
+            const jobs=e.target.result.filter(j=>j.status==='aberto');
+            const nstat=JSON.parse(localStorage.getItem(C.KEYS.NOTIFSTAT)||'{}');
+            jobs.forEach(j=>{
+                const fech=this.calcCloseDate(j.data,j); fech.setDate(fech.getDate()+(parseInt(j.diasPagamento)||0));
+                if(fech.getTime()===today.getTime()&&nstat[j.id]!==todayStr){
+                    new Notification('Pagamento hoje',{body:`${j.job} - ${j.empresa}\n${this.fmt(j.total)}`,requireInteraction:true});
+                    nstat[j.id]=todayStr;
                 }
             });
-            localStorage.setItem(CONFIG.STORAGE_KEYS.NOTIFICATIONS_STATUS, JSON.stringify(notifStatus));
+            localStorage.setItem(C.KEYS.NOTIFSTAT, JSON.stringify(nstat));
         };
     },
-
-    checkOverduePayments(){
-        if(!this.db||Notification.permission!=='granted') return;
-        const tx = this.db.transaction('jobs','readonly');
-        tx.objectStore('jobs').getAll().onsuccess = (e) => {
-            const jobs = e.target.result;
-            const hoje = new Date(); hoje.setHours(0,0,0,0);
-            const ontem = new Date(hoje); ontem.setDate(ontem.getDate()-1);
-            const notifKey = 'overdue_notified_'+hoje.toISOString().split('T')[0];
-            if(localStorage.getItem(notifKey)) return;
-            const overdueJobs = jobs.filter(job => {
-                if(job.pago) return false;
-                const fech = this.calcClosingDate(job.data, job);
-                const pag = new Date(fech); pag.setDate(pag.getDate()+Number(job.diasPagamento||0));
-                return pag.getTime() <= ontem.getTime();
+    checkOverdue(){
+        if(!this.db||Notification.permission!=='granted')return;
+        const today=new Date(); today.setHours(0,0,0,0); const yesterday=new Date(today); yesterday.setDate(yesterday.getDate()-1);
+        const key='overdue_'+today.toISOString().slice(0,10); if(localStorage.getItem(key))return;
+        this.db.transaction('jobs').objectStore('jobs').getAll().onsuccess=e=>{
+            const overdue=e.target.result.filter(j=>{
+                if(j.status!=='aberto') return false;
+                const fech=this.calcCloseDate(j.data,j); fech.setDate(fech.getDate()+(parseInt(j.diasPagamento)||0));
+                return fech.getTime()<=yesterday.getTime();
             });
-            if(overdueJobs.length>0){
-                const msg = overdueJobs.length===1 ? `O job "${overdueJobs[0].job}" está com pagamento vencido. Confirme o recebimento.` : `${overdueJobs.length} jobs estão com pagamento vencido. Verifique e confirme.`;
-                new Notification('Pagamentos Vencidos', { body: msg, requireInteraction: true });
-                localStorage.setItem(notifKey, 'true');
+            if(overdue.length){
+                new Notification('Pagamentos vencidos',{body:overdue.length===1?`${overdue[0].job} está vencido`:`${overdue.length} jobs vencidos. Confirme!`,requireInteraction:true});
+                localStorage.setItem(key,'1');
             }
         };
-    },
-
-    updateBaseHours(value){
-        const h = parseFloat(value);
-        if(isNaN(h)||h<1||h>24){ alert('Horas base devem ser entre 1 e 24.'); document.getElementById('baseHoursInput').value=this.baseHours; return; }
-        this.baseHours = h;
-        localStorage.setItem(CONFIG.STORAGE_KEYS.BASE_HOURS, h.toString());
-        this.showToast(`Horas base atualizadas para ${h}h.`);
-    },
-
-    updateNotificationHour(value){
-        const [hr,mn] = value.split(':').map(Number);
-        if(isNaN(hr)||isNaN(mn)||hr<0||hr>23||mn<0||mn>59){ alert('Horário inválido.'); document.getElementById('notificationCheckHour').value=this.notificationHour; return; }
-        this.notificationHour = value;
-        localStorage.setItem(CONFIG.STORAGE_KEYS.NOTIFICATION_HOUR, value);
-        this.showToast(`Horário de verificação atualizado para ${value}.`);
     }
 };
 
-// Service Worker
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }
-
 // Init
-if(!localStorage.getItem(CONFIG.STORAGE_KEYS.SENHA)) document.getElementById('senhaInput').placeholder = 'Defina sua chave no primeiro acesso';
+if(!localStorage.getItem(C.KEYS.SENHA)) document.getElementById('senhaInput').placeholder='Crie uma chave';
 App.init();
-
-document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible'){ App.checkDuePayments(); App.checkOverduePayments(); } });
-window.addEventListener('focus', ()=>{ App.checkDuePayments(); App.checkOverduePayments(); });
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){App.checkPays();App.checkOverdue();}});
+window.addEventListener('focus',()=>{App.checkPays();App.checkOverdue();});
 </script>
 </body>
 </html>
