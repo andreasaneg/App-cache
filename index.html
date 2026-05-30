@@ -4,19 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="description" content="FADER LIVRE - Sistema Controlador de Cachês ERP v4.0">
+    <meta name="description" content="FADER LIVRE - Sistema Controlador de Cachês ERP v4.1">
     <meta name="theme-color" content="#0f172a">
-    <title>FADER LIVRE - CACHÊ CONTROL v4.0 TESTE</title>
+    <title>FADER LIVRE - CACHÊ CONTROL v4.1</title>
     
-    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <style>
         /* ============================================
-           FADER LIVRE - Temas e Componentes v4.0
+           FADER LIVRE - Temas e Componentes v4.1
            ============================================ */
         
-        /* Tema Escuro (Padrão) */
         :root {
             --primary: #10b981;
             --primary-hover: #059669;
@@ -36,6 +34,7 @@
             --blue-glow: rgba(56, 189, 248, 0.2);
             --warning: #f59e0b;
             --success: #16a34a;
+            --success-glow: rgba(22, 163, 74, 0.2);
             --whatsapp: #25D366;
             --border-color: #334155;
             --border-hover: #475569;
@@ -49,12 +48,11 @@
             --status-fechado-bg: rgba(234, 88, 12, 0.15);
             --status-fechado-text: #fb923c;
             --status-fechado-border: rgba(234, 88, 12, 0.3);
-            --status-pago-bg: rgba(22, 163, 74, 0.15);
+            --status-pago-bg: rgba(22, 163, 74, 0.2);
             --status-pago-text: #4ade80;
-            --status-pago-border: rgba(22, 163, 74, 0.3);
+            --status-pago-border: rgba(22, 163, 74, 0.4);
         }
         
-        /* Tema Claro */
         body.light-mode {
             --primary: #0277bd;
             --primary-hover: #01579b;
@@ -74,6 +72,7 @@
             --blue-glow: rgba(25, 118, 210, 0.2);
             --warning: #fbc02d;
             --success: #388e3c;
+            --whatsapp: #25D366;
             --border-color: #bdbdbd;
             --border-hover: #9e9e9e;
         }
@@ -87,7 +86,6 @@
             color: white !important;
         }
         
-        /* Reset e Base */
         *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
@@ -107,7 +105,6 @@
             line-height: 1.5;
         }
         
-        /* Header */
         .app-header {
             text-align: center;
             border-bottom: 2px solid var(--primary);
@@ -132,7 +129,7 @@
             text-transform: uppercase;
         }
         
-        /* Navegação */
+        /* Navegação - FONTE MAIOR */
         .tab-container {
             display: flex;
             gap: 8px;
@@ -152,7 +149,7 @@
             border-radius: 12px;
             cursor: pointer;
             font-weight: 700;
-            font-size: 0.85em;
+            font-size: 1em;  /* AUMENTADO de 0.85em para 1em */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -209,6 +206,7 @@
         .total-horas { font-size: 2em; font-weight: 900; color: var(--primary); }
         .total-liquido { font-size: 2em; font-weight: 900; color: var(--success); }
         
+        /* Botão do olho com SVG */
         .eye-button {
             position: absolute;
             top: 15px;
@@ -219,11 +217,25 @@
             border-radius: 14px;
             background: var(--border-color);
             color: var(--text);
-            font-size: 1.3em;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 8px;
+        }
+        
+        .eye-button:hover {
+            background: var(--border-hover);
+        }
+        
+        .eye-button svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
         
         /* Input Groups */
@@ -275,7 +287,6 @@
             box-shadow: 0 0 0 3px var(--primary-glow);
         }
         
-        /* Grid de inputs */
         .input-row, .time-inputs {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -295,7 +306,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-family: inherit;
@@ -311,6 +322,20 @@
         .btn-cancel { background: var(--card-hover); color: var(--text); }
         .btn-danger-outline { background: var(--danger-glow); color: var(--danger); border: 1px solid var(--danger); }
         .btn-sm { font-size: 0.8em; padding: 12px; }
+        .btn-confirm-pay {
+            background: var(--success-glow);
+            color: var(--success);
+            border: 1px solid var(--success);
+            font-size: 0.8em;
+            padding: 10px 14px;
+            margin-top: 6px;
+            width: auto;
+            display: inline-flex;
+        }
+        .btn-confirm-pay:hover {
+            background: var(--success);
+            color: white;
+        }
         
         .button-group-vertical {
             display: flex;
@@ -319,7 +344,7 @@
             margin-top: 5px;
         }
         
-        /* History Cards */
+        /* History Cards - FONTE MAIOR */
         .history-card {
             background: var(--card);
             border-radius: 20px;
@@ -330,7 +355,7 @@
         }
         
         .empresa-title {
-            font-size: 1.3em;
+            font-size: 1.4em;  /* AUMENTADO de 1.3em */
             font-weight: 800;
             margin-bottom: 8px;
             display: flex;
@@ -340,7 +365,7 @@
             color: var(--primary);
         }
         
-        .btn-del, .btn-edit-inline {
+        .btn-del, .btn-edit-inline, .btn-confirm-inline {
             position: absolute;
             top: 15px;
             width: 38px;
@@ -353,10 +378,27 @@
             z-index: 10;
             border: none;
             cursor: pointer;
+            background: transparent;
+            padding: 6px;
         }
         
-        .btn-del { right: 15px; background: var(--danger-glow); color: var(--danger); }
-        .btn-edit-inline { right: 58px; background: var(--blue-glow); color: var(--blue); }
+        .btn-del { right: 15px; color: var(--danger); }
+        .btn-del:hover { background: var(--danger-glow); }
+        .btn-edit-inline { right: 58px; color: var(--blue); }
+        .btn-edit-inline:hover { background: var(--blue-glow); }
+        .btn-confirm-inline { right: 101px; color: var(--success); }
+        .btn-confirm-inline:hover { background: var(--success-glow); }
+        
+        /* Ícones SVG nos botões */
+        .btn-del svg, .btn-edit-inline svg, .btn-confirm-inline svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
         
         /* Badges */
         .badge-status {
@@ -364,7 +406,7 @@
             align-items: center;
             padding: 5px 10px;
             border-radius: 8px;
-            font-size: 0.75em;
+            font-size: 0.8em;  /* AUMENTADO de 0.75em */
             font-weight: 800;
             text-transform: uppercase;
             margin-top: 8px;
@@ -489,9 +531,9 @@
         input:checked + .slider:before { transform: translateX(26px); }
         input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
         
-        /* Meta Text */
+        /* Meta Text - FONTE MAIOR */
         .meta-text {
-            font-size: 0.85em;
+            font-size: 0.95em;  /* AUMENTADO de 0.85em */
             color: var(--muted);
             line-height: 1.6;
             margin: 4px 0;
@@ -593,6 +635,17 @@
             gap: 5px;
         }
         
+        /* Animação de confirmação */
+        @keyframes payConfirm {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); background: var(--success-glow); }
+            100% { transform: scale(1); }
+        }
+        
+        .pay-confirmed {
+            animation: payConfirm 0.5s ease;
+        }
+        
         /* Responsivo */
         @media (min-width: 768px) {
             body { max-width: 800px; margin: 0 auto; padding: 30px; padding-bottom: 60px; }
@@ -605,7 +658,6 @@
             .tab-container { max-width: 600px; margin-left: auto; margin-right: auto; }
         }
         
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: var(--dark-pure); border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
@@ -626,7 +678,7 @@
             <div class="login-card">
                 <div class="login-header">
                     <h2>Acesso Identificado</h2>
-                    <p>Cachê Control ERP v4.0</p>
+                    <p>Cachê Control ERP v4.1</p>
                 </div>
                 
                 <label for="senhaInput">Chave Codificada de Segurança</label>
@@ -671,10 +723,20 @@
 
     <!-- ==================== ABA JOBS ==================== -->
     <main id="abaJobs" class="app-section active">
-        <!-- Dashboard -->
         <section class="dashboard">
             <article class="dashboard-card">
-                <button class="eye-button" id="eyeButton" onclick="App.toggleValues()">👁️</button>
+                <button class="eye-button" id="eyeButton" onclick="App.toggleValues()" title="Alternar visibilidade dos valores">
+                    <!-- Ícone de olho aberto (SVG elegante) -->
+                    <svg id="eyeIconOpen" viewBox="0 0 24 24">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <!-- Ícone de olho fechado (SVG elegante) - oculto inicialmente -->
+                    <svg id="eyeIconClosed" viewBox="0 0 24 24" style="display:none;">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                        <line x1="1" y1="1" x2="23" y2="23"/>
+                    </svg>
+                </button>
                 <h3 class="dashboard-title">Total Bruto</h3>
                 <p id="vTotalSemana" class="total-geral">R$ 0,00</p>
             </article>
@@ -692,7 +754,6 @@
             </article>
         </section>
 
-        <!-- Formulário Job -->
         <section class="input-group">
             <h3 id="formJobTitle">💼 Job</h3>
             <input type="hidden" id="editJobId" value="">
@@ -725,7 +786,6 @@
             </div>
         </section>
 
-        <!-- Gráfico -->
         <section class="input-group">
             <h3>📊 Faturamento por contratante</h3>
             <div class="chart-container">
@@ -733,7 +793,6 @@
             </div>
         </section>
 
-        <!-- Lista Jobs -->
         <section class="input-group">
             <h3 class="section-title">📋 Jobs Lançados</h3>
             
@@ -884,12 +943,10 @@
     <!-- ==================== SCRIPTS ==================== -->
     <script>
     /**
-     * FADER LIVRE CACHÊ CONTROL v4.0
-     * Versão Monolítica para Teste
-     * Todos os módulos em um único arquivo
+     * FADER LIVRE CACHÊ CONTROL v4.1
+     * Versão Monolítica - Atualizada
      */
     
-    // ==================== CONSTANTES ====================
     const CONFIG = Object.freeze({
         DB_NAME: 'CacheFinal_V33',
         DB_VERSION: 1,
@@ -922,9 +979,7 @@
         ])
     });
     
-    // ==================== APP PRINCIPAL ====================
     const App = {
-        // Estado
         db: null,
         ocultarValores: false,
         filtroVisualizacao: 'aberto',
@@ -933,19 +988,13 @@
         notificationHour: CONFIG.DEFAULTS.NOTIFICATION_HOUR,
         chartInstance: null,
         
-        // ==================== INICIALIZAÇÃO ====================
         init() {
-            console.log('🚀 Inicializando FADER LIVRE v4.0...');
-            
-            // Carrega configurações
+            console.log('🚀 FADER LIVRE v4.1 inicializando...');
             this.loadSettings();
-            
-            // Abre banco de dados
             this.openDB();
         },
         
         loadSettings() {
-            // Tema
             const savedTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.THEME) || CONFIG.DEFAULTS.THEME;
             if (savedTheme === 'light') {
                 document.body.classList.add('light-mode');
@@ -953,7 +1002,6 @@
                 if (tt) tt.checked = true;
             }
             
-            // Horas base
             const savedHours = localStorage.getItem(CONFIG.STORAGE_KEYS.BASE_HOURS);
             if (savedHours) {
                 this.baseHours = parseFloat(savedHours);
@@ -961,7 +1009,6 @@
                 if (bh) bh.value = this.baseHours;
             }
             
-            // Horário notificação
             const savedNotif = localStorage.getItem(CONFIG.STORAGE_KEYS.NOTIFICATION_HOUR);
             if (savedNotif) {
                 this.notificationHour = savedNotif;
@@ -969,7 +1016,6 @@
                 if (nh) nh.value = this.notificationHour;
             }
             
-            // Senha
             const senhaSalva = localStorage.getItem(CONFIG.STORAGE_KEYS.SENHA);
             if (!senhaSalva) {
                 document.getElementById('senhaInput').placeholder = 'Defina sua chave no primeiro acesso';
@@ -991,28 +1037,37 @@
             
             request.onsuccess = (event) => {
                 this.db = event.target.result;
-                console.log('✅ Banco de dados conectado');
-                
-                // Se já está logado, inicializa UI
+                console.log('✅ Banco conectado');
                 if (document.getElementById('loginScreen').style.display === 'none') {
                     this.initUI();
                 }
             };
             
             request.onerror = () => {
-                alert('Erro crítico: Banco de dados recusou conexão. Tente recarregar a página.');
+                alert('Erro crítico: Banco de dados recusou conexão.');
             };
         },
         
         initUI() {
             document.getElementById('dataJob').value = new Date().toISOString().split('T')[0];
-            document.getElementById('eyeButton').innerHTML = this.ocultarValores ? '🙈' : '👁️';
-            
+            this.updateEyeIcon();
             this.updateDashboard();
             this.updateCompanyList();
             this.updatePeriodUI();
             this.requestNotificationPermission();
             this.checkDuePayments();
+        },
+        
+        updateEyeIcon() {
+            const openIcon = document.getElementById('eyeIconOpen');
+            const closedIcon = document.getElementById('eyeIconClosed');
+            if (this.ocultarValores) {
+                openIcon.style.display = 'none';
+                closedIcon.style.display = 'block';
+            } else {
+                openIcon.style.display = 'block';
+                closedIcon.style.display = 'none';
+            }
         },
         
         // ==================== AUTENTICAÇÃO ====================
@@ -1022,7 +1077,7 @@
             
             if (!senhaSalva) {
                 if (!senha || senha.trim().length < 4) {
-                    alert('Defina uma Chave Master de pelo menos 4 caracteres no primeiro acesso.');
+                    alert('Defina uma Chave Master de pelo menos 4 caracteres.');
                     return;
                 }
                 localStorage.setItem(CONFIG.STORAGE_KEYS.SENHA, senha.trim());
@@ -1076,7 +1131,7 @@
             let msg = 'Contatos de recuperação:\n';
             if (email) msg += `E-mail: ${email}\n`;
             if (telefone) msg += `Telefone: ${telefone}\n`;
-            if (!email && !telefone) msg = 'Nenhum dado de recuperação configurado.';
+            if (!email && !telefone) msg = 'Nenhum dado configurado.';
             alert(msg);
         },
         
@@ -1219,7 +1274,7 @@
         
         toggleValues() {
             this.ocultarValores = !this.ocultarValores;
-            document.getElementById('eyeButton').innerHTML = this.ocultarValores ? '🙈' : '👁️';
+            this.updateEyeIcon();
             this.updateDashboard();
         },
         
@@ -1298,7 +1353,6 @@
                 diasPagamento: diasPg, nfPercentual: nfPerc
             };
             
-            // Campos específicos
             if (tipoPg === 'Semanal') {
                 payload.inicioSemana = parseInt(document.getElementById('cadInicioSemana').value);
                 payload.fimSemana = parseInt(document.getElementById('cadFimSemana').value);
@@ -1344,7 +1398,6 @@
                 
                 this.updatePeriodUI();
                 
-                // Preenche campos específicos após criar o HTML
                 setTimeout(() => {
                     if (d.tipoPagamento === 'Semanal') {
                         const isEl = document.getElementById('cadInicioSemana');
@@ -1404,8 +1457,12 @@
                             <div class="meta-text">📅 <b>Ciclo:</b> ${emp.tipoPagamento} | 📄 <b>NF:</b> ${emp.nfPercentual}%</div>
                         </div>
                         <div class="company-card-actions">
-                            <button class="btn-edit-inline" onclick="App.editCompany(${emp.id})">✏️</button>
-                            <button class="btn-del" onclick="App.deleteCompany(${emp.id})">🗑️</button>
+                            <button class="btn-edit-inline" onclick="App.editCompany(${emp.id})">
+                                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            </button>
+                            <button class="btn-del" onclick="App.deleteCompany(${emp.id})">
+                                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
                         </div>
                     `;
                     container.appendChild(card);
@@ -1464,7 +1521,6 @@
                 return;
             }
             
-            // Busca empresa
             const txEmp = this.db.transaction('empresas', 'readonly');
             txEmp.objectStore('empresas').getAll().onsuccess = (e) => {
                 const empresas = e.target.result;
@@ -1475,7 +1531,6 @@
                     return;
                 }
                 
-                // Cálculos
                 const cacheBase = parseFloat(empresa.cacheBase || 0);
                 const diaria = parseFloat(empresa.diaria || 0);
                 const percNF = parseFloat(empresa.nfPercentual || 0);
@@ -1514,7 +1569,8 @@
                     inicioPrimeiraQuinzena: parseInt(empresa.inicioPrimeiraQuinzena || 1),
                     fimPrimeiraQuinzena: parseInt(empresa.fimPrimeiraQuinzena || 15),
                     fimSegundaQuinzena: parseInt(empresa.fimSegundaQuinzena || 30),
-                    previsaoPagamento: previsao
+                    previsaoPagamento: previsao,
+                    pago: false  // NOVO: campo de confirmação de pagamento
                 };
                 
                 if (idEdicao) payload.id = parseInt(idEdicao);
@@ -1529,12 +1585,40 @@
                     this.updateDashboard();
                     this.clearJobForm();
                     
-                    // Limpa notificação
                     const notifStatus = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.NOTIFICATIONS_STATUS) || '{}');
                     delete notifStatus[payload.id || idEdicao];
                     localStorage.setItem(CONFIG.STORAGE_KEYS.NOTIFICATIONS_STATUS, JSON.stringify(notifStatus));
                 };
                 req.onerror = (err) => { console.error(err); alert('Erro ao salvar job.'); };
+            };
+        },
+        
+        // NOVA FUNÇÃO: Confirmar pagamento de um job
+        confirmPayment(id) {
+            if (!confirm('Confirmar que este pagamento foi recebido?')) return;
+            
+            const tx = this.db.transaction('jobs', 'readwrite');
+            const store = tx.objectStore('jobs');
+            
+            const getReq = store.get(id);
+            getReq.onsuccess = () => {
+                const job = getReq.result;
+                if (job) {
+                    job.pago = true;
+                    const putReq = store.put(job);
+                    putReq.onsuccess = () => {
+                        this.autoBackup();
+                        this.updateDashboard();
+                        // Animação no card
+                        setTimeout(() => {
+                            const card = document.querySelector(`.history-card [data-job-id="${id}"]`)?.closest('.history-card');
+                            if (card) {
+                                card.classList.add('pay-confirmed');
+                                setTimeout(() => card.classList.remove('pay-confirmed'), 500);
+                            }
+                        }, 100);
+                    };
+                }
             };
         },
         
@@ -1564,7 +1648,7 @@
                 } else {
                     return new Date(ano, mes + 1, p1Fim, 0, 0, 0, 0);
                 }
-            } else { // Mensal
+            } else {
                 const pFim = parseInt(empresa.fimPeriodo || 30);
                 if (dia <= pFim) {
                     return new Date(ano, mes, pFim, 0, 0, 0, 0);
@@ -1582,6 +1666,9 @@
         },
         
         getJobStatus(job) {
+            // Se o job foi confirmado como pago manualmente
+            if (job.pago === true) return 'pago';
+            
             const hoje = new Date();
             hoje.setHours(0, 0, 0, 0);
             
@@ -1662,7 +1749,6 @@
         updateDashboard() {
             if (!this.db) return;
             
-            // Verifica se há NF
             const txE = this.db.transaction('empresas', 'readonly');
             txE.objectStore('empresas').getAll().onsuccess = (eE) => {
                 const empresas = eE.target.result;
@@ -1673,7 +1759,6 @@
                 if (nfCard) nfCard.style.display = hasNF ? 'block' : 'none';
                 if (liqCard) liqCard.style.display = hasNF ? 'block' : 'none';
                 
-                // Processa jobs
                 const tx = this.db.transaction('jobs', 'readonly');
                 tx.objectStore('jobs').getAll().onsuccess = (e) => {
                     const jobs = e.target.result;
@@ -1682,7 +1767,6 @@
                     let tBruto = 0, tNF = 0, tHoras = 0;
                     const porEmpresa = {};
                     
-                    // Reseta colorMap periodicamente
                     if (Object.keys(this.colorMap).length > 20) this.colorMap = {};
                     
                     const container = document.getElementById('listaHistorico');
@@ -1698,13 +1782,11 @@
                             porEmpresa[job.empresa] = (porEmpresa[job.empresa] || 0) + (job.total || 0);
                         }
                         
-                        // Atribui cor
                         if (!this.colorMap[job.empresa]) {
                             const idx = Object.keys(this.colorMap).length % CONFIG.CHART_COLORS.length;
                             this.colorMap[job.empresa] = CONFIG.CHART_COLORS[idx];
                         }
                         
-                        // Filtro de exibição
                         const deveExibir = (this.filtroVisualizacao === 'aberto' && status === 'aberto') ||
                                           (this.filtroVisualizacao === 'arquivado' && (status === 'arquivado' || status === 'pago'));
                         
@@ -1714,13 +1796,30 @@
                             card.style.borderLeft = `6px solid ${this.colorMap[job.empresa]}`;
                             
                             let badge = '';
-                            if (status === 'aberto') badge = '<span class="badge-status status-aberto">Aberto</span>';
-                            else if (status === 'arquivado') badge = '<span class="badge-status status-fechado">Aguardando</span>';
-                            else badge = '<span class="badge-status status-pago">Quitado ✓</span>';
+                            if (status === 'aberto') {
+                                badge = '<span class="badge-status status-aberto">Aberto</span>';
+                            } else if (status === 'arquivado') {
+                                badge = '<span class="badge-status status-fechado">Aguardando</span>';
+                            } else {
+                                badge = '<span class="badge-status status-pago">Pago ✓</span>';
+                            }
+                            
+                            // Botão de confirmar pagamento (aparece apenas para jobs com status 'pago' por data mas não confirmados)
+                            let confirmBtn = '';
+                            if (status === 'pago' && job.pago !== true) {
+                                confirmBtn = `<button class="btn-confirm-inline" onclick="App.confirmPayment(${job.id})" title="Confirmar recebimento" data-job-id="${job.id}">
+                                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                                </button>`;
+                            }
                             
                             card.innerHTML = `
-                                <button class="btn-del" onclick="App.deleteJob(${job.id})">🗑️</button>
-                                <button class="btn-edit-inline" onclick="App.editJob(${job.id})">✏️</button>
+                                <button class="btn-del" onclick="App.deleteJob(${job.id})" title="Excluir">
+                                    <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                </button>
+                                <button class="btn-edit-inline" onclick="App.editJob(${job.id})" title="Editar">
+                                    <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                </button>
+                                ${confirmBtn}
                                 <div class="empresa-title">${job.empresa}</div>
                                 <div class="meta-text">📅 ${this.formatDate(job.data)} | 📌 ${job.job}</div>
                                 <div>${badge}</div>
@@ -1728,23 +1827,20 @@
                                 <div class="meta-text">Cachê: ${this.formatCurrency(job.cache)}</div>
                                 <div class="meta-text">Diária: ${this.formatCurrency(job.diaria)}</div>
                                 <div class="meta-text">Horas Extras: ${this.formatCurrency(job.extra)}</div>
-                                <div class="meta-text">🗓️ Previsão: <b>${job.previsaoPagamento}</b></div>
+                                <div class="meta-text">Previsão de Recebimento: <b>${job.previsaoPagamento}</b></div>
                                 <div style="margin-top:10px;font-weight:900;">Total Bruto: <span>${this.formatCurrency(job.total)}</span></div>
                             `;
                             container.appendChild(card);
                         }
                     });
                     
-                    // Atualiza cards
                     document.getElementById('vTotalSemana').textContent = this.formatCurrency(tBruto);
                     document.getElementById('vTotalNF').textContent = '- ' + this.formatCurrency(tNF);
                     document.getElementById('vTotalLiquido').textContent = this.formatCurrency(tBruto - tNF);
                     document.getElementById('vTotalHoras').textContent = tHoras.toFixed(1) + 'h';
                     
-                    // Gráfico
                     this.renderChart(porEmpresa);
                     
-                    // Filtro de busca ativo
                     if (document.getElementById('searchBox').style.display === 'block') {
                         this.filterTable();
                     }
@@ -1777,7 +1873,6 @@
                 return;
             }
             
-            // Remove mensagem
             const msgEl = canvas.parentElement.querySelector('.no-data-msg');
             if (msgEl) msgEl.remove();
             canvas.style.display = 'block';
@@ -1819,28 +1914,77 @@
             }
         },
         
-        // ==================== EXPORTAÇÃO ====================
+        // ==================== EXPORTAÇÃO CSV MELHORADA ====================
         exportCSV() {
             const tx = this.db.transaction('jobs', 'readonly');
             tx.objectStore('jobs').getAll().onsuccess = (e) => {
                 const jobs = e.target.result;
                 jobs.sort((a, b) => new Date(b.data) - new Date(a.data));
                 
-                let csv = '\uFEFFID;Data;Empresa;Job;Cachê;Diária;Horas Extras;Total Bruto;Imposto NF;Valor Líquido;Previsão\n';
+                // Agrupar por empresa
+                const empresasMap = {};
                 jobs.forEach(j => {
-                    const liq = j.total - j.valorNF;
-                    csv += `${j.id};${j.data};${j.empresa};${j.job};${j.cache.toFixed(2)};${j.diaria.toFixed(2)};${j.extra.toFixed(2)};${j.total.toFixed(2)};${j.valorNF.toFixed(2)};${liq.toFixed(2)};${j.previsaoPagamento}\n`;
+                    if (!empresasMap[j.empresa]) {
+                        empresasMap[j.empresa] = [];
+                    }
+                    empresasMap[j.empresa].push(j);
                 });
+                
+                // Construir CSV organizado
+                let csv = '\uFEFF'; // BOM para Excel
+                csv += 'FADER LIVRE - RELATÓRIO DE CACHÊS\n';
+                csv += `Gerado em: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+                
+                let totalGeralBruto = 0;
+                let totalGeralNF = 0;
+                let totalGeralLiquido = 0;
+                
+                // Para cada empresa
+                Object.keys(empresasMap).sort().forEach(nomeEmpresa => {
+                    const jobsEmpresa = empresasMap[nomeEmpresa];
+                    
+                    csv += `\n${'='.repeat(60)}\n`;
+                    csv += `EMPRESA: ${nomeEmpresa}\n`;
+                    csv += `${'='.repeat(60)}\n`;
+                    csv += 'Data;Job;Horas;Início;Fim;Cachê;Diária;Horas Extras;Total Bruto;Imposto NF;Valor Líquido;Previsão Pagamento;Status\n';
+                    
+                    let subtotalBruto = 0;
+                    let subtotalNF = 0;
+                    
+                    jobsEmpresa.forEach(j => {
+                        const liq = (j.total || 0) - (j.valorNF || 0);
+                        const status = this.getJobStatus(j);
+                        const statusTexto = status === 'aberto' ? 'Aberto' : status === 'arquivado' ? 'Aguardando' : 'Pago';
+                        
+                        csv += `${this.formatDate(j.data)};${j.job};${j.horas}h;${j.inicio};${j.fim};R$ ${(j.cache||0).toFixed(2)};R$ ${(j.diaria||0).toFixed(2)};R$ ${(j.extra||0).toFixed(2)};R$ ${(j.total||0).toFixed(2)};R$ ${(j.valorNF||0).toFixed(2)};R$ ${liq.toFixed(2)};${j.previsaoPagamento};${statusTexto}\n`;
+                        
+                        subtotalBruto += (j.total || 0);
+                        subtotalNF += (j.valorNF || 0);
+                    });
+                    
+                    const subtotalLiquido = subtotalBruto - subtotalNF;
+                    csv += `${'—'.repeat(60)}\n`;
+                    csv += `SUBTOTAL ${nomeEmpresa}: Bruto: R$ ${subtotalBruto.toFixed(2)} | NF: R$ ${subtotalNF.toFixed(2)} | Líquido: R$ ${subtotalLiquido.toFixed(2)}\n`;
+                    
+                    totalGeralBruto += subtotalBruto;
+                    totalGeralNF += subtotalNF;
+                    totalGeralLiquido += subtotalLiquido;
+                });
+                
+                csv += `\n${'='.repeat(60)}\n`;
+                csv += `TOTAL GERAL: Bruto: R$ ${totalGeralBruto.toFixed(2)} | NF: R$ ${totalGeralNF.toFixed(2)} | Líquido: R$ ${totalGeralLiquido.toFixed(2)}\n`;
+                csv += `${'='.repeat(60)}\n`;
                 
                 const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
                 const a = document.createElement('a');
                 a.href = URL.createObjectURL(blob);
-                a.download = `fader_livre_${new Date().toISOString().split('T')[0]}.csv`;
+                a.download = `fader_livre_faturamento_${new Date().toISOString().split('T')[0]}.csv`;
                 a.click();
-                alert('Exportado com sucesso!');
+                alert('Planilha exportada com sucesso!');
             };
         },
         
+        // ==================== WHATSAPP (SEM EMOJIS NOS DADOS) ====================
         sendWhatsApp() {
             const tx = this.db.transaction('jobs', 'readonly');
             tx.objectStore('jobs').getAll().onsuccess = (e) => {
@@ -1866,23 +2010,25 @@
                 
                 filtrados.sort((a, b) => new Date(b.data) - new Date(a.data));
                 
-                let msg = '*FADER LIVRE - EXTRATO*\n' + '━'.repeat(30) + '\n\n';
+                let msg = '*FADER LIVRE - EXTRATO*\n';
+                msg += '━'.repeat(30) + '\n\n';
                 let total = 0;
                 
                 filtrados.forEach(j => {
                     msg += `*${j.empresa}* - ${this.formatDate(j.data)}\n`;
-                    msg += `📌 ${j.job}\n`;
-                    msg += `💰 Cachê: R$ ${(j.cache||0).toFixed(2)}\n`;
-                    msg += `🚗 Diária: R$ ${(j.diaria||0).toFixed(2)}\n`;
-                    msg += `⏰ Extras: R$ ${(j.extra||0).toFixed(2)}\n`;
-                    msg += `📊 Total: R$ ${(j.total||0).toFixed(2)}\n`;
-                    msg += `📅 Previsão: ${j.previsaoPagamento}\n\n`;
+                    msg += `Job: ${j.job}\n`;
+                    msg += `Cachê: R$ ${(j.cache||0).toFixed(2)}\n`;
+                    msg += `Diária / Logística: R$ ${(j.diaria||0).toFixed(2)}\n`;
+                    msg += `Horas Extras: R$ ${(j.extra||0).toFixed(2)}\n`;
+                    msg += `Total: R$ ${(j.total||0).toFixed(2)}\n`;
+                    msg += `Previsão de Pagamento: ${j.previsaoPagamento}\n\n`;
                     total += (j.total || 0);
                 });
                 
                 msg += '━'.repeat(30) + '\n';
                 msg += `*TOTAL GERAL: R$ ${total.toFixed(2)}*\n`;
-                msg += `\n📱 ${new Date().toLocaleDateString('pt-BR')}`;
+                msg += `\nRelatório gerado em: ${new Date().toLocaleDateString('pt-BR')}\n`;
+                msg += 'FADER LIVRE - Cachê Control v4.1';
                 
                 window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg), '_blank');
             };
@@ -1897,7 +2043,7 @@
                         jobs: eJ.target.result,
                         empresas: eE.target.result,
                         exportadoEm: new Date().toISOString(),
-                        versao: '4.0'
+                        versao: '4.1'
                     };
                     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
                     const a = document.createElement('a');
@@ -1921,7 +2067,11 @@
                     
                     if (!confirm(`Restaurar backup?\nJobs: ${dados.jobs.length}\nEmpresas: ${dados.empresas.length}\n\nIsso substituirá TODOS os dados atuais.`)) return;
                     
-                    // Limpa e restaura
+                    // Garantir que jobs antigos tenham o campo 'pago'
+                    dados.jobs.forEach(j => {
+                        if (j.pago === undefined) j.pago = false;
+                    });
+                    
                     const txClearJ = this.db.transaction('jobs', 'readwrite');
                     txClearJ.objectStore('jobs').clear().onsuccess = () => {
                         const txJ = this.db.transaction('jobs', 'readwrite');
@@ -1976,12 +2126,14 @@
                 const hojeStr = new Date().toISOString().split('T')[0];
                 
                 jobs.forEach(job => {
+                    if (job.pago === true) return; // Pula jobs já confirmados
+                    
                     const fech = this.calcClosingDate(job.data, job);
                     const pag = new Date(fech);
                     pag.setDate(pag.getDate() + Number(job.diasPagamento || 0));
                     
                     if (pag.getTime() === hoje.getTime() && notifStatus[job.id] !== hojeStr) {
-                        new Notification('💸 Pagamento de Job Hoje!', {
+                        new Notification('Pagamento de Job Hoje', {
                             body: `"${job.job}" - ${job.empresa}\nValor: ${this.formatCurrency(job.total)}`,
                             tag: `job-${job.id}-${hojeStr}`,
                             requireInteraction: true
@@ -1996,26 +2148,19 @@
     };
     
     // ==================== INICIALIZAÇÃO ====================
-    // Verifica se já está logado (tela de login não visível)
-    const loginScreen = document.getElementById('loginScreen');
-    
-    // Inicializa o app
-    App.init();
-    
-    // Se não tem senha, mostra placeholder
     if (!localStorage.getItem(CONFIG.STORAGE_KEYS.SENHA)) {
         document.getElementById('senhaInput').placeholder = 'Defina sua chave no primeiro acesso';
     }
     
-    // Event listeners para notificações
+    App.init();
+    
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') App.checkDuePayments();
     });
     window.addEventListener('focus', () => App.checkDuePayments());
     
-    console.log('✅ FADER LIVRE v4.0 carregado com sucesso!');
-    console.log('📱 Versão monolítica para teste');
-    console.log('💡 Dica: Abra o console (F12) para ver logs');
+    console.log('✅ FADER LIVRE v4.1 carregado!');
+    console.log('🆕 Novidades: Ícones SVG, CSV organizado, confirmação de pagamento, fonte maior');
     </script>
 </body>
 </html>
