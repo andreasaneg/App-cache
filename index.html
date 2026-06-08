@@ -55,12 +55,21 @@
         input,select{width:100%;padding:14px;border-radius:14px;border:1px solid var(--border-color);background:var(--dark-pure);color:var(--text);margin-bottom:15px;font-size:16px;font-family:inherit}
         input:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
         .input-row,.time-inputs{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+        
+        @media(max-width: 480px) {
+            .time-inputs {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+        }
+
         .btn{width:100%;border:none;padding:16px;border-radius:14px;font-weight:800;cursor:pointer;margin-bottom:12px;font-size:0.95em;display:flex;align-items:center;justify-content:center;gap:8px;text-transform:uppercase;letter-spacing:1px;transition:all 0.2s}
         .btn:active{transform:scale(0.98)}.btn-save{background:var(--primary);color:var(--dark-pure)}
         .btn-export{background:var(--border-color);color:var(--text)}.btn-whats{background:var(--whatsapp);color:white}
         .btn-search{background:var(--blue);color:var(--text)}.btn-cancel{background:var(--card-hover);color:var(--text)}
         .btn-danger-outline{background:var(--danger-glow);color:var(--danger);border:1px solid var(--danger)}
-        .btn-sm{font-size:0.8em;padding:12px}.button-group-vertical{display:flex;flex-direction:column;gap:5px;margin-top:5px}
+        .btn-sm{font-size:0.8em;padding:12px}
+        .button-group-vertical{display:flex;flex-direction:column;gap:5px;margin-top:5px}
 
         .history-card{background:var(--card);border-radius:20px;padding:18px;margin-bottom:15px;position:relative;box-shadow:var(--shadow-sm)}
         .empresa-title{font-size:1.4em;font-weight:800;margin-bottom:8px;color:var(--primary);padding-right:160px}
@@ -78,6 +87,20 @@
         .status-aberto{background:var(--status-aberto-bg);color:var(--status-aberto-text);border:1px solid var(--status-aberto-border)}
         .status-arquivado{background:var(--status-fechado-bg);color:var(--status-fechado-text);border:1px solid var(--status-fechado-border)}
         .status-pago{background:var(--status-pago-bg);color:var(--status-pago-text);border:1px solid var(--status-pago-border)}
+
+        .select-status-inline {
+            background: var(--dark-pure);
+            color: var(--text);
+            border: 1px solid var(--border-color);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            width: auto;
+            display: inline-block;
+            margin-bottom: 0;
+            margin-top: 5px;
+            cursor: pointer;
+        }
 
         .autocomplete-list{position:absolute;z-index:100;background:var(--card);border:1px solid var(--border-hover);border-radius:16px;width:calc(100% - 40px);max-height:200px;overflow-y:auto;margin-top:-12px;box-shadow:var(--shadow-lg)}
         .autocomplete-item{padding:14px;cursor:pointer;border-bottom:1px solid var(--border-color);color:var(--text)}
@@ -108,129 +131,9 @@
         .login-actions{display:flex;flex-direction:column;gap:10px;margin-top:10px}
         .login-secondary-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
         .export-central{border-color:var(--border-hover);background:linear-gradient(180deg,var(--card) 0%,var(--card-hover) 100%);margin-top:20px}
-        .description-text{color:var(--muted);font-size:0.85em;margin-bottom:15px}.whatsapp-export{margin-top:10px;margin-bottom:25px}
-        .section-title{font-size:1.2em;font-weight:800;margin:0 0 20px 0;color:var(--text)}
-
-        .company-card{background:var(--card);padding:15px 60px 15px 15px;border-radius:20px;margin-bottom:10px;border:1px solid var(--border-color);position:relative;min-height:80px}
-        .company-card-header{margin-bottom:5px}.company-name{font-size:1.1em;font-weight:800;color:var(--primary)}
-        .company-card-body{margin-bottom:5px}.company-card-body .meta-text{font-size:0.85em}
-        .company-card-actions{position:absolute;top:10px;right:10px;display:flex;gap:4px}
-
-        .toast-container{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:10px}
-        .toast{background:var(--card);color:var(--text);padding:16px 20px;border-radius:16px;box-shadow:var(--shadow-lg);border-left:4px solid var(--primary);animation:slideIn 0.3s ease;max-width:350px;font-size:0.9em}.toast.success{border-left-color:var(--success)}.toast.error{border-left-color:var(--danger)}
-        @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
-        @media(min-width:768px){body{max-width:800px;margin:0 auto;padding:30px;padding-bottom:60px}.dashboard{grid-template-columns:repeat(2,1fr)}}
-        @media(min-width:1024px){body{max-width:1000px}.dashboard{grid-template-columns:repeat(4,1fr)}.tab-container{max-width:600px;margin:0 auto 25px auto}}
-        :focus-visible{outline:2px solid var(--primary);outline-offset:2px}
-    </style>
-</head>
-<body onload="document.getElementById('themeToggle').checked = document.body.classList.contains('light-mode')">
-
-<!-- LOGIN -->
-<div id="loginScreen" class="login-overlay">
-    <div class="login-container">
-        <button onclick="App.emergencyReset()" class="btn btn-danger-outline emergency-reset-btn">Forçar Reset de Emergência</button>
-        <div class="login-card">
-            <div class="login-header"><h2>Acesso Identificado</h2><p>Cachê Control ERP v4.3</p></div>
-            <label for="senhaInput">Chave Codificada</label>
-            <input type="password" id="senhaInput" placeholder="••••••••" class="password-input">
-            <div id="novaSenhaBox" class="new-password-box" style="display:none">
-                <label>Nova Chave</label><input type="password" id="novaSenha" placeholder="Mínimo 4 caracteres">
-                <label>E-mail</label><input type="email" id="emailRecuperacao" placeholder="nome@exemplo.com">
-                <label>Telefone (opcional)</label><input type="tel" id="telefoneRecuperacao" placeholder="(xx) xxxxx-xxxx">
-                <button class="btn btn-save" onclick="App.registerCredentials()">Registrar Credenciais</button>
-            </div>
-            <div class="login-actions">
-                <button class="btn btn-save" onclick="App.login()">Validar Token</button>
-                <div class="login-secondary-actions">
-                    <button class="btn btn-cancel btn-sm" onclick="App.toggleRegistration()">Configurar</button>
-                    <button class="btn btn-export btn-sm" onclick="App.recoverPassword()">Resgatar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- HEADER -->
-<header class="app-header"><h1>FADER LIVRE</h1><p>SISTEMA CONTROLADOR DE CACHÊS</p></header>
-
-<!-- TABS -->
-<nav class="tab-container">
-    <button class="tab-button active" onclick="App.switchTab('abaJobs', this)">Lançamentos</button>
-    <button class="tab-button" onclick="App.switchTab('abaEmpresas', this)">Empresas</button>
-    <button class="tab-button" onclick="App.switchTab('abaConfiguracoes', this)">Configurações</button>
-</nav>
-
-<!-- ABA JOBS -->
-<main id="abaJobs" class="app-section active">
-    <section class="dashboard">
-        <article class="dashboard-card">
-            <button class="eye-button" id="eyeButton" onclick="App.toggleValues()">
-                <svg id="eyeIconOpen" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                <svg id="eyeIconClosed" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-            </button>
-            <h3 class="dashboard-title">Total Bruto</h3><p id="vTotalSemana" class="total-geral">R$ 0,00</p>
-        </article>
-        <article class="dashboard-card" id="dashboardNfCard"><h3 class="dashboard-title">Imposto NF</h3><p id="vTotalNF" class="total-nf">- R$ 0,00</p></article>
-        <article class="dashboard-card" id="dashboardLiquidoCard"><h3 class="dashboard-title">Valor Líquido</h3><p id="vTotalLiquido" class="total-liquido">R$ 0,00</p></article>
-        <article class="dashboard-card"><h3 class="dashboard-title">Horas Trabalhadas</h3><p id="vTotalHoras" class="total-horas">0.0h</p></article>
-    </section>
-    <section class="input-group">
-        <h3 id="formJobTitle">Job</h3><input type="hidden" id="editJobId">
-        <label>Empresa</label><input type="text" id="empresaJob" placeholder="Pesquisar..." oninput="App.autocomplete(this.value)"><div id="autocompleteContainer"></div>
-        <label>Data</label><input type="date" id="dataJob">
-        <label>Job</label><input type="text" id="nomeJob" placeholder="Ex: Direção de Fotografia">
-        <div class="time-inputs"><div><label>Início</label><input type="time" id="inicio" value="08:00"></div><div><label>Fim</label><input type="time" id="fim" value="20:00"></div></div>
-        <div class="button-group-vertical"><button class="btn btn-save" onclick="App.saveJob()">Salvar Lançamento</button><button class="btn btn-cancel" onclick="App.clearJobForm()">Limpar</button></div>
-    </section>
-    <section class="input-group"><h3>Faturamento por contratante</h3><div class="chart-container"><canvas id="graficoEmpresas"></canvas></div></section>
-    <section class="input-group">
-        <h3 class="section-title">Jobs Lançados</h3>
-        <div class="toggle-filter-container">
-            <button id="btnFiltroAberto" class="btn-filter active" onclick="App.setFilter('aberto')">Período Aberto</button>
-            <button id="btnFiltroArquivado" class="btn-filter" onclick="App.setFilter('arquivado')">Pagos / Arquivados</button>
-        </div>
-        <div class="search-controls"><button class="btn btn-search" id="btnBuscaTexto" onclick="App.openSearch()">Filtrar</button><button class="btn btn-export" onclick="App.clearSearch()">Limpar</button></div>
-        <div id="searchBox" class="search-box" style="display:none"><input type="text" id="inputBusca" onkeyup="App.filterTable()" placeholder="Buscar..."></div>
-        <div id="listaHistorico"></div>
-    </section>
-    <div class="whatsapp-export"><button class="btn btn-whats" onclick="App.sendWhatsApp()">Enviar para Whatsapp</button></div>
-</main>
-
-<!-- ABA EMPRESAS -->
-<aside id="abaEmpresas" class="app-section">
-    <section class="input-group">
-        <h2 id="formEmpresaTitle">Nova Empresa e Regras</h2><input type="hidden" id="cadIdEmpresa">
-        <label>Nome</label><input type="text" id="cadNomeEmpresa" placeholder="Razão Social">
-        <div class="input-row"><div><label>Cachê Base (12h)</label><input type="number" id="cadCacheBase" step="0.01" min="0"></div><div><label>Alimentação/Logística</label><input type="number" id="cadDiaria" step="0.01" min="0"></div></div>
-        <label>Ciclo de Faturamento</label><select id="cadTipoPagamento" onchange="App.updatePeriodUI()"><option value="Semanal">Semanal</option><option value="Quinzenal">Quinzenal</option><option value="Mensal">Mensal</option></select>
-        <div id="cadPeriodoContainer"></div>
-        <div class="input-row"><div><label>Dias p/ Liquidação</label><input type="number" id="cadDiasPagamento" vain-bottom:15px;border:1px solid var(--border-color)}
-        .config-group h4{color:var(--text);margin-bottom:10px;font-size:1em}.config-help-text{font-size:0.8em;color:var(--muted);margin-top:5px}
-        .warning-text{font-size:0.8em;color:var(--danger);margin-top:5px}.muted-label{color:var(--muted)}
-        .toggle-row{display:flex;justify-content:space-between;align-items:center}.toggle-row label{margin-bottom:0}
-        .toggle-switch{position:relative;display:inline-block;width:60px;height:34px}
-        .toggle-switch input{opacity:0;width:0;height:0;margin:0}
-        .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:var(--border-color);transition:0.4s;border-radius:34px}
-        .slider:before{position:absolute;content:"";height:26px;width:26px;left:4px;bottom:4px;background-color:white;transition:0.4s;border-radius:50%}
-        input:checked+.slider{background-color:var(--primary)}input:focus+.slider{box-shadow:0 0 1px var(--primary)}
-        input:checked+.slider:before{transform:translateX(26px)}input:disabled+.slider{opacity:0.5;cursor:not-allowed}
-        .meta-text{font-size:0.95em;color:var(--muted);line-height:1.6;margin:4px 0}.meta-text b{color:var(--text)}
-        .chart-container{height:300px;margin-top:15px;position:relative}
-        .login-overlay{position:fixed;inset:0;background:var(--dark-pure);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;padding:15px}
-        .login-container{width:100%;max-width:400px}.emergency-reset-btn{width:100%;margin-bottom:20px;box-shadow:0 4px 10px rgba(239,68,68,0.3);padding:10px 15px;border-radius:10px;font-weight:bold;font-size:0.8em}
-        .login-card{background:var(--card);padding:25px;border-radius:28px;box-shadow:var(--shadow-xl);border:1px solid var(--border-color)}
-        .login-header{text-align:center;margin-bottom:20px}.login-header h2{color:var(--text);font-size:1.4em;font-weight:800}
-        .login-header p{color:var(--muted);font-size:0.8em;margin-top:4px;letter-spacing:1px}
-        .password-input{text-align:center;letter-spacing:6px;font-size:20px}
-        .new-password-box{margin-top:5px;padding-top:15px;border-top:1px dashed var(--border-color)}
-        .login-actions{display:flex;flex-direction:column;gap:10px;margin-top:10px}
-        .login-secondary-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-        .export-central{border-color:var(--border-hover);background:linear-gradient(180deg,var(--card) 0%,var(--card-hover) 100%);margin-top:20px}
         .description-text{color:var(--muted);font-size:0.85em;margin-bottom:15px}
         .toast-container{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:10px}
         .toast{background:var(--card);color:var(--text);padding:16px 20px;border-radius:16px;box-shadow:var(--shadow-lg);border-left:4px solid var(--primary);animation:slideIn 0.3s ease;max-width:350px;font-size:0.9em}.toast.success{border-left-color:var(--success)}.toast.error{border-left-color:var(--danger)}
-        @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
         @media(min-width:768px){body{max-width:800px;margin:0 auto;padding:30px;padding-bottom:60px}.dashboard{grid-template-columns:repeat(2,1fr)}}
         @media(min-width:1024px){body{max-width:1000px}.dashboard{grid-template-columns:repeat(4,1fr)}.tab-container{max-width:600px;margin:0 auto 25px auto}}
         :focus-visible{outline:2px solid var(--primary);outline-offset:2px}
@@ -415,7 +318,7 @@ const App = {
         document.getElementById('btnFiltroAberto').classList.toggle('active', filter === 'aberto');
         document.getElementById('btnFiltroArquivado').classList.toggle('active', filter === 'arquivado');
         this.renderJobList();
-        this.renderChart(); // Ajustado: Gráfico passa a escutar a mudança de filtro de período
+        this.renderChart(); // Integrado: Atualiza gráfico ao mudar de aba
     },
 
     openSearch() {
@@ -427,7 +330,7 @@ const App = {
         document.getElementById('inputBusca').value = '';
         document.getElementById('searchBox').style.display = 'none';
         this.renderJobList();
-        this.renderChart(); // Ajustado: Atualiza o gráfico limpando a busca
+        this.renderChart(); // Integrado: Reseta gráfico ao limpar busca
     },
 
     normalizeString(str) {
@@ -437,7 +340,7 @@ const App = {
 
     filterTable() {
         this.renderJobList();
-        this.renderChart(); // Ajustado: Torna o gráfico reativo à digitação do filtro de busca
+        this.renderChart(); // Integrado: Atualiza gráfico ao digitar na busca
     },
 
     autocomplete(val) {
@@ -517,7 +420,7 @@ const App = {
             const index = this.state.jobs.findIndex(j => j.id === id);
             if (index !== -1) {
                 this.state.jobs[index] = { ...this.state.jobs[index], empresa, data, nome, inicio, fim, horas, valorBruto };
-                this.showToast('Lançamento atualizado', 'success');
+                this.showToast('Lançamento updated', 'success');
             }
         } else {
             const newJob = {
@@ -593,7 +496,7 @@ const App = {
             return;
         }
 
-        // Ajustado: Validação estrita contra nomes duplicados
+        // Integrado: Validação estrita de duplicidade ignorando maiúsculas, minúsculas e acentos
         const nomeNormalizado = this.normalizeString(nome);
         const empresaDuplicada = this.state.empresas.find(e => e.id !== id && this.normalizeString(e.nome) === nomeNormalizado);
         
@@ -810,7 +713,6 @@ const App = {
             return;
         }
 
-        // Ajustado: Retornou para a renderização exata do seu escopo original (history-card com botões inline absolutos)
         this.state.empresas.forEach(emp => {
             const card = document.createElement('article');
             card.className = 'history-card';
@@ -833,7 +735,7 @@ const App = {
         const buscaVal = this.normalizeString(document.getElementById('inputBusca').value);
         const dadosTotais = {};
 
-        // Ajustado: O gráfico agora escuta rigorosamente os mesmos filtros da listagem de tela
+        // Integrado: O gráfico lê exatamente a mesma regra de filtragem de tela (por busca e por período)
         const currentFilteredJobs = this.state.jobs.filter(job => {
             const matchStatus = this.state.currentFilter === 'aberto' ? job.status === 'aberto' : job.status === 'pago';
             const matchText = !buscaVal || 
@@ -880,6 +782,3 @@ const App = {
 </script>
 </body>
 </html>
-
-
-
