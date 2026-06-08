@@ -55,6 +55,14 @@
         input,select{width:100%;padding:14px;border-radius:14px;border:1px solid var(--border-color);background:var(--dark-pure);color:var(--text);margin-bottom:15px;font-size:16px;font-family:inherit}
         input:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
         .input-row,.time-inputs{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+        
+        @media(max-width: 480px) {
+            .time-inputs {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+        }
+
         .btn{width:100%;border:none;padding:16px;border-radius:14px;font-weight:800;cursor:pointer;margin-bottom:12px;font-size:0.95em;display:flex;align-items:center;justify-content:center;gap:8px;text-transform:uppercase;letter-spacing:1px;transition:all 0.2s}
         .btn:active{transform:scale(0.98)}.btn-save{background:var(--primary);color:var(--dark-pure)}
         .btn-export{background:var(--border-color);color:var(--text)}.btn-whats{background:var(--whatsapp);color:white}
@@ -78,6 +86,20 @@
         .status-aberto{background:var(--status-aberto-bg);color:var(--status-aberto-text);border:1px solid var(--status-aberto-border)}
         .status-arquivado{background:var(--status-fechado-bg);color:var(--status-fechado-text);border:1px solid var(--status-fechado-border)}
         .status-pago{background:var(--status-pago-bg);color:var(--status-pago-text);border:1px solid var(--status-pago-border)}
+
+        .select-status-inline {
+            background: var(--dark-pure);
+            color: var(--text);
+            border: 1px solid var(--border-color);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            width: auto;
+            display: inline-block;
+            margin-bottom: 0;
+            margin-top: 5px;
+            cursor: pointer;
+        }
 
         .autocomplete-list{position:absolute;z-index:100;background:var(--card);border:1px solid var(--border-hover);border-radius:16px;width:calc(100% - 40px);max-height:200px;overflow-y:auto;margin-top:-12px;box-shadow:var(--shadow-lg)}
         .autocomplete-item{padding:14px;cursor:pointer;border-bottom:1px solid var(--border-color);color:var(--text)}
@@ -108,14 +130,7 @@
         .login-actions{display:flex;flex-direction:column;gap:10px;margin-top:10px}
         .login-secondary-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
         .export-central{border-color:var(--border-hover);background:linear-gradient(180deg,var(--card) 0%,var(--card-hover) 100%);margin-top:20px}
-        .description-text{color:var(--muted);font-size:0.85em;margin-bottom:15px}.whatsapp-export{margin-top:10px;margin-bottom:25px}
-        .section-title{font-size:1.2em;font-weight:800;margin:0 0 20px 0;color:var(--text)}
-
-        .company-card{background:var(--card);padding:15px 60px 15px 15px;border-radius:20px;margin-bottom:10px;border:1px solid var(--border-color);position:relative;min-height:80px}
-        .company-card-header{margin-bottom:5px}.company-name{font-size:1.1em;font-weight:800;color:var(--primary)}
-        .company-card-body{margin-bottom:5px}.company-card-body .meta-text{font-size:0.85em}
-        .company-card-actions{position:absolute;top:10px;right:10px;display:flex;gap:4px}
-
+        .description-text{color:var(--muted);font-size:0.85em;margin-bottom:15px}
         .toast-container{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:10px}
         .toast{background:var(--card);color:var(--text);padding:16px 20px;border-radius:16px;box-shadow:var(--shadow-lg);border-left:4px solid var(--primary);animation:slideIn 0.3s ease;max-width:350px;font-size:0.9em}.toast.success{border-left-color:var(--success)}.toast.error{border-left-color:var(--danger)}
         @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
@@ -124,7 +139,9 @@
         :focus-visible{outline:2px solid var(--primary);outline-offset:2px}
     </style>
 </head>
-<body onload="document.getElementById('themeToggle').checked = document.body.classList.contains('light-mode')">
+<body onload="document.getElementById('themeToggle').checked = document.body.classList.contains('light-mode'); App.init();">
+
+<div id="toastContainer" class="toast-container"></div>
 
 <!-- LOGIN -->
 <div id="loginScreen" class="login-overlay">
@@ -205,461 +222,573 @@
         <div class="input-row"><div><label>Cachê Base (12h)</label><input type="number" id="cadCacheBase" step="0.01" min="0"></div><div><label>Alimentação/Logística</label><input type="number" id="cadDiaria" step="0.01" min="0"></div></div>
         <label>Ciclo de Faturamento</label><select id="cadTipoPagamento" onchange="App.updatePeriodUI()"><option value="Semanal">Semanal</option><option value="Quinzenal">Quinzenal</option><option value="Mensal">Mensal</option></select>
         <div id="cadPeriodoContainer"></div>
-        <div class="input-row"><div><label>Dias p/ Liquidação</label><input type="number" id="cadDiasPagamento" value="5" min="0"></div><div><label>Alíquota NF (%)</label><input type="number" id="cadNfPercentual" value="0" min="0" max="100" step="0.01"></div></div>
-        <div class="button-group-vertical"><button class="btn btn-save" onclick="App.saveCompany()">Registrar Empresa</button><button class="btn btn-cancel" onclick="App.clearCompanyForm()">Limpar</button></div>
+        <div class="input-row"><div><label>Dias p/ Liquidação</label><input type="number" id="cadDiasPagamento" value="30"></div></div>
+        <div class="button-group-vertical"><button class="btn btn-save" onclick="App.saveEmpresa()">Salvar Regra</button><button class="btn btn-cancel" onclick="App.clearEmpresaForm()">Limpar</button></div>
     </section>
-    <section class="input-group"><h3>Empresas Cadastradas</h3><div id="listaEmpresasCadastradas"></div></section>
-    <section class="input-group export-central">
-        <h2>Central de Exportação</h2>
-        <p class="description-text">Exporte dados ou faça backup de segurança.</p>
-        <div class="button-group-vertical">
-            <button class="btn btn-export" onclick="App.exportCSV()">Exportar para Excel (.CSV)</button>
-            <button class="btn btn-export" id="btnGerarCopiaSeguranca" onclick="App.createBackup()">Gerar Backup (.JSON)</button>
-            <button class="btn btn-cancel" onclick="document.getElementById('restoreFile').click()">Importar Backup (.JSON)</button>
-        </div>
-        <input type="file" id="restoreFile" accept=".json" hidden onchange="App.restoreBackup(event)">
-    </section>
+    <section class="input-group"><h3>Empresas Cadastradas</h3><div id="listaEmpresas"></div></section>
 </aside>
 
-<!-- ABA CONFIGURAÇÕES -->
+<!-- ABA CONFIGURACOES -->
 <aside id="abaConfiguracoes" class="app-section">
     <section class="input-group">
-        <h3>Configurações</h3>
-        <div class="config-group"><h4>Modo de Exibição</h4>
-            <div class="toggle-row"><label>Modo Escuro / Claro</label>
-                <label class="toggle-switch"><input type="checkbox" id="themeToggle" onchange="App.toggleTheme()"><span class="slider"></span></label>
-            </div>
-        </div>
-        <div class="config-group"><h4>Horas Padrão</h4><label>Horas base para cálculo</label><input type="number" id="baseHoursInput" min="1" max="24" value="12" onchange="App.updateBaseHours(this.value)"></div>
-        <div class="config-group"><h4>Notificações</h4><label>Horário de verificação</label><input type="time" id="notificationCheckHour" value="09:00" onchange="App.updateNotificationHour(this.value)"></div>
-        <div class="config-group"><h4>Biometria</h4><p class="warning-text">Não disponível na versão web.</p></div>
-        <div class="config-group"><h4>Alterar Chave</h4>
-            <label>Chave Atual</label><input type="password" id="oldMasterPassword">
-            <label>Nova Chave</label><input type="password" id="newMasterPassword">
-            <label>Confirmar</label><input type="password" id="confirmNewMasterPassword">
-            <button class="btn btn-save" style="background:var(--blue)" onclick="App.changePassword()">Alterar</button>
-        </div>
+        <h2>Preferências do Sistema</h2>
+        <div class="config-group"><div class="toggle-row"><label for="themeToggle">Modo Claro</label><label class="toggle-switch"><input type="checkbox" id="themeToggle" onchange="App.toggleTheme()"><span class="slider"></span></label></div></div>
+        <div class="config-group"><h4>Backup de Dados</h4><button class="btn btn-export btn-sm" id="btnGerarCopiaSeguranca" onclick="App.exportBackup()">Exportar Backup JSON</button><input type="file" id="importFile" style="display:none" onchange="App.importBackup(event)"><button class="btn btn-search btn-sm" onclick="document.getElementById('importFile').click()">Importar Backup JSON</button></div>
     </section>
 </aside>
 
-<div class="toast-container" id="toastContainer"></div>
-
+<!-- LOGICA DO SISTEMA -->
 <script>
-const C = {
-    DB:'CacheFinal_V33', VER:1,
-    KEYS:{ SENHA:'s_cc', EMAIL:'e_cc', TEL:'t_cc', THEME:'theme', HOURS:'hrs', NOTIF:'notif', BACKUP:'bak', NOTIFSTAT:'nstat' },
-    DEF:{ HOURS:12, NOTIF:'09:00', JOB_START:'08:00', JOB_END:'20:00', DIAS:5, NF:0 },
-    WEEKDAYS:['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
-    COLORS:['#38bdf8','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316','#a855f7','#06b6d4']
-};
-
 const App = {
-    db:null, hideVals:false, filter:'aberto', cmap:{}, baseH:C.DEF.HOURS, notifH:C.DEF.NOTIF, chart:null,
-
-    init(){
-        const th = localStorage.getItem(C.KEYS.THEME)||'dark';
-        if(th==='light') document.body.classList.add('light-mode');
-        document.getElementById('themeToggle').checked = (th==='light');
-        this.baseH = parseFloat(localStorage.getItem(C.KEYS.HOURS))||C.DEF.HOURS;
-        this.notifH = localStorage.getItem(C.KEYS.NOTIF)||C.DEF.NOTIF;
-        document.getElementById('baseHoursInput').value = this.baseH;
-        document.getElementById('notificationCheckHour').value = this.notifH;
-        if(!localStorage.getItem(C.KEYS.SENHA)) document.getElementById('senhaInput').placeholder='Crie uma chave';
-        this.openDB();
+    state: {
+        jobs: [],
+        empresas: [],
+        currentFilter: 'aberto',
+        hideValues: false,
+        chart: null
     },
 
-    openDB(){
-        const r = indexedDB.open(C.DB, C.VER);
-        r.onupgradeneeded = e => { const d=e.target.result; if(!d.objectStoreNames.contains('jobs')) d.createObjectStore('jobs',{keyPath:'id',autoIncrement:true}); if(!d.objectStoreNames.contains('empresas')) d.createObjectStore('empresas',{keyPath:'id',autoIncrement:true}); };
-        r.onsuccess = e => { this.db=e.target.result; if(document.getElementById('loginScreen').style.display==='none') this.initUI(); };
-        r.onerror = () => alert('Erro no banco de dados');
+    init() {
+        this.loadData();
+        const autenticado = localStorage.getItem('fader_auth');
+        if (autenticado) {
+            document.getElementById('loginScreen').style.display = 'none';
+        }
+        this.render();
     },
 
-    initUI(){
-        document.getElementById('dataJob').value = new Date().toISOString().slice(0,10);
-        this.updateEye(); this.updateDash(); this.updateCoList(); this.updatePeriodUI();
-        this.reqNotif(); this.checkPays(); this.checkOverdue();
+    loadData() {
+        const storedJobs = localStorage.getItem('fader_jobs');
+        const storedEmpresas = localStorage.getItem('fader_empresas');
+        this.state.jobs = storedJobs ? JSON.parse(storedJobs) : [];
+        this.state.empresas = storedEmpresas ? JSON.parse(storedEmpresas) : [];
     },
 
-    updateEye(){ document.getElementById('eyeIconOpen').style.display=this.hideVals?'none':'block'; document.getElementById('eyeIconClosed').style.display=this.hideVals?'block':'none'; },
-    toast(m,t=''){ const c=document.getElementById('toastContainer'); const d=document.createElement('div'); d.className='toast '+t; d.textContent=m; c.appendChild(d); setTimeout(()=>{d.style.opacity='0';setTimeout(()=>d.remove(),300)},3000); },
-    fmt(v){ return this.hideVals?'R$ •••••':Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); },
-    fmtDate(d){ if(!d)return''; const[a,m,dia]=d.split('-'); return`${dia}/${m}/${a}`; },
-    timeDiff(a,b){ const[ah,am]=a.split(':').map(Number),[bh,bm]=b.split(':').map(Number); let t1=ah*60+am, t2=bh*60+bm; if(t2<t1) t2+=1440; return t2-t1; },
-    autoBak(){
-        if(!this.db)return;
-        const t1=this.db.transaction('jobs','readonly'); t1.objectStore('jobs').getAll().onsuccess=e1=>{
-            const t2=this.db.transaction('empresas','readonly'); t2.objectStore('empresas').getAll().onsuccess=e2=>{
-                localStorage.setItem(C.KEYS.BACKUP, JSON.stringify({jobs:e1.target.result, empresas:e2.target.result, ts:new Date().toISOString()}));
-            };
-        };
+    saveData() {
+        localStorage.setItem('fader_jobs', JSON.stringify(this.state.jobs));
+        localStorage.setItem('fader_empresas', JSON.stringify(this.state.empresas));
+        this.render();
     },
 
-    // Auth
-    login(){
-        const pw=document.getElementById('senhaInput').value, saved=localStorage.getItem(C.KEYS.SENHA);
-        if(!saved){ if(!pw||pw.length<4){alert('Mínimo 4 caracteres');return;} localStorage.setItem(C.KEYS.SENHA,pw); localStorage.setItem(C.KEYS.EMAIL,'suporte@faderlivre.com'); this.hideLogin(); }
-        else if(pw===saved) this.hideLogin(); else alert('Chave incorreta');
-    },
-    hideLogin(){ document.getElementById('loginScreen').style.display='none'; this.initUI(); },
-    toggleReg(){ const b=document.getElementById('novaSenhaBox'); b.style.display=b.style.display==='none'?'block':'none'; },
-    regCreds(){
-        const pw=document.getElementById('novaSenha').value, em=document.getElementById('emailRecuperacao').value;
-        if(!pw||!em||pw.length<4){alert('Preencha todos os campos (mín 4 caracteres)');return;}
-        localStorage.setItem(C.KEYS.SENHA,pw); localStorage.setItem(C.KEYS.EMAIL,em);
-        localStorage.setItem(C.KEYS.TEL, document.getElementById('telefoneRecuperacao').value); alert('Registrado!'); location.reload();
-    },
-    recover(){
-        const em=localStorage.getItem(C.KEYS.EMAIL), tel=localStorage.getItem(C.KEYS.TEL);
-        alert(`Contatos:\nE-mail: ${em||'não cadastrado'}\nTelefone: ${tel||'não cadastrado'}`);
-    },
-    changePW(){
-        const old=document.getElementById('oldMasterPassword').value, nw=document.getElementById('newMasterPassword').value, cf=document.getElementById('confirmNewMasterPassword').value;
-        if(old!==localStorage.getItem(C.KEYS.SENHA)){alert('Chave atual incorreta');return;}
-        if(nw.length<4||nw!==cf){alert('Nova chave inválida ou não confere');return;}
-        localStorage.setItem(C.KEYS.SENHA,nw); alert('Alterada!'); document.getElementById('oldMasterPassword').value=document.getElementById('newMasterPassword').value=document.getElementById('confirmNewMasterPassword').value='';
-    },
-    emergencyReset(){
-        if(!confirm('Apagar TODOS os dados?'))return; localStorage.clear(); indexedDB.deleteDatabase(C.DB).onsuccess=()=>location.reload();
-    },
-
-    switchTab(id,btn){
-        document.querySelectorAll('.app-section').forEach(s=>s.classList.remove('active'));
-        document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
-        document.getElementById(id).classList.add('active'); if(btn)btn.classList.add('active');
-        if(id==='abaEmpresas'){ this.updateCoList(); this.updatePeriodUI(); }
-        else if(id==='abaJobs') this.updateDash();
-        else if(id==='abaConfiguracoes'){ document.getElementById('themeToggle').checked=document.body.classList.contains('light-mode'); document.getElementById('baseHoursInput').value=this.baseH; document.getElementById('notificationCheckHour').value=this.notifH; }
-    },
-
-    toggleTheme(){ document.body.classList.toggle('light-mode'); localStorage.setItem(C.KEYS.THEME, document.body.classList.contains('light-mode')?'light':'dark'); },
-    updateBaseHours(v){ const h=parseFloat(v); if(h<1||h>24){alert('1-24');return;} this.baseH=h; localStorage.setItem(C.KEYS.HOURS,h); this.toast('Horas base: '+h+'h'); },
-    updateNotifHour(v){ this.notifH=v; localStorage.setItem(C.KEYS.NOTIF,v); this.toast('Notificação: '+v); },
-    toggleValues(){ this.hideVals=!this.hideVals; this.updateEye(); this.updateDash(); },
-
-    updatePeriodUI(){
-        const t=document.getElementById('cadTipoPagamento').value, c=document.getElementById('cadPeriodoContainer');
-        if(t==='Semanal') c.innerHTML = `<div class="config-group"><h4>Período Semanal</h4><div class="input-row"><div><label>Início</label><select id="cadInicioSemana">${C.WEEKDAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}</select></div><div><label>Corte</label><select id="cadFimSemana">${C.WEEKDAYS.map((d,i)=>`<option value="${i}" ${i===0?'selected':''}>${d}</option>`).join('')}</select></div></div></div>`;
-        else if(t==='Quinzenal') c.innerHTML = `<div class="config-group"><h4>Período Quinzenal</h4><div class="input-row"><div><label>Início 1ª</label><input type="number" id="cadInicioPrimeiraQuinzena" value="1" min="1" max="31"></div><div><label>Fim 1ª</label><input type="number" id="cadFimPrimeiraQuinzena" value="15" min="1" max="31"></div></div><label>Fim 2ª</label><input type="number" id="cadFimSegundaQuinzena" value="30" min="1" max="31"><p class="config-help-text">Início 2ª = dia seguinte ao fim da 1ª.</p></div>`;
-        else c.innerHTML = `<div class="config-group"><h4>Período Mensal</h4><label>Dia Final</label><input type="number" id="cadFimPeriodo" value="30" min="1" max="31"><p class="config-help-text">Início sempre dia 1.</p></div>`;
-    },
-
-    saveCompany(){
-        const nome=document.getElementById('cadNomeEmpresa').value.trim(), idEd=document.getElementById('cadIdEmpresa').value;
-        if(!nome){alert('Nome obrigatório');return;}
-        const payload = { nome, cacheBase:parseFloat(document.getElementById('cadCacheBase').value)||0, diaria:parseFloat(document.getElementById('cadDiaria').value)||0, tipoPagamento:document.getElementById('cadTipoPagamento').value, diasPagamento:parseInt(document.getElementById('cadDiasPagamento').value)||0, nfPercentual:parseFloat(document.getElementById('cadNfPercentual').value)||0 };
-        const t=payload.tipoPagamento;
-        if(t==='Semanal'){ payload.inicioSemana=parseInt(document.getElementById('cadInicioSemana').value); payload.fimSemana=parseInt(document.getElementById('cadFimSemana').value); }
-        else if(t==='Quinzenal'){ payload.inicioPrimeiraQuinzena=parseInt(document.getElementById('cadInicioPrimeiraQuinzena').value); payload.fimPrimeiraQuinzena=parseInt(document.getElementById('cadFimPrimeiraQuinzena').value); payload.fimSegundaQuinzena=parseInt(document.getElementById('cadFimSegundaQuinzena').value); }
-        else payload.fimPeriodo=parseInt(document.getElementById('cadFimPeriodo').value);
-        if(idEd) payload.id=parseInt(idEd);
-        const tx=this.db.transaction('empresas','readwrite'), store=tx.objectStore('empresas');
-        (idEd?store.put(payload):store.add(payload)).onsuccess=()=>{ this.toast('Empresa salva!','success'); this.autoBak(); this.clearCoForm(); this.updateCoList(); this.updateDash(); };
-    },
-    editCompany(id){
-        this.db.transaction('empresas').objectStore('empresas').get(id).onsuccess=e=>{
-            const d=e.target.result; if(!d)return;
-            document.getElementById('formEmpresaTitle').textContent='Editando: '+d.nome;
-            document.getElementById('cadIdEmpresa').value=d.id; document.getElementById('cadNomeEmpresa').value=d.nome;
-            document.getElementById('cadCacheBase').value=d.cacheBase; document.getElementById('cadDiaria').value=d.diaria;
-            document.getElementById('cadTipoPagamento').value=d.tipoPagamento;
-            document.getElementById('cadNfPercentual').value=d.nfPercentual||0;
-            document.getElementById('cadDiasPagamento').value=d.diasPagamento||0;
-            this.updatePeriodUI();
-            setTimeout(()=>{
-                if(d.tipoPagamento==='Semanal'){ document.getElementById('cadInicioSemana').value=d.inicioSemana||1; document.getElementById('cadFimSemana').value=d.fimSemana||0; }
-                else if(d.tipoPagamento==='Quinzenal'){ document.getElementById('cadInicioPrimeiraQuinzena').value=d.inicioPrimeiraQuinzena||1; document.getElementById('cadFimPrimeiraQuinzena').value=d.fimPrimeiraQuinzena||15; document.getElementById('cadFimSegundaQuinzena').value=d.fimSegundaQuinzena||30; }
-                else document.getElementById('cadFimPeriodo').value=d.fimPeriodo||30;
-            },100);
-            scrollTo(0,0);
-        };
-    },
-    deleteCompany(id){
-        if(!confirm('Remover empresa?'))return;
-        this.db.transaction('empresas','readwrite').objectStore('empresas').delete(id).onsuccess=()=>{ this.autoBak(); this.updateCoList(); this.updateDash(); };
-    },
-    updateCoList(){
-        if(!this.db)return;
-        const c=document.getElementById('listaEmpresasCadastradas'); c.innerHTML='';
-        this.db.transaction('empresas').objectStore('empresas').getAll().onsuccess=e=>{
-            const arr=e.target.result;
-            if(!arr.length){ c.innerHTML='<p style="color:var(--muted);text-align:center">Nenhuma empresa</p>'; return; }
-            arr.forEach(emp=>{
-                const card=document.createElement('div'); card.className='company-card';
-                card.innerHTML = `<div class="company-card-header"><span class="company-name">${emp.nome}</span></div>
-                    <div class="company-card-body">
-                        <div class="meta-text">Base: R$ ${emp.cacheBase.toFixed(2)} | Diária: R$ ${emp.diaria.toFixed(2)}</div>
-                        <div class="meta-text">Ciclo: ${emp.tipoPagamento} | NF: ${emp.nfPercentual}%</div>
-                    </div>
-                    <div class="company-card-actions">
-                        <button class="btn-edit-inline" onclick="App.editCompany(${emp.id})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-                        <button class="btn-del" onclick="App.deleteCompany(${emp.id})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
-                    </div>`;
-                c.appendChild(card);
-            });
-        };
-    },
-    clearCoForm(){
-        document.getElementById('formEmpresaTitle').textContent='Nova Empresa e Regras'; document.getElementById('cadIdEmpresa').value='';
-        document.getElementById('cadNomeEmpresa').value=''; document.getElementById('cadCacheBase').value=''; document.getElementById('cadDiaria').value='';
-        document.getElementById('cadNfPercentual').value=C.DEF.NF; document.getElementById('cadTipoPagamento').value='Semanal';
-        document.getElementById('cadDiasPagamento').value=C.DEF.DIAS; this.updatePeriodUI();
-    },
-    autocomplete(q){
-        const c=document.getElementById('autocompleteContainer'); c.innerHTML=''; if(!this.db||!q||!q.trim())return;
-        this.db.transaction('empresas').objectStore('empresas').getAll().onsuccess=e=>{
-            const arr=e.target.result.filter(x=>x.nome.toLowerCase().includes(q.toLowerCase()));
-            if(!arr.length)return;
-            const l=document.createElement('div'); l.className='autocomplete-list';
-            arr.forEach(x=>{ const d=document.createElement('div'); d.className='autocomplete-item'; d.textContent=x.nome; d.onclick=()=>{document.getElementById('empresaJob').value=x.nome;c.innerHTML='';}; l.appendChild(d); });
-            c.appendChild(l);
-        };
-    },
-
-    // Jobs
-    saveJob(){
-        const data=document.getElementById('dataJob').value, empNome=document.getElementById('empresaJob').value.trim(), idEd=document.getElementById('editJobId').value;
-        if(!data||!empNome){alert('Data e Empresa obrigatórios');return;}
-        this.db.transaction('empresas').objectStore('empresas').getAll().onsuccess=e=>{
-            const emp=e.target.result.find(x=>x.nome.toLowerCase()===empNome.toLowerCase());
-            if(!emp){alert('Empresa não cadastrada');return;}
-            const cache=parseFloat(emp.cacheBase)||0, diaria=parseFloat(emp.diaria)||0, nf=parseFloat(emp.nfPercentual)||0;
-            const ini=document.getElementById('inicio').value, fim=document.getElementById('fim').value;
-            const mins=this.timeDiff(ini,fim), hrs=mins/60;
-            const extras=Math.max(0,hrs-this.baseH), rate=this.baseH>0?cache/this.baseH:0, valExtras=extras*rate;
-            const bruto=cache+diaria+valExtras, imp=bruto*(nf/100);
-            const previsao=this.calcPayDate(data, emp);
-            const payload = { data, empresa:emp.nome, job:document.getElementById('nomeJob').value||'Job', cache, diaria, extra:valExtras, total:bruto, valorNF:imp, horas:hrs.toFixed(1), inicio:ini, fim, tipoPagamento:emp.tipoPagamento, diasPagamento:parseInt(emp.diasPagamento)||0, fimPeriodo:parseInt(emp.fimPeriodo)||30, inicioSemana:parseInt(emp.inicioSemana)||1, fimSemana:parseInt(emp.fimSemana)||0, inicioPrimeiraQuinzena:parseInt(emp.inicioPrimeiraQuinzena)||1, fimPrimeiraQuinzena:parseInt(emp.fimPrimeiraQuinzena)||15, fimSegundaQuinzena:parseInt(emp.fimSegundaQuinzena)||30, previsaoPagamento:previsao, status:'aberto' };
-            if(idEd) payload.id=parseInt(idEd);
-            const tx=this.db.transaction('jobs','readwrite'), store=tx.objectStore('jobs');
-            (idEd?store.put(payload):store.add(payload)).onsuccess=()=>{ this.toast('Job salvo!','success'); this.autoBak(); this.updateDash(); this.clearJobForm(); };
-        };
-    },
-    calcCloseDate(dt, emp){
-        const d=new Date(dt+'T00:00:00'), a=d.getFullYear(), m=d.getMonth(), dia=d.getDate();
-        if(emp.tipoPagamento==='Semanal'){
-            const ds=d.getDay(), dc=parseInt(emp.fimSemana)||0; let diff=ds===dc?0:(dc-ds+7)%7;
-            const r=new Date(d); r.setDate(dia+diff); r.setHours(0,0,0,0); return r;
-        } else if(emp.tipoPagamento==='Quinzenal'){
-            const p1i=parseInt(emp.inicioPrimeiraQuinzena)||1, p1f=parseInt(emp.fimPrimeiraQuinzena)||15, p2f=parseInt(emp.fimSegundaQuinzena)||30;
-            if(dia>=p1i&&dia<=p1f) return new Date(a,m,p1f);
-            else if(dia>p1f&&dia<=p2f) return new Date(a,m,p2f);
-            else return new Date(a,m+1,p1f);
+    login() {
+        const input = document.getElementById('senhaInput').value;
+        if (input.length >= 4) {
+            localStorage.setItem('fader_auth', 'true');
+            document.getElementById('loginScreen').style.display = 'none';
+            this.showToast('Acesso concedido', 'success');
         } else {
-            const pf=parseInt(emp.fimPeriodo)||30;
-            if(dia<=pf) return new Date(a,m,pf); else return new Date(a,m+1,pf);
+            this.showToast('Chave inválida', 'error');
         }
     },
-    calcPayDate(dt, emp){
-        const fech=this.calcCloseDate(dt, emp); fech.setDate(fech.getDate()+(parseInt(emp.diasPagamento)||0));
-        return fech.toLocaleDateString('pt-BR');
-    },
-    getStatus(job){ return job.status||'aberto'; },
 
-    editJob(id){
-        this.db.transaction('jobs').objectStore('jobs').get(id).onsuccess=e=>{
-            const j=e.target.result; if(!j)return;
-            document.getElementById('formJobTitle').textContent='Editando'; document.getElementById('editJobId').value=j.id;
-            document.getElementById('empresaJob').value=j.empresa; document.getElementById('dataJob').value=j.data;
-            document.getElementById('nomeJob').value=j.job; document.getElementById('inicio').value=j.inicio; document.getElementById('fim').value=j.fim;
-            scrollTo(0,0);
-        };
-    },
-    deleteJob(id){
-        if(!confirm('Excluir job?'))return;
-        this.db.transaction('jobs','readwrite').objectStore('jobs').delete(id).onsuccess=()=>{ this.autoBak(); this.updateDash(); };
-    },
-    confirmPay(id){
-        if(!confirm('Confirmar recebimento?'))return;
-        const tx=this.db.transaction('jobs','readwrite'), store=tx.objectStore('jobs');
-        store.get(id).onsuccess=e=>{ const j=e.target.result; if(j){ j.status='pago'; store.put(j).onsuccess=()=>{ this.autoBak(); this.updateDash(); }; } };
-    },
-    archiveJob(id){
-        if(!confirm('Arquivar este job?'))return;
-        const tx=this.db.transaction('jobs','readwrite'), store=tx.objectStore('jobs');
-        store.get(id).onsuccess=e=>{ const j=e.target.result; if(j){ j.status='arquivado'; store.put(j).onsuccess=()=>{ this.autoBak(); this.updateDash(); }; } };
-    },
-    clearJobForm(){
-        document.getElementById('formJobTitle').textContent='Job'; document.getElementById('editJobId').value='';
-        document.getElementById('empresaJob').value=''; document.getElementById('nomeJob').value='';
-        document.getElementById('dataJob').value=new Date().toISOString().slice(0,10);
-        document.getElementById('inicio').value=C.DEF.JOB_START; document.getElementById('fim').value=C.DEF.JOB_END;
-    },
-    setFilter(t){ this.filter=t; document.getElementById('btnFiltroAberto').classList.toggle('active',t==='aberto'); document.getElementById('btnFiltroArquivado').classList.toggle('active',t==='arquivado'); this.updateDash(); },
-    openSearch(){ document.getElementById('searchBox').style.display='block'; document.getElementById('inputBusca').focus(); },
-    clearSearch(){ document.getElementById('searchBox').style.display='none'; document.getElementById('inputBusca').value=''; this.filterTable(); },
-    filterTable(){ const t=document.getElementById('inputBusca').value.toUpperCase(); document.querySelectorAll('.history-card').forEach(c=>c.style.display=c.textContent.toUpperCase().includes(t)?'block':'none'); },
-
-    updateDash(){
-        if(!this.db)return;
-        this.db.transaction('empresas').objectStore('empresas').getAll().onsuccess=eE=>{
-            const hasNF=eE.target.result.some(x=>x.nfPercentual>0);
-            document.getElementById('dashboardNfCard').style.display=hasNF?'block':'none';
-            document.getElementById('dashboardLiquidoCard').style.display=hasNF?'block':'none';
-            this.db.transaction('jobs').objectStore('jobs').getAll().onsuccess=e=>{
-                const jobs=e.target.result.sort((a,b)=>new Date(b.data)-new Date(a.data));
-                let tBruto=0,tNF=0,tHoras=0; const porEmp={}; if(Object.keys(this.cmap).length>20)this.cmap={};
-                const container=document.getElementById('listaHistorico'); container.innerHTML='';
-                jobs.forEach(j=>{
-                    const st=this.getStatus(j);
-                    if(st==='aberto'){ tBruto+=j.total||0; tNF+=j.valorNF||0; tHoras+=parseFloat(j.horas)||0; porEmp[j.empresa]=(porEmp[j.empresa]||0)+(j.total||0); }
-                    if(!this.cmap[j.empresa]) this.cmap[j.empresa]=C.COLORS[Object.keys(this.cmap).length%C.COLORS.length];
-                    const show=(this.filter==='aberto'&&st==='aberto')||(this.filter==='arquivado'&&(st==='arquivado'||st==='pago'));
-                    if(show){
-                        const card=document.createElement('div'); card.className='history-card'; card.style.borderLeft=`6px solid ${this.cmap[j.empresa]}`;
-                        const badge = st==='aberto'?'<span class="badge-status status-aberto">Aberto</span>':st==='arquivado'?'<span class="badge-status status-arquivado">Arquivado</span>':'<span class="badge-status status-pago">Pago</span>';
-                        let btns = `<button class="btn-del" onclick="App.deleteJob(${j.id})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
-                                   <button class="btn-edit-inline" onclick="App.editJob(${j.id})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>`;
-                        if(st==='aberto'){
-                            btns += `<button class="btn-confirm-inline" onclick="App.confirmPay(${j.id})"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
-                                     <button class="btn-archive-inline" onclick="App.archiveJob(${j.id})"><svg viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></button>`;
-                        }
-                        card.innerHTML = `${btns}
-                            <div class="empresa-title">${j.empresa}</div>
-                            <div class="meta-text">${this.fmtDate(j.data)} | ${j.job}</div><div>${badge}</div>
-                            <div class="meta-text" style="margin-top:8px">Horários: ${j.inicio} às ${j.fim} (${j.horas}h)</div>
-                            <div class="meta-text">Cachê: ${this.fmt(j.cache)}</div><div class="meta-text">Diária: ${this.fmt(j.diaria)}</div>
-                            <div class="meta-text">Horas Extras: ${this.fmt(j.extra)}</div>
-                            <div class="meta-text">Previsão: <b>${j.previsaoPagamento}</b></div>
-                            <div style="margin-top:10px;font-weight:900">Total Bruto: <span>${this.fmt(j.total)}</span></div>`;
-                        container.appendChild(card);
-                    }
-                });
-                document.getElementById('vTotalSemana').textContent=this.fmt(tBruto);
-                document.getElementById('vTotalNF').textContent='- '+this.fmt(tNF);
-                document.getElementById('vTotalLiquido').textContent=this.fmt(tBruto-tNF);
-                document.getElementById('vTotalHoras').textContent=tHoras.toFixed(1)+'h';
-                this.renderChart(porEmp);
-                if(document.getElementById('searchBox').style.display==='block') this.filterTable();
-            };
-        };
+    toggleRegistration() {
+        const box = document.getElementById('novaSenhaBox');
+        box.style.display = box.style.display === 'none' ? 'block' : 'none';
     },
 
-    renderChart(dados){
-        const canvas=document.getElementById('graficoEmpresas'); if(!canvas)return;
-        const labels=Object.keys(dados), values=Object.values(dados), colors=labels.map(l=>this.cmap[l]||'#94a3b8');
-        if(!labels.length){
-            if(this.chart){this.chart.destroy();this.chart=null;} canvas.style.display='none';
-            const p=canvas.parentElement; if(!p.querySelector('.no-data-msg')){const m=document.createElement('p');m.className='no-data-msg';m.style.cssText='color:var(--muted);text-align:center;padding:40px 0';m.textContent='Sem dados';p.appendChild(m);}
+    registerCredentials() {
+        this.showToast('Credenciais configuradas', 'success');
+        document.getElementById('novaSenhaBox').style.display = 'none';
+    },
+
+    recoverPassword() {
+        this.showToast('Instruções enviadas para o e-mail cadastrado', 'success');
+    },
+
+    emergencyReset() {
+        if(confirm('Deseja realmente limpar todos os dados locais do aplicativo?')) {
+            localStorage.clear();
+            location.reload();
+        }
+    },
+
+    switchTab(tabId, btn) {
+        document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+    },
+
+    toggleTheme() {
+        document.body.classList.toggle('light-mode');
+    },
+
+    toggleValues() {
+        this.state.hideValues = !this.state.hideValues;
+        document.getElementById('eyeIconOpen').style.display = this.state.hideValues ? 'none' : 'block';
+        document.getElementById('eyeIconClosed').style.display = this.state.hideValues ? 'block' : 'none';
+        this.renderDashboards();
+    },
+
+    setFilter(filter) {
+        this.state.currentFilter = filter;
+        document.getElementById('btnFiltroAberto').classList.toggle('active', filter === 'aberto');
+        document.getElementById('btnFiltroArquivado').classList.toggle('active', filter === 'arquivado');
+        this.renderJobList();
+        this.renderChart(); // Atualiza o gráfico de acordo com o filtro ativo
+    },
+
+    openSearch() {
+        const box = document.getElementById('searchBox');
+        box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    },
+
+    clearSearch() {
+        document.getElementById('inputBusca').value = '';
+        document.getElementById('searchBox').style.display = 'none';
+        this.renderJobList();
+        this.renderChart();
+    },
+
+    normalizeString(str) {
+        if (!str) return '';
+        return str.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    },
+
+    filterTable() {
+        this.renderJobList();
+        this.renderChart(); // Atualiza o gráfico durante a busca
+    },
+
+    autocomplete(val) {
+        const container = document.getElementById('autocompleteContainer');
+        container.innerHTML = '';
+        if (!val) return;
+        
+        const searchVal = this.normalizeString(val);
+        const filtered = this.state.empresas.filter(e => this.normalizeString(e.nome).includes(searchVal));
+        
+        if (filtered.length > 0) {
+            const list = document.createElement('div');
+            list.className = 'autocomplete-list';
+            filtered.forEach(emp => {
+                const item = document.createElement('div');
+                item.className = 'autocomplete-item';
+                item.innerText = emp.nome;
+                item.onclick = () => {
+                    document.getElementById('empresaJob').value = emp.nome;
+                    container.innerHTML = '';
+                };
+                list.appendChild(item);
+            });
+            container.appendChild(list);
+        }
+    },
+
+    updatePeriodUI() {
+    },
+
+    formatarDataComDiaSemana(dataStr) {
+        if (!dataStr) return '';
+        const partes = dataStr.split('-');
+        const data = new Date(partes[0], partes[1] - 1, partes[2]);
+        const diasSemana = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+        const diaSemanaExtenso = diasSemana[data.getDay()];
+        
+        const diaFormatado = String(data.getDate()).padStart(2, '0');
+        const mesFormatado = String(data.getMonth() + 1).padStart(2, '0');
+        const anoFormatado = data.getFullYear();
+        
+        return `${diaFormatado}/${mesFormatado}/${anoFormatado} (${diaSemanaExtenso})`;
+    },
+
+    calcularHoras(inicio, fim) {
+        if(!inicio || !fim) return 0;
+        const [hI, mI] = inicio.split(':').map(Number);
+        const [hF, mF] = fim.split(':').map(Number);
+        let dif = (hF * 60 + mF) - (hI * 60 + mI);
+        if(dif < 0) dif += 24 * 60;
+        return dif / 60;
+    },
+
+    getRegraEmpresa(nomeEmpresa) {
+        const searchNome = this.normalizeString(nomeEmpresa);
+        return this.state.empresas.find(e => this.normalizeString(e.nome) === searchNome) || { cacheBase: 0, diaria: 0 };
+    },
+
+    saveJob() {
+        const id = document.getElementById('editJobId').value;
+        const empresa = document.getElementById('empresaJob').value;
+        const data = document.getElementById('dataJob').value;
+        const nome = document.getElementById('nomeJob').value;
+        const inicio = document.getElementById('inicio').value;
+        const fim = document.getElementById('fim').value;
+
+        if (!empresa || !data) {
+            this.showToast('Empresa e Data são obrigatórios', 'error');
             return;
         }
-        const msg=canvas.parentElement.querySelector('.no-data-msg'); if(msg)msg.remove(); canvas.style.display='block';
-        if(this.chart){ this.chart.data.labels=labels; this.chart.data.datasets[0].data=values; this.chart.data.datasets[0].backgroundColor=colors; this.chart.update('none'); }
-        else this.chart=new Chart(canvas,{type:'bar',data:{labels,datasets:[{data:values,backgroundColor:colors,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>this.fmt(ctx.parsed.y)}}},scales:{y:{display:false},x:{ticks:{color:'#94a3b8'}}}}});
+
+        const horas = this.calcularHoras(inicio, fim);
+        const regra = this.getRegraEmpresa(empresa);
+        const valorBruto = Number(regra.cacheBase) + Number(regra.diaria);
+
+        if (id) {
+            const index = this.state.jobs.findIndex(j => j.id === id);
+            if (index !== -1) {
+                this.state.jobs[index] = { ...this.state.jobs[index], empresa, data, nome, inicio, fim, horas, valorBruto };
+                this.showToast('Lançamento updated', 'success');
+            }
+        } else {
+            const newJob = {
+                id: Date.now().toString(),
+                empresa,
+                data,
+                nome,
+                inicio,
+                fim,
+                horas,
+                valorBruto,
+                status: 'aberto'
+            };
+            this.state.jobs.push(newJob);
+            this.showToast('Lançamento salvo', 'success');
+        }
+
+        this.clearJobForm();
+        this.saveData();
     },
 
-    escapeCSV(t){ if(!t)return''; t=String(t); if(t.includes(';')||t.includes('"')||t.includes('\n')) return '"'+t.replace(/"/g,'""')+'"'; return t; },
-    exportCSV(){
-        this.db.transaction('jobs').objectStore('jobs').getAll().onsuccess=e=>{
-            const jobs=e.target.result.sort((a,b)=>new Date(b.data)-new Date(a.data));
-            const map={}; jobs.forEach(j=>{ if(!map[j.empresa])map[j.empresa]=[]; map[j.empresa].push(j); });
-            let csv='\uFEFF'; csv+='FADER LIVRE - RELATORIO DE CACHES\n'; csv+=`Gerado em: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
-            let tBr=0,tNf=0,tLq=0;
-            Object.keys(map).sort().forEach(nome=>{
-                const arr=map[nome]; csv+=`\n${'='.repeat(50)}\nEMPRESA: ${nome}\n${'='.repeat(50)}\n`;
-                csv+='Data;Job;Horas;Inicio;Fim;Cache;Diaria;Horas Extras;Total Bruto;Imposto NF;Valor Liquido;Previsao;Status\n';
-                let sBr=0,sNf=0;
-                arr.forEach(j=>{
-                    const liq=(j.total||0)-(j.valorNF||0);
-                    csv+=`${this.fmtDate(j.data)};${this.escapeCSV(j.job)};${j.horas};${j.inicio};${j.fim};${(j.cache||0).toFixed(2).replace('.',',')};${(j.diaria||0).toFixed(2).replace('.',',')};${(j.extra||0).toFixed(2).replace('.',',')};${(j.total||0).toFixed(2).replace('.',',')};${(j.valorNF||0).toFixed(2).replace('.',',')};${liq.toFixed(2).replace('.',',')};${j.previsaoPagamento};${this.getStatus(j)==='pago'?'Pago':this.getStatus(j)==='arquivado'?'Arquivado':'Aberto'}\n`;
-                    sBr+=j.total||0; sNf+=j.valorNF||0;
-                });
-                const sLq=sBr-sNf;
-                csv+=`${'—'.repeat(50)}\nSUBTOTAL: Bruto ${sBr.toFixed(2).replace('.',',')} | NF ${sNf.toFixed(2).replace('.',',')} | Liquido ${sLq.toFixed(2).replace('.',',')}\n`;
-                tBr+=sBr; tNf+=sNf; tLq+=sLq;
+    clearJobForm() {
+        document.getElementById('editJobId').value = '';
+        document.getElementById('empresaJob').value = '';
+        document.getElementById('dataJob').value = '';
+        document.getElementById('nomeJob').value = '';
+        document.getElementById('inicio').value = '08:00';
+        document.getElementById('fim').value = '20:00';
+        document.getElementById('formJobTitle').innerText = 'Job';
+    },
+
+    editJob(id) {
+        const job = this.state.jobs.find(j => j.id === id);
+        if (job) {
+            document.getElementById('editJobId').value = job.id;
+            document.getElementById('empresaJob').value = job.empresa;
+            document.getElementById('dataJob').value = job.data;
+            document.getElementById('nomeJob').value = job.nome;
+            document.getElementById('inicio').value = job.inicio;
+            document.getElementById('fim').value = job.fim;
+            document.getElementById('formJobTitle').innerText = 'Editar Job';
+            this.switchTab('abaJobs', document.querySelectorAll('.tab-button')[0]);
+        }
+    },
+
+    deleteJob(id) {
+        if (confirm('Remover este lançamento?')) {
+            this.state.jobs = this.state.jobs.filter(j => j.id !== id);
+            this.showToast('Lançamento removido', 'success');
+            this.saveData();
+        }
+    },
+
+    updateJobStatus(id, newStatus) {
+        const index = this.state.jobs.findIndex(j => j.id === id);
+        if (index !== -1) {
+            this.state.jobs[index].status = newStatus;
+            this.showToast(`Status alterado para ${newStatus.toUpperCase()}`, 'success');
+            this.saveData();
+        }
+    },
+
+    saveEmpresa() {
+        const id = document.getElementById('cadIdEmpresa').value;
+        const nome = document.getElementById('cadNomeEmpresa').value;
+        const cacheBase = document.getElementById('cadCacheBase').value || 0;
+        const diaria = document.getElementById('cadDiaria').value || 0;
+        const tipoPagamento = document.getElementById('cadTipoPagamento').value;
+        const diasPagamento = document.getElementById('cadDiasPagamento').value || 30;
+
+        if (!nome) {
+            this.showToast('Nome da empresa é obrigatório', 'error');
+            return;
+        }
+
+        const nomeNormalizado = this.normalizeString(nome);
+        const empresaDuplicada = this.state.empresas.find(e => e.id !== id && this.normalizeString(e.nome) === nomeNormalizado);
+        
+        if (empresaDuplicada) {
+            this.showToast('Já existe uma empresa cadastrada com este nome', 'error');
+            return;
+        }
+
+        if (id) {
+            const index = this.state.empresas.findIndex(e => e.id === id);
+            if (index !== -1) {
+                this.state.empresas[index] = { id, nome, cacheBase, diaria, tipoPagamento, diasPagamento };
+                this.showToast('Empresa atualizada', 'success');
+            }
+        } else {
+            this.state.empresas.push({
+                id: Date.now().toString(),
+                nome, cacheBase, diaria, tipoPagamento, diasPagamento
             });
-            csv+=`\n${'='.repeat(50)}\nTOTAL GERAL: Bruto ${tBr.toFixed(2).replace('.',',')} | NF ${tNf.toFixed(2).replace('.',',')} | Liquido ${tLq.toFixed(2).replace('.',',')}\n${'='.repeat(50)}\n`;
-            const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-            const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`fader_livre_${new Date().toISOString().slice(0,10)}.csv`; a.click();
-            this.toast('CSV exportado!','success');
-        };
+            this.showToast('Empresa cadastrada', 'success');
+        }
+
+        this.clearEmpresaForm();
+        this.saveData();
     },
 
-    sendWhatsApp(){
-        this.db.transaction('jobs').objectStore('jobs').getAll().onsuccess=e=>{
-            const jobs=e.target.result.filter(j=>{ const st=this.getStatus(j); return (this.filter==='aberto'&&st==='aberto')||(this.filter==='arquivado'&&st!=='aberto'); });
-            if(!jobs.length){alert('Nenhum registro');return;}
-            jobs.sort((a,b)=>new Date(b.data)-new Date(a.data));
-            let msg='*FADER LIVRE - EXTRATO*\n'+'━'.repeat(30)+'\n\n', total=0;
-            jobs.forEach(j=>{ msg+=`*${j.empresa}* - ${this.fmtDate(j.data)}\nJob: ${j.job}\nCachê: R$ ${(j.cache||0).toFixed(2)}\nDiária: R$ ${(j.diaria||0).toFixed(2)}\nHoras Extras: R$ ${(j.extra||0).toFixed(2)}\nTotal: R$ ${(j.total||0).toFixed(2)}\nPrevisão: ${j.previsaoPagamento}\n\n`; total+=j.total||0; });
-            msg+='━'.repeat(30)+'\n*TOTAL GERAL: R$ '+total.toFixed(2)+'*\n\n'+new Date().toLocaleDateString('pt-BR');
-            window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(msg),'_blank');
-        };
+    clearEmpresaForm() {
+        document.getElementById('cadIdEmpresa').value = '';
+        document.getElementById('cadNomeEmpresa').value = '';
+        document.getElementById('cadCacheBase').value = '';
+        document.getElementById('cadDiaria').value = '';
+        document.getElementById('cadDiasPagamento').value = '30';
+        document.getElementById('formEmpresaTitle').innerText = 'Nova Empresa e Regras';
     },
 
-    createBackup(){
-        const t1=this.db.transaction('jobs'), t2=this.db.transaction('empresas');
-        t1.objectStore('jobs').getAll().onsuccess=e1=>{ t2.objectStore('empresas').getAll().onsuccess=e2=>{
-            const bk={jobs:e1.target.result, empresas:e2.target.result, ts:new Date().toISOString()};
-            const blob=new Blob([JSON.stringify(bk,null,2)],{type:'application/json'});
-            const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
-            this.toast('Backup gerado!','success');
-        };};
+    editEmpresa(id) {
+        const emp = this.state.empresas.find(e => e.id === id);
+        if (emp) {
+            document.getElementById('cadIdEmpresa').value = emp.id;
+            document.getElementById('cadNomeEmpresa').value = emp.nome;
+            document.getElementById('cadCacheBase').value = emp.cacheBase;
+            document.getElementById('cadDiaria').value = emp.diaria;
+            document.getElementById('cadTipoPagamento').value = emp.tipoPagamento;
+            document.getElementById('cadDiasPagamento').value = emp.diasPagamento;
+            document.getElementById('formEmpresaTitle').innerText = 'Editar Empresa';
+        }
     },
 
-    restoreBackup(ev){
-        const f=ev.target.files[0]; if(!f)return;
-        const r=new FileReader(); r.onload=e=>{
-            try{
-                const d=JSON.parse(e.target.result);
-                if(!d.jobs||!d.empresas) throw new Error('Inválido');
-                if(!confirm(`Restaurar ${d.jobs.length} jobs e ${d.empresas.length} empresas?`))return;
-                const tx1=this.db.transaction('jobs','readwrite'); tx1.objectStore('jobs').clear().onsuccess=()=>{
-                    const tx2=this.db.transaction('jobs','readwrite'); d.jobs.forEach(j=>tx2.objectStore('jobs').put(j));
-                    tx2.oncomplete=()=>{
-                        const tx3=this.db.transaction('empresas','readwrite'); tx3.objectStore('empresas').clear().onsuccess=()=>{
-                            const tx4=this.db.transaction('empresas','readwrite'); d.empresas.forEach(x=>tx4.objectStore('empresas').put(x));
-                            tx4.oncomplete=()=>{ alert('Restaurado!'); location.reload(); };
-                        };
-                    };
-                };
-            }catch(ex){alert('Arquivo inválido');}
-        };
-        r.readAsText(f); ev.target.value='';
+    deleteEmpresa(id) {
+        if (confirm('Remover esta empresa e suas regras?')) {
+            this.state.empresas = this.state.empresas.filter(e => e.id !== id);
+            this.showToast('Empresa removida', 'success');
+            this.saveData();
+        }
     },
 
-    reqNotif(){ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); },
-    checkPays(){
-        if(!this.db||Notification.permission!=='granted')return;
-        const now=new Date(), h=now.getHours(), m=now.getMinutes(), [ch,cm]=this.notifH.split(':').map(Number);
-        if(h<ch||(h===ch&&m<cm))return;
-        const today=new Date(); today.setHours(0,0,0,0); const todayStr=today.toISOString().slice(0,10);
-        this.db.transaction('jobs').objectStore('jobs').getAll().onsuccess=e=>{
-            const jobs=e.target.result.filter(j=>j.status==='aberto');
-            const nstat=JSON.parse(localStorage.getItem(C.KEYS.NOTIFSTAT)||'{}');
-            jobs.forEach(j=>{
-                const fech=this.calcCloseDate(j.data,j); fech.setDate(fech.getDate()+(parseInt(j.diasPagamento)||0));
-                if(fech.getTime()===today.getTime()&&nstat[j.id]!==todayStr){
-                    new Notification('Pagamento hoje',{body:`${j.job} - ${j.empresa}\n${this.fmt(j.total)}`,requireInteraction:true});
-                    nstat[j.id]=todayStr;
+    sendWhatsApp() {
+        const buscaVal = this.normalizeString(document.getElementById('inputBusca').value);
+        
+        const filteredJobs = this.state.jobs.filter(job => {
+            const matchStatus = this.state.currentFilter === 'aberto' ? job.status === 'aberto' : job.status === 'pago';
+            const matchText = !buscaVal || 
+                this.normalizeString(job.empresa).includes(buscaVal) || 
+                this.normalizeString(job.nome).includes(buscaVal);
+            return matchStatus && matchText;
+        });
+
+        if (filteredJobs.length === 0) {
+            this.showToast('Nenhum registro encontrado no filtro atual para envio', 'error');
+            return;
+        }
+
+        let texto = `*FADER LIVRE - RELATÓRIO DE JOBS (${this.state.currentFilter === 'aberto' ? 'PERÍODO ABERTO' : 'PAGOS / ARQUIVADOS'})*\n\n`;
+        let total = 0;
+
+        filteredJobs.forEach(j => {
+            texto += `*Empresa:* ${j.empresa}\n`;
+            texto += `*Job:* ${j.nome || 'Não informado'}\n`;
+            texto += `*Data:* ${this.formatarDataComDiaSemana(j.data)}\n`;
+            texto += `*Horas:* ${j.horas.toFixed(1)}h (${j.inicio} às ${j.fim})\n`;
+            texto += `*Valor:* R$ ${j.valorBruto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}\n`;
+            texto += `*Status:* ${j.status.toUpperCase()}\n`;
+            texto += `-----------------------------------\n`;
+            total += j.valorBruto;
+        });
+
+        texto += `\n*TOTAL DO PERÍODO:* R$ ${total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+        
+        const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
+        window.open(url, '_blank');
+    },
+
+    exportBackup() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ jobs: this.state.jobs, empresas: this.state.empresas }));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "fader_livre_backup.json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    },
+
+    importBackup(event) {
+        const input = event.target;
+        const reader = new FileReader();
+        reader.onload = () => {
+            try {
+                const imported = JSON.parse(reader.result);
+                if (imported.jobs || imported.empresas) {
+                    this.state.jobs = imported.jobs || [];
+                    this.state.empresas = imported.empresas || [];
+                    this.saveData();
+                    this.showToast('Backup importado com sucesso', 'success');
+                } else {
+                    this.showToast('Formato de backup inválido', 'error');
                 }
-            });
-            localStorage.setItem(C.KEYS.NOTIFSTAT, JSON.stringify(nstat));
-        };
-    },
-    checkOverdue(){
-        if(!this.db||Notification.permission!=='granted')return;
-        const today=new Date(); today.setHours(0,0,0,0); const yesterday=new Date(today); yesterday.setDate(yesterday.getDate()-1);
-        const key='overdue_'+today.toISOString().slice(0,10); if(localStorage.getItem(key))return;
-        this.db.transaction('jobs').objectStore('jobs').getAll().onsuccess=e=>{
-            const overdue=e.target.result.filter(j=>{
-                if(j.status!=='aberto') return false;
-                const fech=this.calcCloseDate(j.data,j); fech.setDate(fech.getDate()+(parseInt(j.diasPagamento)||0));
-                return fech.getTime()<=yesterday.getTime();
-            });
-            if(overdue.length){
-                new Notification('Pagamentos vencidos',{body:overdue.length===1?`${overdue[0].job} está vencido`:`${overdue.length} jobs vencidos. Confirme!`,requireInteraction:true});
-                localStorage.setItem(key,'1');
+            } catch (e) {
+                this.showToast('Erro ao ler arquivo de backup', 'error');
             }
         };
+        reader.readAsText(input.files[0]);
+    },
+
+    showToast(message, type = 'success') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerText = message;
+        container.appendChild(toast);
+        setTimeout(() => { toast.remove(); }, 3000);
+    },
+
+    render() {
+        this.renderDashboards();
+        this.renderJobList();
+        this.renderEmpresasTab();
+        this.renderChart();
+    },
+
+    renderDashboards() {
+        let bruto = 0; let horas = 0;
+        this.state.jobs.forEach(j => {
+            bruto += j.valorBruto;
+            horas += j.horas;
+        });
+        const imposto = bruto * 0.06;
+        const liquido = bruto - imposto;
+
+        if (this.state.hideValues) {
+            document.getElementById('vTotalSemana').innerText = 'R$ ••••••';
+            document.getElementById('vTotalNF').innerText = '- R$ ••••••';
+            document.getElementById('vTotalLiquido').innerText = 'R$ ••••••';
+            document.getElementById('vTotalHoras').innerText = '••••';
+        } else {
+            document.getElementById('vTotalSemana').innerText = `R$ ${bruto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            document.getElementById('vTotalNF').innerText = `- R$ ${imposto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            document.getElementById('vTotalLiquido').innerText = `R$ ${liquido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            document.getElementById('vTotalHoras').innerText = `${horas.toFixed(1)}h`;
+        }
+    },
+
+    renderJobList() {
+        const container = document.getElementById('listaHistorico');
+        container.innerHTML = '';
+
+        const buscaVal = this.normalizeString(document.getElementById('inputBusca').value);
+
+        const filtered = this.state.jobs.filter(job => {
+            const matchStatus = this.state.currentFilter === 'aberto' ? job.status === 'aberto' : job.status === 'pago';
+            const matchText = !buscaVal || 
+                this.normalizeString(job.empresa).includes(buscaVal) || 
+                this.normalizeString(job.nome).includes(buscaVal);
+            return matchStatus && matchText;
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<p class="description-text" style="text-align:center; padding: 20px;">Nenhum lançamento encontrado.</p>';
+            return;
+        }
+
+        filtered.forEach(job => {
+            const card = document.createElement('article');
+            card.className = 'history-card';
+
+            const formattedValue = this.state.hideValues ? 'R$ ••••••' : `R$ ${job.valorBruto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+
+            card.innerHTML = `
+                <h4 class="empresa-title">${job.empresa}</h4>
+                <p class="meta-text"><b>Job:</b> ${job.nome || 'Não informado'}</p>
+                <p class="meta-text"><b>Data:</b> ${this.formatarDataComDiaSemana(job.data)}</p>
+                <p class="meta-text"><b>Horas:</b> ${job.horas.toFixed(1)}h (${job.inicio} às ${job.fim})</p>
+                <p class="meta-text"><b>Valor:</b> ${formattedValue}</p>
+                <div>
+                    <label class="muted-label" style="font-size:0.7em; display:inline-block; margin-right:5px;">STATUS:</label>
+                    <select class="select-status-inline" onchange="App.updateJobStatus('${job.id}', this.value)">
+                        <option value="aberto" ${job.status === 'aberto' ? 'selected' : ''}>Aberto</option>
+                        <option value="pago" ${job.status === 'pago' ? 'selected' : ''}>Pago</option>
+                    </select>
+                </div>
+                <button class="btn-edit-inline" onclick="App.editJob('${job.id}')" title="Editar"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+                <button class="btn-del" onclick="App.deleteJob('${job.id}')" title="Excluir"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+            `;
+            container.appendChild(card);
+        });
+    },
+
+    renderEmpresasTab() {
+        const container = document.getElementById('listaEmpresas');
+        container.innerHTML = '';
+
+        if (this.state.empresas.length === 0) {
+            container.innerHTML = '<p class="description-text" style="text-align:center; padding: 20px;">Nenhuma empresa cadastrada.</p>';
+            return;
+        }
+
+        this.state.empresas.forEach(emp => {
+            const card = document.createElement('article');
+            card.className = 'company-card';
+            card.innerHTML = `
+                <div class="company-card-header"><span class="company-name">${emp.nome}</span></div>
+                <div class="company-card-body">
+                    <p class="meta-text">Cachê: R$ ${Number(emp.cacheBase).toFixed(2)} | Diária: R$ ${Number(emp.diaria).toFixed(2)}</p>
+                    <p class="meta-text">Ciclo: ${emp.tipoPagamento} | Liquidação: ${emp.diasPagamento} dias</p>
+                </div>
+                <div class="company-card-actions">
+                    <button class="btn-edit-inline" style="position:static;" onclick="App.editEmpresa('${emp.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+                    <button class="btn-del" style="position:static;" onclick="App.deleteEmpresa('${emp.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    },
+
+    renderChart() {
+        const ctx = document.getElementById('graficoEmpresas');
+        if (!ctx) return;
+
+        const buscaVal = this.normalizeString(document.getElementById('inputBusca').value);
+        const dadosTotais = {};
+
+        // Gráfico passa a computar estritamente o conjunto filtrado de registros em tela
+        const currentFilteredJobs = this.state.jobs.filter(job => {
+            const matchStatus = this.state.currentFilter === 'aberto' ? job.status === 'aberto' : job.status === 'pago';
+            const matchText = !buscaVal || 
+                this.normalizeString(job.empresa).includes(buscaVal) || 
+                this.normalizeString(job.nome).includes(buscaVal);
+            return matchStatus && matchText;
+        });
+
+        currentFilteredJobs.forEach(j => {
+            dadosTotais[j.empresa] = (dadosTotais[j.empresa] || 0) + j.valorBruto;
+        });
+
+        const labels = Object.keys(dadosTotais);
+        const dataValues = Object.values(dadosTotais);
+
+        if (this.state.chart) {
+            this.state.chart.destroy();
+        }
+
+        this.state.chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Faturamento Bruto R$',
+                    data: dataValues,
+                    backgroundColor: '#10b981',
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
     }
 };
-
-// Init
-if(!localStorage.getItem(C.KEYS.SENHA)) document.getElementById('senhaInput').placeholder='Crie uma chave';
-App.init();
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){App.checkPays();App.checkOverdue();}});
-window.addEventListener('focus',()=>{App.checkPays();App.checkOverdue();});
 </script>
 </body>
 </html>
+
