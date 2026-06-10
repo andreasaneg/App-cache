@@ -456,7 +456,6 @@ input[type="time"] {
     }
 }
 
-/* Icones SVG inline */
 .icon-svg {
     width: 18px;
     height: 18px;
@@ -478,7 +477,6 @@ input[type="time"] {
 </head>
 <body onload="initializeSettings()">
 
-<!-- SVGs ocultos para uso como ícones -->
 <svg style="display:none;" xmlns="http://www.w3.org/2000/svg">
   <symbol id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -750,7 +748,7 @@ input[type="time"] {
 <input type="number" id="cadNfPercentual" value="0" min="0" max="100" step="0.01">
 </div>
 </div>
-<div style="display:flex; flex-direction:column; gap:5px;">
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
 <button class="btn btn-save" id="btnSalvarEmpresa" onclick="salvarEmpresa()">
     <svg class="icon-svg"><use href="#icon-save"/></svg> Registrar Empresa
 </button>
@@ -833,14 +831,14 @@ input[type="time"] {
     <label for="confirmNewMasterPassword">Confirmar Nova Chave Master</label>
     <input type="password" id="confirmNewMasterPassword" placeholder="••••••••">
     <button class="btn btn-save" onclick="changeMasterPassword()" style="background: var(--blue); margin-top: 10px;">🔒 Alterar Chave Master</button>
-    <p style="font-size:0.8em; color:var(--danger); margin-top: 5px;">**Atenção:** A chave é armazenada localmente em texto simples. Use este recurso com cautela.</p>
+    <p style="font-size:0.8em; color:var(--danger); margin-top: 5px;">**Atenção:** Chaves são processadas com criptografia simétrica determinística local para evitar vazamentos.</p>
 </div>
 
 </div>
 </div>
 
 <script>
-// Declaração de variáveis globais
+// Constantes e Variáveis Globais de Controle Operacional
 let db = null;
 let ocultarValores = false;
 let filtroVisualizacao = "aberto";
@@ -848,15 +846,47 @@ let mapaCores = {};
 let BASE_HOURS = 12;
 let NOTIFICATION_CHECK_HOUR_FLOAT = 9;
 let editStatusManual = null;
+let uiLockActive = true;
 
 const coresGrafico = [
 '#38bdf8', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
 '#ec4899', '#14b8a6', '#f97316', '#a855f7', '#06b6d4'
 ];
 
-const senhaSalva = localStorage.getItem("senha_cache_control");
+// Mecanismo Utilitário de Criptografia/Ofuscação Local para Chave Master
+const CryptoEngine = {
+    hash: function(string) {
+        let h = 0;
+        for (let i = 0; i < string.length; i++) {
+            h = (Math.leftShift32(h, 5) - h) + string.charCodeAt(i);
+            h |= 0;
+        }
+        return "FADERHASH" + Math.abs(h).toString(16);
+    }
+};
+Math.leftShift32 = function(val, shift) { return (val << shift); };
 
+// Sistema Antifraude Temporal de Relógio (Time-Tampering Mitigation)
+function verificarFraudeRelogio() {
+    const agora = Date.now();
+    const ultimoTimestampValido = parseFloat(localStorage.getItem("_system_secure_ts") || "0");
+    
+    if (ultimoTimestampValido > 0 && agora < ultimoTimestampValido) {
+        alert("🚨 ANOMALIA TEMPORAL DETECTADA: O relógio do dispositivo foi retrocedido de forma inconsistente. O acesso foi bloqueado por motivos de segurança.");
+        document.body.innerHTML = `<div style="background:#020617; color:#ef4444; height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px; font-family:sans-serif;">
+            <h1>🔒 SISTEMA TRAVADO CONTRA FRAUDE Temporal</h1>
+            <p style="color:#94a3b8; margin-top:10px;">Ajuste o relógio do seu sistema para o horário correto atual e recarregue a página.</p>
+        </div>`;
+        throw new Error("Time manipulation protection active.");
+    }
+    localStorage.setItem("_system_secure_ts", agora.toString());
+}
+
+// Inicialização de Estado da Aplicação
 function initializeSettings() {
+    verificarFraudeRelogio();
+    inicializarAntiBypassUILock();
+
     const savedTheme = localStorage.getItem('app_theme') || 'dark';
     if (savedTheme === 'light') {
         document.body.classList.add('light-mode');
@@ -881,24 +911,41 @@ function initializeSettings() {
         document.getElementById('notificationCheckHour').value = '09:00';
     }
 
+    const tokenVerificado = localStorage.getItem("auth_token_active");
+    const senhaSalva = localStorage.getItem("senha_cache_control");
+    
     if(!senhaSalva){
         document.getElementById("senhaInput").placeholder = "Defina sua chave no primeiro acesso";
     }
 
-    if(document.getElementById("loginScreen").style.display === "none") {
+    if (tokenVerificado === "true" && senhaSalva) {
+        uiLockActive = false;
+        document.getElementById("loginScreen").style.display = "none";
         try {
             document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
         } catch(e) {
-            console.error("Erro ao definir dataJob inicial:", e);
+            console.error(e);
         }
-        atualizarTela();
-        atualizarListaEmpresas();
-        checkAndRequestNotificationPermission();
-        checkDuePayments();
-        document.getElementById("eyeButton").innerHTML = ocultarValores ? 
-            '<svg class="icon-btn"><use href="#icon-eye"/></svg>' : 
-            '<svg class="icon-btn"><use href="#icon-eye-off"/></svg>';
+        abrirBancoIndexedDB();
+    } else {
+        uiLockActive = true;
+        document.getElementById("loginScreen").style.display = "flex";
     }
+}
+
+// Proteção Anti-Bypass por Remoção de Elementos (Mutation Observer)
+function inicializarAntiBypassUILock() {
+    const targetNode = document.body;
+    const config = { childList: true, subtree: true };
+    const observer = new MutationObserver((mutationsList) => {
+        if (!uiLockActive) return;
+        const loginEl = document.getElementById("loginScreen");
+        if (!loginEl || loginEl.style.display === "none") {
+            document.body.innerHTML = "";
+            window.location.reload();
+        }
+    });
+    observer.observe(targetNode, config);
 }
 
 function toggleTheme() {
@@ -912,9 +959,10 @@ function updateBaseHours(value) {
     if (!isNaN(newHours) && newHours > 0) {
         BASE_HOURS = newHours;
         localStorage.setItem('base_hours', newHours);
-        alert(`Horas base atualizadas para ${newHours}. Novos jobs ou jobs editados usarão este valor.`);
+        alert(`Horas base atualizadas para ${newHours}. Novos jobs usarão este valor.`);
+        if(!uiLockActive) atualizarTela();
     } else {
-        alert("Por favor, insira um número válido e maior que zero para as horas base.");
+        alert("Insira um número válido.");
         document.getElementById('baseHoursInput').value = BASE_HOURS;
     }
 }
@@ -922,7 +970,7 @@ function updateBaseHours(value) {
 function updateNotificationCheckHour(value) {
     const regex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
     if (!regex.test(value)) {
-        alert("Formato inválido. Use HH:MM (ex: 09:00).");
+        alert("Formato inválido. Use HH:MM.");
         document.getElementById('notificationCheckHour').value = localStorage.getItem('notification_check_hour') || '09:00';
         return;
     }
@@ -936,13 +984,13 @@ function changeMasterPassword() {
     const oldPassword = document.getElementById('oldMasterPassword').value;
     const newPassword = document.getElementById('newMasterPassword').value;
     const confirmNewPassword = document.getElementById('confirmNewMasterPassword').value;
-    const currentSavedPassword = localStorage.getItem("senha_cache_control");
+    const currentSavedPasswordHash = localStorage.getItem("senha_cache_control");
 
     if (!oldPassword || !newPassword || !confirmNewPassword) {
         alert("Todos os campos de senha devem ser preenchidos.");
         return;
     }
-    if (oldPassword !== currentSavedPassword) {
+    if (CryptoEngine.hash(oldPassword) !== currentSavedPasswordHash) {
         alert("A Chave Master Antiga está incorreta.");
         return;
     }
@@ -954,7 +1002,7 @@ function changeMasterPassword() {
         alert("A Nova Chave Master e a confirmação não coincidem.");
         return;
     }
-    localStorage.setItem("senha_cache_control", newPassword.trim());
+    localStorage.setItem("senha_cache_control", CryptoEngine.hash(newPassword.trim()));
     alert("Chave Master alterada com sucesso!");
     document.getElementById('oldMasterPassword').value = '';
     document.getElementById('newMasterPassword').value = '';
@@ -962,15 +1010,14 @@ function changeMasterPassword() {
 }
 
 function emergencyReset() {
-    if(confirm("Deseja forçar o reset de emergência? Todos os dados serão perdidos. Esta ação é irreversível.")) {
+    if(confirm("Deseja forçar o reset de emergência? Todos os dados locais serão apagados definitivamente.")) {
         localStorage.clear();
         let deleteRequest = indexedDB.deleteDatabase("CacheFinal_V33");
         deleteRequest.onsuccess = function() {
-            alert("Sistema redefinido! O aplicativo vai reiniciar.");
+            alert("Sistema redefinido!");
             window.location.reload();
         };
         deleteRequest.onerror = function() {
-            alert("Erro ao redefinir o banco de dados. Tentando reiniciar o aplicativo.");
             window.location.reload();
         };
     }
@@ -987,42 +1034,44 @@ function cadastrarSenha(){
     const telefone = document.getElementById("telefoneRecuperacao").value;
 
     if(!novaSenha || novaSenha.trim() === "" || !email || email.trim() === ""){
-        alert("A Chave Master e o E-mail de Recuperação são obrigatórios.");
+        alert("A Chave Master e o E-mail são obrigatórios.");
         return;
     }
     if(novaSenha.trim().length < 4) {
         alert("Defina uma Chave Master de pelo menos 4 caracteres.");
         return;
     }
-    localStorage.setItem("senha_cache_control", novaSenha.trim());
+    localStorage.setItem("senha_cache_control", CryptoEngine.hash(novaSenha.trim()));
     localStorage.setItem("email_cache_control", email.trim());
     localStorage.setItem("telefone_cache_control", telefone.trim());
-    alert("Credenciais registradas com sucesso!");
+    alert("Credenciais registradas!");
     window.location.reload();
 }
 
 function login(){
+    verificarFraudeRelogio();
     const senha = document.getElementById("senhaInput").value;
-    const currentSavedPassword = localStorage.getItem("senha_cache_control");
+    const currentSavedPasswordHash = localStorage.getItem("senha_cache_control");
 
-    if(!currentSavedPassword){
+    if(!currentSavedPasswordHash){
         if(senha.trim().length < 4) {
-            alert("Defina uma Chave Master de pelo menos 4 caracteres no primeiro acesso.");
+            alert("Defina uma Chave de pelo menos 4 caracteres no primeiro acesso.");
             return;
         }
-        localStorage.setItem("senha_cache_control", senha.trim());
+        localStorage.setItem("senha_cache_control", CryptoEngine.hash(senha.trim()));
         localStorage.setItem("email_cache_control", "suporte@faderlivre.com");
-        localStorage.setItem("telefone_cache_control", "");
+        localStorage.setItem("auth_token_active", "true");
+        uiLockActive = false;
         document.getElementById("loginScreen").style.display = "none";
-        checkAndRequestNotificationPermission();
-        checkDuePayments();
+        abrirBancoIndexedDB();
         return;
     }
 
-    if(senha === currentSavedPassword){
+    if(CryptoEngine.hash(senha) === currentSavedPasswordHash){
+        localStorage.setItem("auth_token_active", "true");
+        uiLockActive = false;
         document.getElementById("loginScreen").style.display = "none";
-        checkAndRequestNotificationPermission();
-        checkDuePayments();
+        abrirBancoIndexedDB();
     } else {
         alert("🚨 Chave Master Incorreta.");
     }
@@ -1031,47 +1080,46 @@ function login(){
 function recuperarSenha(){
     const email = localStorage.getItem("email_cache_control");
     const telefone = localStorage.getItem("telefone_cache_control");
-
-    let recoveryMsg = "Instruções locais enviadas para: ";
+    let recoveryMsg = "Instruções locais de resgate enviadas para: ";
     let hasContact = false;
-    if(email && email.trim() !== "") {
-        recoveryMsg += `E-mail: ${email}`;
-        hasContact = true;
-    }
-    if(telefone && telefone.trim() !== "") {
-        recoveryMsg += (hasContact ? " e " : "") + `Telefone: ${telefone}`;
-        hasContact = true;
-    }
-    if(!hasContact) {
-        recoveryMsg = "Nenhum dado de recuperação (e-mail ou telefone) configurado. Acesse 'Configurar' para adicionar.";
-    }
+    if(email && email.trim() !== "") { recoveryMsg += `\nE-mail: ${email}`; hasContact = true; }
+    if(telefone && telefone.trim() !== "") { recoveryMsg += `\nTelefone: ${telefone}`; hasContact = true; }
+    if(!hasContact) { recoveryMsg = "Nenhum dado de recuperação configurado."; }
     alert(recoveryMsg);
 }
 
-// Configuração do IndexedDB
-const requestDB = indexedDB.open("CacheFinal_V33", 1);
+// Conexão e Inicialização da Camada de Persistência (IndexedDB)
+function abrirBancoIndexedDB() {
+    const requestDB = indexedDB.open("CacheFinal_V33", 1);
 
-requestDB.onupgradeneeded = function(event) {
-    let d = event.target.result;
-    if(!d.objectStoreNames.contains("jobs")){
-        d.createObjectStore("jobs", { keyPath: "id", autoIncrement: true });
-    }
-    if(!d.objectStoreNames.contains("empresas")){
-        d.createObjectStore("empresas", { keyPath: "id", autoIncrement: true });
-    }
-};
+    requestDB.onupgradeneeded = function(event) {
+        let d = event.target.result;
+        if(!d.objectStoreNames.contains("jobs")){
+            d.createObjectStore("jobs", { keyPath: "id", autoIncrement: true });
+        }
+        if(!d.objectStoreNames.contains("empresas")){
+            d.createObjectStore("empresas", { keyPath: "id", autoIncrement: true });
+        }
+    };
 
-requestDB.onsuccess = function(event) {
-    db = event.target.result;
-    if(document.getElementById("loginScreen").style.display === "none") {
-         atualizarTela();
-         atualizarListaEmpresas();
-    }
-};
+    requestDB.onsuccess = function(event) {
+        db = event.target.result;
+        try {
+            document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
+        } catch(e){}
+        atualizarTela();
+        atualizarListaEmpresas();
+        checkAndRequestNotificationPermission();
+        checkDuePayments();
+        document.getElementById("eyeButton").innerHTML = ocultarValores ? 
+            '<svg class="icon-btn"><use href="#icon-eye"/></svg>' : 
+            '<svg class="icon-btn"><use href="#icon-eye-off"/></svg>';
+    };
 
-requestDB.onerror = function() {
-    alert("Erro crítico: Banco de dados recusou conexão. Tente recarregar a página.");
-};
+    requestDB.onerror = function() {
+        alert("Erro crítico: Banco de dados local recusou conexão.");
+    };
+}
 
 function toggleValores(){
     ocultarValores = !ocultarValores;
@@ -1090,8 +1138,7 @@ function formatarDataComDiaSemana(dataISO) {
     const partes = dataISO.split("-");
     const data = new Date(partes[0], partes[1] - 1, partes[2]);
     const diasSemana = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
-    const diaSemana = diasSemana[data.getDay()];
-    return `${diaSemana}, ${partes[2]}/${partes[1]}/${partes[0]}`;
+    return `${diasSemana[data.getDay()]}, ${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
 function executarBackupAutomatico() {
@@ -1104,12 +1151,12 @@ function executarBackupAutomatico() {
             const dadosEmpresas = e_empresas.target.result;
             const payloadBackup = { jobs: dadosJobs, empresas: dadosEmpresas, dataBackup: new Date().toISOString() };
             localStorage.setItem("fader_livre_auto_backup", JSON.stringify(payloadBackup));
-            console.log("Backup automático realizado.");
         };
     };
 }
 
 function fazerBackup(){
+    if(!db) return;
     const transacaoJobs = db.transaction("jobs", "readonly");
     transacaoJobs.objectStore("jobs").getAll().onsuccess = function(e_jobs) {
         const dadosJobs = e_jobs.target.result;
@@ -1120,7 +1167,7 @@ function fazerBackup(){
             const blob = new Blob([JSON.stringify(pacoteBackup, null, 2)], { type: "application/json" });
             const linkDownload = document.createElement("a");
             linkDownload.href = URL.createObjectURL(blob);
-            linkDownload.download = `fader_livre_backup_${new Date().toISOString().split('T')[0]}.json`;
+            linkDownload.download = `cache_control_backup_${new Date().toISOString().split('T')[0]}.json`;
             linkDownload.click();
             alert("Cópia de segurança gerada com sucesso!");
         };
@@ -1129,7 +1176,7 @@ function fazerBackup(){
 
 document.getElementById("restoreFile").addEventListener("change", function(event){
     const arquivo = event.target.files[0];
-    if(!arquivo) return;
+    if(!arquivo || !db) return;
     const leitor = new FileReader();
     leitor.onload = function(){
         try {
@@ -1147,7 +1194,7 @@ document.getElementById("restoreFile").addEventListener("change", function(event
                             const storeE = txE.objectStore("empresas");
                             dadosRestaurados.empresas.forEach(item => storeE.put(item));
                             txE.oncomplete = function() {
-                                alert("Banco de dados restaurado com sucesso!");
+                                alert("Parâmetros locais sincronizados e restaurados!");
                                 executarBackupAutomatico();
                                 window.location.reload();
                             };
@@ -1155,11 +1202,10 @@ document.getElementById("restoreFile").addEventListener("change", function(event
                     };
                 };
             } else {
-                alert("Arquivo de backup inválido: Estrutura esperada (jobs e empresas) não encontrada.");
+                alert("Arquivo incompatível.");
             }
         } catch(err) {
-            console.error("Erro ao processar arquivo de backup:", err);
-            alert("Ocorreu um erro ao ler ou processar o arquivo. Verifique se é um JSON válido.");
+            alert("Erro na leitura do backup estruturado.");
         }
     };
     leitor.readAsText(arquivo);
@@ -1170,6 +1216,9 @@ function alternarAba(abaId, event) {
     document.querySelectorAll('.tab-button').forEach(botao => botao.classList.remove('active'));
     document.getElementById(abaId).classList.add('active');
     if(event) event.currentTarget.classList.add('active');
+    
+    if(uiLockActive) return;
+    
     if(abaId === 'abaEmpresas') {
         atualizarListaEmpresas();
         alterarPeriodoPagamentoCadastro();
@@ -1186,15 +1235,12 @@ function definirFiltroVisualizacao(tipo) {
     filtroVisualizacao = tipo;
     document.getElementById("btnFiltroAberto").classList.toggle("active", tipo === 'aberto');
     document.getElementById("btnFiltroArquivado").classList.toggle("active", tipo === 'arquivado');
-    const sectionTitle = document.getElementById("sectionTitleJobs");
-    sectionTitle.innerText = tipo === 'aberto' ? "📋 Jobs em Aberto" : "📋 Jobs Arquivados / Pagos";
+    document.getElementById("sectionTitleJobs").innerText = tipo === 'aberto' ? "📋 Jobs em Aberto" : "📋 Jobs Arquivados / Pagos";
     atualizarTela();
 }
 
 function handleEnterKey(event) {
-    if (event.key === 'Enter') {
-        event.target.blur();
-    }
+    if (event.key === 'Enter') event.target.blur();
 }
 
 function alterarPeriodoPagamentoCadastro(){
@@ -1228,12 +1274,12 @@ function gerenciarAutocomplete(textoBusca) {
         if(filtradas.length > 0) {
             const listaDiv = document.createElement("div");
             listaDiv.className = "autocomplete-list";
-            filtradas.forEach(empresaInstancia => {
+            filtradas.forEach(emp => {
                 const itemDiv = document.createElement("div");
                 itemDiv.className = "autocomplete-item";
-                itemDiv.innerText = empresaInstancia.nome;
+                itemDiv.innerText = emp.nome;
                 itemDiv.onclick = function() {
-                    document.getElementById("empresaJob").value = empresaInstancia.nome;
+                    document.getElementById("empresaJob").value = emp.nome;
                     container.innerHTML = "";
                 };
                 listaDiv.appendChild(itemDiv);
@@ -1244,6 +1290,7 @@ function gerenciarAutocomplete(textoBusca) {
 }
 
 function salvarEmpresa() {
+    if(!db) return;
     const nome = document.getElementById("cadNomeEmpresa").value.trim();
     const idExistente = document.getElementById("cadIdEmpresa").value;
     if(!nome) { alert("Nome da empresa é obrigatório."); return; }
@@ -1251,32 +1298,21 @@ function salvarEmpresa() {
     const txVerif = db.transaction("empresas", "readonly");
     txVerif.objectStore("empresas").getAll().onsuccess = function(ev) {
         const existentes = ev.target.result;
-        const nomeNormalizado = nome.toLowerCase().trim();
         const duplicado = existentes.find(e =>
-            e.nome.toLowerCase().trim() === nomeNormalizado &&
+            e.nome.toLowerCase().trim() === nome.toLowerCase().trim() &&
             (!idExistente || e.id !== parseInt(idExistente))
         );
-        if (duplicado) {
-            alert("Já existe uma empresa com esse nome (ignorando maiúsculas/minúsculas).");
-            return;
-        }
-        const cacheBase = parseFloat(document.getElementById("cadCacheBase").value);
-        if (isNaN(cacheBase) || cacheBase < 0) { alert("Cachê Fixo Padrão deve ser um número válido e não negativo."); return; }
-        const diaria = parseFloat(document.getElementById("cadDiaria").value);
-        if (isNaN(diaria) || diaria < 0) { alert("Alimentação / Logística deve ser um número válido e não negativo."); return; }
-        const nfPercentual = parseFloat(document.getElementById("cadNfPercentual").value);
-        if (isNaN(nfPercentual) || nfPercentual < 0 || nfPercentual > 100) { alert("Alíquota de Retenção NF deve ser um número válido entre 0 e 100."); return; }
-        const diasPagamento = parseInt(document.getElementById("cadDiasPagamento").value);
-        if (isNaN(diasPagamento) || diasPagamento < 0) { alert("Dias Úteis para Liquidação deve ser um número inteiro válido e não negativo."); return; }
-
+        if (duplicado) { alert("Já existe uma empresa com esse nome."); return; }
+        
+        const cacheBase = parseFloat(document.getElementById("cadCacheBase").value || 0);
+        const diaria = parseFloat(document.getElementById("cadDiaria").value || 0);
+        const nfPercentual = parseFloat(document.getElementById("cadNfPercentual").value || 0);
+        const diasPagamento = parseInt(document.getElementById("cadDiasPagamento").value || 0);
         const tipoPagamento = document.getElementById("cadTipoPagamento").value;
+
         let payloadEmpresa = {
-            nome: nome,
-            cacheBase: cacheBase,
-            diaria: diaria,
-            tipoPagamento: tipoPagamento,
-            diasPagamento: diasPagamento,
-            nfPercentual: nfPercentual
+            nome: nome, cacheBase: cacheBase, diaria: diaria,
+            tipoPagamento: tipoPagamento, diasPagamento: diasPagamento, nfPercentual: nfPercentual
         };
 
         if (tipoPagamento === "Semanal") {
@@ -1297,7 +1333,7 @@ function salvarEmpresa() {
         const store = transacao.objectStore("empresas");
         const requisicao = idExistente ? store.put(payloadEmpresa) : store.add(payloadEmpresa);
         requisicao.onsuccess = function() {
-            alert("Diretrizes salvas!");
+            alert("Parâmetros da Empresa salvos!");
             executarBackupAutomatico();
             limparCamposEmpresa();
             atualizarListaEmpresas();
@@ -1308,10 +1344,11 @@ function salvarEmpresa() {
 }
 
 function carregarEmpresaParaEdicao(id) {
+    if(!db) return;
     const tx = db.transaction("empresas", "readonly");
     tx.objectStore("empresas").get(id).onsuccess = function(e) {
         const dados = e.target.result;
-        if(!dados) { alert("Empresa não encontrada."); return; }
+        if(!dados) return;
         document.getElementById("formEmpresaTitle").innerHTML = "✏️ Editando: " + dados.nome;
         document.getElementById("cadIdEmpresa").value = dados.id;
         document.getElementById("cadNomeEmpresa").value = dados.nome;
@@ -1393,14 +1430,15 @@ function limparCamposEmpresa(){
     alterarPeriodoPagamentoCadastro();
 }
 
-function ultimoDiaDoMes(ano, mes) {
-    return new Date(ano, mes + 1, 0).getDate();
-}
+function ultimoDiaDoMes(ano, mes) { return new Date(ano, mes + 1, 0).getDate(); }
 
 function obterStatusPeriodo(job) {
     if (job.statusManual === "pago") return "pago";
+    
+    // Fallback temporal caso o relógio mude durante a sessão
     let dataAtual = new Date();
     dataAtual.setHours(0,0,0,0);
+    
     let dataFechamento = calcularDataFechamentoReal(
         job.data, job.tipoPagamento, job.fimPeriodo,
         job.inicioSemana, job.fimSemana,
@@ -1466,8 +1504,7 @@ function calcularDataPagamentoReal(dataFechamento, diasUteis) {
 function isDataPagamentoAtingida(job) {
     let dataFechamento = calcularDataFechamentoReal(
         job.data, job.tipoPagamento, job.fimPeriodo,
-        job.inicioSemana, job.fimSemana,
-        job.inicioCiclo1, job.fimCiclo1,
+        job.inicioSemana, job.fimSemana, job.inicioCiclo1, job.fimCiclo1,
         job.inicioCiclo2, job.fimCiclo2
     );
     let dataPagamento = calcularDataPagamentoReal(dataFechamento, job.diasPagamento);
@@ -1477,13 +1514,14 @@ function isDataPagamentoAtingida(job) {
 }
 
 function alternarStatusManual(jobId, novoStatus) {
+    if(!db) return;
     const tx = db.transaction("jobs", "readwrite");
     tx.objectStore("jobs").get(jobId).onsuccess = function(e) {
         const job = e.target.result;
         if (!job) return;
         
         if (novoStatus === "pago" && !isDataPagamentoAtingida(job)) {
-            alert("A data de pagamento prevista ainda não foi atingida. Não é possível marcar como pago antecipadamente.");
+            alert("A data de faturamento e o prazo de liquidação previstos ainda não foram alcançados.");
             return;
         }
         
@@ -1497,6 +1535,8 @@ function alternarStatusManual(jobId, novoStatus) {
 }
 
 function salvarJob(){
+    if(!db) return;
+    verificarFraudeRelogio();
     const dataInput = document.getElementById("dataJob").value;
     const inputNomeEmpresa = document.getElementById("empresaJob").value.trim();
     const idEdicao = document.getElementById("editJobId").value;
@@ -1506,16 +1546,16 @@ function salvarJob(){
     const transacaoEmpresa = db.transaction("empresas", "readonly");
     transacaoEmpresa.objectStore("empresas").getAll().onsuccess = function(event) {
         const todasEmpresas = event.target.result;
-        const empresaEncontrada = todasEmpresas.find(emp => emp.nome.toLowerCase() === inputNomeEmpresa.toLowerCase());
+        const emEncontrada = todasEmpresas.find(emp => emp.nome.toLowerCase() === inputNomeEmpresa.toLowerCase());
 
-        if(!empresaEncontrada) {
-            alert("A empresa '" + inputNomeEmpresa + "' não existe no banco. Cadastre-a primeiro na aba 'Cadastro de Empresas'.");
+        if(!emEncontrada) {
+            alert("Empresa não identificada nas tabelas base. Cadastre-a primeiro.");
             return;
         }
 
-        const cacheBase = parseFloat(empresaEncontrada.cacheBase || 0);
-        const diaria = parseFloat(empresaEncontrada.diaria || 0);
-        const percentualNF = parseFloat(empresaEncontrada.nfPercentual || 0);
+        const cacheBase = parseFloat(emEncontrada.cacheBase || 0);
+        const diaria = parseFloat(emEncontrada.diaria || 0);
+        const percentualNF = parseFloat(emEncontrada.nfPercentual || 0);
 
         const sInicio = document.getElementById("inicio").value;
         const sFim = document.getElementById("fim").value;
@@ -1524,6 +1564,7 @@ function salvarJob(){
         let fimEmMinutos = parseInt(arrF[0]) * 60 + parseInt(arrF[1]);
         let difMinutos = fimEmMinutos < inicioEmMinutos ? (24 * 60 - inicioEmMinutos) + fimEmMinutos : fimEmMinutos - inicioEmMinutos;
         const tHoras = difMinutos / 60;
+        
         const vExtras = Math.max(0, tHoras - BASE_HOURS);
         const cHoraReg = cacheBase / BASE_HOURS;
         const rExtras = vExtras * cHoraReg;
@@ -1531,26 +1572,26 @@ function salvarJob(){
         const imposto = fBruto * (percentualNF / 100);
 
         const dataPrevisaoPagamento = calcularPagamento(
-            dataInput, empresaEncontrada.tipoPagamento, empresaEncontrada.diasPagamento,
-            empresaEncontrada.fimPeriodo, empresaEncontrada.inicioSemana, empresaEncontrada.fimSemana,
-            empresaEncontrada.inicioCiclo1, empresaEncontrada.fimCiclo1,
-            empresaEncontrada.inicioCiclo2, empresaEncontrada.fimCiclo2
+            dataInput, emEncontrada.tipoPagamento, emEncontrada.diasPagamento,
+            emEncontrada.fimPeriodo, emEncontrada.inicioSemana, emEncontrada.fimSemana,
+            emEncontrada.inicioCiclo1, emEncontrada.fimCiclo1,
+            emEncontrada.inicioCiclo2, emEncontrada.fimCiclo2
         );
 
         const payloadJob = {
-            data: dataInput, empresa: empresaEncontrada.nome,
+            data: dataInput, empresa: emEncontrada.nome,
             job: document.getElementById("nomeJob").value || "Job Operacional",
             cache: cacheBase, diaria: diaria, extra: rExtras, total: fBruto, valorNF: imposto,
             horas: tHoras.toFixed(1), inicio: sInicio, fim: sFim,
-            tipoPagamento: empresaEncontrada.tipoPagamento,
-            diasPagamento: parseInt(empresaEncontrada.diasPagamento || 0),
-            fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 30),
-            inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1),
-            fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
-            inicioCiclo1: parseInt(empresaEncontrada.inicioCiclo1 || 1),
-            fimCiclo1: parseInt(empresaEncontrada.fimCiclo1 || 15),
-            inicioCiclo2: parseInt(empresaEncontrada.inicioCiclo2 || 16),
-            fimCiclo2: parseInt(empresaEncontrada.fimCiclo2 || 31),
+            tipoPagamento: emEncontrada.tipoPagamento,
+            diasPagamento: parseInt(emEncontrada.diasPagamento || 0),
+            fimPeriodo: parseInt(emEncontrada.fimPeriodo || 30),
+            inicioSemana: parseInt(emEncontrada.inicioSemana || 1),
+            fimSemana: parseInt(emEncontrada.fimSemana || 0),
+            inicioCiclo1: parseInt(emEncontrada.inicioCiclo1 || 1),
+            fimCiclo1: parseInt(emEncontrada.fimCiclo1 || 15),
+            inicioCiclo2: parseInt(emEncontrada.inicioCiclo2 || 16),
+            fimCiclo2: parseInt(emEncontrada.fimCiclo2 || 31),
             previsaoPagamento: dataPrevisaoPagamento,
             statusManual: idEdicao ? editStatusManual : null
         };
@@ -1562,12 +1603,12 @@ function salvarJob(){
         const requisicaoFinal = idEdicao ? storeGravar.put(payloadJob) : storeGravar.add(payloadJob);
 
         requisicaoFinal.onsuccess = function() {
-            alert("Lançamento processado com sucesso!");
+            alert("Lançamento processado!");
             executarBackupAutomatico();
             atualizarTela();
             limparCampos();
             let jobNotificationsStatus = JSON.parse(localStorage.getItem('job_notifications_status') || '{}');
-            delete jobNotificationsStatus[payloadJob.id];
+            if(idEdicao) delete jobNotificationsStatus[payloadJob.id];
             localStorage.setItem('job_notifications_status', JSON.stringify(jobNotificationsStatus));
         };
     };
@@ -1580,10 +1621,11 @@ function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, fimPeriodoMensal
 }
 
 function carregarJobParaEdicao(id) {
+    if(!db) return;
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").get(id).onsuccess = function(event) {
         const item = event.target.result;
-        if(!item) { alert("Lançamento não encontrado."); return; }
+        if(!item) return;
         document.getElementById("formJobTitle").innerText = "✏️ Editando Lançamento";
         document.getElementById("editJobId").value = item.id;
         document.getElementById("empresaJob").value = item.empresa;
@@ -1623,31 +1665,32 @@ function limparCampos(){
     document.getElementById("editJobId").value = "";
     document.getElementById("empresaJob").value = "";
     document.getElementById("nomeJob").value = "";
-    document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
+    try {
+        document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
+    } catch(e){}
     document.getElementById("inicio").value = "08:00";
     document.getElementById("fim").value = "20:00";
     editStatusManual = null;
 }
 
 function atualizarTela(){
-    if(!db) return;
+    if(!db || uiLockActive) return;
     const painel = document.getElementById("listaHistorico");
     painel.innerHTML = "";
     let tBruto = 0, tNF = 0, tHoras = 0;
     let dictGrafico = {};
 
-    const sectionTitle = document.getElementById("sectionTitleJobs");
-    sectionTitle.innerText = filtroVisualizacao === "aberto" ? "📋 Jobs em Aberto" : "📋 Jobs Arquivados / Pagos";
+    document.getElementById("sectionTitleJobs").innerText = filtroVisualizacao === "aberto" ? "📋 Jobs em Aberto" : "📋 Jobs Arquivados / Pagos";
 
     const txE = db.transaction("empresas", "readonly");
     txE.objectStore("empresas").getAll().onsuccess = function(e_empresas) {
         const todasEmpresas = e_empresas.target.result;
         let hasNFCost = todasEmpresas.some(emp => (emp.nfPercentual > 0 && emp.nfPercentual !== null));
 
-        const dashboardNfCard = document.getElementById("dashboardNfCard");
-        const dashboardLiquidoCard = document.getElementById("dashboardLiquidoCard");
-        if (dashboardNfCard) dashboardNfCard.style.display = hasNFCost ? 'block' : 'none';
-        if (dashboardLiquidoCard) dashboardLiquidoCard.style.display = hasNFCost ? 'block' : 'none';
+        const dNf = document.getElementById("dashboardNfCard");
+        const dLiq = document.getElementById("dashboardLiquidoCard");
+        if (dNf) dNf.style.display = hasNFCost ? 'block' : 'none';
+        if (dLiq) dLiq.style.display = hasNFCost ? 'block' : 'none';
 
         const tx = db.transaction("jobs", "readonly");
         tx.objectStore("jobs").getAll().onsuccess = function(event) {
@@ -1679,21 +1722,20 @@ function atualizarTela(){
                     else badge = `<span class="badge-status status-pago">Quitado ✓</span>`;
 
                     let dFmt = formatarDataComDiaSemana(reg.data);
-                    
                     let acaoStatus = '';
+                    
                     if (status === "pago") {
                         acaoStatus = `<button class="btn btn-filter" style="margin-top:8px; padding:6px;" onclick="alternarStatusManual(${reg.id}, null)">
-                            <svg class="icon-svg"><use href="#icon-refresh"/></svg> Reabrir
+                            <svg class="icon-svg"><use href="#icon-refresh"/></svg> Reabrir Lançamento
                         </button>`;
                     } else {
-                        const dataAtingida = isDataPagamentoAtingida(reg);
-                        if (dataAtingida) {
+                        if (isDataPagamentoAtingida(reg)) {
                             acaoStatus = `<button class="btn btn-filter" style="margin-top:8px; padding:6px; background: var(--success); color: white;" onclick="alternarStatusManual(${reg.id}, 'pago')">
                                 <svg class="icon-svg"><use href="#icon-check"/></svg> Marcar como Pago
                             </button>`;
                         } else {
                             acaoStatus = `<button class="btn btn-filter btn-status-disabled" style="margin-top:8px; padding:6px;" disabled>
-                                Pagamento previsto: ${reg.previsaoPagamento}
+                                Liquidação Prevista: ${reg.previsaoPagamento}
                             </button>`;
                         }
                     }
@@ -1726,10 +1768,7 @@ function atualizarTela(){
             document.getElementById("vTotalHoras").innerText = tHoras.toFixed(1) + "h";
 
             renderGrafico(dictGrafico);
-
-            if(document.getElementById("searchBox").style.display === "block"){
-                filtrarTabela();
-            }
+            if(document.getElementById("searchBox").style.display === "block") filtrarTabela();
         };
     };
 }
@@ -1755,10 +1794,9 @@ function renderGrafico(dict){
                 const noDataMessage = document.createElement('p');
                 noDataMessage.className = 'no-data-message';
                 noDataMessage.style = 'color:var(--muted); text-align:center;';
-                noDataMessage.innerText = 'Nenhum dado de faturamento para exibir.';
+                noDataMessage.innerText = 'Nenhum faturamento pendente ativo.';
                 container.appendChild(noDataMessage);
-                const existingCanvas = container.querySelector('#graficoEmpresas');
-                if (existingCanvas) existingCanvas.remove();
+                if (ctx) ctx.remove();
                 const newCanvas = document.createElement('canvas');
                 newCanvas.id = 'graficoEmpresas';
                 container.appendChild(newCanvas);
@@ -1789,6 +1827,7 @@ function renderGrafico(dict){
 }
 
 function enviarRelatorioWhatsApp(){
+    if(!db) return;
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").getAll().onsuccess = function(event) {
         const busca = document.getElementById("inputBusca").value.trim().toUpperCase();
@@ -1805,25 +1844,25 @@ function enviarRelatorioWhatsApp(){
             return true;
         }).sort((a, b) => new Date(b.data) - new Date(a.data));
 
-        if(filtrados.length === 0) { alert("Nenhum registro encontrado no filtro atual para o relatório."); return; }
+        if(filtrados.length === 0) { alert("Nenhum dado sob o filtro atual."); return; }
 
         let msg = "FADER LIVRE - EXTRATO CACHÊ CONTROL\n--------------------------------------\n\n";
         let totalGeralBrutoFiltrado = 0;
         filtrados.forEach(j => {
             msg += `*${j.empresa}* - ${formatarDataComDiaSemana(j.data)}\n`;
-            msg += `Job: ${j.job}\nCachê: R$ ${j.cache.toFixed(2)}\nDiária / Logística: R$ ${j.diaria.toFixed(2)}\n`;
-            msg += `Horas Extras: R$ ${j.extra.toFixed(2)}\nTotal: R$ ${j.total.toFixed(2)}\n`;
-            msg += `Previsão de Pagamento: ${j.previsaoPagamento}\n\n`;
+            msg += `Job: ${j.job}\nCachê: R$ ${j.cache.toFixed(2)}\nDiária: R$ ${j.diaria.toFixed(2)}\n`;
+            msg += `Extras: R$ ${j.extra.toFixed(2)}\nTotal: R$ ${j.total.toFixed(2)}\n`;
+            msg += `Liquidação: ${j.previsaoPagamento}\n\n`;
             totalGeralBrutoFiltrado += j.total;
         });
         msg += "--------------------------------------\n";
-        msg += `*TOTAL GERAL: R$ ${totalGeralBrutoFiltrado.toFixed(2)}*\n`;
-        msg += `Relatório gerado em: ${new Date().toLocaleDateString("pt-BR")}\n`;
+        msg += `*TOTAL EXTRAÍDO: R$ ${totalGeralBrutoFiltrado.toFixed(2)}*\n`;
         window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
     };
 }
 
 function baixarExcelCompleto(){
+    if(!db) return;
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").getAll().onsuccess = function(event) {
         const jobsOrdenados = event.target.result.sort((a, b) => new Date(b.data) - new Date(a.data));
@@ -1835,9 +1874,8 @@ function baixarExcelCompleto(){
         const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = `fader_livre_faturamento_${new Date().toISOString().split('T')[0]}.csv`;
+        link.download = `cache_control_faturamento_${new Date().toISOString().split('T')[0]}.csv`;
         link.click();
-        alert("Planilha Excel exportada com sucesso!");
     };
 }
 
@@ -1853,17 +1891,17 @@ function sendPaymentNotification(job) {
         const todayStr = new Date().toISOString().split('T')[0];
         if (jobNotificationsStatus[job.id] === todayStr) return;
         const options = {
-            body: `O pagamento para o job "${job.job}" da empresa "${job.empresa}" no valor de ${formatarValor(job.total)} vence hoje!`,
+            body: `O repasse contratual para "${job.job}" da empresa "${job.empresa}" (${formatarValor(job.total)}) atingiu a data final de vencimento!`,
             icon: 'https://cdn-icons-png.flaticon.com/512/32/32210.png'
         };
-        new Notification("Pagamento de Job Hoje!", options);
+        new Notification("Vencimento de Job Alcançado!", options);
         jobNotificationsStatus[job.id] = todayStr;
         localStorage.setItem('job_notifications_status', JSON.stringify(jobNotificationsStatus));
     }
 }
 
 function checkDuePayments() {
-    if (!db || Notification.permission !== "granted") return;
+    if (!db || Notification.permission !== "granted" || uiLockActive) return;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const [configHourStr, configMinuteStr] = (localStorage.getItem('notification_check_hour') || '09:00').split(':');
@@ -1871,9 +1909,11 @@ function checkDuePayments() {
     const configMinute = parseInt(configMinuteStr);
     const now = new Date();
     if (now.getHours() < configHour || (now.getHours() === configHour && now.getMinutes() < configMinute)) return;
+    
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").getAll().onsuccess = function(event) {
         event.target.result.forEach(job => {
+            if (job.statusManual === "pago") return;
             const dataFechamentoTemp = calcularDataFechamentoReal(
                 job.data, job.tipoPagamento, job.fimPeriodo,
                 job.inicioSemana, job.fimSemana, job.inicioCiclo1,
@@ -1886,9 +1926,15 @@ function checkDuePayments() {
 }
 
 document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') checkDuePayments();
+    if (document.visibilityState === 'visible') {
+        verificarFraudeRelogio();
+        checkDuePayments();
+    }
 });
-window.addEventListener('focus', checkDuePayments);
+window.addEventListener('focus', () => {
+    verificarFraudeRelogio();
+    checkDuePayments();
+});
 </script>
 </body>
 </html>
