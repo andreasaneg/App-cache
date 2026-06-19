@@ -1724,6 +1724,915 @@ window.onload = function() {
         document.getElementById("senhaInput").placeholder = "Defina sua chave no primeiro acesso";
     }
 };
+    <script>
+// ==========================================
+// VARIÁVEIS GLOBAIS
+// ==========================================
+let db = null;
+let ocultarValores = false;
+let filtroVisualizacao = "aberto";
+let mapaCores = {};
+let editStatusManual = null;
+let FERIADOS_NACIONAIS = [
+    '01-01', '21-04', '01-05', '07-09', '12-10', '02-11', '15-11', '25-12'
+];
+
+const coresGrafico = [
+    '#38bdf8', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
+    '#ec4899', '#14b8a6', '#f97316', '#a855f7', '#06b6d4'
+];
+
+// ==========================================
+// TOGGLE SENHA
+// ==========================================
+function togglePasswordVisibility() {
+    const input = document.getElementById('senhaInput');
+    const btn = document.querySelector('.toggle-password');
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = '<svg class="icon-svg"><use href="#icon-eye-off"/></svg>';
+    } else {
+        input.type = 'password';
+        btn.innerHTML = '<svg class="icon-svg"><use href="#icon-eye"/></svg>';
+    }
+}
+
+// ==========================================
+// SEGURANÇA
+// ==========================================
+function codificarSenha(senha) {
+    let hash = 0;
+    const str = senha.split('').reverse().join('') + '_fader_x9';
+    for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+    }
+    return 'fx_' + Math.abs(hash).toString(36);
+}
+
+function validarEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// ==========================================
+// VERIFICA FERIADOS E DIAS ÚTEIS
+// ==========================================
+function isFeriado(data) {
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const dia = String(data.getDate()).padStart(2, '0');
+    const dataStr = `${dia}-${mes}`;
+    return FERIADOS_NACIONAIS.includes(dataStr);
+}
+
+function isDiaUtil(data) {
+    const diaSemana = data.getDay();
+    if (diaSemana === 0 || diaSemana === 6) return false;
+    if (isFeriado(data)) return false;
+    return true;
+}
+
+function adicionarDiasUteis(dataInicial, dias) {
+    let data = new Date(dataInicial);
+    let diasAdicionados = 0;
+    while (diasAdicionados < dias) {
+        data.setDate(data.getDate() + 1);
+        if (isDiaUtil(data)) diasAdicionados++;
+    }
+    data.setHours(0, 0, 0, 0);
+    return data;
+}
+
+// ==========================================
+// FORMATAR HORAS (10:17h)
+// ==========================================
+function formatarHoras(horasDecimais) {
+    const h = Math.floor(horasDecimais);
+    const m = Math.round((horasDecimais - h) * 60);
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}h`;
+}
+
+// ==========================================
+// FORMATAR DATA (SEM EMOJIS)
+// ==========================================
+function formatarDataComDiaSemana(dataISO) {
+    const partes = dataISO.split("-");
+    const data = new Date(partes[0], partes[1] - 1, partes[2]);
+    const diasSemana = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+    return `${diasSemana[data.getDay()]}, ${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+function formatarDataExtenso(dataISO) {
+    const partes = dataISO.split("-");
+    const data = new Date(partes[0], partes[1] - 1, partes[2]);
+    const diasSemana = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+    return `${partes[2]}/${partes[1]}/${partes[0]} - ${diasSemana[data.getDay()]}`;
+}
+
+// ==========================================
+// INICIALIZAÇÃO
+// ==========================================
+function initializeApp() {
+    const savedTheme = localStorage.getItem('app_theme') || 'dark';
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+        const tt = document.getElementById('themeToggle');
+        if (tt) tt.checked = true;
+    }
+    if(!localStorage.getItem("senha_cache_control")){
+        document.getElementById("senhaInput").placeholder = "Defina sua chave no primeiro acesso";
+    }
+    if(document.getElementById("loginScreen").style.display === "none") {
+        try { document.getElementById("dataJob").value = new Date().toISOString().split('T')[0]; } catch(e) {}
+        atualizarTela();
+        atualizarListaEmpresas();
+        checkAndRequestNotificationPermission();
+        verificarPagamentosHoje();
+    }
+    atualizarIconeOlho();
+}
+
+function atualizarIconeOlho() {
+    const eyeBtn = document.getElementById("eyeButton");
+    if (eyeBtn) {
+        eyeBtn.innerHTML = ocultarValores ? 
+            '<svg class="icon-btn"><use href="#icon-eye"/></svg>' : 
+            '<svg class="icon-btn"><use href="#icon-eye-off"/></svg>';
+    }
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    localStorage.setItem('app_theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+}
+
+// ==========================================
+// RESET / LOGIN
+// ==========================================
+function emergencyReset() {
+    if(confirm("ATENCAO: Todos os dados serao perdidos. Continuar?")) {
+        localStorage.clear();
+        indexedDB.deleteDatabase("CacheFinal_V33").onsuccess = () => {
+            alert("Sistema redefinido!");
+            window.location.reload();
+        };
+    }
+}
+
+function toggleCadastroSenha(){
+    const box = document.getElementById("novaSenhaBox");
+    box.style.display = (box.style.display === "none" || box.style.display === "") ? "block" : "none";
+}
+
+function cadastrarSenha(){
+    const novaSenha = document.getElementById("novaSenha").value;
+    const confirmarSenha = document.getElementById("confirmarSenha").value;
+    const email = document.getElementById("emailRecuperacao").value.trim();
+    const telefone = document.getElementById("telefoneRecuperacao").value.trim();
+    if(!novaSenha || !email) { alert("Chave e e-mail sao obrigatorios."); return; }
+    if(!validarEmail(email)) { alert("E-mail invalido."); return; }
+    if(novaSenha.length < 6) { alert("Minimo 6 caracteres."); return; }
+    if(novaSenha !== confirmarSenha) { alert("Chaves nao conferem."); return; }
+    localStorage.setItem("senha_cache_control", codificarSenha(novaSenha));
+    localStorage.setItem("email_cache_control", email);
+    localStorage.setItem("telefone_cache_control", telefone);
+    alert("Credenciais registradas!");
+    window.location.reload();
+}
+
+function login(){
+    const senha = document.getElementById("senhaInput").value;
+    const senhaSalva = localStorage.getItem("senha_cache_control");
+    if(!senhaSalva){
+        if(senha.length < 4) { alert("Minimo 4 caracteres."); return; }
+        localStorage.setItem("senha_cache_control", codificarSenha(senha));
+        localStorage.setItem("email_cache_control", "suporte@faderlivre.com");
+        document.getElementById("loginScreen").style.display = "none";
+        initializeApp();
+        return;
+    }
+    if(codificarSenha(senha) === senhaSalva){
+        document.getElementById("loginScreen").style.display = "none";
+        initializeApp();
+    } else {
+        alert("Chave Incorreta.");
+    }
+}
+
+function recuperarSenha(){
+    const email = localStorage.getItem("email_cache_control");
+    const telefone = localStorage.getItem("telefone_cache_control");
+    let msg = "";
+    if(email) msg += "E-mail: " + email + "\n";
+    if(telefone) msg += "Telefone: " + telefone + "\n";
+    alert(msg || "Nenhum dado configurado.");
+}
+
+// ==========================================
+// BANCO DE DADOS
+// ==========================================
+const requestDB = indexedDB.open("CacheFinal_V33", 1);
+requestDB.onupgradeneeded = function(event) {
+    let d = event.target.result;
+    if(!d.objectStoreNames.contains("jobs")) d.createObjectStore("jobs", { keyPath: "id", autoIncrement: true });
+    if(!d.objectStoreNames.contains("empresas")) d.createObjectStore("empresas", { keyPath: "id", autoIncrement: true });
+};
+requestDB.onsuccess = function(event) {
+    db = event.target.result;
+    if(document.getElementById("loginScreen").style.display === "none") initializeApp();
+};
+requestDB.onerror = function() { alert("Erro: Banco de dados indisponivel."); };
+
+// ==========================================
+// FUNÇÕES AUXILIARES
+// ==========================================
+function toggleValores(){
+    ocultarValores = !ocultarValores;
+    atualizarIconeOlho();
+    atualizarTela();
+}
+
+function formatarValor(valor){
+    if(ocultarValores) return "R$ •••••";
+    return Number(valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function mostrarToast(mensagem) {
+    const toastAntigo = document.getElementById('toastMsg');
+    if (toastAntigo) toastAntigo.remove();
+    const toast = document.createElement('div');
+    toast.id = 'toastMsg';
+    toast.className = 'toast-notification';
+    toast.textContent = mensagem;
+    toast.onclick = () => toast.remove();
+    document.body.appendChild(toast);
+    setTimeout(() => { if (toast.parentNode) toast.remove(); }, 5000);
+}
+
+// ==========================================
+// BACKUP (LOCAL + NUVEM)
+// ==========================================
+function executarBackupAutomatico() {
+    if(!db) return;
+    const txJ = db.transaction("jobs", "readonly");
+    txJ.objectStore("jobs").getAll().onsuccess = function(e_jobs) {
+        const txE = db.transaction("empresas", "readonly");
+        txE.objectStore("empresas").getAll().onsuccess = function(e_empresas) {
+            const payload = { jobs: e_jobs.target.result, empresas: e_empresas.target.result, dataBackup: new Date().toISOString() };
+            localStorage.setItem("fader_livre_auto_backup", JSON.stringify(payload));
+        };
+    };
+}
+
+function fazerBackup(){
+    const txJ = db.transaction("jobs", "readonly");
+    txJ.objectStore("jobs").getAll().onsuccess = function(e_jobs) {
+        const txE = db.transaction("empresas", "readonly");
+        txE.objectStore("empresas").getAll().onsuccess = function(e_empresas) {
+            const pacote = { jobs: e_jobs.target.result, empresas: e_empresas.target.result, exportadoEm: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(pacote, null, 2)], { type: "application/json" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "fader_livre_backup_" + new Date().toISOString().split('T')[0] + ".json";
+            link.click();
+            mostrarToast("Backup local gerado!");
+        };
+    };
+}
+
+function backupNuvem() {
+    if(!db) { alert("Banco de dados nao disponivel."); return; }
+    const txJ = db.transaction("jobs", "readonly");
+    txJ.objectStore("jobs").getAll().onsuccess = function(e_jobs) {
+        const txE = db.transaction("empresas", "readonly");
+        txE.objectStore("empresas").getAll().onsuccess = function(e_empresas) {
+            const dados = { jobs: e_jobs.target.result, empresas: e_empresas.target.result, dispositivo: navigator.userAgent, timestamp: new Date().toISOString() };
+            const backupsNuvem = JSON.parse(localStorage.getItem('fader_backups_nuvem') || '[]');
+            backupsNuvem.push(dados);
+            if (backupsNuvem.length > 5) backupsNuvem.shift();
+            localStorage.setItem('fader_backups_nuvem', JSON.stringify(backupsNuvem));
+            mostrarToast("Backup salvo na nuvem!");
+            alert("Backup enviado para a nuvem!\nTotal de backups: " + backupsNuvem.length);
+        };
+    };
+}
+
+function restaurarNuvem() {
+    const backupsNuvem = JSON.parse(localStorage.getItem('fader_backups_nuvem') || '[]');
+    if (backupsNuvem.length === 0) { alert("Nenhum backup na nuvem."); return; }
+    const ultimo = backupsNuvem[backupsNuvem.length - 1];
+    if (!confirm("Restaurar backup de " + new Date(ultimo.timestamp).toLocaleString('pt-BR') + "?")) return;
+    const txClearJ = db.transaction("jobs", "readwrite");
+    txClearJ.objectStore("jobs").clear().onsuccess = () => {
+        const txJ = db.transaction("jobs", "readwrite");
+        ultimo.jobs.forEach(item => txJ.objectStore("jobs").put(item));
+        txJ.oncomplete = function() {
+            const txClearE = db.transaction("empresas", "readwrite");
+            txClearE.objectStore("empresas").clear().onsuccess = () => {
+                const txE = db.transaction("empresas", "readwrite");
+                ultimo.empresas.forEach(item => txE.objectStore("empresas").put(item));
+                txE.oncomplete = function() {
+                    alert("Backup restaurado da nuvem!");
+                    window.location.reload();
+                };
+            };
+        };
+    };
+}
+
+document.getElementById("restoreFile").addEventListener("change", function(event){
+    const arquivo = event.target.files[0];
+    if(!arquivo) return;
+    const leitor = new FileReader();
+    leitor.onload = function(){
+        try {
+            const dados = JSON.parse(leitor.result);
+            if(dados.jobs && dados.empresas) {
+                const txClearJ = db.transaction("jobs", "readwrite");
+                txClearJ.objectStore("jobs").clear().onsuccess = () => {
+                    const txJ = db.transaction("jobs", "readwrite");
+                    dados.jobs.forEach(item => txJ.objectStore("jobs").put(item));
+                    txJ.oncomplete = function() {
+                        const txClearE = db.transaction("empresas", "readwrite");
+                        txClearE.objectStore("empresas").clear().onsuccess = () => {
+                            const txE = db.transaction("empresas", "readwrite");
+                            dados.empresas.forEach(item => txE.objectStore("empresas").put(item));
+                            txE.oncomplete = function() {
+                                alert("Banco restaurado!");
+                                window.location.reload();
+                            };
+                        };
+                    };
+                };
+            }
+        } catch(err) { alert("Arquivo invalido."); }
+    };
+    leitor.readAsText(arquivo);
+});
+
+// ==========================================
+// NAVEGAÇÃO
+// ==========================================
+function alternarAba(abaId, event) {
+    document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+    document.getElementById(abaId).classList.add('active');
+    if(event) event.currentTarget.classList.add('active');
+    if(abaId === 'abaEmpresas') atualizarListaEmpresas();
+    else if(abaId === 'abaJobs') atualizarTela();
+}
+
+function definirFiltroVisualizacao(tipo) {
+    filtroVisualizacao = tipo;
+    document.getElementById("btnFiltroAberto").classList.toggle("active", tipo === 'aberto');
+    document.getElementById("btnFiltroArquivado").classList.toggle("active", tipo === 'arquivado');
+    document.getElementById("sectionTitleJobs").innerText = tipo === 'aberto' ? "Jobs em Aberto" : "Jobs Arquivados / Pagos";
+    atualizarTela();
+}
+
+// ==========================================
+// AUTOCOMPLETE
+// ==========================================
+function gerenciarAutocomplete(textoBusca) {
+    const container = document.getElementById("autocompleteContainer");
+    container.innerHTML = "";
+    if(!db || !textoBusca || textoBusca.trim() === "") return;
+    const tx = db.transaction("empresas", "readonly");
+    tx.objectStore("empresas").getAll().onsuccess = function(event) {
+        const filtradas = event.target.result.filter(emp => emp.nome.toLowerCase().includes(textoBusca.toLowerCase().trim()));
+        if(filtradas.length > 0) {
+            const listaDiv = document.createElement("div");
+            listaDiv.className = "autocomplete-list";
+            filtradas.forEach(emp => {
+                const item = document.createElement("div");
+                item.className = "autocomplete-item";
+                item.innerText = emp.nome;
+                item.onclick = function() {
+                    document.getElementById("empresaJob").value = emp.nome;
+                    container.innerHTML = "";
+                };
+                listaDiv.appendChild(item);
+            });
+            container.appendChild(listaDiv);
+        }
+    };
+}
+
+// ==========================================
+// CRUD EMPRESAS
+// ==========================================
+function salvarEmpresa() {
+    const nome = document.getElementById("cadNomeEmpresa").value.trim();
+    const idExistente = document.getElementById("cadIdEmpresa").value;
+    if(!nome) { alert("Nome da empresa e obrigatorio."); return; }
+    const txVerif = db.transaction("empresas", "readonly");
+    txVerif.objectStore("empresas").getAll().onsuccess = function(ev) {
+        const existentes = ev.target.result;
+        const duplicado = existentes.find(e => e.nome.toLowerCase().trim() === nome.toLowerCase().trim() && (!idExistente || e.id !== parseInt(idExistente)));
+        if (duplicado) { alert("Empresa ja cadastrada."); return; }
+        const tipo = document.getElementById("cadTipoPagamento").value;
+        const payload = {
+            nome: nome,
+            cacheBase: parseFloat(document.getElementById("cadCacheBase").value || 0),
+            diaria: parseFloat(document.getElementById("cadDiaria").value || 0),
+            tipoPagamento: tipo,
+            diasPagamento: parseInt(document.getElementById("cadDiasPagamento").value || 0),
+            nfPercentual: parseFloat(document.getElementById("cadNfPercentual").value || 0)
+        };
+        if (tipo === "Semanal") {
+            payload.inicioSemana = parseInt(document.getElementById("cadInicioSemana").value);
+            payload.fimSemana = parseInt(document.getElementById("cadFimSemana").value);
+        } else if (tipo === "Quinzenal") {
+            payload.inicioCiclo1 = parseInt(document.getElementById("cadInicioCiclo1").value) || 11;
+            payload.fimCiclo1 = parseInt(document.getElementById("cadFimCiclo1").value) || 25;
+            payload.inicioCiclo2 = parseInt(document.getElementById("cadInicioCiclo2").value) || 26;
+            payload.fimCiclo2 = parseInt(document.getElementById("cadFimCiclo2").value) || 10;
+        } else {
+            payload.fimPeriodo = parseInt(document.getElementById("cadFimPeriodo").value) || 30;
+        }
+        if(idExistente) payload.id = parseInt(idExistente);
+        const tx = db.transaction("empresas", "readwrite");
+        const req = idExistente ? tx.objectStore("empresas").put(payload) : tx.objectStore("empresas").add(payload);
+        req.onsuccess = function() {
+            alert("Empresa salva!");
+            executarBackupAutomatico();
+            limparCamposEmpresa();
+            atualizarListaEmpresas();
+        };
+    };
+}
+
+function carregarEmpresaParaEdicao(id) {
+    const tx = db.transaction("empresas", "readonly");
+    tx.objectStore("empresas").get(id).onsuccess = function(e) {
+        const d = e.target.result;
+        if(!d) return;
+        document.getElementById("formEmpresaTitle").innerHTML = "Editando: " + d.nome;
+        document.getElementById("cadIdEmpresa").value = d.id;
+        document.getElementById("cadNomeEmpresa").value = d.nome;
+        document.getElementById("cadCacheBase").value = d.cacheBase;
+        document.getElementById("cadDiaria").value = d.diaria;
+        document.getElementById("cadTipoPagamento").value = d.tipoPagamento;
+        document.getElementById("cadDiasPagamento").value = d.diasPagamento || 0;
+        document.getElementById("cadNfPercentual").value = d.nfPercentual || 0;
+        document.getElementById("cadInicioCiclo1").value = d.inicioCiclo1 || 11;
+        document.getElementById("cadFimCiclo1").value = d.fimCiclo1 || 25;
+        document.getElementById("cadInicioCiclo2").value = d.inicioCiclo2 || 26;
+        document.getElementById("cadFimCiclo2").value = d.fimCiclo2 || 10;
+        document.getElementById("cadFimPeriodo").value = d.fimPeriodo || 30;
+        document.getElementById("cadInicioSemana").value = d.inicioSemana || 1;
+        document.getElementById("cadFimSemana").value = d.fimSemana || 0;
+        alterarPeriodoPagamentoCadastro();
+        document.getElementById("formEmpresaTitle").scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+}
+
+function deletarEmpresa(id) {
+    if(confirm("Remover permanentemente esta empresa?")) {
+        db.transaction("empresas", "readwrite").objectStore("empresas").delete(id).onsuccess = () => {
+            executarBackupAutomatico();
+            atualizarListaEmpresas();
+        };
+    }
+}
+
+function atualizarListaEmpresas() {
+    if(!db) return;
+    const container = document.getElementById("listaEmpresasCadastradas");
+    container.innerHTML = "";
+    db.transaction("empresas", "readonly").objectStore("empresas").getAll().onsuccess = function(e) {
+        const colecao = e.target.result;
+        if(colecao.length === 0) {
+            container.innerHTML = "<p style='color:var(--muted); padding:10px;'>Nenhuma empresa cadastrada.</p>";
+            return;
+        }
+        colecao.forEach(emp => {
+            const card = document.createElement("div");
+            card.style = "background:var(--card); padding:15px; border-radius:20px; margin-bottom:10px; border:1px solid var(--border-color); position:relative;";
+            let descCiclo = emp.tipoPagamento;
+            if (emp.tipoPagamento === "Quinzenal") descCiclo = "Quinzenal (" + (emp.inicioCiclo1||11) + " a " + (emp.fimCiclo1||25) + " / " + (emp.inicioCiclo2||26) + " a " + (emp.fimCiclo2||10) + ")";
+            card.innerHTML = '<div class="empresa-title">' + emp.nome + '</div>' +
+                '<div class="meta-text">Cache: <b>R$ ' + emp.cacheBase.toFixed(2) + '</b> | Diaria: <b>R$ ' + emp.diaria.toFixed(2) + '</b></div>' +
+                '<div class="meta-text">Ciclo: <b>' + descCiclo + '</b> | NF: <b>' + emp.nfPercentual + '%</b></div>' +
+                '<button class="btn-edit-inline" onclick="carregarEmpresaParaEdicao(' + emp.id + ')" title="Editar"><svg class="icon-btn"><use href="#icon-edit"/></svg></button>' +
+                '<button class="btn-del" onclick="deletarEmpresa(' + emp.id + ')" title="Excluir"><svg class="icon-btn"><use href="#icon-trash"/></svg></button>';
+            container.appendChild(card);
+        });
+    };
+}
+
+function limparCamposEmpresa(){
+    document.getElementById("formEmpresaTitle").innerText = "Nova Empresa e Regras";
+    document.getElementById("cadIdEmpresa").value = "";
+    document.getElementById("cadNomeEmpresa").value = "";
+    document.getElementById("cadCacheBase").value = "";
+    document.getElementById("cadDiaria").value = "";
+    document.getElementById("cadNfPercentual").value = "0";
+    document.getElementById("cadTipoPagamento").value = "Semanal";
+    document.getElementById("cadInicioCiclo1").value = "11";
+    document.getElementById("cadFimCiclo1").value = "25";
+    document.getElementById("cadInicioCiclo2").value = "26";
+    document.getElementById("cadFimCiclo2").value = "10";
+    alterarPeriodoPagamentoCadastro();
+}
+
+function alterarPeriodoPagamentoCadastro(){
+    const tipo = document.getElementById("cadTipoPagamento").value;
+    document.getElementById("cadPeriodoPersonalizado").style.display = (tipo === "Quinzenal" || tipo === "Mensal") ? "block" : "none";
+    document.getElementById("cadPeriodoSemanalBox").style.display = (tipo === "Semanal") ? "grid" : "none";
+    document.getElementById("quinzenalPeriodos").style.display = (tipo === "Quinzenal") ? "block" : "none";
+    document.getElementById("mensalPeriodos").style.display = (tipo === "Mensal") ? "block" : "none";
+}
+
+// ==========================================
+// CÁLCULO DE DATAS (DIAS ÚTEIS)
+// ==========================================
+function obterStatusPeriodo(job) {
+    if (job.statusManual === "pago") return "pago";
+    let dataAtual = new Date(); dataAtual.setHours(0,0,0,0);
+    let dataFechamento = calcularDataFechamentoReal(job);
+    let dataLiquidacao = adicionarDiasUteis(dataFechamento, job.diasPagamento);
+    if (dataAtual > dataLiquidacao) return "pago";
+    if (dataAtual > dataFechamento) return "arquivado";
+    return "aberto";
+}
+
+function calcularDataFechamentoReal(job) {
+    let objData = new Date(job.data + "T00:00:00");
+    let objFechamento = new Date(objData);
+    if (job.tipoPagamento === "Semanal") {
+        let diaCorte = parseInt(job.fimSemana !== undefined ? job.fimSemana : 0);
+        let diasRestantes = (diaCorte - objData.getDay() + 7) % 7;
+        if (diasRestantes === 0) diasRestantes = 7;
+        objFechamento.setDate(objData.getDate() + diasRestantes);
+    } else if (job.tipoPagamento === "Quinzenal") {
+        let dia = objData.getDate(), mes = objData.getMonth(), ano = objData.getFullYear();
+        let ultimoDia = new Date(ano, mes + 1, 0).getDate();
+        let c1i = parseInt(job.inicioCiclo1 || 11), c1f = Math.min(parseInt(job.fimCiclo1 || 25), ultimoDia);
+        let c2i = Math.min(parseInt(job.inicioCiclo2 || 26), ultimoDia), c2f = Math.min(parseInt(job.fimCiclo2 || 10), ultimoDia);
+        if (dia >= c1i && dia <= c1f) objFechamento = new Date(ano, mes, c1f);
+        else if (dia >= c2i && dia <= c2f) objFechamento = new Date(ano, mes, c2f);
+        else if (dia < c1i) objFechamento = new Date(ano, mes, c1f);
+        else objFechamento = new Date(ano, mes + 1, Math.min(c1f, new Date(ano, mes + 2, 0).getDate()));
+    } else {
+        let dia = objData.getDate();
+        let pFim = Math.min(parseInt(job.fimPeriodo || 30), new Date(objData.getFullYear(), objData.getMonth() + 1, 0).getDate());
+        if (dia <= pFim) objFechamento = new Date(objData.getFullYear(), objData.getMonth(), pFim);
+        else objFechamento = new Date(objData.getFullYear(), objData.getMonth() + 1, Math.min(pFim, new Date(objData.getFullYear(), objData.getMonth() + 2, 0).getDate()));
+    }
+    objFechamento.setHours(0,0,0,0);
+    return objFechamento;
+}
+
+function calcularPrevisaoPagamento(job) {
+    const dataFechamento = calcularDataFechamentoReal(job);
+    return adicionarDiasUteis(dataFechamento, job.diasPagamento);
+}
+
+// ==========================================
+// NOTIFICAÇÕES
+// ==========================================
+function checkAndRequestNotificationPermission() {
+    if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+}
+
+function verificarPagamentosHoje() {
+    if (!db || Notification.permission !== "granted") return;
+    const hoje = new Date();
+    if (hoje.getHours() < 9) return;
+    hoje.setHours(0,0,0,0);
+    const tx = db.transaction("jobs", "readonly");
+    tx.objectStore("jobs").getAll().onsuccess = function(event) {
+        let totalHoje = 0;
+        let notificados = JSON.parse(localStorage.getItem('notificados_hoje') || '{}');
+        const hojeStr = new Date().toISOString().split('T')[0];
+        event.target.result.forEach(job => {
+            if (job.statusManual === "pago") return;
+            const dataPag = calcularPrevisaoPagamento(job);
+            if (dataPag.getTime() === hoje.getTime() && !notificados[job.id]) {
+                totalHoje += job.total;
+                notificados[job.id] = hojeStr;
+            }
+        });
+        if (totalHoje > 0) {
+            localStorage.setItem('notificados_hoje', JSON.stringify(notificados));
+            if (Notification.permission === "granted") new Notification("Pagamentos Hoje!", { body: "Total: " + formatarValor(totalHoje) });
+            mostrarToast("Pagamentos previstos para hoje! Total: " + formatarValor(totalHoje));
+        }
+    };
+}
+
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') verificarPagamentosHoje(); });
+
+// ==========================================
+// CRUD JOBS
+// ==========================================
+function salvarJob(){
+    const dataInput = document.getElementById("dataJob").value;
+    const inputNomeEmpresa = document.getElementById("empresaJob").value.trim();
+    const idEdicao = document.getElementById("editJobId").value;
+    if(!dataInput || !inputNomeEmpresa) { alert("Data e Empresa sao obrigatorios."); return; }
+    const txEmp = db.transaction("empresas", "readonly");
+    txEmp.objectStore("empresas").getAll().onsuccess = function(event) {
+        const emp = event.target.result.find(e => e.nome.toLowerCase() === inputNomeEmpresa.toLowerCase());
+        if(!emp) { alert("Empresa nao encontrada."); return; }
+        const BASE_HOURS = 12;
+        const cacheBase = parseFloat(emp.cacheBase || 0);
+        const diaria = parseFloat(emp.diaria || 0);
+        const nfPerc = parseFloat(emp.nfPercentual || 0);
+        const arrI = document.getElementById("inicio").value.split(":");
+        const arrF = document.getElementById("fim").value.split(":");
+        let difMin = (parseInt(arrF[0])*60 + parseInt(arrF[1])) - (parseInt(arrI[0])*60 + parseInt(arrI[1]));
+        if(difMin < 0) difMin += 1440;
+        const tHoras = difMin / 60;
+        const vExtras = Math.max(0, tHoras - BASE_HOURS);
+        const rExtras = vExtras * (cacheBase / BASE_HOURS);
+        const fBruto = cacheBase + diaria + rExtras;
+        const imposto = fBruto * (nfPerc / 100);
+        const jobTemp = {
+            data: dataInput, tipoPagamento: emp.tipoPagamento, diasPagamento: parseInt(emp.diasPagamento || 0),
+            fimPeriodo: parseInt(emp.fimPeriodo || 30), inicioSemana: parseInt(emp.inicioSemana || 1), fimSemana: parseInt(emp.fimSemana || 0),
+            inicioCiclo1: parseInt(emp.inicioCiclo1 || 11), fimCiclo1: parseInt(emp.fimCiclo1 || 25),
+            inicioCiclo2: parseInt(emp.inicioCiclo2 || 26), fimCiclo2: parseInt(emp.fimCiclo2 || 10)
+        };
+        const dataPrev = calcularPrevisaoPagamento(jobTemp);
+        const previsao = formatarDataExtenso(dataPrev.toISOString().split('T')[0]);
+        const payloadJob = {
+            data: dataInput, empresa: emp.nome, job: document.getElementById("nomeJob").value || "Job Operacional",
+            cache: cacheBase, diaria: diaria, extra: rExtras, total: fBruto, valorNF: imposto,
+            horas: tHoras, inicio: document.getElementById("inicio").value, fim: document.getElementById("fim").value,
+            tipoPagamento: emp.tipoPagamento, diasPagamento: parseInt(emp.diasPagamento || 0),
+            fimPeriodo: parseInt(emp.fimPeriodo || 30), inicioSemana: parseInt(emp.inicioSemana || 1), fimSemana: parseInt(emp.fimSemana || 0),
+            inicioCiclo1: parseInt(emp.inicioCiclo1 || 11), fimCiclo1: parseInt(emp.fimCiclo1 || 25),
+            inicioCiclo2: parseInt(emp.inicioCiclo2 || 26), fimCiclo2: parseInt(emp.fimCiclo2 || 10),
+            previsaoPagamento: previsao, statusManual: idEdicao ? editStatusManual : null
+        };
+        if(idEdicao) payloadJob.id = parseInt(idEdicao);
+        const txG = db.transaction("jobs", "readwrite");
+        const req = idEdicao ? txG.objectStore("jobs").put(payloadJob) : txG.objectStore("jobs").add(payloadJob);
+        req.onsuccess = function() {
+            alert("Lancamento salvo!");
+            executarBackupAutomatico();
+            atualizarTela();
+            limparCampos();
+        };
+    };
+}
+
+function carregarJobParaEdicao(id) {
+    db.transaction("jobs", "readonly").objectStore("jobs").get(id).onsuccess = function(event) {
+        const item = event.target.result;
+        if(!item) return;
+        document.getElementById("formJobTitle").innerText = "Editando Lancamento";
+        document.getElementById("editJobId").value = item.id;
+        document.getElementById("empresaJob").value = item.empresa;
+        document.getElementById("dataJob").value = item.data;
+        document.getElementById("nomeJob").value = item.job;
+        document.getElementById("inicio").value = item.inicio;
+        document.getElementById("fim").value = item.fim;
+        editStatusManual = item.statusManual || null;
+        document.getElementById("formJobTitle").scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+}
+
+function deletarJob(id) {
+    if(confirm("Excluir definitivamente este lancamento?")) {
+        db.transaction("jobs", "readwrite").objectStore("jobs").delete(id).onsuccess = () => {
+            executarBackupAutomatico();
+            atualizarTela();
+        };
+    }
+}
+
+function marcarComoPago(id) {
+    if(confirm("Confirmar pagamento deste job?")) {
+        db.transaction("jobs", "readwrite").objectStore("jobs").get(id).onsuccess = function(e) {
+            const job = e.target.result;
+            if (!job) return;
+            job.statusManual = "pago";
+            db.transaction("jobs", "readwrite").objectStore("jobs").put(job).onsuccess = () => {
+                executarBackupAutomatico();
+                atualizarTela();
+                mostrarToast("Job marcado como pago!");
+            };
+        };
+    }
+}
+
+function reabrirJob(id) {
+    if(confirm("Reabrir este job?")) {
+        db.transaction("jobs", "readwrite").objectStore("jobs").get(id).onsuccess = function(e) {
+            const job = e.target.result;
+            if (!job) return;
+            job.statusManual = null;
+            db.transaction("jobs", "readwrite").objectStore("jobs").put(job).onsuccess = () => {
+                executarBackupAutomatico();
+                atualizarTela();
+                mostrarToast("Job reaberto!");
+            };
+        };
+    }
+}
+
+function limparCampos(){
+    document.getElementById("formJobTitle").innerText = "Novo Job";
+    document.getElementById("editJobId").value = "";
+    document.getElementById("empresaJob").value = "";
+    document.getElementById("nomeJob").value = "";
+    document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
+    document.getElementById("inicio").value = "08:00";
+    document.getElementById("fim").value = "20:00";
+    editStatusManual = null;
+}
+
+// ==========================================
+// ATUALIZAÇÃO DA TELA
+// ==========================================
+function atualizarTela(){
+    if(!db) return;
+    const painel = document.getElementById("listaHistorico");
+    painel.innerHTML = "";
+    let tBruto = 0, tNF = 0, tHoras = 0;
+    let dictGrafico = {};
+    let dictMensal = {};
+
+    const txE = db.transaction("empresas", "readonly");
+    txE.objectStore("empresas").getAll().onsuccess = function(e_empresas) {
+        const temNF = e_empresas.target.result.some(emp => emp.nfPercentual > 0);
+        document.getElementById("dashboardNfCard").style.display = temNF ? 'block' : 'none';
+        document.getElementById("dashboardLiquidoCard").style.display = temNF ? 'block' : 'none';
+        const tx = db.transaction("jobs", "readonly");
+        tx.objectStore("jobs").getAll().onsuccess = function(event) {
+            const matriz = event.target.result.sort((a, b) => new Date(b.data) - new Date(a.data));
+            matriz.forEach(reg => {
+                const status = obterStatusPeriodo(reg);
+                if (status === "aberto") {
+                    tBruto += reg.total || 0;
+                    tNF += reg.valorNF || 0;
+                    tHoras += parseFloat(reg.horas || 0);
+                    dictGrafico[reg.empresa] = (dictGrafico[reg.empresa] || 0) + reg.total;
+                }
+                const mesAno = reg.data.substring(0, 7);
+                dictMensal[mesAno] = (dictMensal[mesAno] || 0) + (reg.total || 0);
+                if(!mapaCores[reg.empresa]) mapaCores[reg.empresa] = coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
+                let check = (filtroVisualizacao === "aberto" && status === "aberto") || (filtroVisualizacao === "arquivado" && (status === "arquivado" || status === "pago"));
+                if (check) {
+                    const card = document.createElement("div");
+                    card.className = "history-card";
+                    card.style.borderLeft = "6px solid " + mapaCores[reg.empresa];
+                    let badge = status === "aberto" ? '<span class="badge-status status-aberto">Aberto</span>' : (status === "arquivado" ? '<span class="badge-status status-fechado">Aguardando</span>' : '<span class="badge-status status-pago">Quitado</span>');
+                    let dFmt = formatarDataComDiaSemana(reg.data);
+                    let horasFmt = formatarHoras(reg.horas);
+                    card.innerHTML = '<button class="btn-del" onclick="deletarJob(' + reg.id + ')" title="Excluir"><svg class="icon-btn"><use href="#icon-trash"/></svg></button>' +
+                        '<button class="btn-edit-inline" onclick="carregarJobParaEdicao(' + reg.id + ')" title="Editar"><svg class="icon-btn"><use href="#icon-edit"/></svg></button>' +
+                        (status === 'pago' ? '<button class="btn-reopen" onclick="reabrirJob(' + reg.id + ')">Reabrir</button>' : '<button class="btn-paid" onclick="marcarComoPago(' + reg.id + ')">Marcar Pago</button>') +
+                        '<div class="empresa-title">' + reg.empresa + '</div>' +
+                        '<div class="meta-text">Data: ' + dFmt + '</div>' +
+                        '<div class="meta-text">Job: ' + reg.job + '</div>' +
+                        '<div>' + badge + '</div>' +
+                        '<div class="meta-text" style="margin-top:8px;">Horarios: ' + reg.inicio + ' as ' + reg.fim + ' (' + horasFmt + ')</div>' +
+                        '<div class="meta-text">Cache: ' + formatarValor(reg.cache) + '</div>' +
+                        '<div class="meta-text">Alimentacao: ' + formatarValor(reg.diaria) + '</div>' +
+                        '<div class="meta-text">Hora Extra: ' + formatarValor(reg.extra) + '</div>' +
+                        '<div class="meta-text">Previsao: <b>' + reg.previsaoPagamento + '</b></div>' +
+                        '<div style="margin-top:10px; font-weight:900;">Total Bruto: <span>' + formatarValor(reg.total) + '</span></div>';
+                    painel.appendChild(card);
+                }
+            });
+            document.getElementById("vTotalSemana").innerText = formatarValor(tBruto);
+            document.getElementById("vTotalNF").innerText = "- " + formatarValor(tNF);
+            document.getElementById("vTotalLiquido").innerText = formatarValor(tBruto - tNF);
+            document.getElementById("vTotalHoras").innerText = formatarHoras(tHoras);
+            renderGrafico(dictGrafico);
+            renderGraficoMensal(dictMensal);
+            if(document.getElementById("searchBox").style.display === "block") filtrarTabela();
+        };
+    };
+}
+
+// ==========================================
+// GRÁFICOS
+// ==========================================
+function renderGrafico(dict){
+    const ctx = document.getElementById("graficoEmpresas");
+    if(!ctx) return;
+    const labels = Object.keys(dict), values = Object.values(dict);
+    const colors = labels.map(lbl => mapaCores[lbl] || '#38bdf8');
+    if(window.chartInstance) {
+        window.chartInstance.data.labels = labels;
+        window.chartInstance.data.datasets[0].data = values;
+        window.chartInstance.data.datasets[0].backgroundColor = colors;
+        window.chartInstance.update();
+    } else {
+        if(labels.length === 0) return;
+        window.chartInstance = new Chart(ctx, {
+            type: "bar",
+            data: { labels: labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 8 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { ticks: { color: "#94a3b8" } } } }
+        });
+    }
+}
+
+function renderGraficoMensal(dict){
+    const ctx = document.getElementById("graficoMensal");
+    if(!ctx) return;
+    const mesesOrdenados = Object.keys(dict).sort();
+    const nomes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const labels = mesesOrdenados.map(m => { const [ano, mes] = m.split('-'); return nomes[parseInt(mes)-1] + '/' + ano; });
+    const values = mesesOrdenados.map(m => dict[m]);
+    if(window.chartMensal) {
+        window.chartMensal.data.labels = labels;
+        window.chartMensal.data.datasets[0].data = values;
+        window.chartMensal.update();
+    } else {
+        if(labels.length === 0) return;
+        window.chartMensal = new Chart(ctx, {
+            type: "line",
+            data: { labels: labels, datasets: [{ data: values, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.4, pointRadius: 5 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { ticks: { color: "#94a3b8" } } } }
+        });
+    }
+}
+
+// ==========================================
+// BUSCA
+// ==========================================
+function abrirBusca(){ document.getElementById("searchBox").style.display = "block"; }
+function limparBusca(){ document.getElementById("inputBusca").value = ""; document.getElementById("searchBox").style.display = "none"; filtrarTabela(); }
+function filtrarTabela(){
+    const termo = document.getElementById("inputBusca").value.toUpperCase().trim();
+    document.querySelectorAll(".history-card").forEach(card => { card.style.display = card.innerText.toUpperCase().includes(termo) ? "block" : "none"; });
+}
+
+// ==========================================
+// WHATSAPP (NOVO FORMATO)
+// ==========================================
+function enviarRelatorioWhatsApp(){
+    const tx = db.transaction("jobs", "readonly");
+    tx.objectStore("jobs").getAll().onsuccess = function(event) {
+        const termo = document.getElementById("inputBusca").value.toUpperCase().trim();
+        const buscaAtiva = document.getElementById("searchBox").style.display === "block" && termo !== "";
+        const filtrados = event.target.result.filter(job => {
+            const status = obterStatusPeriodo(job);
+            if (filtroVisualizacao === "aberto" && status !== "aberto") return false;
+            if (filtroVisualizacao === "arquivado" && status === "aberto") return false;
+            if (buscaAtiva) { const texto = (job.empresa + " " + job.job + " " + job.data.split("-").reverse().join("/")).toUpperCase(); return texto.includes(termo); }
+            return true;
+        }).sort((a, b) => new Date(b.data) - new Date(a.data));
+        if(filtrados.length === 0) { alert("Nenhum registro encontrado."); return; }
+        let msg = "FADER LIVRE - EXTRATO CACHE CONTROL\n======================================\n\n";
+        let totalCache = 0, totalDiaria = 0, totalExtra = 0, totalGeral = 0;
+        filtrados.forEach(j => {
+            msg += "Empresa: " + j.empresa + "\n";
+            msg += "Data: " + formatarDataExtenso(j.data) + "\n";
+            msg += "Job: " + j.job + "\n";
+            msg += "Horarios: " + j.inicio + "h as " + j.fim + "h\n";
+            msg += "Cache: " + formatarValor(j.cache) + "\n";
+            if (j.extra > 0) msg += "Horas Extras: " + formatarValor(j.extra) + "\n";
+            msg += "Diaria/Logistica: " + formatarValor(j.diaria) + "\n";
+            msg += "Total: " + formatarValor(j.total) + "\n";
+            msg += "Previsao de pagamento: " + j.previsaoPagamento + "\n\n";
+            totalCache += j.cache||0; totalDiaria += j.diaria||0; totalExtra += j.extra||0; totalGeral += j.total||0;
+        });
+        msg += "======================================\n";
+        msg += "Total geral: " + formatarValor(totalGeral) + "\n";
+        msg += "Emitido: " + new Date().toLocaleDateString("pt-BR");
+        window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
+    };
+}
+
+// ==========================================
+// EXCEL DETALHADO
+// ==========================================
+function baixarExcelCompleto(){
+    const tx = db.transaction("jobs", "readonly");
+    tx.objectStore("jobs").getAll().onsuccess = function(event) {
+        const ordenados = event.target.result.sort((a, b) => new Date(b.data) - new Date(a.data));
+        let csv = "ID;Data;Empresa;Job;Cache;Alimentacao;Hora_Extra;Total_Bruto;Imposto_NF;Valor_Liquido;Horas;Previsao_Pagamento\n";
+        ordenados.forEach(i => {
+            const liquido = i.total - i.valorNF;
+            csv += i.id + ";" + i.data + ";" + i.empresa + ";" + i.job + ";";
+            csv += "R$ " + (i.cache||0).toFixed(2) + ";R$ " + (i.diaria||0).toFixed(2) + ";R$ " + (i.extra||0).toFixed(2) + ";";
+            csv += "R$ " + (i.total||0).toFixed(2) + ";R$ " + (i.valorNF||0).toFixed(2) + ";R$ " + liquido.toFixed(2) + ";";
+            csv += formatarHoras(i.horas) + ";" + i.previsaoPagamento + "\n";
+        });
+        const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "fader_livre_faturamento_" + new Date().toISOString().split('T')[0] + ".csv";
+        link.click();
+        mostrarToast("Planilha exportada!");
+    };
+}
+
+// ==========================================
+// INICIALIZAÇÃO FINAL
+// ==========================================
+window.onload = function() {
+    if(!localStorage.getItem("senha_cache_control")){
+        document.getElementById("senhaInput").placeholder = "Defina sua chave no primeiro acesso";
+    }
+};
+</script>
 </script>
 </body>
 </html>
