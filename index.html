@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<title>FADER LIVRE - CACHÊ CONTROL v3.0 ERP MASTER</title>
+<title>FADER LIVRE - CONTROLE DE CACHÊS</title>
 
 <!-- Bibliotecas externas -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -66,8 +66,8 @@ body.light-mode {
   transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 body {
-  padding: 15px;
-  padding-bottom: 100px;
+  padding: 12px;
+  padding-bottom: 80px;
   background: var(--bg);
   color: var(--text);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -85,130 +85,121 @@ body {
   from { transform: translateX(-20px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-  100% { transform: scale(1); }
-}
 
 /* ===== HEADER ===== */
 .header {
   text-align: center;
   border-bottom: 2px solid var(--primary);
-  padding-bottom: 20px;
-  margin-bottom: 25px;
+  padding: 10px 0 15px 0;
+  margin-bottom: 20px;
   position: relative;
 }
-.header .logo {
-  height: 60px;
+.logo-img {
+  height: 50px;
   display: block;
-  margin: 0 auto 10px;
+  margin: 0 auto 5px;
+  object-fit: contain;
 }
-.header h2 {
-  font-size: 1.6em;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: var(--text);
-  text-transform: uppercase;
-}
-.header p {
+.header p.subtitle {
   color: var(--primary);
-  font-size: 0.85em;
+  font-size: 0.8em;
   font-weight: 700;
-  margin-top: 6px;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
+  margin-top: 4px;
 }
 
 /* ===== DASHBOARD ===== */
 .dashboard {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 15px;
-  margin-bottom: 25px;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 @media(min-width: 600px) {
-  .dashboard { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .dashboard { grid-template-columns: repeat(4, 1fr); }
 }
 .dashboard-card {
   background: var(--card);
-  border-radius: 24px;
-  padding: 20px;
+  border-radius: 20px;
+  padding: 15px;
   border: 1px solid var(--border-color);
   position: relative;
   box-shadow: 0 4px 15px -3px rgba(0,0,0,0.3);
   overflow: hidden;
   animation: fadeIn 0.3s ease-out;
 }
-.dashboard-title {
-  font-size: .75em;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-  letter-spacing: 1px;
-  color: var(--text-secondary);
-}
-.total-geral { font-size: 2em; font-weight: 900; color: var(--blue); }
-.total-nf { font-size: 2em; font-weight: 900; color: var(--danger); }
-.total-horas { font-size: 2em; font-weight: 900; color: var(--primary); }
-.total-liquido { font-size: 2em; font-weight: 900; color: var(--success); }
-
-.eye-button {
+.dashboard-card .eye-button {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  width: 46px;
-  height: 46px;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
   border: none;
-  border-radius: 14px;
+  border-radius: 10px;
   background: var(--border-color);
   color: var(--text);
-  font-size: 1.3em;
+  font-size: 0.9em;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 5;
 }
+.dashboard-title {
+  font-size: 0.65em;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  padding-right: 35px; /* espaço para o botão */
+}
+.total-geral { font-size: 1.6em; font-weight: 900; color: var(--blue); }
+.total-nf { font-size: 1.6em; font-weight: 900; color: var(--danger); }
+.total-horas { font-size: 1.6em; font-weight: 900; color: var(--primary); }
+.total-liquido { font-size: 1.6em; font-weight: 900; color: var(--success); }
 
 /* ===== INPUTS E BOTÕES ===== */
 .input-group {
   background: var(--card);
   border: 1px solid var(--border-color);
-  border-radius: 24px;
-  padding: 20px;
-  margin-bottom: 20px;
-  position: relative;
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 16px;
   box-shadow: 0 4px 15px -3px rgba(0,0,0,0.2);
   animation: fadeIn 0.4s ease-out;
 }
 .input-group h2, .input-group h3 {
-  font-size: 1.2em;
-  margin-bottom: 18px;
+  font-size: 1.1em;
+  margin-bottom: 14px;
   color: var(--text);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   border-left: 4px solid var(--primary);
   padding-left: 10px;
 }
 label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   color: var(--muted);
-  font-size: 0.75em;
-  font-weight: 800;
+  font-size: 0.7em;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 input, select {
   width: 100%;
-  padding: 14px;
-  border-radius: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
   border: 1px solid var(--border-color);
   background: var(--dark-pure);
   color: var(--text);
-  margin-bottom: 15px;
-  font-size: 16px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  -webkit-appearance: none;
+  appearance: none;
 }
 input:focus, select:focus {
   outline: none;
@@ -218,18 +209,18 @@ input:focus, select:focus {
 .btn {
   width: 100%;
   border: none;
-  padding: 16px;
+  padding: 14px;
   border-radius: 14px;
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
-  margin-bottom: 12px;
-  font-size: 0.95em;
+  margin-bottom: 10px;
+  font-size: 0.9em;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   transition: all 0.3s ease;
 }
 .btn:hover {
@@ -245,73 +236,82 @@ input:focus, select:focus {
 /* ===== HISTÓRICO ===== */
 .history-card {
   background: var(--card);
-  border-radius: 20px;
-  padding: 18px;
-  margin-bottom: 15px;
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 12px;
   position: relative;
-  border-left: 6px solid var(--primary);
+  border-left: 5px solid var(--primary);
   box-shadow: 0 4px 10px -1px rgba(0,0,0,0.2);
   animation: slideIn 0.3s ease-out;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .history-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   box-shadow: 0 12px 30px rgba(0,0,0,0.3);
 }
 .empresa-title {
-  font-size: 1.3em;
-  font-weight: 800;
-  margin-bottom: 8px;
+  font-size: 1.1em;
+  font-weight: 700;
+  margin-bottom: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-right: 85px;
+  padding-right: 75px;
   color: var(--primary);
 }
+.meta-text {
+  font-size: 0.8em;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 2px 0;
+}
+.meta-text b { color: var(--text); }
 .btn-del, .btn-edit-inline {
   position: absolute;
-  top: 15px;
+  top: 10px;
   background: var(--danger-glow);
   border: none;
   color: var(--danger);
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  font-size: 1em;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  font-size: 0.9em;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
 }
-.btn-del { right: 15px; }
-.btn-edit-inline { right: 58px; background: var(--blue-glow); color: var(--blue); }
+.btn-del { right: 10px; }
+.btn-edit-inline { right: 48px; background: var(--blue-glow); color: var(--blue); }
 .btn-del:hover, .btn-edit-inline:hover { transform: scale(1.1); }
 
 /* ===== ABAS E FILTROS ===== */
 .tab-container {
   display: flex;
-  gap: 8px;
-  margin-bottom: 25px;
+  gap: 6px;
+  margin-bottom: 20px;
   background: var(--dark-pure);
-  padding: 6px;
-  border-radius: 16px;
+  padding: 5px;
+  border-radius: 14px;
   border: 1px solid var(--border-color);
+  flex-wrap: wrap;
 }
 .tab-button {
   flex: 1;
-  padding: 14px 8px;
+  min-width: 80px;
+  padding: 10px 6px;
   background: transparent;
   color: var(--muted);
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 700;
-  font-size: 0.85em;
+  font-size: 0.75em;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
   transition: all 0.3s;
 }
 .tab-button.active {
@@ -324,21 +324,21 @@ input:focus, select:focus {
 
 .toggle-filter-container {
   display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 6px;
+  margin-bottom: 15px;
   background: var(--dark-pure);
-  padding: 6px;
+  padding: 5px;
   border-radius: 12px;
 }
 .btn-filter {
   flex: 1;
-  padding: 12px 6px;
+  padding: 10px 4px;
   border-radius: 8px;
   border: none;
   background: transparent;
   color: var(--muted);
   font-weight: 700;
-  font-size: 0.85em;
+  font-size: 0.75em;
   cursor: pointer;
   transition: all 0.3s;
 }
@@ -355,53 +355,30 @@ input:focus, select:focus {
 .badge-status {
   display: inline-flex;
   align-items: center;
-  padding: 5px 10px;
-  border-radius: 8px;
-  font-size: 0.75em;
-  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.65em;
+  font-weight: 700;
   text-transform: uppercase;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 .status-aberto { background: rgba(2, 132, 199, 0.15); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.3); }
 .status-fechado { background: rgba(234, 88, 12, 0.15); color: #fb923c; border: 1px solid rgba(234, 88, 12, 0.3); }
 .status-pago { background: rgba(22, 163, 74, 0.15); color: #4ade80; border: 1px solid rgba(22, 163, 74, 0.3); }
 
-/* ===== TELA DE VALIDAÇÃO (LICENÇA) - OCULTA POR PADRÃO ===== */
-#telaValidacao {
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  z-index: 10000;
-  display: none; /* nunca será mostrada com a licença automática */
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-}
-#telaValidacao .modal {
-  background: var(--card);
-  border-radius: 28px;
-  padding: 40px;
-  max-width: 480px;
-  width: 100%;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-  border: 1px solid var(--border-color);
-  animation: fadeIn 0.5s ease-out;
-}
-
 /* ===== CONFIGURAÇÕES ===== */
 .config-group {
   background: var(--dark-pure);
-  border-radius: 16px;
-  padding: 15px;
-  margin-bottom: 15px;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
   border: 1px solid var(--border-color);
 }
 .toggle-switch {
   position: relative;
   display: inline-block;
-  width: 60px;
-  height: 34px;
+  width: 50px;
+  height: 28px;
 }
 .toggle-switch input {
   opacity: 0;
@@ -417,13 +394,13 @@ input:focus, select:focus {
   bottom: 0;
   background-color: var(--border-color);
   transition: .4s;
-  border-radius: 34px;
+  border-radius: 28px;
 }
 .slider:before {
   position: absolute;
   content: "";
-  height: 26px;
-  width: 26px;
+  height: 20px;
+  width: 20px;
   left: 4px;
   bottom: 4px;
   background-color: white;
@@ -434,7 +411,7 @@ input:checked + .slider {
   background-color: var(--primary);
 }
 input:checked + .slider:before {
-  transform: translateX(26px);
+  transform: translateX(22px);
 }
 
 /* ===== AUTCOMPLETE ===== */
@@ -443,152 +420,153 @@ input:checked + .slider:before {
   z-index: 100;
   background: var(--card);
   border: 1px solid var(--border-hover);
-  border-radius: 16px;
-  width: calc(100% - 40px);
-  max-height: 200px;
+  border-radius: 12px;
+  width: calc(100% - 32px);
+  max-height: 150px;
   overflow-y: auto;
-  margin-top: -12px;
+  margin-top: -10px;
   box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.7);
 }
 .autocomplete-item {
-  padding: 14px;
+  padding: 10px 14px;
   cursor: pointer;
   border-bottom: 1px solid var(--border-color);
   color: var(--text);
+  font-size: 0.9em;
 }
-.autocomplete-item:last-child {
-  border-bottom: none;
+.autocomplete-item:last-child { border-bottom: none; }
+.autocomplete-item:hover { background: var(--card-hover); }
+
+/* ===== TELA DE LOGIN E VALIDAÇÃO ===== */
+#loginScreen, #telaValidacao {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
 }
-.autocomplete-item:hover {
-  background: var(--card-hover);
+#loginScreen .modal, #telaValidacao .modal {
+  background: var(--card);
+  padding: 25px;
+  border-radius: 28px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6);
+  border: 1px solid var(--border-color);
+}
+.modal .logo-img {
+  height: 60px;
+  display: block;
+  margin: 0 auto 10px;
+}
+.modal h2 {
+  color: var(--text);
+  font-size: 1.3em;
+  font-weight: 800;
+  text-align: center;
+}
+.modal p.sub {
+  color: var(--muted);
+  font-size: 0.8em;
+  text-align: center;
+  letter-spacing: 1px;
 }
 
 /* ===== RESPONSIVIDADE ===== */
 @media (max-width: 480px) {
-  .dashboard { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .dashboard-card { padding: 15px; }
-  .total-geral, .total-nf, .total-horas, .total-liquido { font-size: 1.4em; }
-  .tab-button { font-size: 0.75em; padding: 10px 6px; }
-  .input-group { padding: 15px; }
-  .history-card { padding: 14px; }
+  .dashboard { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .dashboard-card { padding: 12px; }
+  .total-geral, .total-nf, .total-horas, .total-liquido { font-size: 1.3em; }
+  .tab-button { font-size: 0.65em; padding: 8px 4px; min-width: 60px; }
+  .input-group { padding: 12px; }
+  .history-card { padding: 12px; }
+  .btn { padding: 12px; font-size: 0.8em; }
 }
 @media (max-width: 360px) {
-  #abaJobs .input-group div[style*="grid-template-columns:1fr 1fr"] {
-    grid-template-columns: 1fr !important;
-  }
+  .dashboard { grid-template-columns: 1fr 1fr; }
+  .tab-container { flex-wrap: wrap; }
+  .tab-button { flex: 1 0 30%; }
 }
 
-/* Scrollbar personalizada */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: var(--dark-pure); border-radius: 3px; }
 ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary-hover); }
-
-/* Logo placeholder - substitua a URL pela sua imagem real */
-.logo-img {
-  height: 60px;
-  display: block;
-  margin: 0 auto;
-  object-fit: contain;
-}
 </style>
 </head>
 <body>
 
 <!-- ========================================== -->
-<!-- TELA DE VALIDAÇÃO DE LICENÇA (mantida mas oculta) -->
+<!-- TELA DE VALIDAÇÃO (licença - sempre oculta) -->
 <!-- ========================================== -->
-<div id="telaValidacao">
+<div id="telaValidacao" style="display:none;">
   <div class="modal">
-    <div style="text-align:center; margin-bottom:30px;">
-      <img src="#" alt="Fader Livre" class="logo-img" style="height:80px; margin-bottom:10px;">
-      <h2 style="color:var(--text); font-size:1.4em; font-weight:800;">Validação de Licença</h2>
-      <p style="color:var(--muted); font-size:0.9em; margin-top:5px;">Ative seu acesso ao FADER LIVRE</p>
-    </div>
-    <div id="statusLicenca" style="background:var(--dark-pure); border-radius:16px; padding:15px; margin-bottom:20px; border-left:4px solid var(--warning);">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <i class="fas fa-clock" style="font-size:1.2em; color:var(--warning);"></i>
-        <div>
-          <div style="font-weight:600; color:var(--text);">Período de Teste</div>
-          <div style="font-size:0.9em; color:var(--muted);" id="diasTesteRestantes">999 dias restantes</div>
-        </div>
-      </div>
-    </div>
-    <div style="margin-bottom:25px;">
-      <label style="display:block; font-size:0.8em; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:8px; letter-spacing:1px;">
-        <i class="fas fa-key"></i> Chave de Ativação
-      </label>
-      <input type="text" id="inputChaveAtivacao" placeholder="XXXX-XXXX-XXXX-XXXX" 
-             style="width:100%; padding:14px; border-radius:14px; border:1px solid var(--border-color); background:var(--dark-pure); color:var(--text); font-size:16px; text-align:center; letter-spacing:4px; font-family:'Courier New',monospace;">
+    <img src="#" alt="Fader Livre" class="logo-img">
+    <h2>Validação de Licença</h2>
+    <p class="sub">Ative seu acesso</p>
+    <div style="margin:20px 0;">
+      <label>Chave de Ativação</label>
+      <input type="text" id="inputChaveAtivacao" placeholder="XXXX-XXXX-XXXX-XXXX" style="text-align:center; letter-spacing:4px;">
       <input type="hidden" id="inputDadosCripto">
     </div>
-    <button onclick="ativarLicenca()" class="btn btn-save" style="margin-bottom:15px;">
-      <i class="fas fa-unlock"></i> Ativar Licença
-    </button>
-    <div style="margin-top:20px; background:#FFF9E6; border-radius:16px; padding:15px; border:1px dashed #F39C12;">
-      <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-        <i class="fas fa-qrcode" style="font-size:24px; color:#F39C12;"></i>
+    <button class="btn btn-save" onclick="ativarLicenca()"><i class="fas fa-unlock"></i> Ativar</button>
+    <div style="margin-top:15px; background:#FFF9E6; border-radius:12px; padding:12px; border:1px dashed #F39C12;">
+      <div style="display:flex; gap:8px; align-items:center;">
+        <i class="fas fa-qrcode" style="color:#F39C12;"></i>
         <div>
-          <strong style="color:#856404;">Pagamento via PIX</strong>
-          <div style="font-size:0.75em; color:#856404;">Após o pagamento, insira a chave recebida</div>
+          <strong style="color:#856404;">PIX</strong>
+          <div id="codigoPIX" style="font-family:monospace; background:white; padding:8px; border-radius:6px; font-size:0.7em; word-break:break-all;">00020126440014BR.GOV.BCB.PIX...</div>
+          <button onclick="copiarPIX()" style="background:#27AE60; color:white; border:none; padding:4px 12px; border-radius:6px; margin-top:6px; font-size:0.8em;"><i class="fas fa-copy"></i> Copiar</button>
         </div>
       </div>
-      <div id="codigoPIX" style="font-family:'Courier New',monospace; background:white; padding:12px; border-radius:8px; font-size:0.8em; word-break:break-all; color:#2C3E50; margin-bottom:10px;">
-        00020126440014BR.GOV.BCB.PIX0114faderlivre@provedor.com...
-      </div>
-      <button onclick="copiarPIX()" style="background:#27AE60; color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-size:0.85em; display:flex; align-items:center; gap:8px;">
-        <i class="fas fa-copy"></i> Copiar Código PIX
-      </button>
-    </div>
-    <div style="text-align:center; margin-top:20px; padding:10px; color:var(--muted); font-size:0.85em;">
-      <span id="timerLicenca"><i class="fas fa-hourglass-half"></i> 999 dias restantes</span>
     </div>
   </div>
 </div>
 
 <!-- ========================================== -->
-<!-- TELA DE LOGIN (SENHA MASTER)              -->
+<!-- TELA DE LOGIN (senha master)              -->
 <!-- ========================================== -->
-<div id="loginScreen" style="position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; padding:15px;">
-  <button onclick="emergencyReset()" style="background:var(--danger); color:white; border:none; padding:10px 15px; border-radius:10px; font-weight:bold; font-size:0.8em; margin-bottom:20px; width:100%; max-width:400px; box-shadow:0 4px 10px rgba(239,68,68,0.3); cursor:pointer;">
-    <i class="fas fa-exclamation-triangle"></i> Forçar Reset de Emergência
-  </button>
-  <div style="background:var(--card); padding:25px; border-radius:28px; width:100%; max-width:400px; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6); border: 1px solid var(--border-color);">
-    <div style="text-align:center; margin-bottom:20px;">
-      <!-- LOGO AQUI -->
-      <img src="#" alt="Fader Livre" class="logo-img" style="height:60px; margin-bottom:10px;">
-      <p style="color:var(--muted); font-size:0.8em; margin-top:4px; letter-spacing:1px;">Cachê Control ERP v3.0</p>
-    </div>
-    <label><i class="fas fa-lock"></i> Chave Codificada de Segurança</label>
-    <input type="password" id="senhaInput" placeholder="••••••••" style="text-align:center; letter-spacing:6px; font-size:20px;">
-    <div id="novaSenhaBox" style="display:none; margin-top:5px; padding-top:15px; border-top:1px dashed var(--border-color);">
-      <label><i class="fas fa-key"></i> Definir Nova Chave Master</label>
-      <input type="password" id="novaSenha" placeholder="Digite uma chave forte">
-      <label><i class="fas fa-envelope"></i> E-mail Corporativo de Recuperação</label>
-      <input type="email" id="emailRecuperacao" placeholder="nome@empresa.com">
-      <label><i class="fas fa-phone"></i> Telefone para Recuperação (Opcional)</label>
-      <input type="tel" id="telefoneRecuperacao" placeholder="(xx) xxxxx-xxxx">
-      <button class="btn btn-save" onclick="cadastrarSenha()"><i class="fas fa-save"></i> Registrar Credenciais</button>
-    </div>
-    <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
-      <button class="btn btn-save" onclick="login()"><i class="fas fa-check"></i> Validar Token</button>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-        <button class="btn btn-cancel" style="font-size:0.8em; padding:12px;" onclick="toggleCadastroSenha()"><i class="fas fa-cog"></i> Configurar</button>
-        <button class="btn btn-export" style="font-size:0.8em; padding:12px; background:var(--card); border:1px solid var(--border-color);" onclick="recuperarSenha()"><i class="fas fa-key"></i> Resgatar</button>
+<div id="loginScreen">
+  <div class="modal">
+    <img src="#" alt="Fader Livre" class="logo-img">
+    <p class="sub" style="margin-top:5px;">Controle de Cachês</p>
+    <div style="margin:20px 0;">
+      <label><i class="fas fa-lock"></i> Chave de Segurança</label>
+      <input type="password" id="senhaInput" placeholder="••••••••" style="text-align:center; letter-spacing:6px; font-size:18px;">
+      <div id="novaSenhaBox" style="display:none; margin-top:10px; padding-top:12px; border-top:1px dashed var(--border-color);">
+        <label>Nova Chave Master</label>
+        <input type="password" id="novaSenha" placeholder="Digite uma chave forte">
+        <label>E-mail de Recuperação</label>
+        <input type="email" id="emailRecuperacao" placeholder="nome@empresa.com">
+        <label>Telefone (opcional)</label>
+        <input type="tel" id="telefoneRecuperacao" placeholder="(xx) xxxxx-xxxx">
+        <button class="btn btn-save" onclick="cadastrarSenha()"><i class="fas fa-save"></i> Registrar</button>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+        <button class="btn btn-save" onclick="login()"><i class="fas fa-check"></i> Validar Token</button>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <button class="btn btn-cancel" style="font-size:0.75em; padding:10px;" onclick="toggleCadastroSenha()"><i class="fas fa-cog"></i> Configurar</button>
+          <button class="btn btn-export" style="font-size:0.75em; padding:10px; background:var(--card); border:1px solid var(--border-color);" onclick="recuperarSenha()"><i class="fas fa-key"></i> Resgatar</button>
+        </div>
       </div>
     </div>
+    <button onclick="emergencyReset()" style="background:var(--danger); color:white; border:none; padding:8px; border-radius:10px; font-size:0.7em; width:100%;"><i class="fas fa-exclamation-triangle"></i> Reset de Emergência</button>
   </div>
 </div>
 
 <!-- ========================================== -->
-<!-- CONTEÚDO PRINCIPAL DO APP                 -->
+<!-- CONTEÚDO PRINCIPAL                        -->
 <!-- ========================================== -->
 <div id="appContent" style="display:none;">
 
   <div class="header">
-    <!-- LOGO AQUI -->
     <img src="#" alt="Fader Livre" class="logo-img">
-    <p>SISTEMA CONTROLADOR DE CACHÊS</p>
+    <p class="subtitle">Controle de Cachês</p>
   </div>
 
   <!-- Abas -->
@@ -597,10 +575,10 @@ input:checked + .slider:before {
       <i class="fas fa-plus-circle"></i> Lançamentos
     </button>
     <button class="tab-button" id="tabEmpresasBtn" onclick="alternarAba('abaEmpresas', event)">
-      <i class="fas fa-building"></i> Cadastro de Empresas
+      <i class="fas fa-building"></i> Empresas
     </button>
     <button class="tab-button" id="tabConfiguracoesBtn" onclick="alternarAba('abaConfiguracoes', event)">
-      <i class="fas fa-sliders-h"></i> Configurações
+      <i class="fas fa-sliders-h"></i> Config.
     </button>
   </div>
 
@@ -624,7 +602,7 @@ input:checked + .slider:before {
       </div>
       <div class="dashboard-card">
         <div class="dashboard-title">Horas Trabalhadas</div>
-        <div id="vTotalHoras" class="total-horas">0.0h</div>
+        <div id="vTotalHoras" class="total-horas">0h:00m</div>
       </div>
     </div>
 
@@ -637,224 +615,154 @@ input:checked + .slider:before {
       <label><i class="fas fa-calendar-alt"></i> Data</label>
       <input type="date" id="dataJob">
       <label><i class="fas fa-tasks"></i> Job</label>
-      <input type="text" id="nomeJob" placeholder="Ex: Direção de Fotografia - VT Refresco">
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+      <input type="text" id="nomeJob" placeholder="Ex: Direção de Fotografia">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div>
-          <label><i class="fas fa-clock"></i> Início (Check-in)</label>
+          <label><i class="fas fa-clock"></i> Início</label>
           <input type="time" id="inicio" value="08:00">
         </div>
         <div>
-          <label><i class="fas fa-clock"></i> Fim (Check-out)</label>
+          <label><i class="fas fa-clock"></i> Fim</label>
           <input type="time" id="fim" value="20:00">
         </div>
       </div>
       <div style="display:flex; flex-direction:column; gap:5px; margin-top:5px;">
         <button class="btn btn-save" id="btnSalvarJob" onclick="salvarJob()">
-          <i class="fas fa-save"></i> Salvar Lançamento
+          <i class="fas fa-save"></i> Salvar
         </button>
-        <button class="btn btn-cancel" id="btnLimparJob" onclick="limparCampos()"><i class="fas fa-undo"></i> Limpar</button>
+        <button class="btn btn-cancel" onclick="limparCampos()"><i class="fas fa-undo"></i> Limpar</button>
       </div>
     </div>
 
     <div class="input-group">
-      <h3><i class="fas fa-chart-bar"></i> Faturamento por contratante</h3>
-      <div class="chart-container" style="height:300px; margin-top:15px; position:relative;">
-        <canvas id="graficoEmpresas"></canvas>
-      </div>
+      <h3><i class="fas fa-chart-bar"></i> Faturamento</h3>
+      <div style="height:200px;"><canvas id="graficoEmpresas"></canvas></div>
     </div>
 
     <div class="input-group">
-      <div class="section-title" id="sectionTitleJobs" style="margin:0 0 20px 0;"><i class="fas fa-list"></i> Jobs Lançados</div>
+      <div class="section-title" id="sectionTitleJobs" style="margin:0 0 15px 0;"><i class="fas fa-list"></i> Jobs</div>
       <div class="toggle-filter-container">
-        <button id="btnFiltroAberto" class="btn-filter active" onclick="definirFiltroVisualizacao('aberto')">Período Aberto</button>
-        <button id="btnFiltroArquivado" class="btn-filter" onclick="definirFiltroVisualizacao('arquivado')">Pagos / Arquivados</button>
+        <button id="btnFiltroAberto" class="btn-filter active" onclick="definirFiltroVisualizacao('aberto')">Aberto</button>
+        <button id="btnFiltroArquivado" class="btn-filter" onclick="definirFiltroVisualizacao('arquivado')">Arquivados</button>
       </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
-        <button class="btn btn-search" id="btnBuscaTexto" style="margin:0;" onclick="abrirBusca()">
-          <i class="fas fa-search"></i> Filtrar Empresas
-        </button>
-        <button class="btn btn-export" style="margin:0; background:var(--border-color);" onclick="limparBusca()"><i class="fas fa-times"></i> Limpar Filtro</button>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:15px;">
+        <button class="btn btn-search" style="margin:0;" onclick="abrirBusca()"><i class="fas fa-search"></i> Filtrar</button>
+        <button class="btn btn-export" style="margin:0; background:var(--border-color);" onclick="limparBusca()"><i class="fas fa-times"></i> Limpar</button>
       </div>
-      <div id="searchBox" class="search-box" style="display:none; margin-bottom:15px;">
-        <input type="text" id="inputBusca" onkeyup="filtrarTabela()" onkeydown="handleEnterKey(event)" placeholder="Busque por nomes, projetos, datas...">
+      <div id="searchBox" style="display:none; margin-bottom:10px;">
+        <input type="text" id="inputBusca" onkeyup="filtrarTabela()" placeholder="Buscar...">
       </div>
       <div id="listaHistorico"></div>
     </div>
 
-    <div style="margin-top: 10px; margin-bottom: 25px;">
-      <button class="btn btn-whats" onclick="enviarRelatorioWhatsApp()">
-        <i class="fab fa-whatsapp"></i> Enviar para Whatsapp
-      </button>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:20px;">
+      <button class="btn btn-whats" onclick="enviarRelatorioWhatsApp()"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+      <button class="btn btn-export" onclick="baixarExcelCompleto()"><i class="fas fa-file-excel"></i> Excel</button>
     </div>
   </div>
 
   <!-- ABA EMPRESAS -->
   <div id="abaEmpresas" class="app-section">
     <div class="input-group">
-      <h2 id="formEmpresaTitle"><i class="fas fa-building"></i> Nova Empresa e Regras</h2>
+      <h2 id="formEmpresaTitle"><i class="fas fa-building"></i> Nova Empresa</h2>
       <input type="hidden" id="cadIdEmpresa" value="">
-      <label><i class="fas fa-tag"></i> Nome Comercial / Razão Social</label>
+      <label>Nome</label>
       <input type="text" id="cadNomeEmpresa" placeholder="Ex: FADER LIVRE LTDA">
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div>
-          <label><i class="fas fa-dollar-sign"></i> Cachê Fixo Padrão (12h)</label>
-          <input type="number" id="cadCacheBase" placeholder="R$ 0,00" step="0.01">
+          <label>Cachê Base (12h)</label>
+          <input type="number" id="cadCacheBase" placeholder="0,00" step="0.01">
         </div>
         <div>
-          <label><i class="fas fa-utensils"></i> Alimentação / Logística</label>
-          <input type="number" id="cadDiaria" placeholder="R$ 0,00" step="0.01">
+          <label>Diária / Logística</label>
+          <input type="number" id="cadDiaria" placeholder="0,00" step="0.01">
         </div>
       </div>
-      <label><i class="fas fa-calendar-week"></i> Matriz de Ciclo de Faturamento</label>
+      <label>Ciclo de Faturamento</label>
       <select id="cadTipoPagamento" onchange="alterarPeriodoPagamentoCadastro()">
-        <option value="Semanal" selected>Semanal (Fechamentos Regulares)</option>
+        <option value="Semanal">Semanal</option>
         <option value="Quinzenal">Quinzenal</option>
         <option value="Mensal">Mensal</option>
       </select>
-      <div id="cadPeriodoPersonalizado" style="display:none; padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color);">
-        <div id="quinzenalPeriodos" style="display:none; gap:12px;">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-            <div><label>Início Ciclo 1</label><input type="number" id="cadInicioCiclo1" min="1" max="31" value="1"></div>
-            <div><label>Fim Ciclo 1</label><input type="number" id="cadFimCiclo1" min="1" max="31" value="15"></div>
+      <div id="cadPeriodoPersonalizado" style="display:none; background:var(--dark-pure); border-radius:12px; padding:10px; margin-bottom:10px;">
+        <div id="quinzenalPeriodos" style="display:none; gap:8px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div><label>Início Ciclo 1</label><input type="number" id="cadInicioCiclo1" value="1" min="1" max="31"></div>
+            <div><label>Fim Ciclo 1</label><input type="number" id="cadFimCiclo1" value="15" min="1" max="31"></div>
           </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px;">
-            <div><label>Início Ciclo 2</label><input type="number" id="cadInicioCiclo2" min="1" max="31" value="16"></div>
-            <div><label>Fim Ciclo 2</label><input type="number" id="cadFimCiclo2" min="1" max="31" value="31"></div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
+            <div><label>Início Ciclo 2</label><input type="number" id="cadInicioCiclo2" value="16" min="1" max="31"></div>
+            <div><label>Fim Ciclo 2</label><input type="number" id="cadFimCiclo2" value="31" min="1" max="31"></div>
           </div>
-          <p style="font-size:0.75em; color:var(--muted); margin-top:5px;">Meses com menos dias são ajustados automaticamente.</p>
         </div>
-        <div id="mensalPeriodos" style="display:none; grid-template-columns:1fr 1fr; gap:12px;">
-          <div style="grid-column: span 2;">
-            <label>Dia Final do Ciclo</label>
-            <input type="number" id="cadFimPeriodo" min="1" max="31" value="30">
-            <p style="font-size:0.75em; color:var(--muted); margin-top:5px;">O início do ciclo mensal é sempre o dia 1. Defina apenas o dia final.</p>
-          </div>
+        <div id="mensalPeriodos" style="display:none;">
+          <label>Dia Final do Ciclo</label>
+          <input type="number" id="cadFimPeriodo" value="30" min="1" max="31">
         </div>
       </div>
-      <div id="cadPeriodoSemanalBox" style="display:none; padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color); display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div>
-          <label>Dia Inicial</label>
-          <select id="cadInicioSemana" style="margin:0;">
-            <option value="1" selected>Segunda-feira</option>
-            <option value="2">Terça-feira</option>
-            <option value="3">Quarta-feira</option>
-            <option value="4">Quinta-feira</option>
-            <option value="5">Sexta-feira</option>
-            <option value="6">Sábado</option>
-            <option value="0">Domingo</option>
-          </select>
-        </div>
-        <div>
-          <label>Dia de Corte</label>
-          <select id="cadFimSemana" style="margin:0;">
-            <option value="0" selected>Domingo</option>
-            <option value="1">Segunda-feira</option>
-            <option value="2">Terça-feira</option>
-            <option value="3">Quarta-feira</option>
-            <option value="4">Quinta-feira</option>
-            <option value="5">Sexta-feira</option>
-            <option value="6">Sábado</option>
-          </select>
-        </div>
+      <div id="cadPeriodoSemanalBox" style="display:none; background:var(--dark-pure); border-radius:12px; padding:10px; margin-bottom:10px; display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div><label>Início Semana</label><select id="cadInicioSemana"><option value="1">Segunda</option><option value="2">Terça</option><option value="3">Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option><option value="6">Sábado</option><option value="0">Domingo</option></select></div>
+        <div><label>Fim Semana</label><select id="cadFimSemana"><option value="0">Domingo</option><option value="1">Segunda</option><option value="2">Terça</option><option value="3">Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option><option value="6">Sábado</option></select></div>
       </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-        <div>
-          <label><i class="fas fa-calendar-check"></i> Dias Úteis para Liquidação</label>
-          <input type="number" id="cadDiasPagamento" value="5" min="0">
-        </div>
-        <div>
-          <label><i class="fas fa-percent"></i> Alíquota de Retenção NF (%)</label>
-          <input type="number" id="cadNfPercentual" value="0" min="0" max="100" step="0.01">
-        </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div><label>Dias p/ Liquidação</label><input type="number" id="cadDiasPagamento" value="5" min="0"></div>
+        <div><label>Alíquota NF (%)</label><input type="number" id="cadNfPercentual" value="0" min="0" max="100" step="0.01"></div>
       </div>
       <div style="display:flex; flex-direction:column; gap:5px;">
-        <button class="btn btn-save" id="btnSalvarEmpresa" onclick="salvarEmpresa()">
-          <i class="fas fa-save"></i> Registrar Empresa
-        </button>
-        <button class="btn btn-cancel" onclick="limparCamposEmpresa()"><i class="fas fa-broom"></i> Limpar Parâmetros</button>
+        <button class="btn btn-save" onclick="salvarEmpresa()"><i class="fas fa-save"></i> Registrar</button>
+        <button class="btn btn-cancel" onclick="limparCamposEmpresa()"><i class="fas fa-broom"></i> Limpar</button>
       </div>
     </div>
     <div class="input-group">
       <h3><i class="fas fa-list"></i> Empresas Cadastradas</h3>
       <div id="listaEmpresasCadastradas"></div>
     </div>
-    <div class="input-group" style="border-color:var(--border-hover); background: linear-gradient(180deg, var(--card) 0%, #152238 100%); margin-top:20px;">
-      <h2><i class="fas fa-cloud-download-alt"></i> Central Avançada de Exportação</h2>
-      <p style="color:var(--muted); font-size:0.85em; margin-bottom:15px;">Gere faturamentos estruturados ou realize backups locais de segurança.</p>
-      <div style="display:flex; flex-direction:column; gap:5px;">
-        <button class="btn btn-export" onclick="baixarExcelCompleto()">
-          <i class="fas fa-file-excel"></i> Exportar para Excel (.CSV)
-        </button>
-        <button class="btn btn-export" id="btnGerarCopiaSeguranca" style="background:#5c258d;" onclick="fazerBackup()">
-          <i class="fas fa-save"></i> Gerar Cópia de Segurança (.JSON)
-        </button>
-        <button class="btn btn-cancel" style="background:var(--dark-pure); border:1px solid var(--border-color);" onclick="document.getElementById('restoreFile').click()">
-          <i class="fas fa-upload"></i> Importar Cópia de Segurança (.JSON)
-        </button>
+    <div class="input-group" style="border-color:var(--border-hover); background:var(--card);">
+      <h2><i class="fas fa-cloud-upload-alt"></i> Backup e Exportação</h2>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <button class="btn btn-export" onclick="baixarExcelCompleto()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+        <button class="btn btn-export" onclick="fazerBackup()"><i class="fas fa-save"></i> Backup Local (.JSON)</button>
+        <button class="btn btn-export" style="background:#2563eb;" onclick="enviarBackupNuvem()"><i class="fas fa-cloud-upload-alt"></i> Enviar para Nuvem</button>
+        <button class="btn btn-cancel" style="background:var(--dark-pure); border:1px solid var(--border-color);" onclick="document.getElementById('restoreFile').click()"><i class="fas fa-upload"></i> Restaurar Backup</button>
+        <input type="file" id="restoreFile" accept=".json" style="display:none;">
       </div>
-      <input type="file" id="restoreFile" accept=".json" style="display:none;">
     </div>
   </div>
 
   <!-- ABA CONFIGURAÇÕES -->
   <div id="abaConfiguracoes" class="app-section">
     <div class="input-group">
-      <h3><i class="fas fa-sliders-h"></i> Configurações do Aplicativo</h3>
-
+      <h3><i class="fas fa-sliders-h"></i> Configurações</h3>
       <div class="config-group">
-        <h4><i class="fas fa-palette"></i> Modo de Exibição</h4>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <label for="themeToggle" style="margin-bottom: 0;">Modo Escuro / Modo Claro</label>
+        <h4><i class="fas fa-palette"></i> Tema</h4>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label for="themeToggle" style="margin-bottom:0;">Modo Escuro/Claro</label>
           <label class="toggle-switch">
             <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
             <span class="slider"></span>
           </label>
         </div>
-        <p style="font-size:0.8em; color:var(--muted); margin-top: 5px;">Alterne entre o tema escuro e claro do aplicativo.</p>
       </div>
-
       <div class="config-group">
-        <h4><i class="fas fa-clock"></i> Horas Padrão de Trabalho</h4>
-        <label for="baseHoursInput">Horas base para cálculo de cachê (padrão 12h)</label>
-        <input type="number" id="baseHoursInput" min="1" value="12" onchange="updateBaseHours(this.value)">
-        <p style="font-size:0.8em; color:var(--muted); margin-top: 5px;">Defina a quantidade de horas consideradas como "jornada normal" para o cálculo do cachê.</p>
+        <h4><i class="fas fa-clock"></i> Horas Base</h4>
+        <label>Horas padrão (12h)</label>
+        <input type="number" id="baseHoursInput" value="12" onchange="updateBaseHours(this.value)">
       </div>
-
       <div class="config-group">
-        <h4><i class="fas fa-bell"></i> Notificações de Pagamento</h4>
-        <label for="notificationCheckHour">Horário para verificar pagamentos (HH:MM)</label>
-        <input type="text" id="notificationCheckHour" placeholder="09:00" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" onchange="updateNotificationCheckHour(this.value)">
-        <p style="font-size:0.8em; color:var(--muted); margin-top: 5px;">O aplicativo verificará por pagamentos vencendo a partir deste horário.</p>
+        <h4><i class="fas fa-bell"></i> Notificações</h4>
+        <label>Horário de verificação (HH:MM)</label>
+        <input type="text" id="notificationCheckHour" value="09:00" onchange="updateNotificationCheckHour(this.value)">
+        <button class="btn btn-search" onclick="testarNotificacao()" style="margin-top:5px;"><i class="fas fa-bell"></i> Testar Notificação</button>
       </div>
-
       <div class="config-group">
-        <h4><i class="fas fa-fingerprint"></i> Autenticação Biométrica</h4>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <label for="biometricToggle" style="margin-bottom: 0; color: var(--muted);">Ativar Biometria / Reconhecimento Facial</label>
-          <label class="toggle-switch">
-            <input type="checkbox" id="biometricToggle" disabled>
-            <span class="slider"></span>
-          </label>
-        </div>
-        <p style="font-size:0.8em; color:var(--danger); margin-top: 5px;">
-          <i class="fas fa-exclamation-triangle"></i> A ativação da biometria nativa não é suportada nesta versão web.
-        </p>
-      </div>
-
-      <div class="config-group">
-        <h4><i class="fas fa-key"></i> Gerenciamento de Chave Master</h4>
-        <label for="oldMasterPassword">Chave Master Antiga</label>
+        <h4><i class="fas fa-key"></i> Chave Master</h4>
+        <label>Antiga</label>
         <input type="password" id="oldMasterPassword" placeholder="••••••••">
-        <label for="newMasterPassword">Nova Chave Master</label>
+        <label>Nova</label>
         <input type="password" id="newMasterPassword" placeholder="••••••••">
-        <label for="confirmNewMasterPassword">Confirmar Nova Chave Master</label>
+        <label>Confirmar</label>
         <input type="password" id="confirmNewMasterPassword" placeholder="••••••••">
-        <button class="btn btn-save" onclick="changeMasterPassword()" style="background: var(--blue); margin-top: 10px;">
-          <i class="fas fa-lock"></i> Alterar Chave Master
-        </button>
-        <p style="font-size:0.8em; color:var(--danger); margin-top: 5px;">
-          <i class="fas fa-exclamation-triangle"></i> A chave é armazenada localmente em texto simples. Use com cautela.
-        </p>
+        <button class="btn btn-save" onclick="changeMasterPassword()" style="background:var(--blue);"><i class="fas fa-lock"></i> Alterar</button>
       </div>
     </div>
   </div>
@@ -868,7 +776,7 @@ input:checked + .slider:before {
 // ============================================================
 //  SISTEMA DE LICENÇA COM ACESSO AUTOMÁTICO (TESTE INFINITO)
 // ============================================================
-const PERIODO_TESTE = 999999; // dias (praticamente infinito)
+const PERIODO_TESTE = 999999;
 const PERIODO_LICENCA = 999999;
 const CHAVE_CRIPTO = 'FADER_LIVRE_2024_SECRET_KEY';
 
@@ -876,7 +784,6 @@ class SistemaLicenca {
   constructor() {
     this.arquivoLicenca = 'licenca_fader.dat';
   }
-
   gerarChaveAtivacao(codigoPIX) {
     const timestamp = Date.now();
     const dados = {
@@ -886,168 +793,67 @@ class SistemaLicenca {
     };
     const hash = this._gerarHash(codigoPIX + timestamp);
     const dadosCripto = this._criptografar(JSON.stringify(dados));
-    return {
-      chaveAtivacao: hash.substring(0, 16).toUpperCase(),
-      dadosCripto: dadosCripto,
-      validadeDias: PERIODO_LICENCA
-    };
+    return { chaveAtivacao: hash.substring(0,16).toUpperCase(), dadosCripto, validadeDias: PERIODO_LICENCA };
   }
-
-  validarLicenca(chaveAtivacao, dadosCripto) {
+  validarLicenca(chave, dadosCripto) {
     try {
-      const dadosJson = this._descriptografar(dadosCripto);
-      const dados = JSON.parse(dadosJson);
+      const dados = JSON.parse(this._descriptografar(dadosCripto));
       const agora = Date.now();
-      if (agora > dados.expiracao) {
-        return { valida: false, mensagem: 'Licença expirada.', codigoPIX: dados.codigoPIX };
-      }
-      const diasUso = (agora - dados.timestamp) / (24 * 60 * 60 * 1000);
+      if (agora > dados.expiracao) return { valida: false, mensagem: 'Expirada', codigoPIX: dados.codigoPIX };
+      const diasUso = (agora - dados.timestamp) / (24*60*60*1000);
       if (diasUso <= PERIODO_TESTE) {
-        return {
-          valida: true,
-          modo: 'teste',
-          diasRestantes: Math.ceil(PERIODO_TESTE - diasUso),
-          codigoPIX: dados.codigoPIX
-        };
+        return { valida: true, modo: 'teste', diasRestantes: Math.ceil(PERIODO_TESTE - diasUso), codigoPIX: dados.codigoPIX };
       }
-      return {
-        valida: true,
-        modo: 'licenciado',
-        diasRestantes: Math.ceil((dados.expiracao - agora) / (24 * 60 * 60 * 1000)),
-        codigoPIX: dados.codigoPIX
-      };
-    } catch (erro) {
-      return { valida: false, mensagem: 'Erro: ' + erro.message };
-    }
+      return { valida: true, modo: 'licenciado', diasRestantes: Math.ceil((dados.expiracao - agora) / (24*60*60*1000)), codigoPIX: dados.codigoPIX };
+    } catch(e) { return { valida: false, mensagem: 'Erro: '+e.message }; }
   }
-
   verificarExpiracaoProxima() {
-    const licenca = this._carregarLicenca();
+    let licenca = this._carregarLicenca();
     if (!licenca) {
-      // Gera licença automática de teste
       const chaveTeste = this.gerarChaveAtivacao('teste@faderlivre.com');
       this.salvarLicenca(chaveTeste.chaveAtivacao, chaveTeste.dadosCripto);
-      return { alerta: false, mensagem: 'Licença de teste gerada automaticamente.' };
+      return { alerta: false };
     }
     const resultado = this.validarLicenca(licenca.chave, licenca.dadosCripto);
     if (resultado.valida && resultado.diasRestantes <= 7) {
-      return {
-        alerta: true,
-        diasRestantes: resultado.diasRestantes,
-        mensagem: `⚠️ Sua licença expira em ${resultado.diasRestantes} dias. Renove agora!`
-      };
+      return { alerta: true, diasRestantes: resultado.diasRestantes, mensagem: `⚠️ Expira em ${resultado.diasRestantes} dias` };
     }
     return { alerta: false };
   }
-
   salvarLicenca(chave, dadosCripto) {
-    localStorage.setItem(this.arquivoLicenca, JSON.stringify({
-      chave: chave,
-      dadosCripto: dadosCripto,
-      dataAtivacao: new Date().toISOString()
-    }));
+    localStorage.setItem(this.arquivoLicenca, JSON.stringify({ chave, dadosCripto, dataAtivacao: new Date().toISOString() }));
   }
-
-  _gerarHash(texto) {
-    let hash = 0;
-    for (let i = 0; i < texto.length; i++) {
-      const char = texto.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
-    }
-    return Math.abs(hash).toString(16).padStart(16, '0');
-  }
-
+  _gerarHash(texto) { let h=0; for(let i=0;i<texto.length;i++){h=((h<<5)-h)+texto.charCodeAt(i);h=h&h;} return Math.abs(h).toString(16).padStart(16,'0'); }
   _criptografar(dados) { return btoa(dados); }
-  _descriptografar(dadosCripto) { return atob(dadosCripto); }
-
-  _carregarLicenca() {
-    try {
-      const dados = localStorage.getItem(this.arquivoLicenca);
-      return dados ? JSON.parse(dados) : null;
-    } catch { return null; }
-  }
+  _descriptografar(dados) { return atob(dados); }
+  _carregarLicenca() { try { return JSON.parse(localStorage.getItem(this.arquivoLicenca)); } catch { return null; } }
 }
-
 const sistemaLicenca = new SistemaLicenca();
 
 // ============================================================
-//  FUNÇÕES DA TELA DE VALIDAÇÃO (mantidas mas não usadas)
-// ============================================================
-function mostrarTelaValidacao(status) {
-  // Não será chamada porque a licença já é válida automaticamente
-  const tela = document.getElementById('telaValidacao');
-  tela.style.display = 'flex';
-  const dias = status.diasRestantes || PERIODO_TESTE;
-  document.getElementById('diasTesteRestantes').textContent = dias + ' dias restantes';
-  document.getElementById('timerLicenca').innerHTML = `<i class="fas fa-hourglass-half"></i> ${dias} dias restantes`;
-}
-function esconderTelaValidacao() {
-  document.getElementById('telaValidacao').style.display = 'none';
-}
-function ativarLicenca() {
-  const chave = document.getElementById('inputChaveAtivacao').value.trim().toUpperCase();
-  const dadosCripto = document.getElementById('inputDadosCripto').value;
-  if (!chave || chave.length < 16) {
-    alert('Por favor, insira uma chave de ativação válida.');
-    return;
-  }
-  const validacao = sistemaLicenca.validarLicenca(chave, dadosCripto);
-  if (validacao.valida) {
-    sistemaLicenca.salvarLicenca(chave, dadosCripto);
-    esconderTelaValidacao();
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appContent').style.display = 'block';
-    alert('✅ Licença ativada com sucesso!');
-    inicializarApp();
-  } else {
-    alert('❌ ' + validacao.mensagem);
-  }
-}
-function copiarPIX() {
-  const codigo = document.getElementById('codigoPIX').textContent;
-  navigator.clipboard.writeText(codigo).then(() => {
-    const btn = document.querySelector('#telaValidacao .modal button[onclick="copiarPIX()"]');
-    btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
-    setTimeout(() => {
-      btn.innerHTML = '<i class="fas fa-copy"></i> Copiar Código PIX';
-    }, 2000);
-  });
-}
-
-// ============================================================
-//  GERENCIAMENTO DE SENHA MASTER
+//  FUNÇÕES DE LOGIN / SENHA
 // ============================================================
 function toggleCadastroSenha() {
   const box = document.getElementById('novaSenhaBox');
-  box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
+  box.style.display = box.style.display === 'none' || box.style.display === '' ? 'block' : 'none';
 }
 function cadastrarSenha() {
-  const novaSenha = document.getElementById('novaSenha').value;
+  const nova = document.getElementById('novaSenha').value;
   const email = document.getElementById('emailRecuperacao').value;
   const telefone = document.getElementById('telefoneRecuperacao').value;
-  if (!novaSenha || novaSenha.trim() === '' || !email || email.trim() === '') {
-    alert('A Chave Master e o E-mail de Recuperação são obrigatórios.');
-    return;
-  }
-  if (novaSenha.trim().length < 4) {
-    alert('Defina uma Chave Master de pelo menos 4 caracteres.');
-    return;
-  }
-  localStorage.setItem('senha_cache_control', novaSenha.trim());
+  if (!nova || nova.trim()==='' || !email || email.trim()==='') { alert('Chave e e-mail obrigatórios.'); return; }
+  if (nova.trim().length < 4) { alert('Mínimo 4 caracteres.'); return; }
+  localStorage.setItem('senha_cache_control', nova.trim());
   localStorage.setItem('email_cache_control', email.trim());
   localStorage.setItem('telefone_cache_control', telefone.trim());
-  alert('Credenciais registradas com sucesso!');
+  alert('Credenciais registradas!');
   window.location.reload();
 }
 function login() {
   const senha = document.getElementById('senhaInput').value;
-  const currentSavedPassword = localStorage.getItem('senha_cache_control');
-  if (!currentSavedPassword) {
-    if (senha.trim().length < 4) {
-      alert('Defina uma Chave Master de pelo menos 4 caracteres no primeiro acesso.');
-      return;
-    }
+  const saved = localStorage.getItem('senha_cache_control');
+  if (!saved) {
+    if (senha.trim().length < 4) { alert('Defina uma chave com 4+ caracteres.'); return; }
     localStorage.setItem('senha_cache_control', senha.trim());
     localStorage.setItem('email_cache_control', 'suporte@faderlivre.com');
     localStorage.setItem('telefone_cache_control', '');
@@ -1056,22 +862,22 @@ function login() {
     setTimeout(inicializarApp, 100);
     return;
   }
-  if (senha === currentSavedPassword) {
+  if (senha === saved) {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appContent').style.display = 'block';
     setTimeout(inicializarApp, 100);
   } else {
-    alert('🚨 Chave Master Incorreta.');
+    alert('🚨 Chave incorreta.');
   }
 }
 function recuperarSenha() {
   const email = localStorage.getItem('email_cache_control');
   const telefone = localStorage.getItem('telefone_cache_control');
-  let msg = 'Instruções locais enviadas para: ';
-  let has = false;
-  if (email && email.trim() !== '') { msg += `E-mail: ${email}`; has = true; }
-  if (telefone && telefone.trim() !== '') { msg += (has ? ' e ' : '') + `Telefone: ${telefone}`; has = true; }
-  if (!has) msg = 'Nenhum dado de recuperação configurado. Acesse "Configurar" para adicionar.';
+  let msg = 'Recuperação para: ';
+  let has=false;
+  if (email && email.trim()!=='') { msg += `E-mail: ${email}`; has=true; }
+  if (telefone && telefone.trim()!=='') { msg += (has?' e ':'') + `Telefone: ${telefone}`; has=true; }
+  if (!has) msg = 'Nenhum dado de recuperação configurado. Acesse Configurar.';
   alert(msg);
 }
 function changeMasterPassword() {
@@ -1079,48 +885,48 @@ function changeMasterPassword() {
   const newP = document.getElementById('newMasterPassword').value;
   const confirmP = document.getElementById('confirmNewMasterPassword').value;
   const saved = localStorage.getItem('senha_cache_control');
-  if (!old || !newP || !confirmP) { alert('Todos os campos são obrigatórios.'); return; }
-  if (old !== saved) { alert('Chave Master Antiga incorreta.'); return; }
-  if (newP.trim().length < 4) { alert('Nova chave deve ter pelo menos 4 caracteres.'); return; }
-  if (newP !== confirmP) { alert('Nova chave e confirmação não coincidem.'); return; }
+  if (!old || !newP || !confirmP) { alert('Preencha todos os campos.'); return; }
+  if (old !== saved) { alert('Antiga incorreta.'); return; }
+  if (newP.trim().length < 4) { alert('Nova chave deve ter 4+ caracteres.'); return; }
+  if (newP !== confirmP) { alert('Confirmação não coincide.'); return; }
   localStorage.setItem('senha_cache_control', newP.trim());
-  alert('Chave Master alterada com sucesso!');
-  document.getElementById('oldMasterPassword').value = '';
-  document.getElementById('newMasterPassword').value = '';
-  document.getElementById('confirmNewMasterPassword').value = '';
+  alert('Chave alterada!');
+  document.getElementById('oldMasterPassword').value='';
+  document.getElementById('newMasterPassword').value='';
+  document.getElementById('confirmNewMasterPassword').value='';
 }
 function emergencyReset() {
-  if (confirm('Deseja forçar o reset de emergência? Todos os dados serão perdidos. Esta ação é irreversível.')) {
+  if (confirm('Reset irá apagar todos os dados. Prosseguir?')) {
     localStorage.clear();
-    const deleteRequest = indexedDB.deleteDatabase('CacheFinal_V33');
-    deleteRequest.onsuccess = function() {
-      alert('Sistema redefinido! O aplicativo vai reiniciar.');
-      window.location.reload();
-    };
-    deleteRequest.onerror = function() {
-      alert('Erro ao redefinir o banco. Reiniciando...');
-      window.location.reload();
-    };
+    const req = indexedDB.deleteDatabase('CacheFinal_V33');
+    req.onsuccess = function() { alert('Reset concluído. Recarregando...'); window.location.reload(); };
+    req.onerror = function() { alert('Erro ao resetar. Recarregue manualmente.'); window.location.reload(); };
   }
 }
 
 // ============================================================
-//  INICIALIZAÇÃO DO APP (verifica licença e carrega dados)
+//  FUNÇÕES DE VALIDAÇÃO (mantidas para compatibilidade)
+// ============================================================
+function ativarLicenca() { alert('Licença já ativa (modo teste).'); }
+function copiarPIX() {
+  const codigo = document.getElementById('codigoPIX').textContent;
+  navigator.clipboard.writeText(codigo).then(() => alert('PIX copiado!'));
+}
+
+// ============================================================
+//  INICIALIZAÇÃO DO APP
 // ============================================================
 function inicializarApp() {
-  // Verifica e gera licença automática se necessário
-  const statusLic = sistemaLicenca.verificarExpiracaoProxima();
-  if (statusLic.alerta) {
-    // Se por algum motivo ainda mostrar alerta, exibe a tela de validação
-    mostrarTelaValidacao(statusLic);
+  const status = sistemaLicenca.verificarExpiracaoProxima();
+  if (status.alerta) {
+    // não deve ocorrer, mas se acontecer mostra validação
+    document.getElementById('telaValidacao').style.display = 'flex';
     return;
   }
-
-  // Licença válida: oculta tela de validação e mostra o app
-  esconderTelaValidacao();
+  document.getElementById('telaValidacao').style.display = 'none';
   document.getElementById('appContent').style.display = 'block';
 
-  // Inicializa configurações
+  // Tema
   const savedTheme = localStorage.getItem('app_theme') || 'dark';
   if (savedTheme === 'light') {
     document.body.classList.add('light-mode');
@@ -1129,25 +935,18 @@ function inicializarApp() {
     document.body.classList.remove('light-mode');
     document.getElementById('themeToggle').checked = false;
   }
-
-  const savedBaseHours = localStorage.getItem('base_hours');
-  if (savedBaseHours) {
-    BASE_HOURS = parseFloat(savedBaseHours);
-    document.getElementById('baseHoursInput').value = BASE_HOURS;
+  // Horas base
+  const savedBase = localStorage.getItem('base_hours');
+  if (savedBase) { BASE_HOURS = parseFloat(savedBase); document.getElementById('baseHoursInput').value = BASE_HOURS; }
+  // Notificação
+  const savedNotif = localStorage.getItem('notification_check_hour');
+  if (savedNotif) {
+    document.getElementById('notificationCheckHour').value = savedNotif;
+    const [h,m] = savedNotif.split(':').map(Number);
+    NOTIFICATION_CHECK_HOUR_FLOAT = h + m/60;
   }
-  const savedNotificationHour = localStorage.getItem('notification_check_hour');
-  if (savedNotificationHour) {
-    document.getElementById('notificationCheckHour').value = savedNotificationHour;
-    const [hour, minute] = savedNotificationHour.split(':').map(Number);
-    NOTIFICATION_CHECK_HOUR_FLOAT = hour + (minute / 60);
-  } else {
-    document.getElementById('notificationCheckHour').value = '09:00';
-  }
-
-  try {
-    document.getElementById('dataJob').value = new Date().toISOString().split('T')[0];
-  } catch(e) {}
-
+  // Data
+  try { document.getElementById('dataJob').value = new Date().toISOString().split('T')[0]; } catch(e) {}
   inicializarDB();
   executarBackupAutomatico();
   checkAndRequestNotificationPermission();
@@ -1155,7 +954,7 @@ function inicializarApp() {
 }
 
 // ============================================================
-//  BANCO DE DADOS INDEXEDDB
+//  BANCO DE DADOS
 // ============================================================
 let db = null;
 let ocultarValores = false;
@@ -1164,36 +963,28 @@ let mapaCores = {};
 let BASE_HOURS = 12;
 let NOTIFICATION_CHECK_HOUR_FLOAT = 9;
 let editStatusManual = null;
-const coresGrafico = [
-  '#38bdf8', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
-  '#ec4899', '#14b8a6', '#f97316', '#a855f7', '#06b6d4'
-];
+const coresGrafico = ['#38bdf8','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316','#a855f7','#06b6d4'];
 
 function inicializarDB() {
-  const requestDB = indexedDB.open('CacheFinal_V33', 2);
-  requestDB.onupgradeneeded = function(event) {
-    const d = event.target.result;
+  const req = indexedDB.open('CacheFinal_V33', 2);
+  req.onupgradeneeded = function(e) {
+    const d = e.target.result;
     if (!d.objectStoreNames.contains('jobs')) {
       const store = d.createObjectStore('jobs', { keyPath: 'id', autoIncrement: true });
-      store.createIndex('data', 'data');
-      store.createIndex('empresa', 'empresa');
-      store.createIndex('statusManual', 'statusManual');
+      store.createIndex('data','data');
+      store.createIndex('empresa','empresa');
+      store.createIndex('statusManual','statusManual');
     }
     if (!d.objectStoreNames.contains('empresas')) {
       d.createObjectStore('empresas', { keyPath: 'id', autoIncrement: true });
     }
-    if (!d.objectStoreNames.contains('configuracoes')) {
-      d.createObjectStore('configuracoes', { keyPath: 'chave' });
-    }
   };
-  requestDB.onsuccess = function(event) {
-    db = event.target.result;
+  req.onsuccess = function(e) {
+    db = e.target.result;
     atualizarTela();
     atualizarListaEmpresas();
   };
-  requestDB.onerror = function() {
-    alert('Erro crítico: Banco de dados recusou conexão. Tente recarregar a página.');
-  };
+  req.onerror = function() { alert('Erro ao abrir banco de dados.'); };
 }
 
 // ============================================================
@@ -1204,83 +995,69 @@ function formatarValor(valor) {
   return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 function formatarDataComDiaSemana(dataISO) {
-  const partes = dataISO.split('-');
-  const data = new Date(partes[0], partes[1] - 1, partes[2]);
-  const diasSemana = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
-  return `${diasSemana[data.getDay()]}, ${partes[2]}/${partes[1]}/${partes[0]}`;
+  const p = dataISO.split('-');
+  const data = new Date(p[0], p[1]-1, p[2]);
+  const dias = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+  return `${dias[data.getDay()]}, ${p[2]}/${p[1]}/${p[0]}`;
 }
-function ultimoDiaDoMes(ano, mes) {
-  return new Date(ano, mes + 1, 0).getDate();
+function ultimoDiaDoMes(ano, mes) { return new Date(ano, mes+1, 0).getDate(); }
+
+// Formata horas no formato 13h:02m
+function formatarHoras(horasDecimais) {
+  const horas = Math.floor(horasDecimais);
+  const minutos = Math.round((horasDecimais - horas) * 60);
+  return `${String(horas).padStart(2,'0')}h:${String(minutos).padStart(2,'0')}m`;
 }
+
 function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, fimPeriodoMensal, inicioSemana, fimSemana, inicioCiclo1, fimCiclo1, inicioCiclo2, fimCiclo2) {
-  let objetoData = new Date(dataPrestacao + 'T00:00:00');
-  let objetoFechamento = new Date(objetoData);
+  let obj = new Date(dataPrestacao + 'T00:00:00');
+  let fech = new Date(obj);
   if (tipoCiclo === 'Semanal') {
-    let diaAlvoCorte = parseInt(fimSemana || 0);
-    let diaDaSemanaDoJob = objetoData.getDay();
-    let diasParaFimDeSemana = (diaAlvoCorte - diaDaSemanaDoJob + 7) % 7;
-    objetoFechamento.setDate(objetoData.getDate() + diasParaFimDeSemana);
+    let alvo = parseInt(fimSemana || 0);
+    let diaSemana = obj.getDay();
+    let diff = (alvo - diaSemana + 7) % 7;
+    fech.setDate(obj.getDate() + diff);
   } else if (tipoCiclo === 'Quinzenal') {
-    let dia = objetoData.getDate();
-    let ano = objetoData.getFullYear();
-    let mes = objetoData.getMonth();
-    let ultimoDia = ultimoDiaDoMes(ano, mes);
-    let c1i = parseInt(inicioCiclo1 || 1);
-    let c1f = Math.min(parseInt(fimCiclo1 || 15), ultimoDia);
-    let c2i = Math.min(parseInt(inicioCiclo2 || 16), ultimoDia);
-    let c2f = Math.min(parseInt(fimCiclo2 || 31), ultimoDia);
-    if (dia >= c1i && dia <= c1f) {
-      objetoFechamento = new Date(ano, mes, c1f);
-    } else if (dia >= c2i && dia <= c2f) {
-      objetoFechamento = new Date(ano, mes, c2f);
-    } else if (dia < c1i) {
-      objetoFechamento = new Date(ano, mes, c1f);
-    } else {
-      objetoFechamento = new Date(ano, mes + 1, Math.min(c1f, ultimoDiaDoMes(ano, mes + 1)));
-    }
+    let dia = obj.getDate();
+    let ano = obj.getFullYear();
+    let mes = obj.getMonth();
+    let ult = ultimoDiaDoMes(ano, mes);
+    let c1i = parseInt(inicioCiclo1||1);
+    let c1f = Math.min(parseInt(fimCiclo1||15), ult);
+    let c2i = Math.min(parseInt(inicioCiclo2||16), ult);
+    let c2f = Math.min(parseInt(fimCiclo2||31), ult);
+    if (dia >= c1i && dia <= c1f) fech = new Date(ano, mes, c1f);
+    else if (dia >= c2i && dia <= c2f) fech = new Date(ano, mes, c2f);
+    else if (dia < c1i) fech = new Date(ano, mes, c1f);
+    else fech = new Date(ano, mes+1, Math.min(c1f, ultimoDiaDoMes(ano, mes+1)));
   } else {
-    let dia = objetoData.getDate();
-    let pFim = Math.min(parseInt(fimPeriodoMensal || 30), ultimoDiaDoMes(objetoData.getFullYear(), objetoData.getMonth()));
-    if (dia <= pFim) {
-      objetoFechamento = new Date(objetoData.getFullYear(), objetoData.getMonth(), pFim);
-    } else {
-      objetoFechamento = new Date(objetoData.getFullYear(), objetoData.getMonth() + 1,
-        Math.min(pFim, ultimoDiaDoMes(objetoData.getFullYear(), objetoData.getMonth() + 1)));
-    }
+    let dia = obj.getDate();
+    let pFim = Math.min(parseInt(fimPeriodoMensal||30), ultimoDiaDoMes(obj.getFullYear(), obj.getMonth()));
+    if (dia <= pFim) fech = new Date(obj.getFullYear(), obj.getMonth(), pFim);
+    else fech = new Date(obj.getFullYear(), obj.getMonth()+1, Math.min(pFim, ultimoDiaDoMes(obj.getFullYear(), obj.getMonth()+1)));
   }
-  objetoFechamento.setHours(0,0,0,0);
-  return objetoFechamento;
+  fech.setHours(0,0,0,0);
+  return fech;
 }
 function calcularDataPagamentoReal(dataFechamento, diasUteis) {
-  let objetoPagamento = new Date(dataFechamento);
-  objetoPagamento.setDate(objetoPagamento.getDate() + Number(diasUteis));
-  objetoPagamento.setHours(0,0,0,0);
-  return objetoPagamento;
+  let pag = new Date(dataFechamento);
+  pag.setDate(pag.getDate() + Number(diasUteis));
+  pag.setHours(0,0,0,0);
+  return pag;
 }
 function isDataPagamentoAtingida(job) {
-  let dataFechamento = calcularDataFechamentoReal(
-    job.data, job.tipoPagamento, job.fimPeriodo,
-    job.inicioSemana, job.fimSemana, job.inicioCiclo1,
-    job.fimCiclo1, job.inicioCiclo2, job.fimCiclo2
-  );
-  let dataPagamento = calcularDataPagamentoReal(dataFechamento, job.diasPagamento);
-  let hoje = new Date();
-  hoje.setHours(0,0,0,0);
-  return hoje.getTime() >= dataPagamento.getTime();
+  let fech = calcularDataFechamentoReal(job.data, job.tipoPagamento, job.fimPeriodo, job.inicioSemana, job.fimSemana, job.inicioCiclo1, job.fimCiclo1, job.inicioCiclo2, job.fimCiclo2);
+  let pag = calcularDataPagamentoReal(fech, job.diasPagamento);
+  let hoje = new Date(); hoje.setHours(0,0,0,0);
+  return hoje.getTime() >= pag.getTime();
 }
 function obterStatusPeriodo(job) {
   if (job.statusManual === 'pago') return 'pago';
-  let dataAtual = new Date();
-  dataAtual.setHours(0,0,0,0);
-  let dataFechamento = calcularDataFechamentoReal(
-    job.data, job.tipoPagamento, job.fimPeriodo,
-    job.inicioSemana, job.fimSemana,
-    job.inicioCiclo1, job.fimCiclo1,
-    job.inicioCiclo2, job.fimCiclo2
-  );
-  let dataLiquidacao = calcularDataPagamentoReal(dataFechamento, job.diasPagamento);
-  if (dataAtual.getTime() > dataLiquidacao.getTime()) return 'pago';
-  if (dataAtual.getTime() > dataFechamento.getTime()) return 'arquivado';
+  let hoje = new Date(); hoje.setHours(0,0,0,0);
+  let fech = calcularDataFechamentoReal(job.data, job.tipoPagamento, job.fimPeriodo, job.inicioSemana, job.fimSemana, job.inicioCiclo1, job.fimCiclo1, job.inicioCiclo2, job.fimCiclo2);
+  let pag = calcularDataPagamentoReal(fech, job.diasPagamento);
+  if (hoje.getTime() > pag.getTime()) return 'pago';
+  if (hoje.getTime() > fech.getTime()) return 'arquivado';
   return 'aberto';
 }
 
@@ -1290,8 +1067,7 @@ function obterStatusPeriodo(job) {
 function toggleValores() {
   ocultarValores = !ocultarValores;
   document.getElementById('eyeButton').innerHTML = ocultarValores ?
-    '<i class="fas fa-eye"></i>' :
-    '<i class="fas fa-eye-slash"></i>';
+    '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
   atualizarTela();
 }
 function alternarAba(abaId, event) {
@@ -1299,12 +1075,9 @@ function alternarAba(abaId, event) {
   document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
   document.getElementById(abaId).classList.add('active');
   if (event) event.currentTarget.classList.add('active');
-  if (abaId === 'abaEmpresas') {
-    atualizarListaEmpresas();
-    alterarPeriodoPagamentoCadastro();
-  } else if (abaId === 'abaJobs') {
-    atualizarTela();
-  } else if (abaId === 'abaConfiguracoes') {
+  if (abaId === 'abaEmpresas') { atualizarListaEmpresas(); alterarPeriodoPagamentoCadastro(); }
+  else if (abaId === 'abaJobs') atualizarTela();
+  else if (abaId === 'abaConfiguracoes') {
     document.getElementById('themeToggle').checked = document.body.classList.contains('light-mode');
     document.getElementById('baseHoursInput').value = BASE_HOURS;
     document.getElementById('notificationCheckHour').value = localStorage.getItem('notification_check_hour') || '09:00';
@@ -1319,9 +1092,7 @@ function definirFiltroVisualizacao(tipo) {
     '<i class="fas fa-archive"></i> Jobs Arquivados / Pagos';
   atualizarTela();
 }
-function handleEnterKey(event) {
-  if (event.key === 'Enter') event.target.blur();
-}
+function handleEnterKey(e) { if (e.key === 'Enter') e.target.blur(); }
 function alterarPeriodoPagamentoCadastro() {
   const tipo = document.getElementById('cadTipoPagamento').value;
   document.getElementById('cadPeriodoPersonalizado').style.display = 'none';
@@ -1332,25 +1103,22 @@ function alterarPeriodoPagamentoCadastro() {
     document.getElementById('cadPeriodoSemanalBox').style.display = 'grid';
   } else {
     document.getElementById('cadPeriodoPersonalizado').style.display = 'block';
-    if (tipo === 'Quinzenal') {
-      document.getElementById('quinzenalPeriodos').style.display = 'block';
-    } else if (tipo === 'Mensal') {
-      document.getElementById('mensalPeriodos').style.display = 'grid';
-    }
+    if (tipo === 'Quinzenal') document.getElementById('quinzenalPeriodos').style.display = 'block';
+    else if (tipo === 'Mensal') document.getElementById('mensalPeriodos').style.display = 'block';
   }
 }
-function gerenciarAutocomplete(textoBusca) {
+function gerenciarAutocomplete(texto) {
   const container = document.getElementById('autocompleteContainer');
   container.innerHTML = '';
-  if (!db || !textoBusca || textoBusca.trim() === '') return;
-  const tx = db.transaction('empresas', 'readonly');
-  tx.objectStore('empresas').getAll().onsuccess = function(event) {
-    const todas = event.target.result;
-    const query = textoBusca.toLowerCase().trim();
+  if (!db || !texto || texto.trim()==='') return;
+  const tx = db.transaction('empresas','readonly');
+  tx.objectStore('empresas').getAll().onsuccess = function(e) {
+    const todas = e.target.result;
+    const query = texto.toLowerCase().trim();
     const filtradas = todas.filter(emp => emp.nome.toLowerCase().includes(query));
-    if (filtradas.length > 0) {
-      const listaDiv = document.createElement('div');
-      listaDiv.className = 'autocomplete-list';
+    if (filtradas.length) {
+      const lista = document.createElement('div');
+      lista.className = 'autocomplete-list';
       filtradas.forEach(emp => {
         const item = document.createElement('div');
         item.className = 'autocomplete-item';
@@ -1359,9 +1127,9 @@ function gerenciarAutocomplete(textoBusca) {
           document.getElementById('empresaJob').value = emp.nome;
           container.innerHTML = '';
         };
-        listaDiv.appendChild(item);
+        lista.appendChild(item);
       });
-      container.appendChild(listaDiv);
+      container.appendChild(lista);
     }
   };
 }
@@ -1385,47 +1153,32 @@ function filtrarTabela() {
 }
 
 // ============================================================
-//  FUNÇÕES CRUD - EMPRESAS
+//  CRUD EMPRESAS
 // ============================================================
 function salvarEmpresa() {
   const nome = document.getElementById('cadNomeEmpresa').value.trim();
   const idExistente = document.getElementById('cadIdEmpresa').value;
-  if (!nome) { alert('Nome da empresa é obrigatório.'); return; }
-
-  const txVerif = db.transaction('empresas', 'readonly');
+  if (!nome) { alert('Nome obrigatório.'); return; }
+  const txVerif = db.transaction('empresas','readonly');
   txVerif.objectStore('empresas').getAll().onsuccess = function(ev) {
     const existentes = ev.target.result;
-    const nomeNormalizado = nome.toLowerCase().trim();
-    const duplicado = existentes.find(e =>
-      e.nome.toLowerCase().trim() === nomeNormalizado &&
-      (!idExistente || e.id !== parseInt(idExistente))
-    );
-    if (duplicado) {
-      alert('Já existe uma empresa com esse nome.');
-      return;
-    }
+    const norm = nome.toLowerCase().trim();
+    const duplicado = existentes.find(e => e.nome.toLowerCase().trim() === norm && (!idExistente || e.id !== parseInt(idExistente)));
+    if (duplicado) { alert('Empresa já existe.'); return; }
     const cacheBase = parseFloat(document.getElementById('cadCacheBase').value);
-    if (isNaN(cacheBase) || cacheBase < 0) { alert('Cachê Fixo Padrão deve ser um número válido.'); return; }
+    if (isNaN(cacheBase) || cacheBase < 0) { alert('Cachê base inválido.'); return; }
     const diaria = parseFloat(document.getElementById('cadDiaria').value);
-    if (isNaN(diaria) || diaria < 0) { alert('Alimentação / Logística deve ser um número válido.'); return; }
+    if (isNaN(diaria) || diaria < 0) { alert('Diária inválida.'); return; }
     const nfPercentual = parseFloat(document.getElementById('cadNfPercentual').value);
-    if (isNaN(nfPercentual) || nfPercentual < 0 || nfPercentual > 100) { alert('Alíquota NF deve ser entre 0 e 100.'); return; }
+    if (isNaN(nfPercentual) || nfPercentual < 0 || nfPercentual > 100) { alert('NF % inválido.'); return; }
     const diasPagamento = parseInt(document.getElementById('cadDiasPagamento').value);
-    if (isNaN(diasPagamento) || diasPagamento < 0) { alert('Dias Úteis para Liquidação deve ser um número inteiro.'); return; }
-
-    const tipoPagamento = document.getElementById('cadTipoPagamento').value;
-    let payload = {
-      nome: nome,
-      cacheBase: cacheBase,
-      diaria: diaria,
-      tipoPagamento: tipoPagamento,
-      diasPagamento: diasPagamento,
-      nfPercentual: nfPercentual
-    };
-    if (tipoPagamento === 'Semanal') {
+    if (isNaN(diasPagamento) || diasPagamento < 0) { alert('Dias p/ liquidação inválido.'); return; }
+    const tipo = document.getElementById('cadTipoPagamento').value;
+    let payload = { nome, cacheBase, diaria, tipoPagamento: tipo, diasPagamento, nfPercentual };
+    if (tipo === 'Semanal') {
       payload.inicioSemana = parseInt(document.getElementById('cadInicioSemana').value);
       payload.fimSemana = parseInt(document.getElementById('cadFimSemana').value);
-    } else if (tipoPagamento === 'Quinzenal') {
+    } else if (tipo === 'Quinzenal') {
       payload.inicioCiclo1 = parseInt(document.getElementById('cadInicioCiclo1').value) || 1;
       payload.fimCiclo1 = parseInt(document.getElementById('cadFimCiclo1').value) || 15;
       payload.inicioCiclo2 = parseInt(document.getElementById('cadInicioCiclo2').value) || 16;
@@ -1434,8 +1187,7 @@ function salvarEmpresa() {
       payload.fimPeriodo = parseInt(document.getElementById('cadFimPeriodo').value) || 30;
     }
     if (idExistente) payload.id = parseInt(idExistente);
-
-    const tx = db.transaction('empresas', 'readwrite');
+    const tx = db.transaction('empresas','readwrite');
     const store = tx.objectStore('empresas');
     const req = idExistente ? store.put(payload) : store.add(payload);
     req.onsuccess = function() {
@@ -1449,32 +1201,32 @@ function salvarEmpresa() {
   };
 }
 function carregarEmpresaParaEdicao(id) {
-  const tx = db.transaction('empresas', 'readonly');
+  const tx = db.transaction('empresas','readonly');
   tx.objectStore('empresas').get(id).onsuccess = function(e) {
-    const dados = e.target.result;
-    if (!dados) { alert('Empresa não encontrada.'); return; }
-    document.getElementById('formEmpresaTitle').innerHTML = '<i class="fas fa-edit"></i> Editando: ' + dados.nome;
-    document.getElementById('cadIdEmpresa').value = dados.id;
-    document.getElementById('cadNomeEmpresa').value = dados.nome;
-    document.getElementById('cadCacheBase').value = dados.cacheBase;
-    document.getElementById('cadDiaria').value = dados.diaria;
-    document.getElementById('cadTipoPagamento').value = dados.tipoPagamento;
-    document.getElementById('cadDiasPagamento').value = dados.diasPagamento || 0;
-    document.getElementById('cadNfPercentual').value = dados.nfPercentual || 0;
-    document.getElementById('cadInicioCiclo1').value = dados.inicioCiclo1 || 1;
-    document.getElementById('cadFimCiclo1').value = dados.fimCiclo1 || 15;
-    document.getElementById('cadInicioCiclo2').value = dados.inicioCiclo2 || 16;
-    document.getElementById('cadFimCiclo2').value = dados.fimCiclo2 || 31;
-    document.getElementById('cadFimPeriodo').value = dados.fimPeriodo || 30;
-    document.getElementById('cadInicioSemana').value = dados.inicioSemana || 1;
-    document.getElementById('cadFimSemana').value = dados.fimSemana || 0;
+    const d = e.target.result;
+    if (!d) return;
+    document.getElementById('formEmpresaTitle').innerHTML = '<i class="fas fa-edit"></i> Editando: '+d.nome;
+    document.getElementById('cadIdEmpresa').value = d.id;
+    document.getElementById('cadNomeEmpresa').value = d.nome;
+    document.getElementById('cadCacheBase').value = d.cacheBase;
+    document.getElementById('cadDiaria').value = d.diaria;
+    document.getElementById('cadTipoPagamento').value = d.tipoPagamento;
+    document.getElementById('cadDiasPagamento').value = d.diasPagamento || 0;
+    document.getElementById('cadNfPercentual').value = d.nfPercentual || 0;
+    document.getElementById('cadInicioCiclo1').value = d.inicioCiclo1 || 1;
+    document.getElementById('cadFimCiclo1').value = d.fimCiclo1 || 15;
+    document.getElementById('cadInicioCiclo2').value = d.inicioCiclo2 || 16;
+    document.getElementById('cadFimCiclo2').value = d.fimCiclo2 || 31;
+    document.getElementById('cadFimPeriodo').value = d.fimPeriodo || 30;
+    document.getElementById('cadInicioSemana').value = d.inicioSemana || 1;
+    document.getElementById('cadFimSemana').value = d.fimSemana || 0;
     alterarPeriodoPagamentoCadastro();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 }
 function deletarEmpresa(id) {
-  if (confirm('Deseja remover permanentemente esta empresa?')) {
-    const tx = db.transaction('empresas', 'readwrite');
+  if (confirm('Remover empresa?')) {
+    const tx = db.transaction('empresas','readwrite');
     tx.objectStore('empresas').delete(id).onsuccess = () => {
       executarBackupAutomatico();
       atualizarListaEmpresas();
@@ -1484,7 +1236,7 @@ function deletarEmpresa(id) {
   }
 }
 function limparCamposEmpresa() {
-  document.getElementById('formEmpresaTitle').innerHTML = '<i class="fas fa-building"></i> Nova Empresa e Regras';
+  document.getElementById('formEmpresaTitle').innerHTML = '<i class="fas fa-building"></i> Nova Empresa';
   document.getElementById('cadIdEmpresa').value = '';
   document.getElementById('cadNomeEmpresa').value = '';
   document.getElementById('cadCacheBase').value = '';
@@ -1505,20 +1257,17 @@ function atualizarListaEmpresas() {
   if (!db) return;
   const container = document.getElementById('listaEmpresasCadastradas');
   container.innerHTML = '';
-  const tx = db.transaction('empresas', 'readonly');
+  const tx = db.transaction('empresas','readonly');
   tx.objectStore('empresas').getAll().onsuccess = function(e) {
-    const colecao = e.target.result;
-    if (colecao.length === 0) {
-      container.innerHTML = '<p style="color:var(--muted); padding:10px; font-style:italic;">Nenhuma empresa cadastrada.</p>';
-      return;
-    }
-    colecao.forEach(emp => {
+    const lista = e.target.result;
+    if (!lista.length) { container.innerHTML = '<p style="color:var(--muted); padding:10px;">Nenhuma empresa.</p>'; return; }
+    lista.forEach(emp => {
       const card = document.createElement('div');
-      card.style.cssText = 'background:var(--card); padding:15px; border-radius:20px; margin-bottom:10px; border:1px solid var(--border-color); position:relative;';
+      card.style.cssText = 'background:var(--card); padding:12px; border-radius:16px; margin-bottom:8px; border:1px solid var(--border-color); position:relative;';
       card.innerHTML = `
         <div class="empresa-title">${emp.nome}</div>
-        <div class="meta-text"><i class="fas fa-dollar-sign"></i> <b>Base:</b> R$ ${emp.cacheBase.toFixed(2)} | <i class="fas fa-utensils"></i> <b>Diária:</b> R$ ${emp.diaria.toFixed(2)}</div>
-        <div class="meta-text"><i class="fas fa-calendar-alt"></i> <b>Ciclo:</b> ${emp.tipoPagamento} | <i class="fas fa-percent"></i> <b>NF:</b> ${emp.nfPercentual}%</div>
+        <div class="meta-text"><i class="fas fa-dollar-sign"></i> Base: R$ ${emp.cacheBase.toFixed(2)} | <i class="fas fa-utensils"></i> Diária: R$ ${emp.diaria.toFixed(2)}</div>
+        <div class="meta-text"><i class="fas fa-calendar-alt"></i> Ciclo: ${emp.tipoPagamento} | <i class="fas fa-percent"></i> NF: ${emp.nfPercentual}%</div>
         <button class="btn-edit-inline" onclick="carregarEmpresaParaEdicao(${emp.id})"><i class="fas fa-edit"></i></button>
         <button class="btn-del" onclick="deletarEmpresa(${emp.id})"><i class="fas fa-trash"></i></button>
       `;
@@ -1528,91 +1277,91 @@ function atualizarListaEmpresas() {
 }
 
 // ============================================================
-//  FUNÇÕES CRUD - JOBS
+//  CRUD JOBS
 // ============================================================
 function salvarJob() {
   const dataInput = document.getElementById('dataJob').value;
-  const inputNomeEmpresa = document.getElementById('empresaJob').value.trim();
+  const nomeEmpresa = document.getElementById('empresaJob').value.trim();
   const idEdicao = document.getElementById('editJobId').value;
-  if (!dataInput || !inputNomeEmpresa) { alert('Data e Empresa são obrigatórios.'); return; }
-
-  const txEmp = db.transaction('empresas', 'readonly');
-  txEmp.objectStore('empresas').getAll().onsuccess = function(event) {
-    const todas = event.target.result;
-    const empresaEncontrada = todas.find(emp => emp.nome.toLowerCase() === inputNomeEmpresa.toLowerCase());
-    if (!empresaEncontrada) {
-      alert('Empresa "' + inputNomeEmpresa + '" não existe. Cadastre-a primeiro.');
-      return;
-    }
-
-    const cacheBase = parseFloat(empresaEncontrada.cacheBase || 0);
-    const diaria = parseFloat(empresaEncontrada.diaria || 0);
-    const percentualNF = parseFloat(empresaEncontrada.nfPercentual || 0);
-
+  if (!dataInput || !nomeEmpresa) { alert('Data e Empresa são obrigatórios.'); return; }
+  const txEmp = db.transaction('empresas','readonly');
+  txEmp.objectStore('empresas').getAll().onsuccess = function(e) {
+    const todas = e.target.result;
+    const empresa = todas.find(emp => emp.nome.toLowerCase() === nomeEmpresa.toLowerCase());
+    if (!empresa) { alert('Empresa não cadastrada. Cadastre primeiro.'); return; }
+    const cacheBase = empresa.cacheBase || 0;
+    const diaria = empresa.diaria || 0;
+    const nf = empresa.nfPercentual || 0;
     const sInicio = document.getElementById('inicio').value;
     const sFim = document.getElementById('fim').value;
-    const arrI = sInicio.split(':'); const arrF = sFim.split(':');
-    let inicioEmMinutos = parseInt(arrI[0]) * 60 + parseInt(arrI[1]);
-    let fimEmMinutos = parseInt(arrF[0]) * 60 + parseInt(arrF[1]);
-    let difMinutos = fimEmMinutos < inicioEmMinutos ? (24 * 60 - inicioEmMinutos) + fimEmMinutos : fimEmMinutos - inicioEmMinutos;
-    const tHoras = difMinutos / 60;
-    const vExtras = Math.max(0, tHoras - BASE_HOURS);
-    const cHoraReg = cacheBase / BASE_HOURS;
-    const rExtras = vExtras * cHoraReg;
-    const fBruto = cacheBase + diaria + rExtras;
-    const imposto = fBruto * (percentualNF / 100);
+    const [hI, mI] = sInicio.split(':').map(Number);
+    const [hF, mF] = sFim.split(':').map(Number);
+    let inicioMin = hI*60 + mI;
+    let fimMin = hF*60 + mF;
+    let diffMin = fimMin < inicioMin ? (24*60 - inicioMin) + fimMin : fimMin - inicioMin;
+    const horasDecimais = diffMin / 60;
+    const extras = Math.max(0, horasDecimais - BASE_HOURS);
+    const valorHora = cacheBase / BASE_HOURS;
+    const valorExtra = extras * valorHora;
+    const totalBruto = cacheBase + diaria + valorExtra;
+    const imposto = totalBruto * (nf / 100);
 
-    const dataPrevisaoPagamento = calcularPagamento(
-      dataInput, empresaEncontrada.tipoPagamento, empresaEncontrada.diasPagamento,
-      empresaEncontrada.fimPeriodo, empresaEncontrada.inicioSemana, empresaEncontrada.fimSemana,
-      empresaEncontrada.inicioCiclo1, empresaEncontrada.fimCiclo1,
-      empresaEncontrada.inicioCiclo2, empresaEncontrada.fimCiclo2
+    const previsao = calcularPagamento(
+      dataInput, empresa.tipoPagamento, empresa.diasPagamento,
+      empresa.fimPeriodo, empresa.inicioSemana, empresa.fimSemana,
+      empresa.inicioCiclo1, empresa.fimCiclo1, empresa.inicioCiclo2, empresa.fimCiclo2
     );
 
     const payload = {
-      data: dataInput, empresa: empresaEncontrada.nome,
+      data: dataInput,
+      empresa: empresa.nome,
       job: document.getElementById('nomeJob').value || 'Job Operacional',
-      cache: cacheBase, diaria: diaria, extra: rExtras, total: fBruto, valorNF: imposto,
-      horas: tHoras.toFixed(1), inicio: sInicio, fim: sFim,
-      tipoPagamento: empresaEncontrada.tipoPagamento,
-      diasPagamento: parseInt(empresaEncontrada.diasPagamento || 0),
-      fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 30),
-      inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1),
-      fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
-      inicioCiclo1: parseInt(empresaEncontrada.inicioCiclo1 || 1),
-      fimCiclo1: parseInt(empresaEncontrada.fimCiclo1 || 15),
-      inicioCiclo2: parseInt(empresaEncontrada.inicioCiclo2 || 16),
-      fimCiclo2: parseInt(empresaEncontrada.fimCiclo2 || 31),
-      previsaoPagamento: dataPrevisaoPagamento,
+      cache: cacheBase,
+      diaria: diaria,
+      extra: valorExtra,
+      total: totalBruto,
+      valorNF: imposto,
+      horas: horasDecimais,
+      inicio: sInicio,
+      fim: sFim,
+      tipoPagamento: empresa.tipoPagamento,
+      diasPagamento: parseInt(empresa.diasPagamento || 0),
+      fimPeriodo: parseInt(empresa.fimPeriodo || 30),
+      inicioSemana: parseInt(empresa.inicioSemana || 1),
+      fimSemana: parseInt(empresa.fimSemana || 0),
+      inicioCiclo1: parseInt(empresa.inicioCiclo1 || 1),
+      fimCiclo1: parseInt(empresa.fimCiclo1 || 15),
+      inicioCiclo2: parseInt(empresa.inicioCiclo2 || 16),
+      fimCiclo2: parseInt(empresa.fimCiclo2 || 31),
+      previsaoPagamento: previsao,
       statusManual: idEdicao ? editStatusManual : null
     };
     if (idEdicao) payload.id = parseInt(idEdicao);
-
-    const tx = db.transaction('jobs', 'readwrite');
+    const tx = db.transaction('jobs','readwrite');
     const store = tx.objectStore('jobs');
     const req = idEdicao ? store.put(payload) : store.add(payload);
     req.onsuccess = function() {
-      alert('Lançamento salvo!');
+      alert('Job salvo!');
       executarBackupAutomatico();
       atualizarTela();
       limparCampos();
-      let jobNotificationsStatus = JSON.parse(localStorage.getItem('job_notifications_status') || '{}');
-      delete jobNotificationsStatus[payload.id];
-      localStorage.setItem('job_notifications_status', JSON.stringify(jobNotificationsStatus));
+      let notif = JSON.parse(localStorage.getItem('job_notifications_status') || '{}');
+      delete notif[payload.id];
+      localStorage.setItem('job_notifications_status', JSON.stringify(notif));
     };
   };
 }
 function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, fimPeriodoMensal, inicioSemana, fimSemana, inicioCiclo1, fimCiclo1, inicioCiclo2, fimCiclo2) {
-  const dataFechamento = calcularDataFechamentoReal(dataPrestacao, tipoCiclo, fimPeriodoMensal, inicioSemana, fimSemana, inicioCiclo1, fimCiclo1, inicioCiclo2, fimCiclo2);
-  const dataFaturamento = calcularDataPagamentoReal(dataFechamento, diasUteis);
-  return dataFaturamento.toLocaleDateString('pt-BR');
+  const fech = calcularDataFechamentoReal(dataPrestacao, tipoCiclo, fimPeriodoMensal, inicioSemana, fimSemana, inicioCiclo1, fimCiclo1, inicioCiclo2, fimCiclo2);
+  const pag = calcularDataPagamentoReal(fech, diasUteis);
+  return pag.toLocaleDateString('pt-BR');
 }
 function carregarJobParaEdicao(id) {
-  const tx = db.transaction('jobs', 'readonly');
-  tx.objectStore('jobs').get(id).onsuccess = function(event) {
-    const item = event.target.result;
-    if (!item) { alert('Lançamento não encontrado.'); return; }
-    document.getElementById('formJobTitle').innerText = '✏️ Editando Lançamento';
+  const tx = db.transaction('jobs','readonly');
+  tx.objectStore('jobs').get(id).onsuccess = function(e) {
+    const item = e.target.result;
+    if (!item) { alert('Job não encontrado.'); return; }
+    document.getElementById('formJobTitle').innerText = '✏️ Editando Job';
     document.getElementById('editJobId').value = item.id;
     document.getElementById('empresaJob').value = item.empresa;
     document.getElementById('dataJob').value = item.data;
@@ -1624,109 +1373,100 @@ function carregarJobParaEdicao(id) {
   };
 }
 function deletarJob(id) {
-  if (confirm('Excluir definitivamente este lançamento?')) {
-    const tx = db.transaction('jobs', 'readwrite');
+  if (confirm('Excluir job?')) {
+    const tx = db.transaction('jobs','readwrite');
     tx.objectStore('jobs').delete(id).onsuccess = () => {
       executarBackupAutomatico();
       atualizarTela();
-      let jobNotificationsStatus = JSON.parse(localStorage.getItem('job_notifications_status') || '{}');
-      delete jobNotificationsStatus[id];
-      localStorage.setItem('job_notifications_status', JSON.stringify(jobNotificationsStatus));
+      let notif = JSON.parse(localStorage.getItem('job_notifications_status') || '{}');
+      delete notif[id];
+      localStorage.setItem('job_notifications_status', JSON.stringify(notif));
     };
   }
 }
 function alternarStatusManual(jobId, novoStatus) {
-  const tx = db.transaction('jobs', 'readwrite');
+  const tx = db.transaction('jobs','readwrite');
   tx.objectStore('jobs').get(jobId).onsuccess = function(e) {
     const job = e.target.result;
     if (!job) return;
     if (novoStatus === 'pago' && !isDataPagamentoAtingida(job)) {
-      alert('A data de pagamento prevista ainda não foi atingida. Não é possível marcar como pago antecipadamente.');
+      alert('Data de pagamento ainda não atingida.');
       return;
     }
     job.statusManual = novoStatus;
-    const req = tx.objectStore('jobs').put(job);
-    req.onsuccess = () => {
-      executarBackupAutomatico();
-      atualizarTela();
-    };
+    tx.objectStore('jobs').put(job).onsuccess = () => { executarBackupAutomatico(); atualizarTela(); };
   };
 }
 
 // ============================================================
-//  RENDERIZAÇÃO DA TELA PRINCIPAL
+//  RENDERIZAÇÃO DA TELA
 // ============================================================
 function atualizarTela() {
   if (!db) return;
   const painel = document.getElementById('listaHistorico');
   painel.innerHTML = '';
-  let tBruto = 0, tNF = 0, tHoras = 0;
+  let tBruto=0, tNF=0, tHoras=0;
   let dictGrafico = {};
 
-  const txE = db.transaction('empresas', 'readonly');
+  const txE = db.transaction('empresas','readonly');
   txE.objectStore('empresas').getAll().onsuccess = function(e_empresas) {
     const todasEmpresas = e_empresas.target.result;
-    const hasNFCost = todasEmpresas.some(emp => (emp.nfPercentual > 0 && emp.nfPercentual !== null));
-    document.getElementById('dashboardNfCard').style.display = hasNFCost ? 'block' : 'none';
-    document.getElementById('dashboardLiquidoCard').style.display = hasNFCost ? 'block' : 'none';
+    const hasNF = todasEmpresas.some(emp => emp.nfPercentual > 0 && emp.nfPercentual !== null);
+    document.getElementById('dashboardNfCard').style.display = hasNF ? 'block' : 'none';
+    document.getElementById('dashboardLiquidoCard').style.display = hasNF ? 'block' : 'none';
 
-    const tx = db.transaction('jobs', 'readonly');
+    const tx = db.transaction('jobs','readonly');
     tx.objectStore('jobs').getAll().onsuccess = function(event) {
-      const matriz = event.target.result.sort((a, b) => new Date(b.data) - new Date(a.data));
-
-      matriz.forEach(reg => {
-        const status = obterStatusPeriodo(reg);
+      const jobs = event.target.result.sort((a,b) => new Date(b.data) - new Date(a.data));
+      jobs.forEach(job => {
+        const status = obterStatusPeriodo(job);
         if (status === 'aberto') {
-          tBruto += reg.total || 0;
-          tNF += reg.valorNF || 0;
-          tHoras += parseFloat(reg.horas || 0);
-          dictGrafico[reg.empresa] = (dictGrafico[reg.empresa] || 0) + reg.total;
+          tBruto += job.total || 0;
+          tNF += job.valorNF || 0;
+          tHoras += job.horas || 0;
+          dictGrafico[job.empresa] = (dictGrafico[job.empresa] || 0) + job.total;
         }
-        if (!mapaCores[reg.empresa]) mapaCores[reg.empresa] = coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
+        if (!mapaCores[job.empresa]) mapaCores[job.empresa] = coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
 
-        const shouldDisplay = (filtroVisualizacao === 'aberto' && status === 'aberto') ||
-                              (filtroVisualizacao === 'arquivado' && (status === 'arquivado' || status === 'pago'));
-        if (shouldDisplay) {
+        const exibir = (filtroVisualizacao === 'aberto' && status === 'aberto') ||
+                       (filtroVisualizacao === 'arquivado' && (status === 'arquivado' || status === 'pago'));
+        if (exibir) {
           const card = document.createElement('div');
           card.className = 'history-card';
-          card.style.borderLeft = '6px solid ' + mapaCores[reg.empresa];
+          card.style.borderLeftColor = mapaCores[job.empresa];
 
           let badge = '';
           if (status === 'aberto') badge = '<span class="badge-status status-aberto"><i class="fas fa-circle"></i> Aberto</span>';
           else if (status === 'arquivado') badge = '<span class="badge-status status-fechado"><i class="fas fa-clock"></i> Aguardando</span>';
           else badge = '<span class="badge-status status-pago"><i class="fas fa-check-circle"></i> Quitado</span>';
 
-          let acaoStatus = '';
+          let acao = '';
           if (status === 'pago') {
-            acaoStatus = `<button class="btn btn-filter" style="margin-top:8px; padding:6px;" onclick="alternarStatusManual(${reg.id}, null)">
-              <i class="fas fa-undo"></i> Reabrir
-            </button>`;
+            acao = `<button class="btn btn-filter" style="margin-top:6px; padding:4px;" onclick="alternarStatusManual(${job.id}, null)"><i class="fas fa-undo"></i> Reabrir</button>`;
           } else {
-            const dataAtingida = isDataPagamentoAtingida(reg);
-            if (dataAtingida) {
-              acaoStatus = `<button class="btn btn-filter" style="margin-top:8px; padding:6px; background: var(--success); color: white;" onclick="alternarStatusManual(${reg.id}, 'pago')">
-                <i class="fas fa-check"></i> Marcar como Pago
-              </button>`;
+            const atingida = isDataPagamentoAtingida(job);
+            if (atingida) {
+              acao = `<button class="btn btn-filter" style="margin-top:6px; padding:4px; background:var(--success); color:white;" onclick="alternarStatusManual(${job.id}, 'pago')"><i class="fas fa-check"></i> Marcar Pago</button>`;
             } else {
-              acaoStatus = `<button class="btn btn-filter btn-status-disabled" style="margin-top:8px; padding:6px;" disabled>
-                <i class="fas fa-calendar-alt"></i> Pagamento previsto: ${reg.previsaoPagamento}
-              </button>`;
+              acao = `<button class="btn btn-filter btn-status-disabled" style="margin-top:6px; padding:4px;" disabled>Previsto: ${job.previsaoPagamento}</button>`;
             }
           }
 
+          const horasFormatadas = formatarHoras(job.horas || 0);
+
           card.innerHTML = `
-            <button class="btn-del" onclick="deletarJob(${reg.id})"><i class="fas fa-trash"></i></button>
-            <button class="btn-edit-inline" onclick="carregarJobParaEdicao(${reg.id})"><i class="fas fa-edit"></i></button>
-            <div class="empresa-title">${reg.empresa}</div>
-            <div class="meta-text"><i class="fas fa-calendar-alt"></i> ${formatarDataComDiaSemana(reg.data)} | <i class="fas fa-tasks"></i> ${reg.job}</div>
+            <button class="btn-del" onclick="deletarJob(${job.id})"><i class="fas fa-trash"></i></button>
+            <button class="btn-edit-inline" onclick="carregarJobParaEdicao(${job.id})"><i class="fas fa-edit"></i></button>
+            <div class="empresa-title">${job.empresa}</div>
+            <div class="meta-text"><i class="fas fa-calendar-alt"></i> ${formatarDataComDiaSemana(job.data)} | <i class="fas fa-tasks"></i> ${job.job}</div>
             <div>${badge}</div>
-            <div class="meta-text" style="margin-top:8px;"><i class="fas fa-clock"></i> Horários: ${reg.inicio} às ${reg.fim} (${reg.horas}h)</div>
-            <div class="meta-text"><i class="fas fa-dollar-sign"></i> Cachê: ${formatarValor(reg.cache)}</div>
-            <div class="meta-text"><i class="fas fa-utensils"></i> Diária: ${formatarValor(reg.diaria)}</div>
-            <div class="meta-text"><i class="fas fa-clock"></i> Horas Extras: ${formatarValor(reg.extra)}</div>
-            <div class="meta-text"><i class="fas fa-calendar-check"></i> Previsão de Recebimento: <b>${reg.previsaoPagamento}</b></div>
-            <div style="margin-top:10px; font-weight:900;">Total Bruto: <span>${formatarValor(reg.total)}</span></div>
-            ${acaoStatus}
+            <div class="meta-text"><i class="fas fa-clock"></i> ${job.inicio} às ${job.fim} (${horasFormatadas})</div>
+            <div class="meta-text"><i class="fas fa-dollar-sign"></i> Cachê: ${formatarValor(job.cache)}</div>
+            <div class="meta-text"><i class="fas fa-utensils"></i> Diária: ${formatarValor(job.diaria)}</div>
+            <div class="meta-text"><i class="fas fa-clock"></i> Extras: ${formatarValor(job.extra)}</div>
+            <div class="meta-text"><i class="fas fa-calendar-check"></i> Previsão: <b>${job.previsaoPagamento}</b></div>
+            <div style="margin-top:6px; font-weight:700;">Total: ${formatarValor(job.total)}</div>
+            ${acao}
           `;
           painel.appendChild(card);
         }
@@ -1735,12 +1475,9 @@ function atualizarTela() {
       document.getElementById('vTotalSemana').innerText = formatarValor(tBruto);
       document.getElementById('vTotalNF').innerText = '- ' + formatarValor(tNF);
       document.getElementById('vTotalLiquido').innerText = formatarValor(tBruto - tNF);
-      document.getElementById('vTotalHoras').innerText = tHoras.toFixed(1) + 'h';
+      document.getElementById('vTotalHoras').innerText = formatarHoras(tHoras);
       renderGrafico(dictGrafico);
-
-      if (document.getElementById('searchBox').style.display === 'block') {
-        filtrarTabela();
-      }
+      if (document.getElementById('searchBox').style.display === 'block') filtrarTabela();
     };
   };
 }
@@ -1749,8 +1486,7 @@ function renderGrafico(dict) {
   if (!ctx) return;
   const labels = Object.keys(dict);
   const values = Object.values(dict);
-  const colors = labels.map(lbl => mapaCores[lbl]);
-
+  const colors = labels.map(l => mapaCores[l] || '#94a3b8');
   if (window.chartInstance) {
     window.chartInstance.data.labels = labels;
     window.chartInstance.data.datasets[0].data = values;
@@ -1760,37 +1496,29 @@ function renderGrafico(dict) {
     if (labels.length === 0) {
       if (window.chartInstance) { window.chartInstance.destroy(); window.chartInstance = null; }
       const container = ctx.parentNode;
-      if (!container.querySelector('p.no-data-message')) {
+      if (!container.querySelector('p.no-data')) {
         const msg = document.createElement('p');
-        msg.className = 'no-data-message';
-        msg.style.cssText = 'color:var(--muted); text-align:center;';
-        msg.innerHTML = '<i class="fas fa-chart-bar"></i> Nenhum dado de faturamento para exibir.';
+        msg.className = 'no-data';
+        msg.style.cssText = 'color:var(--muted); text-align:center; padding:20px;';
+        msg.innerHTML = '<i class="fas fa-chart-bar"></i> Sem dados';
         container.appendChild(msg);
-        const existingCanvas = container.querySelector('#graficoEmpresas');
-        if (existingCanvas) existingCanvas.remove();
-        const newCanvas = document.createElement('canvas');
-        newCanvas.id = 'graficoEmpresas';
-        container.appendChild(newCanvas);
+        const old = container.querySelector('#graficoEmpresas');
+        if (old) old.remove();
+        const novo = document.createElement('canvas');
+        novo.id = 'graficoEmpresas';
+        container.appendChild(novo);
       }
       return;
-    } else {
-      const noDataMessage = ctx.parentNode.querySelector('p.no-data-message');
-      if (noDataMessage) noDataMessage.remove();
     }
+    const noData = ctx.parentNode.querySelector('p.no-data');
+    if (noData) noData.remove();
     window.chartInstance = new Chart(ctx, {
       type: 'bar',
-      data: { labels: labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 8 }] },
+      data: { labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 6 }] },
       options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: function(context) { return formatarValor(context.parsed.y); },
-              title: function(context) { return context[0].label; }
-            }
-          }
-        },
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
         scales: { y: { display: false }, x: { ticks: { color: '#94a3b8' } } }
       }
     });
@@ -1798,126 +1526,187 @@ function renderGrafico(dict) {
 }
 
 // ============================================================
-//  EXPORTAÇÃO E BACKUP
+//  EXPORTAÇÃO EXCEL (AGRUPADO POR EMPRESA E MÊS)
 // ============================================================
 function baixarExcelCompleto() {
-  const tx = db.transaction('jobs', 'readonly');
-  tx.objectStore('jobs').getAll().onsuccess = function(event) {
-    const jobs = event.target.result.sort((a, b) => new Date(b.data) - new Date(a.data));
-    let csv = 'ID;Data;Empresa;Job;Cache;Diaria;Horas Extras;Total Bruto;Imposto NF;Valor Liquido;Previsao Pagamento\n';
-    jobs.forEach(i => {
-      const valorLiquido = i.total - i.valorNF;
-      csv += `${i.id};${i.data};${i.empresa};${i.job};${i.cache.toFixed(2)};${i.diaria.toFixed(2)};${i.extra.toFixed(2)};${i.total.toFixed(2)};${i.valorNF.toFixed(2)};${valorLiquido.toFixed(2)};${i.previsaoPagamento}\n`;
+  if (!db) return;
+  const tx = db.transaction('jobs','readonly');
+  tx.objectStore('jobs').getAll().onsuccess = function(e) {
+    const jobs = e.target.result;
+    if (!jobs.length) { alert('Nenhum job para exportar.'); return; }
+    // Agrupar por empresa e mês
+    const grupos = {};
+    jobs.forEach(j => {
+      const [ano, mes] = j.data.split('-');
+      const chave = `${j.empresa}|${ano}-${mes}`;
+      if (!grupos[chave]) grupos[chave] = { empresa: j.empresa, mes: `${mes}/${ano}`, jobs: [] };
+      grupos[chave].jobs.push(j);
     });
-    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+
+    let csv = '\uFEFF'; // BOM para Excel
+    csv += 'EMPRESA;MÊS;DATA;JOB;INÍCIO;FIM;HORAS;CACHÊ;DIÁRIA;EXTRAS;TOTAL BRUTO;NF;LÍQUIDO;PREVISÃO PAGTO\n';
+    let totalGeral = 0;
+    Object.keys(grupos).forEach(key => {
+      const grupo = grupos[key];
+      // Linha de cabeçalho do grupo
+      csv += `\n"${grupo.empresa}";"${grupo.mes}";;;;TOTAL MÊS:;;;;;;\n`;
+      let subTotal = 0;
+      grupo.jobs.forEach(j => {
+        const liquido = j.total - (j.valorNF || 0);
+        csv += `${j.empresa};${grupo.mes};${j.data};${j.job};${j.inicio};${j.fim};${formatarHoras(j.horas)};${j.cache.toFixed(2)};${j.diaria.toFixed(2)};${j.extra.toFixed(2)};${j.total.toFixed(2)};${(j.valorNF||0).toFixed(2)};${liquido.toFixed(2)};${j.previsaoPagamento}\n`;
+        subTotal += j.total;
+        totalGeral += j.total;
+      });
+      csv += `;;;;;TOTAL ${grupo.empresa}:;${subTotal.toFixed(2)};;;;\n`;
+    });
+    csv += `\nTOTAL GERAL;${totalGeral.toFixed(2)};;;;\n`;
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `fader_livre_faturamento_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `fader_livre_export_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
-    alert('Planilha CSV exportada!');
+    alert('Exportação concluída!');
   };
 }
-function fazerBackup() {
-  const txJ = db.transaction('jobs', 'readonly');
+
+// ============================================================
+//  BACKUP NA NUVEM (envia para servidor PHP)
+// ============================================================
+function enviarBackupNuvem() {
+  if (!db) return;
+  // Coleta dados
+  const txJ = db.transaction('jobs','readonly');
   txJ.objectStore('jobs').getAll().onsuccess = function(e_jobs) {
-    const dadosJobs = e_jobs.target.result;
-    const txE = db.transaction('empresas', 'readonly');
+    const jobs = e_jobs.target.result;
+    const txE = db.transaction('empresas','readonly');
     txE.objectStore('empresas').getAll().onsuccess = function(e_empresas) {
-      const dadosEmpresas = e_empresas.target.result;
-      const pacote = { jobs: dadosJobs, empresas: dadosEmpresas, exportadoEm: new Date().toISOString() };
+      const empresas = e_empresas.target.result;
+      const pacote = { jobs, empresas, exportadoEm: new Date().toISOString() };
+      const json = JSON.stringify(pacote);
+      // Envia para um endpoint PHP (exemplo)
+      // Se não tiver servidor, faz download forçado como alternativa
+      if (confirm('Deseja enviar para a nuvem (servidor) ou baixar localmente?')) {
+        // Tentar enviar via fetch
+        const url = 'https://seudominio.com/backup_cloud.php'; // Substitua pela URL real
+        fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: json
+        })
+        .then(res => res.json())
+        .then(data => {
+          alert(data.message || 'Backup enviado com sucesso!');
+        })
+        .catch(err => {
+          alert('Falha ao enviar para a nuvem. Fazendo download local como fallback.');
+          fazerBackup();
+        });
+      } else {
+        fazerBackup();
+      }
+    };
+  };
+}
+
+// ============================================================
+//  BACKUP LOCAL
+// ============================================================
+function fazerBackup() {
+  const txJ = db.transaction('jobs','readonly');
+  txJ.objectStore('jobs').getAll().onsuccess = function(e_jobs) {
+    const jobs = e_jobs.target.result;
+    const txE = db.transaction('empresas','readonly');
+    txE.objectStore('empresas').getAll().onsuccess = function(e_empresas) {
+      const empresas = e_empresas.target.result;
+      const pacote = { jobs, empresas, exportadoEm: new Date().toISOString() };
       const blob = new Blob([JSON.stringify(pacote, null, 2)], { type: 'application/json' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
       link.download = `fader_livre_backup_${new Date().toISOString().split('T')[0]}.json`;
       link.click();
-      alert('Cópia de segurança gerada!');
+      alert('Backup local gerado!');
     };
   };
 }
-document.getElementById('restoreFile').addEventListener('change', function(event) {
-  const arquivo = event.target.files[0];
+document.getElementById('restoreFile').addEventListener('change', function(e) {
+  const arquivo = e.target.files[0];
   if (!arquivo) return;
   const leitor = new FileReader();
   leitor.onload = function() {
     try {
       const dados = JSON.parse(leitor.result);
-      if (dados.jobs && dados.empresas) {
-        const txClearJ = db.transaction('jobs', 'readwrite');
-        txClearJ.objectStore('jobs').clear().onsuccess = () => {
-          const txJ = db.transaction('jobs', 'readwrite');
-          const storeJ = txJ.objectStore('jobs');
-          dados.jobs.forEach(item => storeJ.put(item));
-          txJ.oncomplete = function() {
-            const txClearE = db.transaction('empresas', 'readwrite');
-            txClearE.objectStore('empresas').clear().onsuccess = () => {
-              const txE = db.transaction('empresas', 'readwrite');
-              const storeE = txE.objectStore('empresas');
-              dados.empresas.forEach(item => storeE.put(item));
-              txE.oncomplete = function() {
-                alert('Restauração concluída!');
-                executarBackupAutomatico();
-                window.location.reload();
-              };
+      if (!dados.jobs || !dados.empresas) { alert('Arquivo inválido.'); return; }
+      const txClearJ = db.transaction('jobs','readwrite');
+      txClearJ.objectStore('jobs').clear().onsuccess = () => {
+        const txJ = db.transaction('jobs','readwrite');
+        const storeJ = txJ.objectStore('jobs');
+        dados.jobs.forEach(item => storeJ.put(item));
+        txJ.oncomplete = function() {
+          const txClearE = db.transaction('empresas','readwrite');
+          txClearE.objectStore('empresas').clear().onsuccess = () => {
+            const txE = db.transaction('empresas','readwrite');
+            const storeE = txE.objectStore('empresas');
+            dados.empresas.forEach(item => storeE.put(item));
+            txE.oncomplete = function() {
+              alert('Restauração concluída!');
+              executarBackupAutomatico();
+              window.location.reload();
             };
           };
         };
-      } else {
-        alert('Arquivo de backup inválido.');
-      }
-    } catch(err) {
-      alert('Erro ao processar arquivo: ' + err.message);
-    }
+      };
+    } catch(err) { alert('Erro ao ler backup: '+err.message); }
   };
   leitor.readAsText(arquivo);
 });
+
 function executarBackupAutomatico() {
   if (!db) return;
-  const txJ = db.transaction('jobs', 'readonly');
+  const txJ = db.transaction('jobs','readonly');
   txJ.objectStore('jobs').getAll().onsuccess = function(e_jobs) {
-    const dadosJobs = e_jobs.target.result;
-    const txE = db.transaction('empresas', 'readonly');
+    const jobs = e_jobs.target.result;
+    const txE = db.transaction('empresas','readonly');
     txE.objectStore('empresas').getAll().onsuccess = function(e_empresas) {
-      const dadosEmpresas = e_empresas.target.result;
-      const payload = { jobs: dadosJobs, empresas: dadosEmpresas, dataBackup: new Date().toISOString() };
-      localStorage.setItem('fader_livre_auto_backup', JSON.stringify(payload));
-      console.log('Backup automático realizado.');
+      const empresas = e_empresas.target.result;
+      localStorage.setItem('fader_livre_auto_backup', JSON.stringify({ jobs, empresas, dataBackup: new Date().toISOString() }));
     };
   };
 }
 
 // ============================================================
-//  WHATSAPP E CONFIGURAÇÕES
+//  WHATSAPP
 // ============================================================
 function enviarRelatorioWhatsApp() {
-  const tx = db.transaction('jobs', 'readonly');
-  tx.objectStore('jobs').getAll().onsuccess = function(event) {
+  const tx = db.transaction('jobs','readonly');
+  tx.objectStore('jobs').getAll().onsuccess = function(e) {
+    const jobs = e.target.result;
     const busca = document.getElementById('inputBusca').value.trim().toUpperCase();
-    const buscaAtiva = (document.getElementById('searchBox').style.display === 'block') && busca.length > 0;
-    const filtrados = event.target.result.filter(job => {
-      const status = obterStatusPeriodo(job);
+    const buscaAtiva = document.getElementById('searchBox').style.display === 'block' && busca.length > 0;
+    const filtrados = jobs.filter(j => {
+      const status = obterStatusPeriodo(j);
       if (filtroVisualizacao === 'aberto' && status !== 'aberto') return false;
       if (filtroVisualizacao === 'arquivado' && status === 'aberto') return false;
       if (buscaAtiva) {
-        const textoCard = `${job.empresa} ${job.job} ${job.data.split('-').reverse().join('/')}`.toUpperCase();
-        return textoCard.includes(busca);
+        const texto = `${j.empresa} ${j.job} ${j.data}`.toUpperCase();
+        return texto.includes(busca);
       }
       return true;
-    }).sort((a, b) => new Date(b.data) - new Date(a.data));
+    }).sort((a,b) => new Date(b.data) - new Date(a.data));
 
-    if (filtrados.length === 0) { alert('Nenhum registro encontrado no filtro atual.'); return; }
-
+    if (!filtrados.length) { alert('Nenhum registro para enviar.'); return; }
     let msg = 'FADER LIVRE - EXTRATO CACHÊ CONTROL\n--------------------------------------\n\n';
     let total = 0;
     filtrados.forEach(j => {
       msg += `*${j.empresa}* - ${formatarDataComDiaSemana(j.data)}\n`;
       msg += `Job: ${j.job}\nCachê: R$ ${j.cache.toFixed(2)}\nDiária: R$ ${j.diaria.toFixed(2)}\n`;
-      msg += `Horas Extras: R$ ${j.extra.toFixed(2)}\nTotal: R$ ${j.total.toFixed(2)}\n`;
+      msg += `Extras: R$ ${j.extra.toFixed(2)}\nTotal: R$ ${j.total.toFixed(2)}\n`;
       msg += `Previsão: ${j.previsaoPagamento}\n\n`;
       total += j.total;
     });
     msg += '--------------------------------------\n';
     msg += `*TOTAL GERAL: R$ ${total.toFixed(2)}*\n`;
-    msg += `Relatório gerado em: ${new Date().toLocaleDateString('pt-BR')}\n`;
+    msg += `Relatório: ${new Date().toLocaleDateString('pt-BR')}`;
     window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg), '_blank');
   };
 }
@@ -1927,33 +1716,38 @@ function enviarRelatorioWhatsApp() {
 // ============================================================
 function toggleTheme() {
   document.body.classList.toggle('light-mode');
-  const currentTheme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
-  localStorage.setItem('app_theme', currentTheme);
+  localStorage.setItem('app_theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
 }
-function updateBaseHours(value) {
-  const newHours = parseFloat(value);
-  if (!isNaN(newHours) && newHours > 0) {
-    BASE_HOURS = newHours;
-    localStorage.setItem('base_hours', newHours);
-    alert(`Horas base atualizadas para ${newHours}.`);
-  } else {
-    alert('Insira um número válido maior que zero.');
-    document.getElementById('baseHoursInput').value = BASE_HOURS;
-  }
+function updateBaseHours(v) {
+  const novo = parseFloat(v);
+  if (isNaN(novo) || novo <= 0) { alert('Valor inválido.'); document.getElementById('baseHoursInput').value = BASE_HOURS; return; }
+  BASE_HOURS = novo;
+  localStorage.setItem('base_hours', novo);
+  alert('Horas base atualizadas.');
 }
-function updateNotificationCheckHour(value) {
+function updateNotificationCheckHour(v) {
   const regex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
-  if (!regex.test(value)) {
-    alert('Formato inválido. Use HH:MM (ex: 09:00).');
-    document.getElementById('notificationCheckHour').value = localStorage.getItem('notification_check_hour') || '09:00';
-    return;
+  if (!regex.test(v)) { alert('Formato HH:MM'); document.getElementById('notificationCheckHour').value = localStorage.getItem('notification_check_hour') || '09:00'; return; }
+  localStorage.setItem('notification_check_hour', v);
+  alert('Horário de notificação atualizado.');
+}
+function testarNotificacao() {
+  if (!('Notification' in window)) { alert('Notificações não suportadas.'); return; }
+  if (Notification.permission === 'granted') {
+    new Notification('Teste Fader Livre', { body: 'Notificação funcionando!' });
+  } else {
+    Notification.requestPermission().then(perm => {
+      if (perm === 'granted') {
+        new Notification('Teste Fader Livre', { body: 'Notificação funcionando!' });
+      } else {
+        alert('Permissão negada. Ative nas configurações do navegador.');
+      }
+    });
   }
-  localStorage.setItem('notification_check_hour', value);
-  alert('Horário de verificação atualizado.');
 }
 
 // ============================================================
-//  NOTIFICAÇÕES
+//  NOTIFICAÇÕES PUSH
 // ============================================================
 function checkAndRequestNotificationPermission() {
   if (!('Notification' in window)) return;
@@ -1962,64 +1756,49 @@ function checkAndRequestNotificationPermission() {
 let jobNotificationsStatus = JSON.parse(localStorage.getItem('job_notifications_status') || '{}');
 function sendPaymentNotification(job) {
   if (Notification.permission !== 'granted') return;
-  const todayStr = new Date().toISOString().split('T')[0];
-  if (jobNotificationsStatus[job.id] === todayStr) return;
+  const hojeStr = new Date().toISOString().split('T')[0];
+  if (jobNotificationsStatus[job.id] === hojeStr) return;
   const options = {
-    body: `O pagamento do job "${job.job}" da ${job.empresa} no valor de ${formatarValor(job.total)} vence hoje!`,
+    body: `Job "${job.job}" da ${job.empresa} no valor de ${formatarValor(job.total)} vence hoje!`,
     icon: 'https://cdn-icons-png.flaticon.com/512/32/32210.png'
   };
-  new Notification('📢 Pagamento de Job Hoje!', options);
-  jobNotificationsStatus[job.id] = todayStr;
+  new Notification('📢 Pagamento Hoje!', options);
+  jobNotificationsStatus[job.id] = hojeStr;
   localStorage.setItem('job_notifications_status', JSON.stringify(jobNotificationsStatus));
 }
 function checkDuePayments() {
   if (!db || Notification.permission !== 'granted') return;
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  const [h, m] = (localStorage.getItem('notification_check_hour') || '09:00').split(':').map(Number);
-  const now = new Date();
-  if (now.getHours() < h || (now.getHours() === h && now.getMinutes() < m)) return;
-
-  const tx = db.transaction('jobs', 'readonly');
-  tx.objectStore('jobs').getAll().onsuccess = function(event) {
-    event.target.result.forEach(job => {
-      const dataFechamento = calcularDataFechamentoReal(
-        job.data, job.tipoPagamento, job.fimPeriodo,
-        job.inicioSemana, job.fimSemana, job.inicioCiclo1,
-        job.fimCiclo1, job.inicioCiclo2, job.fimCiclo2
-      );
-      const dataPagamentoObj = calcularDataPagamentoReal(dataFechamento, job.diasPagamento);
-      if (dataPagamentoObj.getTime() === today.getTime()) sendPaymentNotification(job);
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const [h,m] = (localStorage.getItem('notification_check_hour') || '09:00').split(':').map(Number);
+  const agora = new Date();
+  if (agora.getHours() < h || (agora.getHours() === h && agora.getMinutes() < m)) return;
+  const tx = db.transaction('jobs','readonly');
+  tx.objectStore('jobs').getAll().onsuccess = function(e) {
+    e.target.result.forEach(job => {
+      const fech = calcularDataFechamentoReal(job.data, job.tipoPagamento, job.fimPeriodo, job.inicioSemana, job.fimSemana, job.inicioCiclo1, job.fimCiclo1, job.inicioCiclo2, job.fimCiclo2);
+      const pag = calcularDataPagamentoReal(fech, job.diasPagamento);
+      if (pag.getTime() === hoje.getTime()) sendPaymentNotification(job);
     });
   };
 }
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') checkDuePayments();
-});
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkDuePayments(); });
 window.addEventListener('focus', checkDuePayments);
 
 // ============================================================
 //  INICIALIZAÇÃO AUTOMÁTICA
 // ============================================================
 (function() {
-  // Verifica se já existe licença, senão gera automaticamente
-  const statusLic = sistemaLicenca.verificarExpiracaoProxima();
-  if (statusLic.alerta) {
-    // Caso raro, mostra a validação
-    mostrarTelaValidacao(statusLic);
+  const status = sistemaLicenca.verificarExpiracaoProxima();
+  if (status.alerta) {
+    document.getElementById('telaValidacao').style.display = 'flex';
     document.getElementById('appContent').style.display = 'none';
   } else {
-    // Licença ok: esconde validação
-    esconderTelaValidacao();
-    // Verifica se já tem senha master
+    document.getElementById('telaValidacao').style.display = 'none';
     const senha = localStorage.getItem('senha_cache_control');
     if (senha) {
-      // Se já tem, tenta login automático (opcional)
-      // Aqui deixamos a tela de login aparecendo para o usuário digitar
       document.getElementById('loginScreen').style.display = 'flex';
       document.getElementById('appContent').style.display = 'none';
     } else {
-      // Primeiro acesso: mostra tela de login para definir senha
       document.getElementById('loginScreen').style.display = 'flex';
       document.getElementById('appContent').style.display = 'none';
     }
