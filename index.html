@@ -2,367 +2,826 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#1a1a2e">
-    <title>CacheApp - Gestão de Cache Profissional</title>
-    <link rel="stylesheet" href="elegant-theme.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CacheApp - Gestão de Cache</title>
+    <style>
+        /* ========== SISTEMA DE DESIGN ELEGANTE ========== */
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+            --radius: 12px;
+        }
+
+        .dark-mode {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text: #f1f5f9;
+            --text-light: #94a3b8;
+            --border: #334155;
+            --shadow: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-lg: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* ========== HEADER ========== */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* ========== BOTÕES ========== */
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background: var(--bg);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 12px;
+        }
+
+        /* ========== BANNER DE EXPIRAÇÃO ========== */
+        .expiry-banner {
+            background: #fef3c7;
+            border-bottom: 2px solid var(--warning);
+            padding: 10px 24px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 14px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .dark-mode .expiry-banner {
+            background: #422006;
+            border-color: #d97706;
+            color: #fde68a;
+        }
+
+        /* ========== CONTAINER ========== */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* ========== ESTATÍSTICAS ========== */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.blue {
+            background: #dbeafe;
+        }
+        .stat-icon.green {
+            background: #d1fae5;
+        }
+        .stat-icon.yellow {
+            background: #fef3c7;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        /* ========== BARRA DE STATUS ========== */
+        .status-bar {
+            background: var(--surface);
+            padding: 16px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.error {
+            background: var(--danger);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ========== LISTA DE ITENS ========== */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .item-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .item-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .item-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .item-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .item-emoji {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .item-cache-time {
+            font-size: 12px;
+            color: var(--text-light);
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .item-size {
+            font-size: 11px;
+            color: var(--primary);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* ========== LOADING ========== */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== MODAL DE LICENÇA ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 440px;
+            width: 90%;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            animation: scaleIn 0.3s ease;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .modal h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .modal p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .code-box {
+            background: var(--bg);
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .code-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+
+        .device-code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .pix-box {
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .pix-key {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            word-break: break-all;
+            color: var(--primary);
+        }
+
+        .input-key {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: var(--surface);
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .input-key:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* ========== VAZIO ========== */
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 56px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* ========== RESPONSIVO ========== */
+        @media (max-width: 600px) {
+            .header {
+                padding: 12px 16px;
+            }
+            .logo {
+                font-size: 16px;
+            }
+            .container {
+                padding: 16px;
+            }
+            .items-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- ========== HEADER PROFISSIONAL ========== -->
-    <header class="app-header">
-        <div class="app-logo">
-            <div class="logo-icon">📦</div>
-            <span>CacheApp</span>
+    <!-- ========== HEADER ========== -->
+    <header class="header">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            CacheApp
         </div>
-        <nav class="app-menu">
-            <button class="menu-btn active" onclick="switchTab('dashboard')">
-                <span>📊</span> Dashboard
+        <div class="header-actions">
+            <button class="btn btn-sm" onclick="toggleDarkMode()" title="Alternar tema">
+                <span id="themeIcon">🌙</span>
             </button>
-            <button class="menu-btn" onclick="switchTab('config')">
-                <span>⚙️</span> Config
+            <button class="btn btn-sm" onclick="atualizarCache()" title="Atualizar cache">
+                🔄 Atualizar
             </button>
-            <button class="menu-btn" onclick="switchTab('license')">
-                <span>🔑</span> Licença
-            </button>
-        </nav>
+        </div>
     </header>
 
-    <!-- ========== BANNER DE EXPIRAÇÃO (oculto por padrão) ========== -->
-    <div class="expiry-banner" id="expiryBanner" style="display: none;">
-        <span class="icon-warning">⚠️</span>
-        <span>Sua licença expira em <strong id="daysRemaining">0</strong> dias</span>
-        <button class="btn-renew" onclick="showLicenseTab()">Renovar Agora</button>
+    <!-- ========== BANNER DE EXPIRAÇÃO ========== -->
+    <div class="expiry-banner" id="expiryBanner">
+        ⚠️ Sua licença expira em <strong id="diasRestantes">0</strong> dias.
+        <button class="btn btn-sm btn-primary" onclick="mostrarModalLicenca()" style="margin-left: 10px;">
+            Renovar
+        </button>
     </div>
 
     <!-- ========== CONTEÚDO PRINCIPAL ========== -->
-    <main class="main-container">
-
-        <!-- TAB: DASHBOARD -->
-        <section id="tab-dashboard" class="tab-content active">
-            <h2 class="section-title">📋 Meu Cache</h2>
-            <p class="section-subtitle">Itens armazenados em cache no dispositivo</p>
-
-            <!-- ESTATÍSTICAS -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #ffeaa7, #fdcb6e);">📦</div>
-                    <div>
-                        <div class="stat-value" id="totalItems">6</div>
-                        <div class="stat-label">Total de Itens</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #55efc4, #00b894);">💾</div>
-                    <div>
-                        <div class="stat-value" id="totalSize">2.4 MB</div>
-                        <div class="stat-label">Espaço Utilizado</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #74b9ff, #0984e3);">⚡</div>
-                    <div>
-                        <div class="stat-value" id="hitRate">94%</div>
-                        <div class="stat-label">Taxa de Cache Hit</div>
-                    </div>
+    <main class="container">
+        <!-- ESTATÍSTICAS -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-icon blue">📦</div>
+                <div>
+                    <div class="stat-value" id="totalItens">-</div>
+                    <div class="stat-label">Itens em Cache</div>
                 </div>
             </div>
-
-            <!-- BARRA DE PROGRESSO -->
-            <div style="background: white; padding: 16px; border-radius: 14px; margin-bottom: 20px;">
-                <span style="font-weight: 600;">Uso do Cache</span>
-                <span style="float: right; color: #7f8c8d;">2.4 MB / 10 MB</span>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 24%;"></div>
+            <div class="stat-card">
+                <div class="stat-icon green">✅</div>
+                <div>
+                    <div class="stat-value" id="cacheHits">-</div>
+                    <div class="stat-label">Cache Hits</div>
                 </div>
             </div>
-
-            <!-- GRADE DE ITENS -->
-            <div class="items-grid" id="itemsGrid">
-                <!-- Item 1 -->
-                <div class="item-card" onclick="viewItem('Maçã')">
-                    <div class="item-icon fruits">🍎</div>
-                    <div class="item-name">Maçã</div>
-                    <div class="item-date">Cacheado: 10/02/2025</div>
-                    <div class="item-size">Tamanho: 245 KB</div>
-                </div>
-
-                <!-- Item 2 -->
-                <div class="item-card" onclick="viewItem('Laranja')">
-                    <div class="item-icon fruits">🍊</div>
-                    <div class="item-name">Laranja</div>
-                    <div class="item-date">Cacheado: 12/02/2025</div>
-                    <div class="item-size">Tamanho: 180 KB</div>
-                </div>
-
-                <!-- Item 3 -->
-                <div class="item-card" onclick="viewItem('Limão')">
-                    <div class="item-icon fruits">🍋</div>
-                    <div class="item-name">Limão</div>
-                    <div class="item-date">Cacheado: 15/02/2025</div>
-                    <div class="item-size">Tamanho: 95 KB</div>
-                </div>
-
-                <!-- Item 4 -->
-                <div class="item-card" onclick="viewItem('Uva')">
-                    <div class="item-icon fruits">🍇</div>
-                    <div class="item-name">Uva</div>
-                    <div class="item-date">Cacheado: 18/02/2025</div>
-                    <div class="item-size">Tamanho: 420 KB</div>
-                </div>
-
-                <!-- Item 5 -->
-                <div class="item-card" onclick="viewItem('Kiwi')">
-                    <div class="item-icon vegetables">🥝</div>
-                    <div class="item-name">Kiwi</div>
-                    <div class="item-date">Cacheado: 20/02/2025</div>
-                    <div class="item-size">Tamanho: 310 KB</div>
-                </div>
-
-                <!-- Item 6 -->
-                <div class="item-card" onclick="viewItem('Cereja')">
-                    <div class="item-icon fruits">🍒</div>
-                    <div class="item-name">Cereja</div>
-                    <div class="item-date">Cacheado: 22/02/2025</div>
-                    <div class="item-size">Tamanho: 150 KB</div>
+            <div class="stat-card">
+                <div class="stat-icon yellow">⏱️</div>
+                <div>
+                    <div class="stat-value" id="ultimaAtt">-</div>
+                    <div class="stat-label">Última Atualização</div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- TAB: CONFIGURAÇÕES -->
-        <section id="tab-config" class="tab-content">
-            <h2 class="section-title">⚙️ Configurações</h2>
-            <p class="section-subtitle">Gerencie as preferências do aplicativo</p>
-            
-            <div class="empty-state">
-                <div class="empty-icon">🔧</div>
-                <p class="empty-text">Configurações disponíveis em breve</p>
+        <!-- STATUS -->
+        <div class="status-bar">
+            <div class="status-indicator">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusTexto">Verificando...</span>
             </div>
-        </section>
+            <span style="font-size: 13px; color: var(--text-light);" id="modoCache">Modo: Online</span>
+        </div>
 
-        <!-- TAB: LICENÇA -->
-        <section id="tab-license" class="tab-content">
-            <h2 class="section-title">🔑 Licença</h2>
-            <p class="section-subtitle">Gerencie sua licença de uso</p>
-
-            <div style="background: white; padding: 24px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                <div id="licenseStatus">
-                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-                        <div style="width: 12px; height: 12px; background: #2ecc71; border-radius: 50%;" id="statusDot"></div>
-                        <strong id="licenseStatusText">Licença Ativa</strong>
-                    </div>
-                    <p style="color: #7f8c8d;" id="licenseExpiry">Expira em: <span id="licenseExpiryDate">22/02/2026</span></p>
-                    <div class="progress-bar" style="margin-top: 16px;">
-                        <div class="progress-fill" id="licenseProgress" style="width: 65%; background: linear-gradient(90deg, #2ecc71, #27ae60);"></div>
-                    </div>
-                </div>
+        <!-- LISTA DE ITENS -->
+        <div id="listaItens">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Carregando dados do cache...</p>
             </div>
-        </section>
-
+        </div>
     </main>
 
-    <!-- ========== MODAL DE LICENÇA EXPIRADA ========== -->
-    <div class="license-overlay" id="licenseOverlay" style="display: none;">
-        <div class="license-modal">
+    <!-- ========== MODAL DE LICENÇA ========== -->
+    <div class="modal-overlay" id="modalLicenca" style="display: none;">
+        <div class="modal">
             <div class="modal-icon">🔐</div>
-            <h3 class="modal-title">Período de Testes Encerrado</h3>
-            <p class="modal-text">
+            <h3 id="modalTitulo">Período de Testes Encerrado</h3>
+            <p id="modalTexto">
                 Seus 30 dias de teste gratuito terminaram.<br>
-                Adquira uma licença de 1 ano para continuar usando.
+                Adquira uma licença de 1 ano para continuar.
             </p>
 
-            <div class="device-code-box">
+            <div class="code-box">
                 <div class="code-label">Código do Dispositivo</div>
-                <div class="device-code" id="deviceCode">A7X9-M2K4</div>
-                <button class="btn-copy" onclick="copyDeviceCode()" style="margin-top: 8px;">
-                    📋 Copiar Código
+                <div class="device-code" id="deviceCode">------</div>
+                <button class="btn btn-sm" onclick="copiarCodigo()" style="margin-top: 8px;">
+                    📋 Copiar
                 </button>
             </div>
 
-            <div class="pix-section">
-                <div class="pix-title">💠 Chave PIX para Pagamento</div>
-                <div class="pix-key">cacheapp.licenca@exemplo.com</div>
-                <p style="font-size: 12px; color: #7f8c8d; margin-top: 8px;">
-                    Envie o comprovante com o código do dispositivo
-                </p>
+            <div class="pix-box">
+                <strong style="font-size: 13px;">💠 PIX para Ativação</strong>
+                <div class="pix-key" style="margin-top: 6px;">cacheapp.licenca@exemplo.com</div>
+                <small style="color: var(--text-light);">Envie o código do dispositivo no comprovante</small>
             </div>
 
-            <input type="text" 
-                   class="input-activation" 
-                   id="activationKey" 
-                   placeholder="Cole sua chave de ativação aqui">
-
-            <button class="btn-activate" onclick="activateLicense()">
+            <input type="text" class="input-key" id="inputChave" placeholder="Cole sua chave de ativação">
+            <button class="btn btn-primary" onclick="ativarLicenca()" style="width: 100%; justify-content: center;">
                 🔓 Ativar Licença (1 ano)
             </button>
         </div>
     </div>
 
-    <!-- ========== SCRIPTS ========== -->
     <script>
-        // ========== SISTEMA DE LICENCIAMENTO ==========
+        // ==========================================
+        // SISTEMA DE LICENCIAMENTO
+        // ==========================================
         
-        // Simula verificação de licença
-        function checkLicense() {
-            const licenseData = JSON.parse(localStorage.getItem('cacheapp_license') || '{}');
-            const now = new Date();
+        function verificarLicenca() {
+            let licenca = localStorage.getItem('cacheapp_licenca');
             
-            // Se não tem licença, cria trial de 30 dias
-            if (!licenseData.trialStart) {
-                licenseData.trialStart = now.toISOString();
-                licenseData.type = 'trial';
-                localStorage.setItem('cacheapp_license', JSON.stringify(licenseData));
-            }
-            
-            const trialStart = new Date(licenseData.trialStart);
-            const trialEnd = new Date(trialStart);
-            trialEnd.setDate(trialEnd.getDate() + 30);
-            
-            // Se tem licença ativa, usa data de expiração da licença
-            if (licenseData.type === 'active' && licenseData.expiresAt) {
-                const licenseExpiry = new Date(licenseData.expiresAt);
-                const daysLeft = Math.ceil((licenseExpiry - now) / (1000 * 60 * 60 * 24));
-                
-                if (daysLeft <= 0) {
-                    showLicenseOverlay();
-                } else if (daysLeft <= 7) {
-                    showExpiryBanner(daysLeft);
-                }
-                
-                updateLicenseTab(licenseData, daysLeft);
-                return;
-            }
-            
-            // Verifica trial
-            const trialDaysLeft = Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24));
-            
-            if (trialDaysLeft <= 0) {
-                showLicenseOverlay();
-            } else if (trialDaysLeft <= 7) {
-                showExpiryBanner(trialDaysLeft);
-            }
-            
-            updateLicenseTab(licenseData, trialDaysLeft);
-        }
-        
-        function showExpiryBanner(days) {
-            document.getElementById('expiryBanner').style.display = 'flex';
-            document.getElementById('daysRemaining').textContent = days;
-        }
-        
-        function showLicenseOverlay() {
-            document.getElementById('licenseOverlay').style.display = 'flex';
-            // Gera código do dispositivo
-            const code = 'DEV-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-            document.getElementById('deviceCode').textContent = code;
-        }
-        
-        function updateLicenseTab(licenseData, daysLeft) {
-            const statusDot = document.getElementById('statusDot');
-            const statusText = document.getElementById('licenseStatusText');
-            const expiryDate = document.getElementById('licenseExpiryDate');
-            const progressBar = document.getElementById('licenseProgress');
-            
-            const totalDays = licenseData.type === 'active' ? 365 : 30;
-            const progressPercent = Math.max(0, Math.min(100, (daysLeft / totalDays) * 100));
-            
-            progressBar.style.width = progressPercent + '%';
-            
-            if (daysLeft > 7) {
-                statusDot.style.background = '#2ecc71';
-                progressBar.style.background = 'linear-gradient(90deg, #2ecc71, #27ae60)';
-            } else if (daysLeft > 0) {
-                statusDot.style.background = '#f39c12';
-                progressBar.style.background = 'linear-gradient(90deg, #f39c12, #e67e22)';
+            if (!licenca) {
+                // Primeira execução: cria trial de 30 dias
+                licenca = {
+                    tipo: 'trial',
+                    inicio: new Date().toISOString(),
+                    dispositivo: gerarCodigoDispositivo()
+                };
+                localStorage.setItem('cacheapp_licenca', JSON.stringify(licenca));
             } else {
-                statusDot.style.background = '#e74c3c';
-                progressBar.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+                licenca = JSON.parse(licenca);
             }
             
-            statusText.textContent = daysLeft > 0 ? 'Licença Ativa' : 'Licença Expirada';
+            const agora = new Date();
+            const inicio = new Date(licenca.inicio);
+            let diasRestantes = 0;
             
-            const expDate = new Date();
-            expDate.setDate(expDate.getDate() + daysLeft);
-            expiryDate.textContent = expDate.toLocaleDateString('pt-BR');
+            if (licenca.tipo === 'trial') {
+                const fimTrial = new Date(inicio);
+                fimTrial.setDate(fimTrial.getDate() + 30);
+                diasRestantes = Math.ceil((fimTrial - agora) / (1000 * 60 * 60 * 24));
+            } else if (licenca.tipo === 'ativa') {
+                const fimLicenca = new Date(licenca.expiracao);
+                diasRestantes = Math.ceil((fimLicenca - agora) / (1000 * 60 * 60 * 24));
+            }
+            
+            // Atualiza código do dispositivo
+            document.getElementById('deviceCode').textContent = licenca.dispositivo;
+            
+            if (diasRestantes <= 0) {
+                // Licença expirada
+                document.getElementById('modalTitulo').textContent = 'Licença Expirada';
+                document.getElementById('modalTexto').textContent = 
+                    'Seu período de uso terminou. Adquira uma licença de 1 ano para continuar.';
+                document.getElementById('modalLicenca').style.display = 'flex';
+                document.getElementById('expiryBanner').style.display = 'none';
+            } else if (diasRestantes <= 7) {
+                // Aviso de expiração
+                document.getElementById('expiryBanner').style.display = 'block';
+                document.getElementById('diasRestantes').textContent = diasRestantes;
+            }
+            
+            return { valido: diasRestantes > 0, diasRestantes };
         }
         
-        function activateLicense() {
-            const key = document.getElementById('activationKey').value;
+        function gerarCodigoDispositivo() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            for (let i = 0; i < 8; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+        
+        function ativarLicenca() {
+            const chave = document.getElementById('inputChave').value.trim();
             
-            // Validação simples (em produção, validaria no servidor)
-            if (key.length < 10) {
-                alert('❌ Chave de ativação inválida!');
+            if (chave.length < 10) {
+                alert('❌ Chave de ativação inválida. Verifique e tente novamente.');
                 return;
             }
             
-            // Simula ativação
-            const licenseData = {
-                type: 'active',
-                trialStart: new Date().toISOString(),
-                expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-                activationKey: key
+            // Simula validação (em produção, validaria no servidor)
+            const licenca = {
+                tipo: 'ativa',
+                inicio: new Date().toISOString(),
+                expiracao: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+                dispositivo: document.getElementById('deviceCode').textContent,
+                chave: chave
             };
             
-            localStorage.setItem('cacheapp_license', JSON.stringify(licenseData));
+            localStorage.setItem('cacheapp_licenca', JSON.stringify(licenca));
             
             alert('✅ Licença ativada com sucesso! Válida por 1 ano.');
-            document.getElementById('licenseOverlay').style.display = 'none';
+            document.getElementById('modalLicenca').style.display = 'none';
             document.getElementById('expiryBanner').style.display = 'none';
-            document.getElementById('activationKey').value = '';
-            
-            checkLicense();
-            switchTab('dashboard');
+            document.getElementById('inputChave').value = '';
         }
         
-        function copyDeviceCode() {
-            const code = document.getElementById('deviceCode').textContent;
-            navigator.clipboard.writeText(code).then(() => {
+        function copiarCodigo() {
+            const codigo = document.getElementById('deviceCode').textContent;
+            navigator.clipboard.writeText(codigo).then(() => {
                 alert('📋 Código copiado!');
             });
         }
         
-        function showLicenseTab() {
-            switchTab('license');
+        function mostrarModalLicenca() {
+            document.getElementById('modalLicenca').style.display = 'flex';
         }
         
-        // ========== NAVEGAÇÃO ==========
+        // Fechar modal ao clicar fora
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'modalLicenca') {
+                document.getElementById('modalLicenca').style.display = 'none';
+            }
+        });
+
+        // ==========================================
+        // SISTEMA DE CACHE (LÓGICA ORIGINAL PRESERVADA)
+        // ==========================================
         
-        function switchTab(tabName) {
-            // Esconde todas as tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
+        const API_URL = '/api/cache';
+        let dadosCache = [];
+        let cacheHits = 0;
+        let cacheMisses = 0;
+        
+        // Modo escuro
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('themeIcon');
+            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
             
-            // Remove active de todos os botões
-            document.querySelectorAll('.menu-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            localStorage.setItem('cacheapp_tema', 
+                document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+        
+        // Carrega tema salvo
+        function carregarTema() {
+            const tema = localStorage.getItem('cacheapp_tema');
+            if (tema === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeIcon').textContent = '☀️';
+            }
+        }
+        
+        // Busca dados da API (com cache)
+        async function buscarDados(forceRefresh = false) {
+            const statusDot = document.getElementById('statusDot');
+            const statusTexto = document.getElementById('statusTexto');
             
-            // Mostra a tab selecionada
-            const tabElement = document.getElementById('tab-' + tabName);
-            if (tabElement) {
-                tabElement.classList.add('active');
+            statusTexto.textContent = 'Buscando dados...';
+            statusDot.className = 'status-dot';
+            
+            try {
+                // Verifica cache local primeiro
+                const cacheLocal = localStorage.getItem('cacheapp_dados');
+                const cacheTimestamp = localStorage.getItem('cacheapp_timestamp');
+                
+                if (!forceRefresh && cacheLocal && cacheTimestamp) {
+                    const idade = Date.now() - parseInt(cacheTimestamp);
+                    const idadeMinutos = Math.floor(idade / 60000);
+                    
+                    if (idadeMinutos < 5) {
+                        // Usa cache
+                        dadosCache = JSON.parse(cacheLocal);
+                        cacheHits++;
+                        statusTexto.textContent = `Cache hit (${idadeMinutos}min atrás)`;
+                        statusDot.className = 'status-dot';
+                        document.getElementById('modoCache').textContent = 'Modo: Cache Local';
+                        document.getElementById('cacheHits').textContent = cacheHits;
+                        renderizarItens();
+                        return;
+                    }
+                }
+                
+                // Busca da API
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('API indisponível');
+                
+                const data = await response.json();
+                dadosCache = data;
+                cacheMisses++;
+                
+                // Salva no cache
+                localStorage.setItem('cacheapp_dados', JSON.stringify(data));
+                localStorage.setItem('cacheapp_timestamp', Date.now().toString());
+                
+                statusTexto.textContent = 'Dados atualizados da API';
+                statusDot.className = 'status-dot';
+                document.getElementById('modoCache').textContent = 'Modo: Online (API)';
+                
+            } catch (erro) {
+                // Fallback para cache
+                statusTexto.textContent = 'API offline - usando cache local';
+                statusDot.className = 'status-dot error';
+                document.getElementById('modoCache').textContent = 'Modo: Offline';
+                
+                const cacheLocal = localStorage.getItem('cacheapp_dados');
+                if (cacheLocal) {
+                    dadosCache = JSON.parse(cacheLocal);
+                }
             }
             
-            // Ativa o botão correspondente
-            const buttons = document.querySelectorAll('.menu-btn');
-            const tabIndex = { dashboard: 0, config: 1, license: 2 };
-            if (buttons[tabIndex[tabName]]) {
-                buttons[tabIndex[tabName]].classList.add('active');
+            renderizarItens();
+        }
+        
+        function atualizarCache() {
+            buscarDados(true);
+        }
+        
+        function renderizarItens() {
+            const container = document.getElementById('listaItens');
+            document.getElementById('totalItens').textContent = dadosCache.length;
+            document.getElementById('cacheHits').textContent = cacheHits;
+            document.getElementById('ultimaAtt').textContent = 
+                new Date().toLocaleTimeString('pt-BR');
+            
+            if (dadosCache.length === 0) {
+                container.innerHTML = `
+                    <div class="empty">
+                        <div class="empty-icon">📭</div>
+                        <p>Nenhum item em cache</p>
+                        <button class="btn btn-primary" onclick="atualizarCache()" style="margin-top: 16px;">
+                            🔄 Atualizar Agora
+                        </button>
+                    </div>
+                `;
+                return;
             }
+            
+            container.innerHTML = `
+                <div class="items-grid">
+                    ${dadosCache.map((item, index) => `
+                        <div class="item-card" onclick="verDetalhes('${item.nome || item.name || 'Item ' + (index + 1)}')">
+                            <div class="item-emoji">${item.emoji || item.icon || '📦'}</div>
+                            <div class="item-name">${item.nome || item.name || 'Item ' + (index + 1)}</div>
+                            <div class="item-cache-time">
+                                ${item.timestamp ? 'Cache: ' + new Date(item.timestamp).toLocaleDateString('pt-BR') : 'Cache local'}
+                            </div>
+                            <div class="item-size">
+                                ${item.tamanho || item.size || (Math.random() * 500).toFixed(0) + ' KB'}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
         }
         
-        function viewItem(itemName) {
-            alert(`📦 Visualizando detalhes de: ${itemName}\n\nCache ativo e funcionando.`);
+        function verDetalhes(nome) {
+            alert(`📦 ${nome}\n\nItem armazenado em cache.\nDados disponíveis offline.`);
         }
         
-        // ========== INICIALIZAÇÃO ==========
+        // ==========================================
+        // INICIALIZAÇÃO
+        // ==========================================
         
         document.addEventListener('DOMContentLoaded', function() {
-            checkLicense();
-            console.log('✅ CacheApp iniciado com sucesso!');
-            console.log('📱 Sistema de licenciamento ativo');
-            console.log('🔒 Trial de 30 dias em andamento');
+            // Verifica licença
+            const licenca = verificarLicenca();
+            
+            // Carrega tema
+            carregarTema();
+            
+            // Inicia busca de dados
+            if (licenca.valido || document.getElementById('modalLicenca').style.display === 'flex') {
+                buscarDados();
+            }
+            
+            console.log('✅ CacheApp v2.0 iniciado');
+            console.log('📱 Sistema de licenciamento: ' + (licenca.valido ? 'Ativo' : 'Expirado'));
+            console.log('📦 Dias restantes: ' + licenca.diasRestantes);
         });
     </script>
 
