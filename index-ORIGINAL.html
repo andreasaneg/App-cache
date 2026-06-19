@@ -1,829 +1,2191 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CacheApp - Gestão de Cache</title>
-    <style>
-        /* ========== SISTEMA DE DESIGN ELEGANTE ========== */
-        :root {
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --border: #e2e8f0;
-            --shadow: 0 1px 3px rgba(0,0,0,0.08);
-            --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
-            --radius: 12px;
-        }
 
-        .dark-mode {
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>FADER LIVRE - CACHÊ CONTROL v3.0 ERP MASTER</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        :root {
+
+            --primary: #10b981;
+
+            --primary-hover: #059669;
+
+            --primary-glow: rgba(16, 185, 129, 0.2);
+
             --bg: #0f172a;
-            --surface: #1e293b;
-            --text: #f1f5f9;
-            --text-light: #94a3b8;
-            --border: #334155;
-            --shadow: 0 1px 3px rgba(0,0,0,0.3);
-            --shadow-lg: 0 4px 12px rgba(0,0,0,0.4);
+
+            --card: #1e293b;
+
+            --card-hover: #24334c;
+
+            --text: #f8fafc;
+
+            --text-secondary: #cbd5e1;
+
+            --danger: #ef4444;
+
+            --danger-hover: #dc2626;
+
+            --danger-glow: rgba(239, 68, 68, 0.15);
+
+            --muted: #94a3b8;
+
+            --blue: #38bdf8;
+
+            --blue-hover: #0ea5e9;
+
+            --blue-glow: rgba(56, 189, 248, 0.2);
+
+            --warning: #f59e0b;
+
+            --success: #16a34a;
+
+            --dark-pure: #020617;
+
+            --border-color: #334155;
+
+            --border-hover: #475569;
+
         }
 
         * {
-            margin: 0;
-            padding: 0;
+
             box-sizing: border-box;
+
+            margin: 0;
+
+            padding: 0;
+
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+            padding: 15px;
+
+            padding-bottom: 100px;
+
             background: var(--bg);
+
             color: var(--text);
-            min-height: 100vh;
-            transition: background 0.3s, color 0.3s;
+
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+            -webkit-font-smoothing: antialiased;
+
+            -moz-osx-font-smoothing: grayscale;
+
+            overflow-x: hidden;
+
         }
 
-        /* ========== HEADER ========== */
         .header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .logo svg {
-            width: 32px;
-            height: 32px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        /* ========== BOTÕES ========== */
-        .btn {
-            padding: 8px 16px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--surface);
-            color: var(--text);
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn:hover {
-            background: var(--bg);
-            transform: translateY(-1px);
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-sm {
-            padding: 4px 10px;
-            font-size: 12px;
-        }
-
-        /* ========== BANNER DE EXPIRAÇÃO ========== */
-        .expiry-banner {
-            background: #fef3c7;
-            border-bottom: 2px solid var(--warning);
-            padding: 10px 24px;
             text-align: center;
-            font-weight: 500;
-            font-size: 14px;
-            display: none;
-            animation: slideDown 0.3s ease;
-        }
 
-        .dark-mode .expiry-banner {
-            background: #422006;
-            border-color: #d97706;
-            color: #fde68a;
-        }
+            border-bottom: 2px solid var(--primary);
 
-        /* ========== CONTAINER ========== */
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 24px;
-        }
+            padding-bottom: 20px;
 
-        /* ========== ESTATÍSTICAS ========== */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
+            margin-bottom: 25px;
 
-        .stat-card {
-            background: var(--surface);
-            padding: 20px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            flex-shrink: 0;
-        }
-
-        .stat-icon.blue {
-            background: #dbeafe;
-        }
-        .stat-icon.green {
-            background: #d1fae5;
-        }
-        .stat-icon.yellow {
-            background: #fef3c7;
-        }
-
-        .stat-value {
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .stat-label {
-            font-size: 13px;
-            color: var(--text-light);
-        }
-
-        /* ========== BARRA DE STATUS ========== */
-        .status-bar {
-            background: var(--surface);
-            padding: 16px 20px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--success);
-            animation: pulse 2s infinite;
-        }
-
-        .status-dot.error {
-            background: var(--danger);
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* ========== LISTA DE ITENS ========== */
-        .items-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
-        }
-
-        .item-card {
-            background: var(--surface);
-            border-radius: var(--radius);
-            padding: 20px;
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid var(--border);
             position: relative;
-            overflow: hidden;
+
         }
 
-        .item-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--primary);
-            transform: scaleX(0);
-            transition: transform 0.3s;
-        }
+        .header h2 {
 
-        .item-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-lg);
-        }
+            font-size: 1.6em;
 
-        .item-card:hover::before {
-            transform: scaleX(1);
-        }
+            font-weight: 800;
 
-        .item-emoji {
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
-
-        .item-name {
-            font-weight: 600;
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-
-        .item-cache-time {
-            font-size: 12px;
-            color: var(--text-light);
-            font-family: 'Consolas', 'Monaco', monospace;
-        }
-
-        .item-size {
-            font-size: 11px;
-            color: var(--primary);
-            margin-top: 4px;
-            font-weight: 500;
-        }
-
-        /* ========== LOADING ========== */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-light);
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 16px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* ========== MODAL DE LICENÇA ========== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            backdrop-filter: blur(4px);
-        }
-
-        .modal {
-            background: var(--surface);
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 440px;
-            width: 90%;
-            text-align: center;
-            box-shadow: var(--shadow-lg);
-            animation: scaleIn 0.3s ease;
-        }
-
-        @keyframes scaleIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-100%); }
-            to { transform: translateY(0); }
-        }
-
-        .modal-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-
-        .modal h3 {
-            font-size: 20px;
-            margin-bottom: 8px;
-        }
-
-        .modal p {
-            color: var(--text-light);
-            margin-bottom: 20px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .code-box {
-            background: var(--bg);
-            border: 2px dashed var(--border);
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 16px;
-        }
-
-        .code-label {
-            font-size: 11px;
-            text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--text-light);
-            margin-bottom: 6px;
+
+            color: #ffffff;
+
+            text-transform: uppercase;
+
         }
 
-        .device-code {
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 2px;
-        }
+        .header p {
 
-        .pix-box {
-            background: var(--bg);
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 16px;
-        }
-
-        .pix-key {
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 13px;
-            word-break: break-all;
             color: var(--primary);
+
+            font-size: 0.85em;
+
+            font-weight: 700;
+
+            margin-top: 6px;
+
+            letter-spacing: 1.5px;
+
+            text-transform: uppercase;
+
         }
 
-        .input-key {
+        
+
+        .dashboard {
+
+            display: grid;
+
+            grid-template-columns: 1fr;
+
+            gap: 15px;
+
+            margin-bottom: 25px;
+
+        }
+
+        @media(min-width: 600px) {
+
+            .dashboard { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+
+        }
+
+        .dashboard-card {
+
+            background: var(--card);
+
+            border-radius: 24px;
+
+            padding: 20px;
+
+            border: 1px solid var(--border-color);
+
+            position: relative;
+
+            box-shadow: 0 4px 15px -3px rgba(0,0,0,0.3);
+
+            overflow: hidden;
+
+        }
+
+        .dashboard-title {
+
+            font-size: .75em;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            margin-bottom: 8px;
+
+            letter-spacing: 1px;
+
+        }
+
+        
+
+        .total-geral { font-size: 2em; font-weight: 900; color: var(--blue); }
+
+        .total-nf { font-size: 2em; font-weight: 900; color: var(--danger); }
+
+        .total-horas { font-size: 2em; font-weight: 900; color: var(--primary); }
+
+        
+
+        .eye-button {
+
+            position: absolute;
+
+            top: 15px;
+
+            right: 15px;
+
+            width: 46px;
+
+            height: 46px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            background: #334155;
+
+            color: white;
+
+            font-size: 1.3em;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+        
+
+        .input-group {
+
+            background: var(--card);
+
+            border: 1px solid var(--border-color);
+
+            border-radius: 24px;
+
+            padding: 20px;
+
+            margin-bottom: 20px;
+
+            position: relative;
+
+            box-shadow: 0 4px 15px -3px rgba(0,0,0,0.2);
+
+        }
+
+        .input-group h2, .input-group h3 {
+
+            font-size: 1.2em;
+
+            margin-bottom: 18px;
+
+            color: #ffffff;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            border-left: 4px solid var(--primary);
+
+            padding-left: 10px;
+
+        }
+
+        
+
+        label {
+
+            display: block;
+
+            margin-bottom: 6px;
+
+            color: var(--muted);
+
+            font-size: 0.75em;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
+        }
+
+        input, select {
+
             width: 100%;
-            padding: 10px 14px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 15px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            background: var(--surface);
-            color: var(--text);
-            margin-bottom: 12px;
+
+            padding: 14px;
+
+            border-radius: 14px;
+
+            border: 1px solid var(--border-color);
+
+            background: var(--dark-pure);
+
+            color: white;
+
+            margin-bottom: 15px;
+
+            font-size: 16px;
+
         }
 
-        .input-key:focus {
+        input:focus, select:focus {
+
             outline: none;
+
             border-color: var(--primary);
+
+            box-shadow: 0 0 0 3px var(--primary-glow);
+
         }
 
-        /* ========== VAZIO ========== */
-        .empty {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-light);
-        }
+        
 
-        .empty-icon {
-            font-size: 56px;
+        .btn {
+
+            width: 100%;
+
+            border: none;
+
+            padding: 16px;
+
+            border-radius: 14px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
             margin-bottom: 12px;
-            opacity: 0.5;
+
+            font-size: 0.95em;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
         }
 
-        /* ========== RESPONSIVO ========== */
-        @media (max-width: 600px) {
-            .header {
-                padding: 12px 16px;
-            }
-            .logo {
-                font-size: 16px;
-            }
-            .container {
-                padding: 16px;
-            }
-            .items-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
-            .stats {
-                grid-template-columns: 1fr;
-            }
+        
+
+        .btn-save { background: var(--primary); color: var(--dark-pure); }
+
+        .btn-export { background: #475569; color: white; }
+
+        .btn-whats { background: #25D366; color: var(--dark-pure); }
+
+        .btn-search { background: #0ea5e9; color: white; }
+
+        .btn-cancel { background: #334155; color: #f8fafc; }
+
+        
+
+        .history-card {
+
+            background: var(--card);
+
+            border-radius: 20px;
+
+            padding: 18px;
+
+            margin-bottom: 15px;
+
+            position: relative;
+
+            border-left: 6px solid var(--primary);
+
+            box-shadow: 0 4px 10px -1px rgba(0,0,0,0.2);
+
         }
+
+        .empresa-title {
+
+            font-size: 1.2em;
+
+            font-weight: 800;
+
+            margin-bottom: 6px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding-right: 85px;
+
+        }
+
+        
+
+        .btn-del {
+
+            position: absolute;
+
+            top: 15px;
+
+            right: 15px;
+
+            background: var(--danger-glow);
+
+            border: none;
+
+            color: var(--danger);
+
+            width: 38px;
+
+            height: 38px;
+
+            border-radius: 12px;
+
+            font-size: 1em;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            z-index: 10;
+
+        }
+
+        
+
+        .btn-edit-inline {
+
+            position: absolute;
+
+            top: 15px;
+
+            right: 58px;
+
+            background: var(--blue-glow);
+
+            border: none;
+
+            color: var(--blue);
+
+            width: 38px;
+
+            height: 38px;
+
+            border-radius: 12px;
+
+            font-size: 1em;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            z-index: 10;
+
+        }
+
+        
+
+        .chart-container {
+
+            height: 300px;
+
+            margin-top: 15px;
+
+            position: relative;
+
+        }
+
+        .search-box {
+
+            display: none;
+
+            margin-bottom: 15px;
+
+        }
+
+        .section-title {
+
+            font-size: 1.2em;
+
+            font-weight: 800;
+
+            margin: 25px 0 15px;
+
+            color: #ffffff;
+
+        }
+
+        
+
+        .tab-container {
+
+            display: flex;
+
+            gap: 8px;
+
+            margin-bottom: 25px;
+
+            background: var(--dark-pure);
+
+            padding: 6px;
+
+            border-radius: 16px;
+
+            border: 1px solid var(--border-color);
+
+        }
+
+        .tab-button {
+
+            flex: 1;
+
+            padding: 14px 8px;
+
+            background: transparent;
+
+            color: var(--muted);
+
+            border: none;
+
+            border-radius: 12px;
+
+            cursor: pointer;
+
+            font-weight: 700;
+
+            font-size: 0.85em;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 6px;
+
+        }
+
+        .tab-button.active {
+
+            background: var(--card);
+
+            color: var(--primary);
+
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+
+        }
+
+        
+
+        .app-section { display: none; }
+
+        .app-section.active { display: block; }
+
+        
+
+        .autocomplete-list {
+
+            position: absolute;
+
+            z-index: 100;
+
+            background: var(--card);
+
+            border: 1px solid var(--border-hover);
+
+            border-radius: 16px;
+
+            width: calc(100% - 40px);
+
+            max-height: 200px;
+
+            overflow-y: auto;
+
+            margin-top: -12px;
+
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.7);
+
+        }
+
+        .autocomplete-item {
+
+            padding: 14px;
+
+            cursor: pointer;
+
+            border-bottom: 1px solid var(--border-color);
+
+        }
+
+        
+
+        .badge-status {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            padding: 5px 10px;
+
+            border-radius: 8px;
+
+            font-size: 0.75em;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            margin-top: 8px;
+
+        }
+
+        .status-aberto { background: rgba(2, 132, 199, 0.15); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.3); }
+
+        .status-fechado { background: rgba(234, 88, 12, 0.15); color: #fb923c; border: 1px solid rgba(234, 88, 12, 0.3); }
+
+        .status-pago { background: rgba(22, 163, 74, 0.15); color: #4ade80; border: 1px solid rgba(22, 163, 74, 0.3); }
+
+        
+
+        .toggle-filter-container {
+
+            display: flex;
+
+            gap: 8px;
+
+            margin-bottom: 20px;
+
+            background: var(--dark-pure);
+
+            padding: 6px;
+
+            border-radius: 12px;
+
+        }
+
+        .btn-filter {
+
+            flex: 1;
+
+            padding: 12px 6px;
+
+            border-radius: 8px;
+
+            border: none;
+
+            background: transparent;
+
+            color: var(--muted);
+
+            font-weight: 700;
+
+            font-size: 0.85em;
+
+        }
+
+        .btn-filter.active {
+
+            background: #334155;
+
+            color: #ffffff;
+
+        }
+
+        
+
+        .meta-text {
+
+            font-size: 0.85em;
+
+            color: var(--muted);
+
+            line-height: 1.6;
+
+            margin: 4px 0;
+
+        }
+
+        .meta-text b { color: #ffffff; }
+
     </style>
+
 </head>
+
 <body>
 
-    <!-- ========== HEADER ========== -->
-    <header class="header">
-        <div class="logo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 6 12 12 16 14"/>
-            </svg>
-            CacheApp
-        </div>
-        <div class="header-actions">
-            <button class="btn btn-sm" onclick="toggleDarkMode()" title="Alternar tema">
-                <span id="themeIcon">🌙</span>
-            </button>
-            <button class="btn btn-sm" onclick="atualizarCache()" title="Atualizar cache">
-                🔄 Atualizar
-            </button>
-        </div>
-    </header>
+<div id="loginScreen" style="position:fixed; inset:0; background:var(--dark-pure); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; padding:15px;">
 
-    <!-- ========== BANNER DE EXPIRAÇÃO ========== -->
-    <div class="expiry-banner" id="expiryBanner">
-        ⚠️ Sua licença expira em <strong id="diasRestantes">0</strong> dias.
-        <button class="btn btn-sm btn-primary" onclick="mostrarModalLicenca()" style="margin-left: 10px;">
-            Renovar
-        </button>
-    </div>
+    <button onclick="emergencyReset()" style="background:var(--danger); color:white; border:none; padding:10px 15px; border-radius:10px; font-weight:bold; font-size:0.8em; margin-bottom:20px; width:100%; max-width:400px; box-shadow:0 4px 10px rgba(239,68,68,0.3);">⚠️ Forçar Reset de Emergência (Celular)</button>
 
-    <!-- ========== CONTEÚDO PRINCIPAL ========== -->
-    <main class="container">
-        <!-- ESTATÍSTICAS -->
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-icon blue">📦</div>
-                <div>
-                    <div class="stat-value" id="totalItens">-</div>
-                    <div class="stat-label">Itens em Cache</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon green">✅</div>
-                <div>
-                    <div class="stat-value" id="cacheHits">-</div>
-                    <div class="stat-label">Cache Hits</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon yellow">⏱️</div>
-                <div>
-                    <div class="stat-value" id="ultimaAtt">-</div>
-                    <div class="stat-label">Última Atualização</div>
-                </div>
-            </div>
+    <div style="background:var(--card); padding:25px; border-radius:28px; width:100%; max-width:400px; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6); border: 1px solid var(--border-color);">
+
+        <div style="text-align:center; margin-bottom:20px;">
+
+            <h2 style="color:#ffffff; margin-top:10px; font-size:1.4em; font-weight:800;">Acesso Identificado</h2>
+
+            <p style="color:var(--muted); font-size:0.8em; margin-top:4px; letter-spacing:1px;">Cachê Control ERP v3.0</p>
+
         </div>
 
-        <!-- STATUS -->
-        <div class="status-bar">
-            <div class="status-indicator">
-                <div class="status-dot" id="statusDot"></div>
-                <span id="statusTexto">Verificando...</span>
-            </div>
-            <span style="font-size: 13px; color: var(--text-light);" id="modoCache">Modo: Online</span>
-        </div>
-
-        <!-- LISTA DE ITENS -->
-        <div id="listaItens">
-            <div class="loading">
-                <div class="spinner"></div>
-                <p>Carregando dados do cache...</p>
-            </div>
-        </div>
-    </main>
-
-    <!-- ========== MODAL DE LICENÇA ========== -->
-    <div class="modal-overlay" id="modalLicenca" style="display: none;">
-        <div class="modal">
-            <div class="modal-icon">🔐</div>
-            <h3 id="modalTitulo">Período de Testes Encerrado</h3>
-            <p id="modalTexto">
-                Seus 30 dias de teste gratuito terminaram.<br>
-                Adquira uma licença de 1 ano para continuar.
-            </p>
-
-            <div class="code-box">
-                <div class="code-label">Código do Dispositivo</div>
-                <div class="device-code" id="deviceCode">------</div>
-                <button class="btn btn-sm" onclick="copiarCodigo()" style="margin-top: 8px;">
-                    📋 Copiar
-                </button>
-            </div>
-
-            <div class="pix-box">
-                <strong style="font-size: 13px;">💠 PIX para Ativação</strong>
-                <div class="pix-key" style="margin-top: 6px;">cacheapp.licenca@exemplo.com</div>
-                <small style="color: var(--text-light);">Envie o código do dispositivo no comprovante</small>
-            </div>
-
-            <input type="text" class="input-key" id="inputChave" placeholder="Cole sua chave de ativação">
-            <button class="btn btn-primary" onclick="ativarLicenca()" style="width: 100%; justify-content: center;">
-                🔓 Ativar Licença (1 ano)
-            </button>
-        </div>
-    </div>
-
-    <script>
-        // ==========================================
-        // SISTEMA DE LICENCIAMENTO
-        // ==========================================
         
-        function verificarLicenca() {
-            let licenca = localStorage.getItem('cacheapp_licenca');
-            
-            if (!licenca) {
-                // Primeira execução: cria trial de 30 dias
-                licenca = {
-                    tipo: 'trial',
-                    inicio: new Date().toISOString(),
-                    dispositivo: gerarCodigoDispositivo()
+
+        <label>Chave Codificada de Segurança</label>
+
+        <input type="password" id="senhaInput" placeholder="••••••••" style="text-align:center; letter-spacing:6px; font-size:20px;">
+
+        
+
+        <div id="novaSenhaBox" style="display:none; margin-top:5px; padding-top:15px; border-top:1px dashed var(--border-color);">
+
+            <label>Definir Nova Chave Master</label>
+
+            <input type="password" id="novaSenha" placeholder="Digite uma chave forte">
+
+            <label>E-mail Corporativo de Recuperação</label>
+
+            <input type="email" id="emailRecuperacao" placeholder="nome@empresa.com">
+
+            <button class="btn btn-save" onclick="cadastrarSenha()">💾 Registrar Credenciais</button>
+
+        </div>
+
+        
+
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+
+            <button class="btn btn-save" onclick="login()">🔓 Validar Token</button>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+
+                <button class="btn btn-cancel" style="font-size:0.8em; padding:12px;" onclick="toggleCadastroSenha()">⚙️ Configurar</button>
+
+                <button class="btn btn-export" style="font-size:0.8em; padding:12px; background:var(--card); border:1px solid var(--border-color);" onclick="recuperarSenha()">🔑 Resgatar</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="header">
+
+    <h2>FADER LIVRE</h2>
+
+    <p>SISTEMA CONTROLADOR DE CACHÊS</p>
+
+</div>
+
+<div class="tab-container">
+
+    <button class="tab-button active" id="tabJobsBtn" onclick="alternarAba('abaJobs', event)">💼 Lançamentos</button>
+
+    <button class="tab-button" id="tabEmpresasBtn" onclick="alternarAba('abaEmpresas', event)">🏢 Empresas</button>
+
+</div>
+
+<div id="abaJobs" class="app-section active">
+
+    
+
+    <div class="dashboard">
+
+        <div class="dashboard-card">
+
+            <button class="eye-button" id="eyeButton" onclick="toggleValores()">👁️</button>
+
+            <div class="dashboard-title" style="color:var(--primary)">Job</div>
+
+            <div id="vTotalSemana" class="total-geral">R$ 0,00</div>
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <div class="dashboard-title" style="color:var(--danger)">Imposto NF</div>
+
+            <div id="vTotalNF" class="total-nf">- R$ 0,00</div>
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <div class="dashboard-title" style="color:var(--blue)">Horas Trabalhadas</div>
+
+            <div id="vTotalHoras" class="total-horas">0.0h</div>
+
+        </div>
+
+    </div>
+
+    <div class="input-group">
+
+        <h3><span id="formJobTitle">💼 Job</span></h3>
+
+        <input type="hidden" id="editJobId" value="">
+
+        <label>Empresa Tomadora do Serviço</label>
+
+        <input type="text" id="empresaJob" placeholder="Digite para pesquisar..." autocomplete="off" oninput="gerenciarAutocomplete(this.value)">
+
+        <div id="autocompleteContainer"></div>
+
+        <label>Data Oficial da Prestação</label>
+
+        <input type="date" id="dataJob">
+
+        <label>Designação do Job / Linha de Production</label>
+
+        <input type="text" id="nomeJob" placeholder="Ex: Direção de Fotografia - VT Refresco">
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+
+            <div>
+
+                <label>Início (Check-in)</label>
+
+                <input type="time" id="inicio" value="08:00">
+
+            </div>
+
+            <div>
+
+                <label>Fim (Check-out)</label>
+
+                <input type="time" id="fim" value="20:00">
+
+            </div>
+
+        </div>
+
+        
+
+        <div style="display:flex; flex-direction:column; gap:5px; margin-top:5px;">
+
+            <button class="btn btn-save" id="btnSalvarJob" onclick="salvarJob()">💾 Salvar Lançamento</button>
+
+            <button class="btn btn-cancel" id="btnLimparJob" onclick="limparCampos()">🧹 Limpar</button>
+
+        </div>
+
+    </div>
+
+    <div class="input-group">
+
+        <h3>📊 Faturamento por contratante</h3>
+
+        <div class="chart-container">
+
+            <canvas id="graficoEmpresas"></canvas>
+
+        </div>
+
+    </div>
+
+    <div class="input-group">
+
+        <div class="section-title" style="margin:0 0 20px 0;">📋 Registros</div>
+
+        
+
+        <div class="toggle-filter-container">
+
+            <button id="btnFiltroAberto" class="btn-filter active" onclick="definirFiltroVisualizacao('aberto')">Período Aberto</button>
+
+            <button id="btnFiltroArquivado" class="btn-filter" onclick="definirFiltroVisualizacao('arquivado')">Pagos / Arquivados</button>
+
+        </div>
+
+        
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+
+            <button class="btn btn-search" id="btnBuscaTexto" style="margin:0;" onclick="abrirBusca()">🔍 Filtrar Empresas</button>
+
+            <button class="btn btn-export" style="margin:0; background:var(--border-color);" onclick="limparBusca()">❌ Limpar Filtro</button>
+
+        </div>
+
+        
+
+        <div id="searchBox" class="search-box">
+
+            <input type="text" id="inputBusca" onkeyup="filtrarTabela()" placeholder="Busque por nomes, projetos, datas...">
+
+        </div>
+
+        
+
+        <div id="listaHistorico"></div>
+
+    </div>
+
+    
+
+    <div style="margin-top: 10px; margin-bottom: 25px;">
+
+        <button class="btn btn-whats" onclick="enviarRelatorioWhatsApp()">💬 Enviar para Whatsapp</button>
+
+    </div>
+
+</div>
+
+<div id="abaEmpresas" class="app-section">
+
+    <div class="input-group">
+
+        <h2 id="formEmpresaTitle">🏢 Nova Empresa e Regras</h2>
+
+        <input type="hidden" id="cadIdEmpresa" value="">
+
+        <label>Nome Comercial / Razão Social</label>
+
+        <input type="text" id="cadNomeEmpresa" placeholder="Ex: FADER LIVRE LTDA">
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+
+            <div>
+
+                <label>Cachê Fixo Padrão (12h)</label>
+
+                <input type="number" id="cadCacheBase" placeholder="R$ 0,00" step="0.01">
+
+            </div>
+
+            <div>
+
+                <label>Alimentação / Logística</label>
+
+                <input type="number" id="cadDiaria" placeholder="R$ 0,00" step="0.01">
+
+            </div>
+
+        </div>
+
+        <label>Matriz de Ciclo de Faturamento</label>
+
+        <select id="cadTipoPagamento" onchange="alterarPeriodoPagamentoCadastro()">
+
+            <option value="Semanal" selected>Semanal (Fechamentos Regulares)</option>
+
+            <option value="Quinzenal">Quinzenal</option>
+
+            <option value="Mensal">Mensal</option>
+
+        </select>
+
+        <div id="cadPeriodoPersonalizado" style="display:none; padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color);">
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+
+                <div>
+
+                    <label>Dia Inicial do Ciclo</label>
+
+                    <input type="number" id="cadInicioPeriodo" min="1" max="31" value="1">
+
+                </div>
+
+                <div>
+
+                    <label>Dia Final do Ciclo</label>
+
+                    <input type="number" id="cadFimPeriodo" min="1" max="31" value="15">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id="cadPeriodoSemanalBox" style="padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color); display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+
+            <div>
+
+                <label>Dia Inicial</label>
+
+                <select id="cadInicioSemana" style="margin:0;">
+
+                    <option value="1" selected>Segunda-feira</option>
+
+                    <option value="2">Terça-feira</option>
+
+                    <option value="3">Quarta-feira</option>
+
+                    <option value="4">Quinta-feira</option>
+
+                    <option value="5">Sexta-feira</option>
+
+                    <option value="6">Sábado</option>
+
+                    <option value="0">Domingo</option>
+
+                </select>
+
+            </div>
+
+            <div>
+
+                <label>Dia de Corte</label>
+
+                <select id="cadFimSemana" style="margin:0;">
+
+                    <option value="0" selected>Domingo</option>
+
+                    <option value="1">Segunda-feira</option>
+
+                    <option value="2">Terça-feira</option>
+
+                    <option value="3">Quarta-feira</option>
+
+                    <option value="4">Quinta-feira</option>
+
+                    <option value="5">Sexta-feira</option>
+
+                    <option value="6">Sábado</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+
+            <div>
+
+                <label>Dias Úteis para Liquidação</label>
+
+                <input type="number" id="cadDiasPagamento" value="5" min="0">
+
+            </div>
+
+            <div>
+
+                <label>Alíquota de Retenção NF (%)</label>
+
+                <input type="number" id="cadNfPercentual" value="0" min="0" max="100" step="0.01">
+
+            </div>
+
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:5px;">
+
+            <button class="btn btn-save" id="btnSalvarEmpresa" onclick="salvarEmpresa()">💾 Registrar Empresa</button>
+
+            <button class="btn btn-cancel" onclick="limparCamposEmpresa()">🧹 Limpar Parâmetros</button>
+
+        </div>
+
+    </div>
+
+    <div class="input-group">
+
+        <h3>🏢 Empresas Cadastradas</h3>
+
+        <div id="listaEmpresasCadastradas"></div>
+
+    </div>
+
+    <div class="input-group" style="border-color:var(--border-hover); background: linear-gradient(180deg, var(--card) 0%, #152238 100%); margin-top:20px;">
+
+        <h2>⚡ Central Avançada de Exportação</h2>
+
+        <p style="color:var(--muted); font-size:0.85em; margin-bottom:15px;">Gere faturamentos estruturados ou realize backups locais de segurança.</p>
+
+        
+
+        <div style="display:flex; flex-direction:column; gap:5px;">
+
+            <button class="btn btn-export" onclick="baixarExcelCompleto()">📊 Exportar para Excel (.CSV)</button>
+
+            <button class="btn btn-export" style="background:#5c258d;" onclick="fazerBackup()">💾 Gerar Cópia de Segurança (.JSON)</button>
+
+            <button class="btn btn-cancel" style="background:var(--dark-pure); border:1px solid var(--border-color);" onclick="document.getElementById('restoreFile').click()">📥 Importar Cópia de Segurança (.JSON)</button>
+
+        </div>
+
+        <input type="file" id="restoreFile" accept=".json" style="display:none;">
+
+    </div>
+
+</div>
+
+<script>
+
+let db = null;
+
+let ocultarValores = false;
+
+let filtroVisualizacao = "aberto"; 
+
+let mapaCores = {};
+
+function emergencyReset() {
+
+    if(confirm("Deseja forçar o reset de emergência?")) {
+
+        localStorage.clear();
+
+        let deleteRequest = indexedDB.deleteDatabase("CacheFinal_V33");
+
+        deleteRequest.onsuccess = function() {
+
+            alert("Sistema redefinido! O aplicativo vai reiniciar.");
+
+            window.location.reload();
+
+        };
+
+        deleteRequest.onerror = function() {
+
+            window.location.reload();
+
+        };
+
+    }
+
+}
+
+const coresGrafico = [
+
+    '#38bdf8', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', 
+
+    '#ec4899', '#14b8a6', '#f97316', '#a855f7', '#06b6d4'
+
+];
+
+const senhaSalva = localStorage.getItem("senha_cache_control");
+
+if(!senhaSalva){
+
+    document.getElementById("senhaInput").placeholder = "Defina sua senha no primeiro acesso";
+
+}
+
+function toggleCadastroSenha(){
+
+    const box = document.getElementById("novaSenhaBox");
+
+    box.style.display = (box.style.display === "none" || box.style.display === "") ? "block" : "none";
+
+}
+
+function cadastrarSenha(){
+
+    const novaSenha = document.getElementById("novaSenha").value;
+
+    const email = document.getElementById("emailRecuperacao").value;
+
+    
+
+    if(!novaSenha || novaSenha.trim() === "" || !email || email.trim() === ""){
+
+        alert("Todos os campos devem ser preenchidos.");
+
+        return;
+
+    }
+
+    
+
+    localStorage.setItem("senha_cache_control", novaSenha.trim());
+
+    localStorage.setItem("email_cache_control", email.trim());
+
+    alert("Credenciais registradas!");
+
+    window.location.reload();
+
+}
+
+function login(){
+
+    const senha = document.getElementById("senhaInput").value;
+
+    if(!senhaSalva){
+
+        if(senha.trim().length < 4) {
+
+            alert("Defina uma senha de pelo menos 4 caracteres.");
+
+            return;
+
+        }
+
+        localStorage.setItem("senha_cache_control", senha.trim());
+
+        localStorage.setItem("email_cache_control", "suporte@faderlivre.com");
+
+        document.getElementById("loginScreen").style.display = "none";
+
+        return;
+
+    }
+
+    if(senha === senhaSalva){
+
+        document.getElementById("loginScreen").style.display = "none";
+
+    } else {
+
+        alert("🚨 Chave Master Incorreta.");
+
+    }
+
+}
+
+function recuperarSenha(){
+
+    const email = localStorage.getItem("email_cache_control");
+
+    if(!email){
+
+        alert("Nenhum e-mail de recuperação configurado.");
+
+        return;
+
+    }
+
+    alert("Instruções locais enviadas para: " + email);
+
+}
+
+const requestDB = indexedDB.open("CacheFinal_V33", 1);
+
+requestDB.onupgradeneeded = function(event) {
+
+    let d = event.target.result;
+
+    if(!d.objectStoreNames.contains("jobs")){
+
+        d.createObjectStore("jobs", { keyPath: "id", autoIncrement: true });
+
+    }
+
+    if(!d.objectStoreNames.contains("empresas")){
+
+        d.createObjectStore("empresas", { keyPath: "id", autoIncrement: true });
+
+    }
+
+};
+
+requestDB.onsuccess = function(event) {
+
+    db = event.target.result;
+
+    try {
+
+        document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
+
+    } catch(e) {}
+
+    atualizarTela();
+
+    atualizarListaEmpresas();
+
+};
+
+requestDB.onerror = function() {
+
+    alert("Erro crítico: Banco de dados recusou conexão.");
+
+};
+
+function toggleValores(){
+
+    ocultarValores = !ocultarValores;
+
+    document.getElementById("eyeButton").innerHTML = ocultarValores ? "🙈" : "👁️";
+
+    atualizarTela();
+
+}
+
+function formatarValor(valor){
+
+    if(ocultarValores) return "R$ •••••";
+
+    return Number(valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+}
+
+function executarBackupAutomatico() {
+
+    if(!db) return;
+
+    const txJ = db.transaction("jobs", "readonly");
+
+    txJ.objectStore("jobs").getAll().onsuccess = function(e_jobs) {
+
+        const dadosJobs = e_jobs.target.result;
+
+        const txE = db.transaction("empresas", "readonly");
+
+        txE.objectStore("empresas").getAll().onsuccess = function(e_empresas) {
+
+            const dadosEmpresas = e_empresas.target.result;
+
+            const payloadBackup = { jobs: dadosJobs, empresas: dadosEmpresas, dataBackup: new Date().toISOString() };
+
+            localStorage.setItem("fader_livre_auto_backup", JSON.stringify(payloadBackup));
+
+        };
+
+    };
+
+}
+
+function fazerBackup(){
+
+    const transacaoJobs = db.transaction("jobs", "readonly");
+
+    transacaoJobs.objectStore("jobs").getAll().onsuccess = function(e_jobs) {
+
+        const dadosJobs = e_jobs.target.result;
+
+        const transacaoEmpresas = db.transaction("empresas", "readonly");
+
+        transacaoEmpresas.objectStore("empresas").getAll().onsuccess = function(e_empresas) {
+
+            const dadosEmpresas = e_empresas.target.result;
+
+            const pacoteBackup = { jobs: dadosJobs, empresas: dadosEmpresas, exportadoEm: new Date().toISOString() };
+
+            const blob = new Blob([JSON.stringify(pacoteBackup, null, 2)], { type: "application/json" });
+
+            const linkDownload = document.createElement("a");
+
+            linkDownload.href = URL.createObjectURL(blob);
+
+            linkDownload.download = `fader_livre_backup.json`;
+
+            linkDownload.click();
+
+        };
+
+    };
+
+}
+
+document.getElementById("restoreFile").addEventListener("change", function(event){
+
+    const arquivo = event.target.files[0];
+
+    if(!arquivo) return;
+
+    const leitor = new FileReader();
+
+    leitor.onload = function(){
+
+        try {
+
+            const dadosRestaurados = JSON.parse(leitor.result);
+
+            if(dadosRestaurados.jobs && dadosRestaurados.empresas) {
+
+                const txJ = db.transaction("jobs", "readwrite");
+
+                dadosRestaurados.jobs.forEach(item => txJ.objectStore("jobs").put(item));
+
+                txJ.oncomplete = function() {
+
+                    const txE = db.transaction("empresas", "readwrite");
+
+                    dadosRestaurados.empresas.forEach(item => txE.objectStore("empresas").put(item));
+
+                    txE.oncomplete = function() {
+
+                        alert("Banco de dados restaurado!");
+
+                        executarBackupAutomatico();
+
+                        window.location.reload();
+
+                    };
+
                 };
-                localStorage.setItem('cacheapp_licenca', JSON.stringify(licenca));
-            } else {
-                licenca = JSON.parse(licenca);
+
             }
-            
-            const agora = new Date();
-            const inicio = new Date(licenca.inicio);
-            let diasRestantes = 0;
-            
-            if (licenca.tipo === 'trial') {
-                const fimTrial = new Date(inicio);
-                fimTrial.setDate(fimTrial.getDate() + 30);
-                diasRestantes = Math.ceil((fimTrial - agora) / (1000 * 60 * 60 * 24));
-            } else if (licenca.tipo === 'ativa') {
-                const fimLicenca = new Date(licenca.expiracao);
-                diasRestantes = Math.ceil((fimLicenca - agora) / (1000 * 60 * 60 * 24));
-            }
-            
-            // Atualiza código do dispositivo
-            document.getElementById('deviceCode').textContent = licenca.dispositivo;
-            
-            if (diasRestantes <= 0) {
-                // Licença expirada
-                document.getElementById('modalTitulo').textContent = 'Licença Expirada';
-                document.getElementById('modalTexto').textContent = 
-                    'Seu período de uso terminou. Adquira uma licença de 1 ano para continuar.';
-                document.getElementById('modalLicenca').style.display = 'flex';
-                document.getElementById('expiryBanner').style.display = 'none';
-            } else if (diasRestantes <= 7) {
-                // Aviso de expiração
-                document.getElementById('expiryBanner').style.display = 'block';
-                document.getElementById('diasRestantes').textContent = diasRestantes;
-            }
-            
-            return { valido: diasRestantes > 0, diasRestantes };
-        }
-        
-        function gerarCodigoDispositivo() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let code = '';
-            for (let i = 0; i < 8; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return code;
-        }
-        
-        function ativarLicenca() {
-            const chave = document.getElementById('inputChave').value.trim();
-            
-            if (chave.length < 10) {
-                alert('❌ Chave de ativação inválida. Verifique e tente novamente.');
-                return;
-            }
-            
-            // Simula validação (em produção, validaria no servidor)
-            const licenca = {
-                tipo: 'ativa',
-                inicio: new Date().toISOString(),
-                expiracao: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-                dispositivo: document.getElementById('deviceCode').textContent,
-                chave: chave
-            };
-            
-            localStorage.setItem('cacheapp_licenca', JSON.stringify(licenca));
-            
-            alert('✅ Licença ativada com sucesso! Válida por 1 ano.');
-            document.getElementById('modalLicenca').style.display = 'none';
-            document.getElementById('expiryBanner').style.display = 'none';
-            document.getElementById('inputChave').value = '';
-        }
-        
-        function copiarCodigo() {
-            const codigo = document.getElementById('deviceCode').textContent;
-            navigator.clipboard.writeText(codigo).then(() => {
-                alert('📋 Código copiado!');
+
+        } catch(err) { alert("Arquivo inválido."); }
+
+    };
+
+    leitor.readAsText(arquivo);
+
+});
+
+function alternarAba(abaId, event) {
+
+    document.querySelectorAll('.app-section').forEach(secao => secao.classList.remove('active'));
+
+    document.querySelectorAll('.tab-button').forEach(botao => botao.classList.remove('active'));
+
+    document.getElementById(abaId).classList.add('active');
+
+    if(event) event.currentTarget.classList.add('active');
+
+    if(abaId === 'abaEmpresas') atualizarListaEmpresas(); else atualizarTela();
+
+}
+
+function definirFiltroVisualizacao(tipo) {
+
+    filtroVisualizacao = tipo;
+
+    document.getElementById("btnFiltroAberto").classList.toggle("active", tipo === 'aberto');
+
+    document.getElementById("btnFiltroArquivado").classList.toggle("active", tipo === 'arquivado');
+
+    atualizarTela();
+
+}
+
+function alterarPeriodoPagamentoCadastro(){
+
+    const tipo = document.getElementById("cadTipoPagamento").value;
+
+    if(tipo === "Quinzenal" || tipo === "Mensal") {
+
+        document.getElementById("cadPeriodoPersonalizado").style.display = "block";
+
+        document.getElementById("cadPeriodoSemanalBox").style.display = "none";
+
+    } else {
+
+        document.getElementById("cadPeriodoPersonalizado").style.display = "none";
+
+        document.getElementById("cadPeriodoSemanalBox").style.display = "grid";
+
+    }
+
+}
+
+function gerenciarAutocomplete(textoBusca) {
+
+    const container = document.getElementById("autocompleteContainer");
+
+    container.innerHTML = "";
+
+    if(!db || !textoBusca || textoBusca.trim() === "") return;
+
+    const tx = db.transaction("empresas", "readonly");
+
+    tx.objectStore("empresas").getAll().onsuccess = function(event) {
+
+        const todasEmpresas = event.target.result;
+
+        const queryLimpa = textoBusca.toLowerCase().trim();
+
+        const filtradas = todasEmpresas.filter(emp => emp.nome.toLowerCase().includes(queryLimpa));
+
+        if(filtradas.length > 0) {
+
+            const listaDiv = document.createElement("div");
+
+            listaDiv.className = "autocomplete-list";
+
+            filtradas.forEach(empresaInstancia => {
+
+                const itemDiv = document.createElement("div");
+
+                itemDiv.className = "autocomplete-item";
+
+                itemDiv.innerText = empresaInstancia.nome;
+
+                itemDiv.onclick = function() {
+
+                    document.getElementById("empresaJob").value = empresaInstancia.nome;
+
+                    container.innerHTML = "";
+
+                };
+
+                listaDiv.appendChild(itemDiv);
+
             });
+
+            container.appendChild(listaDiv);
+
         }
-        
-        function mostrarModalLicenca() {
-            document.getElementById('modalLicenca').style.display = 'flex';
+
+    };
+
+}
+
+function salvarEmpresa() {
+
+    const nome = document.getElementById("cadNomeEmpresa").value.trim();
+
+    const idExistente = document.getElementById("cadIdEmpresa").value;
+
+    if(!nome) { alert("Nome da empresa é obrigatório."); return; }
+
+    const payloadEmpresa = {
+
+        nome: nome,
+
+        cacheBase: parseFloat(document.getElementById("cadCacheBase").value || 0),
+
+        diaria: parseFloat(document.getElementById("cadDiaria").value || 0),
+
+        tipoPagamento: document.getElementById("cadTipoPagamento").value,
+
+        inicioPeriodo: parseInt(document.getElementById("cadInicioPeriodo").value || 1),
+
+        fimPeriodo: parseInt(document.getElementById("cadFimPeriodo").value || 15),
+
+        inicioSemana: parseInt(document.getElementById("cadInicioSemana").value || 1),
+
+        fimSemana: parseInt(document.getElementById("cadFimSemana").value || 0),
+
+        diasPagamento: parseInt(document.getElementById("cadDiasPagamento").value || 0),
+
+        nfPercentual: parseFloat(document.getElementById("cadNfPercentual").value || 0)
+
+    };
+
+    if(idExistente) payloadEmpresa.id = parseInt(idExistente);
+
+    const transacao = db.transaction("empresas", "readwrite");
+
+    const store = transacao.objectStore("empresas");
+
+    const requisicao = idExistente ? store.put(payloadEmpresa) : store.add(payloadEmpresa);
+
+    requisicao.onsuccess = function() {
+
+        alert("Diretrizes salvas!");
+
+        executarBackupAutomatico();
+
+        limparCamposEmpresa();
+
+        atualizarListaEmpresas();
+
+    };
+
+}
+
+function carregarEmpresaParaEdicao(id) {
+
+    const tx = db.transaction("empresas", "readonly");
+
+    tx.objectStore("empresas").get(id).onsuccess = function(e) {
+
+        const dados = e.target.result;
+
+        if(!dados) return;
+
+        document.getElementById("formEmpresaTitle").innerHTML = "✏️ Editando: " + dados.nome;
+
+        document.getElementById("cadIdEmpresa").value = dados.id;
+
+        document.getElementById("cadNomeEmpresa").value = dados.nome;
+
+        document.getElementById("cadCacheBase").value = dados.cacheBase;
+
+        document.getElementById("cadDiaria").value = dados.diaria;
+
+        document.getElementById("cadTipoPagamento").value = dados.tipoPagamento;
+
+        document.getElementById("cadInicioPeriodo").value = dados.inicioPeriodo || 1;
+
+        document.getElementById("cadFimPeriodo").value = dados.fimPeriodo || 15;
+
+        document.getElementById("cadInicioSemana").value = dados.inicioSemana || 1;
+
+        document.getElementById("cadFimSemana").value = dados.fimSemana || 0;
+
+        document.getElementById("cadDiasPagamento").value = dados.diasPagamento || 0;
+
+        document.getElementById("cadNfPercentual").value = dados.nfPercentual || 0;
+
+        alterarPeriodoPagamentoCadastro();
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    };
+
+}
+
+function deletarEmpresa(id) {
+
+    if(confirm("Deseja remover permanentemente esta empresa?")) {
+
+        const tx = db.transaction("empresas", "readwrite");
+
+        tx.objectStore("empresas").delete(id).onsuccess = () => {
+
+            executarBackupAutomatico();
+
+            atualizarListaEmpresas();
+
+        };
+
+    }
+
+}
+
+function atualizarListaEmpresas() {
+
+    if(!db) return;
+
+    const container = document.getElementById("listaEmpresasCadastradas");
+
+    container.innerHTML = "";
+
+    const tx = db.transaction("empresas", "readonly");
+
+    tx.objectStore("empresas").getAll().onsuccess = function(e) {
+
+        const colecao = e.target.result;
+
+        if(colecao.length === 0) {
+
+            container.innerHTML = "<p style='color:var(--muted); padding:10px; font-style:italic;'>Nenhuma empresa cadastrada.</p>";
+
+            return;
+
         }
-        
-        // Fechar modal ao clicar fora
-        document.addEventListener('click', function(e) {
-            if (e.target.id === 'modalLicenca') {
-                document.getElementById('modalLicenca').style.display = 'none';
-            }
+
+        colecao.forEach(empresaItem => {
+
+            const card = document.createElement("div");
+
+            card.style = "background:var(--card); padding:15px; border-radius:20px; margin-bottom:10px; border:1px solid var(--border-color); position:relative;";
+
+            card.innerHTML = `
+
+                <div style="font-size:1.1em; font-weight:800; color:var(--primary); margin-bottom:5px;">${empresaItem.nome}</div>
+
+                <div class="meta-text">💰 <b>Base:</b> R$ ${empresaItem.cacheBase.toFixed(2)} | 🚗 <b>Diária:</b> R$ ${empresaItem.diaria.toFixed(2)}</div>
+
+                <div class="meta-text">📅 <b>Ciclo:</b> ${empresaItem.tipoPagamento} | 📄 <b>NF:</b> ${empresaItem.nfPercentual}%</div>
+
+                <button class="btn-edit-inline" onclick="carregarEmpresaParaEdicao(${empresaItem.id})">✏️</button>
+
+                <button class="btn-del" onclick="deletarEmpresa(${empresaItem.id})">🗑️</button>
+
+            `;
+
+            container.appendChild(card);
+
         });
 
-        // ==========================================
-        // SISTEMA DE CACHE (LÓGICA ORIGINAL PRESERVADA)
-        // ==========================================
-        
-        const API_URL = '/api/cache';
-        let dadosCache = [];
-        let cacheHits = 0;
-        let cacheMisses = 0;
-        
-        // Modo escuro
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            const icon = document.getElementById('themeIcon');
-            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-            
-            localStorage.setItem('cacheapp_tema', 
-                document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    };
+
+}
+
+function limparCamposEmpresa(){
+
+    document.getElementById("formEmpresaTitle").innerText = "🏢 Nova Empresa e Regras";
+
+    document.getElementById("cadIdEmpresa").value = "";
+
+    document.getElementById("cadNomeEmpresa").value = "";
+
+    document.getElementById("cadCacheBase").value = "";
+
+    document.getElementById("cadDiaria").value = "";
+
+    document.getElementById("cadNfPercentual").value = "0";
+
+}
+
+function obterStatusPeriodo(instanciaJob) {
+
+    let dataAtual = new Date(); dataAtual.setHours(0,0,0,0);
+
+    let dataFechamento = calcularDataFechamentoReal(instanciaJob.data, instanciaJob.tipoPagamento, instanciaJob.inicioPeriodo, instanciaJob.fimPeriodo, instanciaJob.inicioSemana, instanciaJob.fimSemana);
+
+    let dataLiquidacao = calcularDataPagamentoReal(dataFechamento, instanciaJob.diasPagamento);
+
+    if (dataAtual > dataLiquidacao) return "pago";
+
+    if (dataAtual > dataFechamento) return "arquivado";
+
+    return "aberto";
+
+}
+
+function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana) {
+
+    let objetoData = new Date(dataPrestacao + "T00:00:00");
+
+    let objetoFechamento = new Date(objetoData);
+
+    if (tipoCiclo === "Semanal") {
+
+        let diaAlvoCorte = parseInt(fimSemana !== undefined ? fimSemana : 0);
+
+        let diasRestantes = (diaAlvoCorte - objetoData.getDay() + 7) % 7;
+
+        if (diasRestantes === 0) diasRestantes = 7;
+
+        objetoFechamento.setDate(objetoData.getDate() + diasRestantes);
+
+    } else {
+
+        let diaCorrente = objetoData.getDate();
+
+        let pFim = parseInt(fimPeriodo || 15);
+
+        if (diaCorrente <= pFim) {
+
+            objetoFechamento = new Date(objetoData.getFullYear(), objetoData.getMonth(), pFim);
+
+        } else {
+
+            objetoFechamento = new Date(objetoData.getFullYear(), objetoData.getMonth() + 1, pFim);
+
         }
+
+    }
+
+    return objetoFechamento;
+
+}
+
+function calcularDataPagamentoReal(dataFechamento, diasUteis) {
+
+    let objetoPagamento = new Date(dataFechamento);
+
+    objetoPagamento.setDate(objetoPagamento.getDate() + Number(diasUteis));
+
+    return objetoPagamento;
+
+}
+
+function salvarJob(){
+
+    const dataInput = document.getElementById("dataJob").value;
+
+    const inputNomeEmpresa = document.getElementById("empresaJob").value.trim();
+
+    const idEdicao = document.getElementById("editJobId").value;
+
+    
+
+    if(!dataInput || !inputNomeEmpresa) { alert("Data e Empresa são obrigatórios."); return; }
+
+    const transacaoEmpresa = db.transaction("empresas", "readonly");
+
+    transacaoEmpresa.objectStore("empresas").getAll().onsuccess = function(event) {
+
+        const todasEmpresas = event.target.result;
+
+        const empresaEncontrada = todasEmpresas.find(emp => emp.nome.toLowerCase() === inputNomeEmpresa.toLowerCase());
+
+        if(!empresaEncontrada) {
+
+            alert("A empresa '" + inputNomeEmpresa + "' não existe no banco. Cadastre-a primeiro na aba Empresas.");
+
+            return;
+
+        }
+
+        const cacheBase = parseFloat(empresaEncontrada.cacheBase || 0);
+
+        const diaria = parseFloat(empresaEncontrada.diaria || 0);
+
+        const percentualNF = parseFloat(empresaEncontrada.nfPercentual || 0);
+
         
-        // Carrega tema salvo
-        function carregarTema() {
-            const tema = localStorage.getItem('cacheapp_tema');
-            if (tema === 'dark') {
-                document.body.classList.add('dark-mode');
-                document.getElementById('themeIcon').textContent = '☀️';
+
+        const sInicio = document.getElementById("inicio").value;
+
+        const sFim = document.getElementById("fim").value;
+
+        const arrI = sInicio.split(":"); const arrF = sFim.split(":");
+
+        
+
+        let difMinutos = (parseInt(arrF[0]) * 60 + parseInt(arrF[1])) - (parseInt(arrI[0]) * 60 + parseInt(arrI[1]));
+
+        if(difMinutos < 0) difMinutos += 1440;
+
+        
+
+        const tHoras = difMinutos / 60;
+
+        const vExtras = Math.max(0, tHoras - 12);
+
+        const cHoraReg = cacheBase / 12;
+
+        const rExtras = vExtras * cHoraReg;
+
+        const fBruto = cacheBase + diaria + rExtras;
+
+        const imposto = fBruto * (percentualNF / 100);
+
+        const payloadJob = {
+
+            data: dataInput, 
+
+            empresa: empresaEncontrada.nome,
+
+            job: document.getElementById("nomeJob").value || "Job Operacional",
+
+            cache: cacheBase, diaria: diaria, extra: rExtras, total: fBruto, valorNF: imposto,
+
+            horas: tHoras.toFixed(1), inicio: sInicio, fim: sFim,
+
+            tipoPagamento: empresaEncontrada.tipoPagamento, diasPagamento: parseInt(empresaEncontrada.diasPagamento || 0),
+
+            inicioPeriodo: parseInt(empresaEncontrada.inicioPeriodo || 1), fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 15),
+
+            inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1), fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
+
+            previsaoPagamento: calcularPagamento(dataInput, empresaEncontrada.tipoPagamento, empresaEncontrada.diasPagamento, empresaEncontrada.inicioPeriodo, empresaEncontrada.fimPeriodo, empresaEncontrada.inicioSemana, empresaEncontrada.fimSemana)
+
+        };
+
+        if(idEdicao) payloadJob.id = parseInt(idEdicao);
+
+        const txGravar = db.transaction("jobs", "readwrite");
+
+        const storeGravar = txGravar.objectStore("jobs");
+
+        const requisicaoFinal = idEdicao ? storeGravar.put(payloadJob) : storeGravar.add(payloadJob);
+
+        requisicaoFinal.onsuccess = function() {
+
+            alert("Lançamento processado com sucesso!");
+
+            executarBackupAutomatico();
+
+            atualizarTela();
+
+            limparCampos();
+
+        };
+
+    };
+
+}
+
+function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana){
+
+    let dataFechamento = calcularDataFechamentoReal(dataPrestacao, tipoCiclo, inicioPeriodo, fimPeriodo, inicioSemana, fimSemana);
+
+    let dataFaturamento = calcularDataPagamentoReal(dataFechamento, diasUteis);
+
+    return dataFaturamento.toLocaleDateString("pt-BR");
+
+}
+
+function carregarJobParaEdicao(id) {
+
+    const tx = db.transaction("jobs", "readonly");
+
+    tx.objectStore("jobs").get(id).onsuccess = function(event) {
+
+        const item = event.target.result;
+
+        if(!item) return;
+
+        document.getElementById("formJobTitle").innerText = "✏️ Editando Lançamento";
+
+        document.getElementById("editJobId").value = item.id;
+
+        document.getElementById("empresaJob").value = item.empresa;
+
+        document.getElementById("dataJob").value = item.data;
+
+        document.getElementById("nomeJob").value = item.job;
+
+        document.getElementById("inicio").value = item.inicio;
+
+        document.getElementById("fim").value = item.fim;
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    };
+
+}
+
+function deletarJob(id) {
+
+    if(confirm("Excluir definitivamente este lançamento?")) {
+
+        const tx = db.transaction("jobs", "readwrite");
+
+        tx.objectStore("jobs").delete(id).onsuccess = () => {
+
+            executarBackupAutomatico();
+
+            atualizarTela();
+
+        };
+
+    }
+
+}
+
+function abrirBusca(){ document.getElementById("searchBox").style.display = "block"; }
+
+function limparBusca(){ document.getElementById("inputBusca").value = ""; document.getElementById("searchBox").style.display = "none"; filtrarTabela(); }
+
+function filtrarTabela(){
+
+    const termo = document.getElementById("inputBusca").value.toUpperCase().trim();
+
+    document.querySelectorAll(".history-card").forEach(card => {
+
+        card.style.display = card.innerText.toUpperCase().includes(termo) ? "block" : "none";
+
+    });
+
+}
+
+function limparCampos(){
+
+    document.getElementById("formJobTitle").innerText = "💼 Job";
+
+    document.getElementById("editJobId").value = "";
+
+    document.getElementById("empresaJob").value = "";
+
+    document.getElementById("nomeJob").value = "";
+
+    document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
+
+}
+
+function atualizarTela(){
+
+    if(!db) return;
+
+    const painel = document.getElementById("listaHistorico");
+
+    painel.innerHTML = "";
+
+    let tBruto = 0, tNF = 0, tHoras = 0;
+
+    let dictGrafico = {};
+
+    const tx = db.transaction("jobs", "readonly");
+
+    tx.objectStore("jobs").getAll().onsuccess = function(event) {
+
+        const matriz = event.target.result.reverse();
+
+        matriz.forEach(reg => {
+
+            const status = obterStatusPeriodo(reg);
+
+            let check = (filtroVisualizacao === "aberto" && status === "aberto") || (filtroVisualizacao === "arquivado" && (status === "arquivado" || status === "pago"));
+
+            if (status === "aberto") {
+
+                tBruto += reg.total || 0; tNF += reg.valorNF || 0; tHoras += parseFloat(reg.horas || 0);
+
+                dictGrafico[reg.empresa] = (dictGrafico[reg.empresa] || 0) + reg.total;
+
             }
-        }
-        
-        // Busca dados da API (com cache)
-        async function buscarDados(forceRefresh = false) {
-            const statusDot = document.getElementById('statusDot');
-            const statusTexto = document.getElementById('statusTexto');
-            
-            statusTexto.textContent = 'Buscando dados...';
-            statusDot.className = 'status-dot';
-            
-            try {
-                // Verifica cache local primeiro
-                const cacheLocal = localStorage.getItem('cacheapp_dados');
-                const cacheTimestamp = localStorage.getItem('cacheapp_timestamp');
+
+            if(!mapaCores[reg.empresa]) mapaCores[reg.empresa] = coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
+
+            if (check) {
+
+                const card = document.createElement("div");
+
+                card.className = "history-card";
+
+                card.style.borderLeft = "6px solid " + mapaCores[reg.empresa];
+
                 
-                if (!forceRefresh && cacheLocal && cacheTimestamp) {
-                    const idade = Date.now() - parseInt(cacheTimestamp);
-                    const idadeMinutos = Math.floor(idade / 60000);
-                    
-                    if (idadeMinutos < 5) {
-                        // Usa cache
-                        dadosCache = JSON.parse(cacheLocal);
-                        cacheHits++;
-                        statusTexto.textContent = `Cache hit (${idadeMinutos}min atrás)`;
-                        statusDot.className = 'status-dot';
-                        document.getElementById('modoCache').textContent = 'Modo: Cache Local';
-                        document.getElementById('cacheHits').textContent = cacheHits;
-                        renderizarItens();
-                        return;
-                    }
-                }
-                
-                // Busca da API
-                const response = await fetch(API_URL);
-                if (!response.ok) throw new Error('API indisponível');
-                
-                const data = await response.json();
-                dadosCache = data;
-                cacheMisses++;
-                
-                // Salva no cache
-                localStorage.setItem('cacheapp_dados', JSON.stringify(data));
-                localStorage.setItem('cacheapp_timestamp', Date.now().toString());
-                
-                statusTexto.textContent = 'Dados atualizados da API';
-                statusDot.className = 'status-dot';
-                document.getElementById('modoCache').textContent = 'Modo: Online (API)';
-                
-            } catch (erro) {
-                // Fallback para cache
-                statusTexto.textContent = 'API offline - usando cache local';
-                statusDot.className = 'status-dot error';
-                document.getElementById('modoCache').textContent = 'Modo: Offline';
-                
-                const cacheLocal = localStorage.getItem('cacheapp_dados');
-                if (cacheLocal) {
-                    dadosCache = JSON.parse(cacheLocal);
-                }
-            }
-            
-            renderizarItens();
-        }
-        
-        function atualizarCache() {
-            buscarDados(true);
-        }
-        
-        function renderizarItens() {
-            const container = document.getElementById('listaItens');
-            document.getElementById('totalItens').textContent = dadosCache.length;
-            document.getElementById('cacheHits').textContent = cacheHits;
-            document.getElementById('ultimaAtt').textContent = 
-                new Date().toLocaleTimeString('pt-BR');
-            
-            if (dadosCache.length === 0) {
-                container.innerHTML = `
-                    <div class="empty">
-                        <div class="empty-icon">📭</div>
-                        <p>Nenhum item em cache</p>
-                        <button class="btn btn-primary" onclick="atualizarCache()" style="margin-top: 16px;">
-                            🔄 Atualizar Agora
-                        </button>
-                    </div>
+
+                let badge = status === "aberto" ? `<span class="badge-status status-aberto">Aberto</span>` : (status === "arquivado" ? `<span class="badge-status status-fechado">Aguardando</span>` : `<span class="badge-status status-pago">Quitado ✓</span>`);
+
+                let dFmt = reg.data.split("-").reverse().join("/");
+
+                card.innerHTML = `
+
+                    <button class="btn-del" onclick="deletarJob(${reg.id})">🗑️</button>
+
+                    <button class="btn-edit-inline" onclick="carregarJobParaEdicao(${reg.id})">✏️</button>
+
+                    <div class="empresa-title" style="color:${mapaCores[reg.empresa]}">${reg.empresa}</div>
+
+                    <div class="meta-text">📅 ${dFmt} | 📌 ${reg.job}</div>
+
+                    <div>${badge}</div>
+
+                    <div class="meta-text" style="margin-top:8px;">🕒 Jornada: ${reg.inicio} às ${reg.fim} (${reg.horas}h)</div>
+
+                    <div class="meta-text">📆 Recebimento: <b>${reg.previsaoPagamento}</b></div>
+
+                    <div style="margin-top:10px; font-weight:900;">Bruto: <span>${formatarValor(reg.total)}</span></div>
+
                 `;
-                return;
+
+                painel.appendChild(card);
+
             }
-            
-            container.innerHTML = `
-                <div class="items-grid">
-                    ${dadosCache.map((item, index) => `
-                        <div class="item-card" onclick="verDetalhes('${item.nome || item.name || 'Item ' + (index + 1)}')">
-                            <div class="item-emoji">${item.emoji || item.icon || '📦'}</div>
-                            <div class="item-name">${item.nome || item.name || 'Item ' + (index + 1)}</div>
-                            <div class="item-cache-time">
-                                ${item.timestamp ? 'Cache: ' + new Date(item.timestamp).toLocaleDateString('pt-BR') : 'Cache local'}
-                            </div>
-                            <div class="item-size">
-                                ${item.tamanho || item.size || (Math.random() * 500).toFixed(0) + ' KB'}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-        
-        function verDetalhes(nome) {
-            alert(`📦 ${nome}\n\nItem armazenado em cache.\nDados disponíveis offline.`);
-        }
-        
-        // ==========================================
-        // INICIALIZAÇÃO
-        // ==========================================
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            // Verifica licença
-            const licenca = verificarLicenca();
-            
-            // Carrega tema
-            carregarTema();
-            
-            // Inicia busca de dados
-            if (licenca.valido || document.getElementById('modalLicenca').style.display === 'flex') {
-                buscarDados();
-            }
-            
-            console.log('✅ CacheApp v2.0 iniciado');
-            console.log('📱 Sistema de licenciamento: ' + (licenca.valido ? 'Ativo' : 'Expirado'));
-            console.log('📦 Dias restantes: ' + licenca.diasRestantes);
+
         });
-    </script>
+
+        document.getElementById("vTotalSemana").innerText = formatarValor(tBruto);
+
+        document.getElementById("vTotalNF").innerText = "- " + formatarValor(tNF);
+
+        document.getElementById("vTotalHoras").innerText = tHoras.toFixed(1) + "h";
+
+        renderGrafico(dictGrafico);
+
+        
+
+        if(document.getElementById("searchBox").style.display === "block"){
+
+            filtrarTabela();
+
+        }
+
+    };
+
+}
+
+function renderGrafico(dict){
+
+    const ctx = document.getElementById("graficoEmpresas");
+
+    if(!ctx) return;
+
+    
+
+    const labels = Object.keys(dict), values = Object.values(dict);
+
+    const colors = labels.map(lbl => mapaCores[lbl]);
+
+    if(window.chartInstance) {
+
+        window.chartInstance.data.labels = labels;
+
+        window.chartInstance.data.datasets[0].data = values;
+
+        window.chartInstance.data.datasets[0].backgroundColor = colors;
+
+        window.chartInstance.update();
+
+    } else {
+
+        if(labels.length === 0) return;
+
+        window.chartInstance = new Chart(ctx, {
+
+            type: "bar",
+
+            data: { labels: labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 8 }] },
+
+            options: {
+
+                responsive: true, maintainAspectRatio: false,
+
+                plugins: { legend: { display: false } },
+
+                scales: { y: { display: false }, x: { ticks: { color: "#94a3b8" } } }
+
+            }
+
+        });
+
+    }
+
+}
+
+function enviarRelatorioWhatsApp(){
+
+    const tx = db.transaction("jobs", "readonly");
+
+    tx.objectStore("jobs").getAll().onsuccess = function(event) {
+
+        const termoBusca = document.getElementById("inputBusca").value.toUpperCase().trim();
+
+        const caixaBuscaAtiva = document.getElementById("searchBox").style.display === "block";
+
+        const filtrados = event.target.result.filter(item => {
+
+            const status = obterStatusPeriodo(item);
+
+            const passaFiltroAbas = (filtroVisualizacao === "aberto" && status === "aberto") || 
+
+                                   (filtroVisualizacao === "arquivado" && (status === "arquivado" || status === "pago"));
+
+            
+
+            if (!passaFiltroAbas) return false;
+
+            if (caixaBuscaAtiva && termoBusca !== "") {
+
+                const stringDoCard = `${item.empresa} ${item.job} ${item.data}`.toUpperCase();
+
+                return stringDoCard.includes(termoBusca);
+
+            }
+
+            return true;
+
+        });
+
+        if(filtrados.length === 0) { alert("Nenhum registro encontrado no filtro atual."); return; }
+
+        
+
+        let msg = "FADER LIVRE - EXTRATO CACHÊ CONTROL\n";
+
+        if(caixaBuscaAtiva && termoBusca !== "") {
+
+            msg += `FILTRO ATIVO: "${termoBusca}"\n`;
+
+        }
+
+        msg += "--------------------------------------\n\n";
+
+        
+
+        let totalGeralFiltrado = 0;
+
+        filtrados.forEach(j => {
+
+            msg += `${j.empresa} - ${j.data.split("-").reverse().join("/")}\nJob: ${j.job}\nTotal: R$ ${j.total.toFixed(2)}\n\n`;
+
+            totalGeralFiltrado += j.total;
+
+        });
+
+        msg += "--------------------------------------\n";
+
+        msg += `Total: R$ ${totalGeralFiltrado.toFixed(2)}\n`;
+
+        
+
+        window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
+
+    };
+
+}
+
+function baixarExcelCompleto(){
+
+    const tx = db.transaction("jobs", "readonly");
+
+    tx.objectStore("jobs").getAll().onsuccess = function(event) {
+
+        let csv = "ID;Data;Empresa;Job;Total;Previsao\n";
+
+        event.target.result.forEach(i => csv += `${i.id};${i.data};${i.empresa};${i.job};${i.total};${i.previsaoPagamento}\n`);
+
+        const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+
+        const link = document.createElement("a");
+
+        link.href = URL.createObjectURL(blob);
+
+        link.download = `fader_livre_faturamento.csv`;
+
+        link.click();
+
+    };
+
+}
+
+</script>
 
 </body>
+
 </html>
