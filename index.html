@@ -277,6 +277,1023 @@ od.forEach(i=>{let lq=i.total-i.valorNF;c+=i.data+";"+i.empresa+";"+i.job+";R$ "
 let b=new Blob(["\ufeff"+c],{type:'text/csv;charset=utf-8;'});let l=document.createElement("a");l.href=URL.createObjectURL(b);l.download="fader_"+new Date().toISOString().split('T')[0]+".csv";l.click();toast("Excel exportado!");};}
 
 window.onload=function(){if(!localStorage.getItem("senha_cache_control")){document.getElementById("senhaInput").placeholder="Defina sua chave";}};
+<script>
+// ==========================================
+// VARIÁVEIS GLOBAIS
+// ==========================================
+let db = null;
+let ocultarValores = false;
+let filtroVisualizacao = "aberto";
+let mapaCores = {};
+let editStatusManual = null;
+let FERIADOS = ['01-01','21-04','01-05','07-09','12-10','02-11','15-11','25-12'];
+const coresGrafico = ['#38bdf8','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316','#a855f7','#06b6d4'];
+
+// ==========================================
+// FUNÇÕES DA TELA DE LOGIN
+// ==========================================
+function togglePasswordVisibility() {
+    var input = document.getElementById('senhaInput');
+    var btn = document.querySelector('.toggle-password');
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = '<svg class="icon-svg"><use href="#icon-eye-off"/></svg>';
+    } else {
+        input.type = 'password';
+        btn.innerHTML = '<svg class="icon-svg"><use href="#icon-eye"/></svg>';
+    }
+}
+
+function codificarSenha(senha) {
+    var hash = 0;
+    var str = senha.split('').reverse().join('') + '_fader';
+    for (var i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash = hash | 0;
+    }
+    return 'fx_' + Math.abs(hash).toString(36);
+}
+
+function validarEmail(email) {
+    return email.indexOf('@') > 0 && email.indexOf('.') > 0;
+}
+
+function emergencyReset() {
+    if (confirm("ATENCAO: Todos os dados serao perdidos. Continuar?")) {
+        localStorage.clear();
+        var deleteRequest = indexedDB.deleteDatabase("CacheFinal_V33");
+        deleteRequest.onsuccess = function() {
+            alert("Sistema redefinido! Reiniciando...");
+            window.location.reload();
+        };
+        deleteRequest.onerror = function() {
+            window.location.reload();
+        };
+    }
+}
+
+function toggleCadastroSenha() {
+    var box = document.getElementById("novaSenhaBox");
+    if (box.style.display === "none" || box.style.display === "") {
+        box.style.display = "block";
+    } else {
+        box.style.display = "none";
+    }
+}
+
+function cadastrarSenha() {
+    var novaSenha = document.getElementById("novaSenha").value;
+    var confirmarSenha = document.getElementById("confirmarSenha").value;
+    var email = document.getElementById("emailRecuperacao").value.trim();
+    var telefone = document.getElementById("telefoneRecuperacao").value.trim();
+
+    if (!novaSenha || !email) {
+        alert("Chave e e-mail sao obrigatorios.");
+        return;
+    }
+    if (!validarEmail(email)) {
+        alert("E-mail invalido.");
+        return;
+    }
+    if (novaSenha.length < 6) {
+        alert("A chave deve ter pelo menos 6 caracteres.");
+        return;
+    }
+    if (novaSenha !== confirmarSenha) {
+        alert("As chaves nao conferem.");
+        return;
+    }
+
+    localStorage.setItem("senha_cache_control", codificarSenha(novaSenha));
+    localStorage.setItem("email_cache_control", email);
+    localStorage.setItem("telefone_cache_control", telefone);
+    alert("Credenciais registradas com sucesso!");
+    window.location.reload();
+}
+
+function login() {
+    var senha = document.getElementById("senhaInput").value;
+    var senhaSalva = localStorage.getItem("senha_cache_control");
+
+    if (!senhaSalva) {
+        if (senha.length < 4) {
+            alert("Defina uma chave de pelo menos 4 caracteres.");
+            return;
+        }
+        localStorage.setItem("senha_cache_control", codificarSenha(senha));
+        localStorage.setItem("email_cache_control", "suporte@faderlivre.com");
+        document.getElementById("loginScreen").style.display = "none";
+        inicializarApp();
+        return;
+    }
+
+    if (codificarSenha(senha) === senhaSalva) {
+        document.getElementById("loginScreen").style.display = "none";
+        inicializarApp();
+    } else {
+        alert("Chave de Seguranca Incorreta.");
+    }
+}
+
+function recuperarSenha() {
+    var email = localStorage.getItem("email_cache_control");
+    var telefone = localStorage.getItem("telefone_cache_control");
+    var msg = "";
+    if (email) msg = msg + "E-mail: " + email + "\n";
+    if (telefone) msg = msg + "Telefone: " + telefone + "\n";
+    if (!msg) msg = "Nenhum dado de recuperacao configurado.";
+    alert(msg);
+}
+
+function changeMasterPassword() {
+    var oldPwd = document.getElementById('oldMasterPassword').value;
+    var newPwd = document.getElementById('newMasterPassword').value;
+    var confirmPwd = document.getElementById('confirmNewMasterPassword').value;
+    var senhaAtual = localStorage.getItem("senha_cache_control");
+
+    if (!oldPwd || !newPwd || !confirmPwd) {
+        alert("Preencha todos os campos.");
+        return;
+    }
+    if (codificarSenha(oldPwd) !== senhaAtual) {
+        alert("Chave atual incorreta.");
+        return;
+    }
+    if (newPwd.length < 6) {
+        alert("Minimo 6 caracteres.");
+        return;
+    }
+    if (newPwd !== confirmPwd) {
+        alert("Chaves nao conferem.");
+        return;
+    }
+    localStorage.setItem("senha_cache_control", codificarSenha(newPwd));
+    alert("Chave alterada com sucesso!");
+    document.getElementById('oldMasterPassword').value = '';
+    document.getElementById('newMasterPassword').value = '';
+    document.getElementById('confirmNewMasterPassword').value = '';
+}
+
+// ==========================================
+// INICIALIZAÇÃO
+// ==========================================
+function inicializarApp() {
+    var tema = localStorage.getItem('app_theme') || 'dark';
+    if (tema === 'light') {
+        document.body.classList.add('light-mode');
+        var tt = document.getElementById('themeToggle');
+        if (tt) tt.checked = true;
+    }
+    
+    if (!localStorage.getItem("senha_cache_control")) {
+        document.getElementById("senhaInput").placeholder = "Defina sua chave";
+    }
+
+    try {
+        document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
+    } catch(e) {}
+    
+    atualizarTela();
+    atualizarListaEmpresas();
+    checkNotif();
+    verificarPgto();
+    atualizarIconeOlho();
+}
+
+function atualizarIconeOlho() {
+    var eb = document.getElementById("eyeButton");
+    if (eb) {
+        eb.innerHTML = ocultarValores ? 
+            '<svg class="icon-btn"><use href="#icon-eye"/></svg>' : 
+            '<svg class="icon-btn"><use href="#icon-eye-off"/></svg>';
+    }
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    var tema = document.body.classList.contains('light-mode') ? 'light' : 'dark';
+    localStorage.setItem('app_theme', tema);
+}
+
+// ==========================================
+// BANCO DE DADOS
+// ==========================================
+var requestDB = indexedDB.open("CacheFinal_V33", 1);
+requestDB.onupgradeneeded = function(event) {
+    var d = event.target.result;
+    if (!d.objectStoreNames.contains("jobs")) {
+        d.createObjectStore("jobs", { keyPath: "id", autoIncrement: true });
+    }
+    if (!d.objectStoreNames.contains("empresas")) {
+        d.createObjectStore("empresas", { keyPath: "id", autoIncrement: true });
+    }
+};
+requestDB.onsuccess = function(event) {
+    db = event.target.result;
+    if (document.getElementById("loginScreen").style.display === "none") {
+        inicializarApp();
+    }
+};
+requestDB.onerror = function() {
+    alert("Erro: Banco de dados indisponivel.");
+};
+
+// ==========================================
+// FUNÇÕES AUXILIARES
+// ==========================================
+function toggleValores() {
+    ocultarValores = !ocultarValores;
+    atualizarIconeOlho();
+    atualizarTela();
+}
+
+function formatarValor(valor) {
+    if (ocultarValores) return "R$ •••••";
+    return Number(valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function formatarHoras(hd) {
+    var h = Math.floor(hd);
+    var m = Math.round((hd - h) * 60);
+    return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + 'h';
+}
+
+function formatarData(dataISO) {
+    var p = dataISO.split("-");
+    var d = new Date(p[0], p[1] - 1, p[2]);
+    var dias = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+    return dias[d.getDay()] + ', ' + p[2] + '/' + p[1] + '/' + p[0];
+}
+
+function formatarDataExt(dataISO) {
+    var p = dataISO.split("-");
+    var d = new Date(p[0], p[1] - 1, p[2]);
+    var dias = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+    return p[2] + '/' + p[1] + '/' + p[0] + ' - ' + dias[d.getDay()];
+}
+
+function mostrarToast(mensagem) {
+    var ta = document.getElementById('toastMsg');
+    if (ta) ta.remove();
+    var t = document.createElement('div');
+    t.id = 'toastMsg';
+    t.className = 'toast-notification';
+    t.textContent = mensagem;
+    t.onclick = function() { t.remove(); };
+    document.body.appendChild(t);
+    setTimeout(function() { if (t.parentNode) t.remove(); }, 5000);
+}
+
+// ==========================================
+// FERIADOS E DIAS ÚTEIS
+// ==========================================
+function isFeriado(data) {
+    var m = String(data.getMonth() + 1).padStart(2, '0');
+    var d = String(data.getDate()).padStart(2, '0');
+    return FERIADOS.indexOf(d + '-' + m) >= 0;
+}
+
+function isDiaUtil(data) {
+    var ds = data.getDay();
+    if (ds === 0 || ds === 6) return false;
+    if (isFeriado(data)) return false;
+    return true;
+}
+
+function adicionarDiasUteis(dataInicial, dias) {
+    var d = new Date(dataInicial);
+    var ad = 0;
+    while (ad < dias) {
+        d.setDate(d.getDate() + 1);
+        if (isDiaUtil(d)) ad++;
+    }
+    d.setHours(0, 0, 0, 0);
+    return d;
+}
+
+// ==========================================
+// BACKUP
+// ==========================================
+function backupAuto() {
+    if (!db) return;
+    var tJ = db.transaction("jobs", "readonly");
+    tJ.objectStore("jobs").getAll().onsuccess = function(ej) {
+        var tE = db.transaction("empresas", "readonly");
+        tE.objectStore("empresas").getAll().onsuccess = function(ee) {
+            var p = { jobs: ej.target.result, empresas: ee.target.result, data: new Date().toISOString() };
+            localStorage.setItem("fader_auto_backup", JSON.stringify(p));
+        };
+    };
+}
+
+function fazerBackup() {
+    if (!db) return;
+    var tJ = db.transaction("jobs", "readonly");
+    tJ.objectStore("jobs").getAll().onsuccess = function(ej) {
+        var tE = db.transaction("empresas", "readonly");
+        tE.objectStore("empresas").getAll().onsuccess = function(ee) {
+            var p = { jobs: ej.target.result, empresas: ee.target.result, data: new Date().toISOString() };
+            var blob = new Blob([JSON.stringify(p, null, 2)], { type: "application/json" });
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "fader_backup_" + new Date().toISOString().split('T')[0] + ".json";
+            link.click();
+            mostrarToast("Backup local gerado!");
+        };
+    };
+}
+
+function backupNuvem() {
+    if (!db) return;
+    var tJ = db.transaction("jobs", "readonly");
+    tJ.objectStore("jobs").getAll().onsuccess = function(ej) {
+        var tE = db.transaction("empresas", "readonly");
+        tE.objectStore("empresas").getAll().onsuccess = function(ee) {
+            var d = { jobs: ej.target.result, empresas: ee.target.result, ts: new Date().toISOString() };
+            var bn = JSON.parse(localStorage.getItem('fader_nuvem') || '[]');
+            bn.push(d);
+            if (bn.length > 5) bn.shift();
+            localStorage.setItem('fader_nuvem', JSON.stringify(bn));
+            mostrarToast("Backup salvo na nuvem!");
+            alert("Backup enviado! Total: " + bn.length);
+        };
+    };
+}
+
+function restaurarNuvem() {
+    var bn = JSON.parse(localStorage.getItem('fader_nuvem') || '[]');
+    if (bn.length === 0) { alert("Nenhum backup na nuvem."); return; }
+    var u = bn[bn.length - 1];
+    if (!confirm("Restaurar backup de " + new Date(u.ts).toLocaleString('pt-BR') + "?")) return;
+    var tc = db.transaction("jobs", "readwrite");
+    tc.objectStore("jobs").clear().onsuccess = function() {
+        var tJ = db.transaction("jobs", "readwrite");
+        u.jobs.forEach(function(i) { tJ.objectStore("jobs").put(i); });
+        tJ.oncomplete = function() {
+            var tcE = db.transaction("empresas", "readwrite");
+            tcE.objectStore("empresas").clear().onsuccess = function() {
+                var tE = db.transaction("empresas", "readwrite");
+                u.empresas.forEach(function(i) { tE.objectStore("empresas").put(i); });
+                tE.oncomplete = function() {
+                    alert("Backup restaurado!");
+                    window.location.reload();
+                };
+            };
+        };
+    };
+}
+
+// Restore file
+document.getElementById("restoreFile").addEventListener("change", function(event) {
+    var arquivo = event.target.files[0];
+    if (!arquivo) return;
+    var leitor = new FileReader();
+    leitor.onload = function() {
+        try {
+            var dados = JSON.parse(leitor.result);
+            if (dados.jobs && dados.empresas) {
+                var tc = db.transaction("jobs", "readwrite");
+                tc.objectStore("jobs").clear().onsuccess = function() {
+                    var tJ = db.transaction("jobs", "readwrite");
+                    dados.jobs.forEach(function(i) { tJ.objectStore("jobs").put(i); });
+                    tJ.oncomplete = function() {
+                        var tcE = db.transaction("empresas", "readwrite");
+                        tcE.objectStore("empresas").clear().onsuccess = function() {
+                            var tE = db.transaction("empresas", "readwrite");
+                            dados.empresas.forEach(function(i) { tE.objectStore("empresas").put(i); });
+                            tE.oncomplete = function() {
+                                alert("Importado com sucesso!");
+                                window.location.reload();
+                            };
+                        };
+                    };
+                };
+            }
+        } catch(err) {
+            alert("Arquivo invalido.");
+        }
+    };
+    leitor.readAsText(arquivo);
+});
+
+// ==========================================
+// NAVEGAÇÃO
+// ==========================================
+function alternarAba(abaId, event) {
+    document.querySelectorAll('.app-section').forEach(function(s) { s.classList.remove('active'); });
+    document.querySelectorAll('.tab-button').forEach(function(b) { b.classList.remove('active'); });
+    document.getElementById(abaId).classList.add('active');
+    if (event) event.currentTarget.classList.add('active');
+    if (abaId === 'abaEmpresas') atualizarListaEmpresas();
+    else if (abaId === 'abaJobs') atualizarTela();
+}
+
+function definirFiltroVisualizacao(tipo) {
+    filtroVisualizacao = tipo;
+    document.getElementById("btnFiltroAberto").classList.toggle("active", tipo === 'aberto');
+    document.getElementById("btnFiltroArquivado").classList.toggle("active", tipo === 'arquivado');
+    document.getElementById("sectionTitleJobs").innerText = tipo === 'aberto' ? "Jobs em Aberto" : "Jobs Arquivados / Pagos";
+    atualizarTela();
+}
+
+// ==========================================
+// AUTOCOMPLETE
+// ==========================================
+function gerenciarAutocomplete(texto) {
+    var container = document.getElementById("autocompleteContainer");
+    container.innerHTML = "";
+    if (!db || !texto || texto.trim() === "") return;
+    var tx = db.transaction("empresas", "readonly");
+    tx.objectStore("empresas").getAll().onsuccess = function(event) {
+        var filtradas = event.target.result.filter(function(emp) {
+            return emp.nome.toLowerCase().indexOf(texto.toLowerCase().trim()) >= 0;
+        });
+        if (filtradas.length > 0) {
+            var listaDiv = document.createElement("div");
+            listaDiv.className = "autocomplete-list";
+            filtradas.forEach(function(emp) {
+                var item = document.createElement("div");
+                item.className = "autocomplete-item";
+                item.innerText = emp.nome;
+                item.onclick = function() {
+                    document.getElementById("empresaJob").value = emp.nome;
+                    container.innerHTML = "";
+                };
+                listaDiv.appendChild(item);
+            });
+            container.appendChild(listaDiv);
+        }
+    };
+}
+
+// ==========================================
+// CRUD EMPRESAS
+// ==========================================
+function salvarEmpresa() {
+    var nome = document.getElementById("cadNomeEmpresa").value.trim();
+    var idExistente = document.getElementById("cadIdEmpresa").value;
+    if (!nome) { alert("Nome da empresa e obrigatorio."); return; }
+
+    var tv = db.transaction("empresas", "readonly");
+    tv.objectStore("empresas").getAll().onsuccess = function(ev) {
+        var existentes = ev.target.result;
+        var duplicado = existentes.find(function(e) {
+            return e.nome.toLowerCase().trim() === nome.toLowerCase().trim() && (!idExistente || e.id !== parseInt(idExistente));
+        });
+        if (duplicado) { alert("Empresa ja cadastrada."); return; }
+
+        var tipo = document.getElementById("cadTipoPagamento").value;
+        var payload = {
+            nome: nome,
+            cacheBase: parseFloat(document.getElementById("cadCacheBase").value || 0),
+            diaria: parseFloat(document.getElementById("cadDiaria").value || 0),
+            tipoPagamento: tipo,
+            diasPagamento: parseInt(document.getElementById("cadDiasPagamento").value || 0),
+            nfPercentual: parseFloat(document.getElementById("cadNfPercentual").value || 0)
+        };
+
+        if (tipo === "Semanal") {
+            payload.inicioSemana = parseInt(document.getElementById("cadInicioSemana").value);
+            payload.fimSemana = parseInt(document.getElementById("cadFimSemana").value);
+        } else if (tipo === "Quinzenal") {
+            payload.inicioCiclo1 = parseInt(document.getElementById("cadInicioCiclo1").value) || 11;
+            payload.fimCiclo1 = parseInt(document.getElementById("cadFimCiclo1").value) || 25;
+            payload.inicioCiclo2 = parseInt(document.getElementById("cadInicioCiclo2").value) || 26;
+            payload.fimCiclo2 = parseInt(document.getElementById("cadFimCiclo2").value) || 10;
+        } else {
+            payload.fimPeriodo = parseInt(document.getElementById("cadFimPeriodo").value) || 30;
+        }
+
+        if (idExistente) payload.id = parseInt(idExistente);
+
+        var tx = db.transaction("empresas", "readwrite");
+        var req = idExistente ? tx.objectStore("empresas").put(payload) : tx.objectStore("empresas").add(payload);
+        req.onsuccess = function() {
+            alert("Empresa salva!");
+            backupAuto();
+            limparCamposEmpresa();
+            atualizarListaEmpresas();
+        };
+    };
+}
+
+function carregarEmpresaParaEdicao(id) {
+    var tx = db.transaction("empresas", "readonly");
+    tx.objectStore("empresas").get(id).onsuccess = function(e) {
+        var d = e.target.result;
+        if (!d) return;
+        document.getElementById("formEmpresaTitle").innerHTML = "Editando: " + d.nome;
+        document.getElementById("cadIdEmpresa").value = d.id;
+        document.getElementById("cadNomeEmpresa").value = d.nome;
+        document.getElementById("cadCacheBase").value = d.cacheBase;
+        document.getElementById("cadDiaria").value = d.diaria;
+        document.getElementById("cadTipoPagamento").value = d.tipoPagamento;
+        document.getElementById("cadDiasPagamento").value = d.diasPagamento || 0;
+        document.getElementById("cadNfPercentual").value = d.nfPercentual || 0;
+        document.getElementById("cadInicioCiclo1").value = d.inicioCiclo1 || 11;
+        document.getElementById("cadFimCiclo1").value = d.fimCiclo1 || 25;
+        document.getElementById("cadInicioCiclo2").value = d.inicioCiclo2 || 26;
+        document.getElementById("cadFimCiclo2").value = d.fimCiclo2 || 10;
+        document.getElementById("cadFimPeriodo").value = d.fimPeriodo || 30;
+        document.getElementById("cadInicioSemana").value = d.inicioSemana || 1;
+        document.getElementById("cadFimSemana").value = d.fimSemana || 0;
+        alterarPeriodoPagamentoCadastro();
+        document.getElementById("formEmpresaTitle").scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+}
+
+function deletarEmpresa(id) {
+    if (confirm("Remover permanentemente?")) {
+        db.transaction("empresas", "readwrite").objectStore("empresas").delete(id).onsuccess = function() {
+            backupAuto();
+            atualizarListaEmpresas();
+        };
+    }
+}
+
+function atualizarListaEmpresas() {
+    if (!db) return;
+    var container = document.getElementById("listaEmpresasCadastradas");
+    container.innerHTML = "";
+    db.transaction("empresas", "readonly").objectStore("empresas").getAll().onsuccess = function(e) {
+        var colecao = e.target.result;
+        if (colecao.length === 0) {
+            container.innerHTML = "<p style='color:var(--muted);padding:10px;'>Nenhuma empresa cadastrada.</p>";
+            return;
+        }
+        colecao.forEach(function(emp) {
+            var card = document.createElement("div");
+            card.style = "background:var(--card);padding:15px;border-radius:20px;margin-bottom:10px;border:1px solid var(--border-color);position:relative;";
+            var descCiclo = emp.tipoPagamento;
+            if (emp.tipoPagamento === "Quinzenal") {
+                descCiclo = "Quinzenal (" + (emp.inicioCiclo1 || 11) + " a " + (emp.fimCiclo1 || 25) + " / " + (emp.inicioCiclo2 || 26) + " a " + (emp.fimCiclo2 || 10) + ")";
+            }
+            card.innerHTML = '<div class="empresa-title">' + emp.nome + '</div>' +
+                '<div class="meta-text">Cache: <b>R$ ' + emp.cacheBase.toFixed(2) + '</b> | Diaria: <b>R$ ' + emp.diaria.toFixed(2) + '</b></div>' +
+                '<div class="meta-text">Ciclo: <b>' + descCiclo + '</b> | NF: <b>' + emp.nfPercentual + '%</b></div>' +
+                '<button class="btn-edit-inline" onclick="carregarEmpresaParaEdicao(' + emp.id + ')"><svg class="icon-btn"><use href="#icon-edit"/></svg></button>' +
+                '<button class="btn-del" onclick="deletarEmpresa(' + emp.id + ')"><svg class="icon-btn"><use href="#icon-trash"/></svg></button>';
+            container.appendChild(card);
+        });
+    };
+}
+
+function limparCamposEmpresa() {
+    document.getElementById("formEmpresaTitle").innerText = "Nova Empresa";
+    document.getElementById("cadIdEmpresa").value = "";
+    document.getElementById("cadNomeEmpresa").value = "";
+    document.getElementById("cadCacheBase").value = "";
+    document.getElementById("cadDiaria").value = "";
+    document.getElementById("cadNfPercentual").value = "0";
+    document.getElementById("cadTipoPagamento").value = "Semanal";
+    alterarPeriodoPagamentoCadastro();
+}
+
+function alterarPeriodoPagamentoCadastro() {
+    var tipo = document.getElementById("cadTipoPagamento").value;
+    document.getElementById("cadPeriodoPersonalizado").style.display = (tipo === "Quinzenal" || tipo === "Mensal") ? "block" : "none";
+    document.getElementById("cadPeriodoSemanalBox").style.display = (tipo === "Semanal") ? "grid" : "none";
+    document.getElementById("quinzenalPeriodos").style.display = (tipo === "Quinzenal") ? "block" : "none";
+    document.getElementById("mensalPeriodos").style.display = (tipo === "Mensal") ? "block" : "none";
+}
+
+// ==========================================
+// CÁLCULO DE DATAS
+// ==========================================
+function obterStatus(job) {
+    if (job.statusManual === "pago") return "pago";
+    var da = new Date(); da.setHours(0, 0, 0, 0);
+    var df = calcFechamento(job);
+    var dl = adicionarDiasUteis(df, job.diasPagamento);
+    if (da > dl) return "pago";
+    if (da > df) return "arquivado";
+    return "aberto";
+}
+
+function calcFechamento(job) {
+    var od = new Date(job.data + "T00:00:00");
+    var of = new Date(od);
+    
+    if (job.tipoPagamento === "Semanal") {
+        var dc = parseInt(job.fimSemana !== undefined ? job.fimSemana : 0);
+        var dr = (dc - od.getDay() + 7) % 7;
+        if (dr === 0) dr = 7;
+        of.setDate(od.getDate() + dr);
+    } else if (job.tipoPagamento === "Quinzenal") {
+        var dia = od.getDate(), mes = od.getMonth(), ano = od.getFullYear();
+        var ud = new Date(ano, mes + 1, 0).getDate();
+        var c1i = parseInt(job.inicioCiclo1 || 11), c1f = Math.min(parseInt(job.fimCiclo1 || 25), ud);
+        var c2i = Math.min(parseInt(job.inicioCiclo2 || 26), ud), c2f = Math.min(parseInt(job.fimCiclo2 || 10), ud);
+        if (dia >= c1i && dia <= c1f) of = new Date(ano, mes, c1f);
+        else if (dia >= c2i && dia <= c2f) of = new Date(ano, mes, c2f);
+        else if (dia < c1i) of = new Date(ano, mes, c1f);
+        else of = new Date(ano, mes + 1, Math.min(c1f, new Date(ano, mes + 2, 0).getDate()));
+    } else {
+        var dia2 = od.getDate();
+        var pf = Math.min(parseInt(job.fimPeriodo || 30), new Date(od.getFullYear(), od.getMonth() + 1, 0).getDate());
+        if (dia2 <= pf) of = new Date(od.getFullYear(), od.getMonth(), pf);
+        else of = new Date(od.getFullYear(), od.getMonth() + 1, Math.min(pf, new Date(od.getFullYear(), od.getMonth() + 2, 0).getDate()));
+    }
+    of.setHours(0, 0, 0, 0);
+    return of;
+}
+
+function calcPrevisao(job) {
+    return adicionarDiasUteis(calcFechamento(job), job.diasPagamento);
+}
+
+// ==========================================
+// NOTIFICAÇÕES
+// ==========================================
+function checkNotif() {
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+}
+
+function verificarPgto() {
+    if (!db || Notification.permission !== "granted") return;
+    var hoje = new Date();
+    if (hoje.getHours() < 9) return;
+    hoje.setHours(0, 0, 0, 0);
+    
+    var tx = db.transaction("jobs", "readonly");
+    tx.objectStore("jobs").getAll().onsuccess = function(e) {
+        var totalHoje = 0;
+        var notificados = JSON.parse(localStorage.getItem('nt_hoje') || '{}');
+        var hojeStr = new Date().toISOString().split('T')[0];
+        
+        e.target.result.forEach(function(job) {
+            if (job.statusManual === "pago") return;
+            var dp = calcPrevisao(job);
+            if (dp.getTime() === hoje.getTime() && !notificados[job.id]) {
+                totalHoje += job.total;
+                notificados[job.id] = hojeStr;
+            }
+        });
+        
+        if (totalHoje > 0) {
+            localStorage.setItem('nt_hoje', JSON.stringify(notificados));
+            if (Notification.permission === "granted") {
+                new Notification("Pagamentos Hoje!", { body: "Total: " + formatarValor(totalHoje) });
+            }
+            mostrarToast("Pagamentos previstos para hoje! Total: " + formatarValor(totalHoje));
+        }
+    };
+}
+
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') verificarPgto();
+});
+
+// ==========================================
+// CRUD JOBS
+// ==========================================
+function salvarJob() {
+    var dataInput = document.getElementById("dataJob").value;
+    var inputNomeEmpresa = document.getElementById("empresaJob").value.trim();
+    var idEdicao = document.getElementById("editJobId").value;
+    if (!dataInput || !inputNomeEmpresa) { alert("Data e Empresa sao obrigatorios."); return; }
+
+    var tE = db.transaction("empresas", "readonly");
+    tE.objectStore("empresas").getAll().onsuccess = function(e) {
+        var emp = e.target.result.find(function(x) {
+            return x.nome.toLowerCase() === inputNomeEmpresa.toLowerCase();
+        });
+        if (!emp) { alert("Empresa nao encontrada. Cadastre primeiro."); return; }
+
+        var BH = 12;
+        var cb = parseFloat(emp.cacheBase || 0);
+        var dd = parseFloat(emp.diaria || 0);
+        var nf = parseFloat(emp.nfPercentual || 0);
+        var aI = document.getElementById("inicio").value.split(":");
+        var aF = document.getElementById("fim").value.split(":");
+        var dm = (parseInt(aF[0]) * 60 + parseInt(aF[1])) - (parseInt(aI[0]) * 60 + parseInt(aI[1]));
+        if (dm < 0) dm += 1440;
+        var th = dm / 60;
+        var ve = Math.max(0, th - BH);
+        var re = ve * (cb / BH);
+        var fb = cb + dd + re;
+        var imp = fb * (nf / 100);
+
+        var jt = {
+            data: dataInput, tipoPagamento: emp.tipoPagamento,
+            diasPagamento: parseInt(emp.diasPagamento || 0),
+            fimPeriodo: parseInt(emp.fimPeriodo || 30),
+            inicioSemana: parseInt(emp.inicioSemana || 1),
+            fimSemana: parseInt(emp.fimSemana || 0),
+            inicioCiclo1: parseInt(emp.inicioCiclo1 || 11),
+            fimCiclo1: parseInt(emp.fimCiclo1 || 25),
+            inicioCiclo2: parseInt(emp.inicioCiclo2 || 26),
+            fimCiclo2: parseInt(emp.fimCiclo2 || 10)
+        };
+        var dp = calcPrevisao(jt);
+        var pv = formatarDataExt(dp.toISOString().split('T')[0]);
+
+        var pj = {
+            data: dataInput, empresa: emp.nome,
+            job: document.getElementById("nomeJob").value || "Job Operacional",
+            cache: cb, diaria: dd, extra: re, total: fb, valorNF: imp,
+            horas: th, inicio: document.getElementById("inicio").value,
+            fim: document.getElementById("fim").value,
+            tipoPagamento: emp.tipoPagamento,
+            diasPagamento: parseInt(emp.diasPagamento || 0),
+            fimPeriodo: parseInt(emp.fimPeriodo || 30),
+            inicioSemana: parseInt(emp.inicioSemana || 1),
+            fimSemana: parseInt(emp.fimSemana || 0),
+            inicioCiclo1: parseInt(emp.inicioCiclo1 || 11),
+            fimCiclo1: parseInt(emp.fimCiclo1 || 25),
+            inicioCiclo2: parseInt(emp.inicioCiclo2 || 26),
+            fimCiclo2: parseInt(emp.fimCiclo2 || 10),
+            previsaoPagamento: pv,
+            statusManual: idEdicao ? editStatusManual : null
+        };
+        if (idEdicao) pj.id = parseInt(idEdicao);
+
+        var tG = db.transaction("jobs", "readwrite");
+        var req = idEdicao ? tG.objectStore("jobs").put(pj) : tG.objectStore("jobs").add(pj);
+        req.onsuccess = function() {
+            alert("Lancamento salvo!");
+            backupAuto();
+            atualizarTela();
+            limparCampos();
+        };
+    };
+}
+
+function carregarJobParaEdicao(id) {
+    db.transaction("jobs", "readonly").objectStore("jobs").get(id).onsuccess = function(e) {
+        var item = e.target.result;
+        if (!item) return;
+        document.getElementById("formJobTitle").innerText = "Editando Lancamento";
+        document.getElementById("editJobId").value = item.id;
+        document.getElementById("empresaJob").value = item.empresa;
+        document.getElementById("dataJob").value = item.data;
+        document.getElementById("nomeJob").value = item.job;
+        document.getElementById("inicio").value = item.inicio;
+        document.getElementById("fim").value = item.fim;
+        editStatusManual = item.statusManual || null;
+        document.getElementById("formJobTitle").scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+}
+
+function deletarJob(id) {
+    if (confirm("Excluir permanentemente?")) {
+        db.transaction("jobs", "readwrite").objectStore("jobs").delete(id).onsuccess = function() {
+            backupAuto();
+            atualizarTela();
+        };
+    }
+}
+
+function marcarPago(id) {
+    if (confirm("Confirmar pagamento?")) {
+        db.transaction("jobs", "readwrite").objectStore("jobs").get(id).onsuccess = function(e) {
+            var j = e.target.result;
+            if (!j) return;
+            j.statusManual = "pago";
+            db.transaction("jobs", "readwrite").objectStore("jobs").put(j).onsuccess = function() {
+                backupAuto();
+                atualizarTela();
+                mostrarToast("Job marcado como pago!");
+            };
+        };
+    }
+}
+
+function reabrirJob(id) {
+    if (confirm("Reabrir este job?")) {
+        db.transaction("jobs", "readwrite").objectStore("jobs").get(id).onsuccess = function(e) {
+            var j = e.target.result;
+            if (!j) return;
+            j.statusManual = null;
+            db.transaction("jobs", "readwrite").objectStore("jobs").put(j).onsuccess = function() {
+                backupAuto();
+                atualizarTela();
+                mostrarToast("Job reaberto!");
+            };
+        };
+    }
+}
+
+function limparCampos() {
+    document.getElementById("formJobTitle").innerText = "Novo Job";
+    document.getElementById("editJobId").value = "";
+    document.getElementById("empresaJob").value = "";
+    document.getElementById("nomeJob").value = "";
+    document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
+    document.getElementById("inicio").value = "08:00";
+    document.getElementById("fim").value = "20:00";
+    editStatusManual = null;
+}
+
+// ==========================================
+// ATUALIZAÇÃO DA TELA
+// ==========================================
+function atualizarTela() {
+    if (!db) return;
+    var painel = document.getElementById("listaHistorico");
+    painel.innerHTML = "";
+    var tB = 0, tN = 0, tH = 0;
+    var dG = {};
+    var dM = {};
+
+    var tE = db.transaction("empresas", "readonly");
+    tE.objectStore("empresas").getAll().onsuccess = function(ee) {
+        var temNF = ee.target.result.some(function(em) { return em.nfPercentual > 0; });
+        document.getElementById("dashboardNfCard").style.display = temNF ? 'block' : 'none';
+        document.getElementById("dashboardLiquidoCard").style.display = temNF ? 'block' : 'none';
+
+        var tx = db.transaction("jobs", "readonly");
+        tx.objectStore("jobs").getAll().onsuccess = function(e) {
+            var matriz = e.target.result.sort(function(a, b) { return new Date(b.data) - new Date(a.data); });
+
+            matriz.forEach(function(reg) {
+                var st = obterStatus(reg);
+                if (st === "aberto") {
+                    tB += reg.total || 0;
+                    tN += reg.valorNF || 0;
+                    tH += parseFloat(reg.horas || 0);
+                    dG[reg.empresa] = (dG[reg.empresa] || 0) + reg.total;
+                }
+                var ma = reg.data.substring(0, 7);
+                dM[ma] = (dM[ma] || 0) + (reg.total || 0);
+                if (!mapaCores[reg.empresa]) mapaCores[reg.empresa] = coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
+
+                var ck = (filtroVisualizacao === "aberto" && st === "aberto") || (filtroVisualizacao === "arquivado" && (st === "arquivado" || st === "pago"));
+                if (ck) {
+                    var card = document.createElement("div");
+                    card.className = "history-card";
+                    card.style.borderLeft = "5px solid " + mapaCores[reg.empresa];
+                    var bd = st === "aberto" ? '<span class="badge-status status-aberto">Aberto</span>' : (st === "arquivado" ? '<span class="badge-status status-fechado">Aguardando</span>' : '<span class="badge-status status-pago">Quitado</span>');
+                    var df = formatarData(reg.data);
+                    var hf = formatarHoras(reg.horas);
+
+                    card.innerHTML = '<button class="btn-del" onclick="deletarJob(' + reg.id + ')"><svg class="icon-btn"><use href="#icon-trash"/></svg></button>' +
+                        '<button class="btn-edit-inline" onclick="carregarJobParaEdicao(' + reg.id + ')"><svg class="icon-btn"><use href="#icon-edit"/></svg></button>' +
+                        (st === 'pago' ? '<button class="btn-reopen" onclick="reabrirJob(' + reg.id + ')">Reabrir</button>' : '<button class="btn-paid" onclick="marcarPago(' + reg.id + ')">Pago</button>') +
+                        '<div class="empresa-title">' + reg.empresa + '</div>' +
+                        '<div class="meta-text">Data: ' + df + '</div>' +
+                        '<div class="meta-text">Job: ' + reg.job + '</div>' +
+                        '<div>' + bd + '</div>' +
+                        '<div class="meta-text">Horarios: ' + reg.inicio + ' as ' + reg.fim + ' (' + hf + ')</div>' +
+                        '<div class="meta-text">Cache: ' + formatarValor(reg.cache) + '</div>' +
+                        '<div class="meta-text">Alimentacao: ' + formatarValor(reg.diaria) + '</div>' +
+                        '<div class="meta-text">Hora Extra: ' + formatarValor(reg.extra) + '</div>' +
+                        '<div class="meta-text">Previsao: <b>' + reg.previsaoPagamento + '</b></div>' +
+                        '<div style="margin-top:8px;font-weight:900;">Total: ' + formatarValor(reg.total) + '</div>';
+                    painel.appendChild(card);
+                }
+            });
+
+            document.getElementById("vTotalSemana").innerText = formatarValor(tB);
+            document.getElementById("vTotalNF").innerText = "- " + formatarValor(tN);
+            document.getElementById("vTotalLiquido").innerText = formatarValor(tB - tN);
+            document.getElementById("vTotalHoras").innerText = formatarHoras(tH);
+            renderGrafico(dG);
+            renderGraficoMensal(dM);
+            if (document.getElementById("searchBox").style.display === "block") filtrarTabela();
+        };
+    };
+}
+
+// ==========================================
+// GRÁFICOS
+// ==========================================
+function renderGrafico(d) {
+    var ctx = document.getElementById("graficoEmpresas");
+    if (!ctx) return;
+    var labels = Object.keys(d), values = Object.values(d);
+    var colors = labels.map(function(lb) { return mapaCores[lb] || '#38bdf8'; });
+    if (window.chart1) {
+        window.chart1.data.labels = labels;
+        window.chart1.data.datasets[0].data = values;
+        window.chart1.data.datasets[0].backgroundColor = colors;
+        window.chart1.update();
+    } else {
+        if (labels.length === 0) return;
+        window.chart1 = new Chart(ctx, {
+            type: "bar",
+            data: { labels: labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 8 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { ticks: { color: "#94a3b8" } } } }
+        });
+    }
+}
+
+function renderGraficoMensal(d) {
+    var ctx = document.getElementById("graficoMensal");
+    if (!ctx) return;
+    var mo = Object.keys(d).sort();
+    var nm = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    var labels = mo.map(function(m) { var a = m.split('-'); return nm[parseInt(a[1])-1] + '/' + a[0]; });
+    var values = mo.map(function(m) { return d[m]; });
+    if (window.chart2) {
+        window.chart2.data.labels = labels;
+        window.chart2.data.datasets[0].data = values;
+        window.chart2.update();
+    } else {
+        if (labels.length === 0) return;
+        window.chart2 = new Chart(ctx, {
+            type: "line",
+            data: { labels: labels, datasets: [{ data: values, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.4, pointRadius: 5 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { ticks: { color: "#94a3b8" } } } }
+        });
+    }
+}
+
+// ==========================================
+// BUSCA
+// ==========================================
+function abrirBusca() { document.getElementById("searchBox").style.display = "block"; }
+function limparBusca() { document.getElementById("inputBusca").value = ""; document.getElementById("searchBox").style.display = "none"; filtrarTabela(); }
+function filtrarTabela() {
+    var termo = document.getElementById("inputBusca").value.toUpperCase().trim();
+    document.querySelectorAll(".history-card").forEach(function(card) {
+        card.style.display = card.innerText.toUpperCase().indexOf(termo) >= 0 ? "block" : "none";
+    });
+}
+
+// ==========================================
+// WHATSAPP
+// ==========================================
+function enviarRelatorioWhatsApp() {
+    var tx = db.transaction("jobs", "readonly");
+    tx.objectStore("jobs").getAll().onsuccess = function(e) {
+        var termo = document.getElementById("inputBusca").value.toUpperCase().trim();
+        var buscaAtiva = document.getElementById("searchBox").style.display === "block" && termo !== "";
+        
+        var filtrados = e.target.result.filter(function(job) {
+            var st = obterStatus(job);
+            if (filtroVisualizacao === "aberto" && st !== "aberto") return false;
+            if (filtroVisualizacao === "arquivado" && st === "aberto") return false;
+            if (buscaAtiva) {
+                var texto = (job.empresa + " " + job.job + " " + job.data.split("-").reverse().join("/")).toUpperCase();
+                return texto.indexOf(termo) >= 0;
+            }
+            return true;
+        }).sort(function(a, b) { return new Date(b.data) - new Date(a.data); });
+
+        if (filtrados.length === 0) { alert("Nenhum registro encontrado."); return; }
+
+        var msg = "FADER LIVRE - EXTRATO\n======================\n\n";
+        var tC = 0, tD = 0, tE = 0, tG = 0;
+        
+        filtrados.forEach(function(j) {
+            msg += "Empresa: " + j.empresa + "\n";
+            msg += "Data: " + formatarDataExt(j.data) + "\n";
+            msg += "Job: " + j.job + "\n";
+            msg += "Horarios: " + j.inicio + "h as " + j.fim + "h\n";
+            msg += "Cache: " + formatarValor(j.cache) + "\n";
+            if (j.extra > 0) msg += "Horas Extras: " + formatarValor(j.extra) + "\n";
+            msg += "Diaria: " + formatarValor(j.diaria) + "\n";
+            msg += "Total: " + formatarValor(j.total) + "\n";
+            msg += "Previsao: " + j.previsaoPagamento + "\n\n";
+            tC += j.cache || 0;
+            tD += j.diaria || 0;
+            tE += j.extra || 0;
+            tG += j.total || 0;
+        });
+        
+        msg += "======================\n";
+        msg += "Total Geral: " + formatarValor(tG) + "\n";
+        msg += new Date().toLocaleDateString("pt-BR");
+        
+        window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
+    };
+}
+
+// ==========================================
+// EXCEL
+// ==========================================
+function baixarExcelCompleto() {
+    var tx = db.transaction("jobs", "readonly");
+    tx.objectStore("jobs").getAll().onsuccess = function(e) {
+        var od = e.target.result.sort(function(a, b) { return new Date(b.data) - new Date(a.data); });
+        var csv = "Data;Empresa;Job;Cache;Alimentacao;Hora_Extra;Total_Bruto;NF;Liquido;Horas;Previsao\n";
+        od.forEach(function(i) {
+            var lq = i.total - i.valorNF;
+            csv += i.data + ";" + i.empresa + ";" + i.job + ";";
+            csv += "R$ " + (i.cache || 0).toFixed(2) + ";R$ " + (i.diaria || 0).toFixed(2) + ";R$ " + (i.extra || 0).toFixed(2) + ";";
+            csv += "R$ " + (i.total || 0).toFixed(2) + ";R$ " + (i.valorNF || 0).toFixed(2) + ";R$ " + lq.toFixed(2) + ";";
+            csv += formatarHoras(i.horas) + ";" + i.previsaoPagamento + "\n";
+        });
+        var blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+        var link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "fader_" + new Date().toISOString().split('T')[0] + ".csv";
+        link.click();
+        mostrarToast("Excel exportado!");
+    };
+}
+
+// ==========================================
+// INICIALIZAÇÃO
+// ==========================================
+window.onload = function() {
+    if (!localStorage.getItem("senha_cache_control")) {
+        document.getElementById("senhaInput").placeholder = "Defina sua chave";
+    }
+};
 </script>
 </body>
 </html>
