@@ -1,1078 +1,228 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>FADER LIVRE - CACHE CONTROL v3.3</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --primary: #10b981; --primary-hover: #059669; --bg: #0f172a;
-            --card: #1e293b; --card-hover: #24334c; --text: #f8fafc;
-            --text-secondary: #cbd5e1; --danger: #ef4444; --muted: #94a3b8;
-            --blue: #38bdf8; --warning: #f59e0b; --success: #16a34a;
-            --dark-pure: #020617; --border-color: #334155; --gold: #c9a96e;
-        }
-        body.light-mode {
-            --primary: #0277bd; --bg: #f5f5f5; --card: #ffffff;
-            --card-hover: #e8e8e8; --text: #212121; --text-secondary: #616161;
-            --danger: #d32f2f; --muted: #757575; --blue: #1976d2;
-            --warning: #fbc02d; --success: #388e3c; --dark-pure: #e0e0e0;
-            --border-color: #bdbdbd;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            padding: 10px; padding-bottom: 80px; background: var(--bg); color: var(--text);
-            font-family: system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased;
-        }
-        .header { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 15px; margin-bottom: 20px; }
-        .header h2 { font-size: 1.4em; font-weight: 800; color: var(--text); text-transform: uppercase; }
-        .header p { color: var(--primary); font-size: 0.75em; font-weight: 700; margin-top: 4px; text-transform: uppercase; }
-        
-        .login-logo { text-align: center; margin-bottom: 12px; }
-        .login-logo h3 { color: var(--text); font-size: 1.1em; font-weight: 800; }
-        
-        .password-container { position: relative; }
-        .password-container input { padding-right: 45px; }
-        .toggle-password {
-            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-            background: none; border: none; color: var(--muted); cursor: pointer;
-            font-size: 1.2em; padding: 8px; z-index: 5;
-        }
-        
-        .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .dashboard-card {
-            background: var(--card); border-radius: 16px; padding: 14px;
-            border: 1px solid var(--border-color); position: relative;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        .dashboard-title { font-size: 0.6em; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-secondary); }
-        .total-geral { font-size: 1.2em; font-weight: 900; color: var(--blue); }
-        .total-nf { font-size: 1.2em; font-weight: 900; color: var(--danger); }
-        .total-horas { font-size: 1.2em; font-weight: 900; color: var(--primary); }
-        .total-liquido { font-size: 1.2em; font-weight: 900; color: var(--success); }
-        
-        .eye-button {
-            position: absolute; top: 8px; right: 8px; width: 32px; height: 32px;
-            border: none; border-radius: 10px; background: var(--border-color); color: var(--text);
-            font-size: 1em; cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
-        
-        .input-group {
-            background: var(--card); border: 1px solid var(--border-color); border-radius: 16px;
-            padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        .input-group h2, .input-group h3 {
-            font-size: 1em; margin-bottom: 10px; color: var(--text);
-            border-left: 3px solid var(--primary); padding-left: 8px;
-        }
-        label { display: block; margin-bottom: 3px; color: var(--muted); font-size: 0.65em; font-weight: 700; text-transform: uppercase; }
-        input, select {
-            width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border-color);
-            background: var(--dark-pure); color: var(--text); margin-bottom: 8px; font-size: 16px;
-        }
-        input:focus, select:focus { outline: none; border-color: var(--primary); }
-        
-        .btn {
-            width: 100%; border: none; padding: 12px; border-radius: 10px; font-weight: 700;
-            cursor: pointer; margin-bottom: 6px; font-size: 0.85em; display: flex;
-            align-items: center; justify-content: center; gap: 6px; text-transform: uppercase;
-        }
-        .btn-save { background: var(--primary); color: #fff; }
-        .btn-export { background: var(--border-color); color: var(--text); }
-        .btn-whats { background: #25D366; color: #fff; }
-        .btn-search { background: var(--blue); color: #fff; }
-        .btn-cancel { background: var(--card-hover); color: var(--text); }
-        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-        .btn-row .btn { margin-bottom: 0; font-size: 0.7em; padding: 10px; }
-        
-        .history-card {
-            background: var(--card); border-radius: 14px; padding: 12px; margin-bottom: 10px;
-            position: relative; border-left: 4px solid var(--primary);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        }
-        .empresa-title { font-size: 1.1em; font-weight: 800; margin-bottom: 4px; padding-right: 80px; color: var(--primary); }
-        
-        .btn-del {
-            position: absolute; top: 8px; right: 8px; background: rgba(239,68,68,0.15);
-            border: none; color: var(--danger); width: 30px; height: 30px; border-radius: 8px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;
-        }
-        .btn-edit-inline {
-            position: absolute; top: 8px; right: 42px; background: rgba(56,189,248,0.15);
-            border: none; color: var(--blue); width: 30px; height: 30px; border-radius: 8px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;
-        }
-        .btn-reopen {
-            position: absolute; top: 44px; right: 8px; background: rgba(245,158,11,0.15);
-            border: none; color: var(--warning); padding: 3px 8px; border-radius: 5px;
-            cursor: pointer; font-size: 0.65em; font-weight: 700; z-index: 10;
-        }
-        .btn-paid {
-            position: absolute; top: 44px; right: 8px; background: rgba(22,163,74,0.15);
-            border: none; color: var(--success); padding: 3px 8px; border-radius: 5px;
-            cursor: pointer; font-size: 0.65em; font-weight: 700; z-index: 10;
-        }
-        
-        .chart-container { height: 220px; margin-top: 8px; }
-        .search-box { display: none; margin-bottom: 10px; }
-        .section-title { font-size: 1em; font-weight: 800; margin: 15px 0 10px; color: var(--text); }
-        
-        .tab-container {
-            display: flex; gap: 4px; margin-bottom: 15px; background: var(--dark-pure);
-            padding: 4px; border-radius: 12px; border: 1px solid var(--border-color);
-        }
-        .tab-button {
-            flex: 1; padding: 10px 4px; background: transparent; color: var(--muted);
-            border: none; border-radius: 8px; cursor: pointer; font-weight: 700;
-            font-size: 0.7em; display: flex; align-items: center; justify-content: center; gap: 3px;
-        }
-        .tab-button.active { background: var(--card); color: var(--primary); }
-        .app-section { display: none; }
-        .app-section.active { display: block; }
-        
-        .badge-status {
-            display: inline-flex; padding: 3px 7px; border-radius: 5px; font-size: 0.65em;
-            font-weight: 800; text-transform: uppercase; margin-top: 4px;
-        }
-        .status-aberto { background: rgba(2,132,199,0.15); color: #38bdf8; }
-        .status-fechado { background: rgba(234,88,12,0.15); color: #fb923c; }
-        .status-pago { background: rgba(22,163,74,0.15); color: #4ade80; }
-        
-        .toggle-filter-container { display: flex; gap: 4px; margin-bottom: 12px; background: var(--dark-pure); padding: 3px; border-radius: 8px; }
-        .btn-filter {
-            flex: 1; padding: 8px 4px; border-radius: 5px; border: none; background: transparent;
-            color: var(--muted); font-weight: 700; font-size: 0.75em; cursor: pointer;
-        }
-        .btn-filter.active { background: #334155; color: #fff; }
-        .meta-text { font-size: 0.8em; color: var(--text); line-height: 1.4; margin: 2px 0; }
-        
-        .config-group {
-            background: var(--dark-pure); border-radius: 12px; padding: 10px;
-            margin-bottom: 10px; border: 1px solid var(--border-color);
-        }
-        .config-group h4 { color: var(--text); margin-bottom: 6px; font-size: 0.9em; }
-        
-        .toggle-switch { position: relative; display: inline-block; width: 48px; height: 26px; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: var(--border-color); transition: .3s; border-radius: 26px;
-        }
-        .slider:before {
-            position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px;
-            background-color: white; transition: .3s; border-radius: 50%;
-        }
-        input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(22px); }
-        
-        .icon-svg { width: 14px; height: 14px; vertical-align: middle; fill: currentColor; }
-        .icon-btn { width: 16px; height: 16px; fill: currentColor; }
-        
-        .toast-notification {
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-            background: var(--primary); color: #fff; padding: 8px 16px; border-radius: 8px;
-            font-weight: 700; z-index: 9999; font-size: 0.8em;
-        }
-        input[type="time"] { font-size: 16px; padding: 8px; min-height: 38px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>FADER LIVRE - CACHÊ CONTROL v3.3</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+--primary: #10b981; --primary-hover: #059669; --primary-glow: rgba(16, 185, 129, 0.2);
+--bg: #0f172a; --card: #1e293b; --card-hover: #24334c;
+--text: #f8fafc; --text-secondary: #cbd5e1;
+--danger: #ef4444; --danger-hover: #dc2626; --danger-glow: rgba(239, 68, 68, 0.15);
+--muted: #94a3b8; --blue: #38bdf8; --blue-hover: #0ea5e9; --blue-glow: rgba(56, 189, 248, 0.2);
+--warning: #f59e0b; --success: #16a34a; --dark-pure: #020617;
+--border-color: #334155; --border-hover: #475569; --gold: #c9a96e;
+}
+body.light-mode {
+--primary: #0277bd; --bg: #f5f5f5; --card: #ffffff; --card-hover: #e8e8e8;
+--text: #212121; --text-secondary: #616161; --danger: #d32f2f;
+--muted: #757575; --blue: #1976d2; --warning: #fbc02d; --success: #388e3c;
+--dark-pure: #e0e0e0; --border-color: #bdbdbd; --border-hover: #9e9e9e;
+}
+*{box-sizing:border-box;margin:0;padding:0;transition:background-color 0.2s ease,border-color 0.2s ease;}
+body{padding:15px;padding-bottom:100px;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+.header{text-align:center;border-bottom:2px solid var(--primary);padding-bottom:20px;margin-bottom:25px;}
+.header h2{font-size:1.6em;font-weight:800;color:var(--text);text-transform:uppercase;}
+.header p{color:var(--primary);font-size:0.85em;font-weight:700;margin-top:6px;text-transform:uppercase;}
+.login-logo{text-align:center;margin-bottom:15px;}
+.login-logo h3{color:var(--text);font-size:1.2em;font-weight:800;}
+.password-container{position:relative;}
+.password-container input{padding-right:45px !important;}
+.toggle-password{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2em;padding:8px;z-index:5;}
+.dashboard{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+@media(min-width:600px){.dashboard{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}}
+.dashboard-card{background:var(--card);border-radius:20px;padding:16px;border:1px solid var(--border-color);position:relative;box-shadow:0 4px 15px -3px rgba(0,0,0,0.3);}
+.dashboard-title{font-size:.65em;font-weight:700;text-transform:uppercase;margin-bottom:6px;color:var(--text-secondary);}
+.total-geral{font-size:1.4em;font-weight:900;color:var(--blue);}
+.total-nf{font-size:1.4em;font-weight:900;color:var(--danger);}
+.total-horas{font-size:1.4em;font-weight:900;color:var(--primary);}
+.total-liquido{font-size:1.4em;font-weight:900;color:var(--success);}
+.eye-button{position:absolute;top:10px;right:10px;width:38px;height:38px;border:none;border-radius:12px;background:var(--border-color);color:var(--text);font-size:1.1em;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.input-group{background:var(--card);border:1px solid var(--border-color);border-radius:20px;padding:16px;margin-bottom:16px;box-shadow:0 4px 15px -3px rgba(0,0,0,0.2);}
+.input-group h2,.input-group h3{font-size:1.1em;margin-bottom:14px;color:var(--text);display:flex;align-items:center;gap:8px;border-left:4px solid var(--primary);padding-left:8px;}
+label{display:block;margin-bottom:4px;color:var(--muted);font-size:0.7em;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
+input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--border-color);background:var(--dark-pure);color:var(--text);margin-bottom:10px;font-size:16px;}
+input:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
+.btn{width:100%;border:none;padding:14px;border-radius:12px;font-weight:800;cursor:pointer;margin-bottom:8px;font-size:0.9em;display:flex;align-items:center;justify-content:center;gap:8px;text-transform:uppercase;letter-spacing:1px;}
+.btn-save{background:var(--primary);color:#fff;}
+.btn-export{background:var(--border-color);color:var(--text);}
+.btn-whats{background:#25D366;color:#fff;}
+.btn-search{background:var(--blue);color:#fff;}
+.btn-cancel{background:var(--card-hover);color:var(--text);}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.btn-row .btn{margin-bottom:0;font-size:0.75em;padding:10px;}
+.history-card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px;position:relative;border-left:5px solid var(--primary);box-shadow:0 4px 10px -1px rgba(0,0,0,0.2);}
+.empresa-title{font-size:1.2em;font-weight:800;margin-bottom:6px;padding-right:90px;color:var(--primary);}
+.btn-del{position:absolute;top:10px;right:10px;background:var(--danger-glow);border:none;color:var(--danger);width:34px;height:34px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;}
+.btn-edit-inline{position:absolute;top:10px;right:48px;background:var(--blue-glow);border:none;color:var(--blue);width:34px;height:34px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;}
+.btn-reopen{position:absolute;top:50px;right:10px;background:rgba(245,158,11,0.15);border:none;color:var(--warning);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:0.7em;font-weight:700;z-index:10;}
+.btn-paid{position:absolute;top:50px;right:10px;background:rgba(22,163,74,0.15);border:none;color:var(--success);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:0.7em;font-weight:700;z-index:10;}
+.chart-container{height:250px;margin-top:10px;}
+.search-box{display:none;margin-bottom:12px;}
+.section-title{font-size:1.1em;font-weight:800;margin:20px 0 12px;color:var(--text);}
+.tab-container{display:flex;gap:6px;margin-bottom:20px;background:var(--dark-pure);padding:5px;border-radius:14px;border:1px solid var(--border-color);}
+.tab-button{flex:1;padding:12px 6px;background:transparent;color:var(--muted);border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:0.75em;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;}
+.tab-button.active{background:var(--card);color:var(--primary);box-shadow:0 4px 10px rgba(0,0,0,0.3);}
+.app-section{display:none;}
+.app-section.active{display:block;}
+.autocomplete-list{position:absolute;z-index:100;background:var(--card);border:1px solid var(--border-hover);border-radius:14px;width:calc(100% - 30px);max-height:180px;overflow-y:auto;margin-top:-10px;box-shadow:0 15px 30px -5px rgba(0,0,0,0.7);}
+.autocomplete-item{padding:12px;cursor:pointer;border-bottom:1px solid var(--border-color);color:var(--text);}
+.badge-status{display:inline-flex;align-items:center;padding:4px 8px;border-radius:6px;font-size:0.7em;font-weight:800;text-transform:uppercase;margin-top:6px;}
+.status-aberto{background:rgba(2,132,199,0.15);color:#38bdf8;border:1px solid rgba(2,132,199,0.3);}
+.status-fechado{background:rgba(234,88,12,0.15);color:#fb923c;border:1px solid rgba(234,88,12,0.3);}
+.status-pago{background:rgba(22,163,74,0.15);color:#4ade80;border:1px solid rgba(22,163,74,0.3);}
+.toggle-filter-container{display:flex;gap:6px;margin-bottom:16px;background:var(--dark-pure);padding:4px;border-radius:10px;}
+.btn-filter{flex:1;padding:10px 4px;border-radius:6px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:0.8em;cursor:pointer;}
+.btn-filter.active{background:#334155;color:#fff;}
+.meta-text{font-size:0.85em;color:var(--text);line-height:1.5;margin:3px 0;}
+.config-group{background:var(--dark-pure);border-radius:14px;padding:12px;margin-bottom:12px;border:1px solid var(--border-color);}
+.config-group h4{color:var(--text);margin-bottom:8px;font-size:0.95em;}
+.toggle-switch{position:relative;display:inline-block;width:52px;height:28px;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:var(--border-color);transition:.4s;border-radius:28px;}
+.slider:before{position:absolute;content:"";height:22px;width:22px;left:3px;bottom:3px;background-color:white;transition:.4s;border-radius:50%;}
+input:checked+.slider{background-color:var(--primary);}
+input:checked+.slider:before{transform:translateX(24px);}
+.icon-svg{width:16px;height:16px;vertical-align:middle;fill:currentColor;}
+.icon-btn{width:18px;height:18px;fill:currentColor;}
+.toast-notification{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:10px 20px;border-radius:10px;font-weight:700;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.4);cursor:pointer;max-width:90%;font-size:0.85em;}
+.periodo-selector{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;}
+.periodo-selector span{text-align:center;font-weight:700;color:var(--muted);}
+input[type="time"]{font-size:16px;padding:8px;min-height:40px;}
+.btn-status-disabled{background:var(--border-color)!important;color:var(--muted)!important;cursor:not-allowed!important;opacity:0.7;}
+</style>
 </head>
 <body>
 
-<svg style="display:none;">
-    <symbol id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
-    <symbol id="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></symbol>
-    <symbol id="icon-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
-    <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
-    <symbol id="icon-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></symbol>
-    <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
-    <symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
-    <symbol id="icon-whatsapp" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884"/></symbol>
-    <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></symbol>
-    <symbol id="icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></symbol>
-    <symbol id="icon-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></symbol>
-</svg>
+<svg style="display:none;"><symbol id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></symbol><symbol id="icon-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol><symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol><symbol id="icon-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></symbol><symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol><symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol><symbol id="icon-whatsapp" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884"/></symbol><symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></symbol><symbol id="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></symbol><symbol id="icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></symbol><symbol id="icon-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></symbol></svg>
 
-<!-- TELA DE LOGIN -->
+<!-- TELA DE LOGIN COM LOGO -->
 <div id="loginScreen" style="position:fixed;inset:0;background:var(--dark-pure);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;padding:15px;">
-    <button onclick="emergencyReset()" style="background:var(--danger);color:white;border:none;padding:10px 15px;border-radius:10px;font-weight:bold;font-size:0.8em;margin-bottom:20px;width:100%;max-width:400px;">FORCAR RESET</button>
-    <div style="background:var(--card);padding:20px;border-radius:24px;width:100%;max-width:380px;border:1px solid var(--border-color);">
-        <div class="login-logo">
-            <svg viewBox="0 0 100 100" style="width:70px;height:70px;"><circle cx="50" cy="50" r="48" stroke="var(--primary)" stroke-width="4"/><text x="50" y="38" text-anchor="middle" fill="var(--text)" font-size="16" font-weight="900">FADER</text><text x="50" y="60" text-anchor="middle" fill="var(--primary)" font-size="14" font-weight="700">LIVRE</text></svg>
-            <h3>FADER LIVRE</h3>
-            <p style="color:var(--primary);font-size:0.7em;">CACHE CONTROL</p>
-        </div>
-        <label>Chave de Seguranca</label>
-        <div class="password-container">
-            <input type="password" id="senhaInput" placeholder="••••••••" style="text-align:center;letter-spacing:6px;font-size:20px;">
-            <button class="toggle-password" onclick="togglePassword()"><svg class="icon-svg"><use href="#icon-eye"/></svg></button>
-        </div>
-        <div id="novaSenhaBox" style="display:none;margin-top:5px;padding-top:10px;border-top:1px dashed var(--border-color);">
-            <label>Nova Chave (min. 6)</label><input type="password" id="novaSenha" placeholder="Minimo 6 caracteres">
-            <label>Confirmar</label><input type="password" id="confirmarSenha" placeholder="Repita">
-            <label>E-mail *</label><input type="email" id="emailRecuperacao" placeholder="seu@email.com">
-            <label>Telefone</label><input type="tel" id="telefoneRecuperacao" placeholder="(11) 99999-9999">
-            <button class="btn btn-save" onclick="cadastrarSenha()">REGISTRAR</button>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
-            <button class="btn btn-save" onclick="login()">ENTRAR</button>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                <button class="btn btn-cancel" style="font-size:0.7em;padding:10px;" onclick="toggleCadastro()">CONFIGURAR</button>
-                <button class="btn btn-export" style="font-size:0.7em;padding:10px;" onclick="recuperarSenha()">RESGATAR</button>
-            </div>
-        </div>
-    </div>
-</div>
+<button onclick="emergencyReset()" style="background:var(--danger);color:white;border:none;padding:10px 15px;border-radius:10px;font-weight:bold;font-size:0.8em;margin-bottom:20px;width:100%;max-width:400px;">Forcar Reset</button>
+<div style="background:var(--card);padding:25px;border-radius:28px;width:100%;max-width:400px;box-shadow:0 30px 60px -15px rgba(0,0,0,0.6);border:1px solid var(--border-color);">
+<div class="login-logo">
+<svg viewBox="0 0 100 100" style="width:70px;height:70px;"><circle cx="50" cy="50" r="48" stroke="var(--primary)" stroke-width="4"/><text x="50" y="38" text-anchor="middle" fill="var(--text)" font-size="16" font-weight="900">FADER</text><text x="50" y="60" text-anchor="middle" fill="var(--primary)" font-size="14" font-weight="700">LIVRE</text></svg>
+<h3>FADER LIVRE</h3><p style="color:var(--primary);font-size:0.7em;">CACHE CONTROL v3.3</p></div>
+<label>Chave de Seguranca</label>
+<div class="password-container"><input type="password" id="senhaInput" placeholder="••••••••" style="text-align:center;letter-spacing:6px;font-size:20px;"><button class="toggle-password" onclick="togglePassword()"><svg class="icon-svg"><use href="#icon-eye"/></svg></button></div>
+<div id="novaSenhaBox" style="display:none;margin-top:5px;padding-top:15px;border-top:1px dashed var(--border-color);">
+<label>Nova Chave (min.6)</label><input type="password" id="novaSenha" placeholder="Minimo 6 caracteres"><label>Confirmar</label><input type="password" id="confirmarSenha" placeholder="Repita"><label>E-mail *</label><input type="email" id="emailRecuperacao" placeholder="seu@email.com"><label>Telefone</label><input type="tel" id="telefoneRecuperacao" placeholder="(11) 99999-9999"><button class="btn btn-save" onclick="cadastrarSenha()">REGISTRAR</button></div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;"><button class="btn btn-save" onclick="login()">ENTRAR</button><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><button class="btn btn-cancel" style="font-size:0.8em;padding:12px;" onclick="toggleCadastroSenha()">CONFIGURAR</button><button class="btn btn-export" style="font-size:0.8em;padding:12px;" onclick="recuperarSenha()">RESGATAR</button></div></div></div></div>
 
-<!-- CABECALHO -->
 <div class="header"><h2>FADER LIVRE</h2><p>SISTEMA CONTROLADOR DE CACHES</p></div>
 
-<!-- TABS -->
 <div class="tab-container">
-    <button class="tab-button active" onclick="mudarAba('abaJobs',this)">Lancamentos</button>
-    <button class="tab-button" onclick="mudarAba('abaEmpresas',this)">Empresas</button>
-    <button class="tab-button" onclick="mudarAba('abaConfig',this)">Config</button>
+<button class="tab-button active" onclick="alternarAba('abaJobs',event)">Lancamentos</button>
+<button class="tab-button" onclick="alternarAba('abaEmpresas',event)">Empresas</button>
+<button class="tab-button" onclick="alternarAba('abaConfig',event)">Config</button>
 </div>
 
 <!-- ABA JOBS -->
 <div id="abaJobs" class="app-section active">
-    <div class="dashboard">
-        <div class="dashboard-card"><button class="eye-button" id="eyeButton" onclick="toggleValores()"><svg class="icon-btn"><use href="#icon-eye-off"/></svg></button><div class="dashboard-title">Total Bruto</div><div id="vTotalSemana" class="total-geral">R$ 0,00</div></div>
-        <div class="dashboard-card" id="dashboardNfCard"><div class="dashboard-title">NF</div><div id="vTotalNF" class="total-nf">- R$ 0,00</div></div>
-        <div class="dashboard-card" id="dashboardLiquidoCard"><div class="dashboard-title">Liquido</div><div id="vTotalLiquido" class="total-liquido">R$ 0,00</div></div>
-        <div class="dashboard-card"><div class="dashboard-title">Horas</div><div id="vTotalHoras" class="total-horas">0:00h</div></div>
-    </div>
-
-    <div class="input-group">
-        <h3><span id="formJobTitle">Novo Job</span></h3>
-        <input type="hidden" id="editJobId" value="">
-        <label>Empresa</label><input type="text" id="empresaJob" placeholder="Pesquisar..." autocomplete="off" oninput="gerenciarAutocomplete(this.value)"><div id="autocompleteContainer"></div>
-        <label>Data</label><input type="date" id="dataJob">
-        <label>Job</label><input type="text" id="nomeJob" placeholder="Ex: Direcao de Fotografia">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><div><label>Inicio</label><input type="time" id="inicio" value="08:00"></div><div><label>Fim</label><input type="time" id="fim" value="20:00"></div></div>
-        <div class="btn-row"><button class="btn btn-save" onclick="salvarJob()">SALVAR</button><button class="btn btn-cancel" onclick="limparCampos()">LIMPAR</button></div>
-    </div>
-
-    <div class="input-group"><h3>Faturamento por Empresa</h3><div class="chart-container"><canvas id="graficoEmpresas"></canvas></div></div>
-    <div class="input-group"><h3>Consolidado Mensal</h3><div class="chart-container"><canvas id="graficoMensal"></canvas></div></div>
-
-    <div class="input-group">
-        <div class="section-title" id="sectionTitleJobs">Jobs em Aberto</div>
-        <div class="toggle-filter-container"><button id="btnFiltroAberto" class="btn-filter active" onclick="definirFiltro('aberto')">Aberto</button><button id="btnFiltroArquivado" class="btn-filter" onclick="definirFiltro('arquivado')">Arquivados</button></div>
-        <div class="btn-row"><button class="btn btn-search" onclick="abrirBusca()">FILTRAR</button><button class="btn btn-cancel" onclick="limparBusca()">LIMPAR</button></div>
-        <div id="searchBox" class="search-box"><input type="text" id="inputBusca" onkeyup="filtrarTabela()" placeholder="Buscar..."></div>
-        <div id="listaHistorico"></div>
-    </div>
-    <button class="btn btn-whats" onclick="enviarWhatsApp()"><svg class="icon-svg"><use href="#icon-whatsapp"/></svg> WHATSAPP</button>
-</div>
+<div class="dashboard"><div class="dashboard-card"><button class="eye-button" id="eyeButton" onclick="toggleValores()"><svg class="icon-btn"><use href="#icon-eye-off"/></svg></button><div class="dashboard-title">Total Bruto</div><div id="vTotalSemana" class="total-geral">R$ 0,00</div></div><div class="dashboard-card" id="dashboardNfCard"><div class="dashboard-title">NF</div><div id="vTotalNF" class="total-nf">- R$ 0,00</div></div><div class="dashboard-card" id="dashboardLiquidoCard"><div class="dashboard-title">Liquido</div><div id="vTotalLiquido" class="total-liquido">R$ 0,00</div></div><div class="dashboard-card"><div class="dashboard-title">Horas</div><div id="vTotalHoras" class="total-horas">0:00h</div></div></div>
+<div class="input-group"><h3><span id="formJobTitle">Novo Job</span></h3><input type="hidden" id="editJobId" value=""><label>Empresa</label><input type="text" id="empresaJob" placeholder="Pesquisar..." autocomplete="off" oninput="gerenciarAutocomplete(this.value)"><div id="autocompleteContainer"></div><label>Data</label><input type="date" id="dataJob"><label>Job</label><input type="text" id="nomeJob" placeholder="Ex: Direcao de Fotografia"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div><label>Inicio</label><input type="time" id="inicio" value="08:00"></div><div><label>Fim</label><input type="time" id="fim" value="20:00"></div></div><div class="btn-row"><button class="btn btn-save" onclick="salvarJob()">SALVAR</button><button class="btn btn-cancel" onclick="limparCampos()">LIMPAR</button></div></div>
+<div class="input-group"><h3>Faturamento por Empresa</h3><div class="chart-container"><canvas id="graficoEmpresas"></canvas></div></div>
+<div class="input-group"><h3>Consolidado Mensal</h3><div class="chart-container"><canvas id="graficoMensal"></canvas></div></div>
+<div class="input-group"><div class="section-title" id="sectionTitleJobs">Jobs em Aberto</div><div class="toggle-filter-container"><button id="btnFiltroAberto" class="btn-filter active" onclick="definirFiltroVisualizacao('aberto')">Aberto</button><button id="btnFiltroArquivado" class="btn-filter" onclick="definirFiltroVisualizacao('arquivado')">Arquivados</button></div><div class="btn-row"><button class="btn btn-search" onclick="abrirBusca()">FILTRAR</button><button class="btn btn-cancel" onclick="limparBusca()">LIMPAR</button></div><div id="searchBox" class="search-box"><input type="text" id="inputBusca" onkeyup="filtrarTabela()" placeholder="Buscar..."></div><div id="listaHistorico"></div></div>
+<button class="btn btn-whats" onclick="enviarWhatsApp()"><svg class="icon-svg"><use href="#icon-whatsapp"/></svg> WHATSAPP</button></div>
 
 <!-- ABA EMPRESAS -->
 <div id="abaEmpresas" class="app-section">
-    <div class="input-group">
-        <h2 id="formEmpresaTitle">Nova Empresa</h2><input type="hidden" id="cadIdEmpresa" value="">
-        <label>Nome</label><input type="text" id="cadNomeEmpresa" placeholder="Ex: FADER LIVRE LTDA">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><div><label>Cache (12h)</label><input type="number" id="cadCacheBase" step="0.01"></div><div><label>Alimentacao</label><input type="number" id="cadDiaria" step="0.01"></div></div>
-        <label>Ciclo</label><select id="cadTipoPagamento" onchange="alterarPeriodo()"><option value="Semanal">Semanal</option><option value="Quinzenal">Quinzenal</option><option value="Mensal">Mensal</option></select>
-        <div id="cadPeriodoSemanalBox" style="padding:10px;background:var(--dark-pure);border-radius:12px;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <div><label>Inicio</label><select id="cadInicioSemana"><option value="1">Segunda</option><option value="2">Terca</option><option value="3">Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option><option value="6">Sabado</option><option value="0">Domingo</option></select></div>
-            <div><label>Corte</label><select id="cadFimSemana"><option value="0">Domingo</option><option value="1">Segunda</option><option value="2">Terca</option><option value="3">Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option><option value="6">Sabado</option></select></div>
-        </div>
-        <div id="cadPeriodoPersonalizado" style="display:none;padding:10px;background:var(--dark-pure);border-radius:12px;margin-bottom:10px;">
-            <div id="quinzenalPeriodos" style="display:none;"><label>Periodo 1</label><div style="display:grid;grid-template-columns:1fr auto 1fr;gap:6px;"><input type="number" id="cadInicioCiclo1" value="11"><span>a</span><input type="number" id="cadFimCiclo1" value="25"></div><label>Periodo 2</label><div style="display:grid;grid-template-columns:1fr auto 1fr;gap:6px;"><input type="number" id="cadInicioCiclo2" value="26"><span>a</span><input type="number" id="cadFimCiclo2" value="10"></div></div>
-            <div id="mensalPeriodos" style="display:none;"><label>Dia Final</label><input type="number" id="cadFimPeriodo" value="30"></div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><div><label>Dias Liquidacao</label><input type="number" id="cadDiasPagamento" value="5"></div><div><label>NF (%)</label><input type="number" id="cadNfPercentual" value="0" step="0.01"></div></div>
-        <div class="btn-row"><button class="btn btn-save" onclick="salvarEmpresa()">SALVAR</button><button class="btn btn-cancel" onclick="limparEmpresa()">LIMPAR</button></div>
-    </div>
-    <div class="input-group"><h3>Empresas</h3><div id="listaEmpresasCadastradas"></div></div>
-    <div class="input-group"><h2>Exportacao</h2>
-        <button class="btn btn-export" onclick="baixarExcel()">EXCEL</button>
-        <button class="btn btn-export" style="background:#5c258d;color:#fff;" onclick="fazerBackup()">BACKUP LOCAL</button>
-        <button class="btn btn-export" onclick="backupNuvem()"><svg class="icon-svg"><use href="#icon-cloud"/></svg> BACKUP NUVEM</button>
-        <button class="btn btn-cancel" onclick="restaurarNuvem()">RESTAURAR NUVEM</button>
-        <button class="btn btn-cancel" onclick="document.getElementById('restoreFile').click()">IMPORTAR</button>
-        <input type="file" id="restoreFile" accept=".json" style="display:none;">
-    </div>
-</div>
+<div class="input-group"><h2 id="formEmpresaTitle">Nova Empresa</h2><input type="hidden" id="cadIdEmpresa" value=""><label>Nome</label><input type="text" id="cadNomeEmpresa" placeholder="Ex: FADER LIVRE LTDA"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div><label>Cache (12h)</label><input type="number" id="cadCacheBase" step="0.01"></div><div><label>Alimentacao</label><input type="number" id="cadDiaria" step="0.01"></div></div><label>Ciclo</label><select id="cadTipoPagamento" onchange="alterarPeriodoPagamentoCadastro()"><option value="Semanal">Semanal</option><option value="Quinzenal">Quinzenal</option><option value="Mensal">Mensal</option></select>
+<div id="cadPeriodoSemanalBox" style="padding:10px;background:var(--dark-pure);border-radius:12px;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;"><div><label>Inicio</label><select id="cadInicioSemana"><option value="1">Segunda</option><option value="2">Terca</option><option value="3">Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option><option value="6">Sabado</option><option value="0">Domingo</option></select></div><div><label>Corte</label><select id="cadFimSemana"><option value="0">Domingo</option><option value="1">Segunda</option><option value="2">Terca</option><option value="3">Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option><option value="6">Sabado</option></select></div></div>
+<div id="cadPeriodoPersonalizado" style="display:none;padding:10px;background:var(--dark-pure);border-radius:12px;margin-bottom:10px;"><div id="quinzenalPeriodos" style="display:none;"><label>Periodo 1</label><div class="periodo-selector"><input type="number" id="cadInicioCiclo1" value="11"><span>a</span><input type="number" id="cadFimCiclo1" value="25"></div><label>Periodo 2</label><div class="periodo-selector"><input type="number" id="cadInicioCiclo2" value="26"><span>a</span><input type="number" id="cadFimCiclo2" value="10"></div></div><div id="mensalPeriodos" style="display:none;"><label>Dia Final</label><input type="number" id="cadFimPeriodo" value="30"></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div><label>Dias Liquidacao</label><input type="number" id="cadDiasPagamento" value="5"></div><div><label>NF (%)</label><input type="number" id="cadNfPercentual" value="0" step="0.01"></div></div>
+<div class="btn-row"><button class="btn btn-save" onclick="salvarEmpresa()">SALVAR</button><button class="btn btn-cancel" onclick="limparCamposEmpresa()">LIMPAR</button></div></div>
+<div class="input-group"><h3>Empresas</h3><div id="listaEmpresasCadastradas"></div></div>
+<div class="input-group"><h2>Exportacao</h2><button class="btn btn-export" onclick="baixarExcel()">EXCEL</button><button class="btn btn-export" style="background:#5c258d;color:#fff;" onclick="fazerBackup()">BACKUP LOCAL</button><button class="btn btn-export" onclick="backupNuvem()"><svg class="icon-svg"><use href="#icon-cloud"/></svg> BACKUP NUVEM</button><button class="btn btn-cancel" onclick="restaurarNuvem()">RESTAURAR NUVEM</button><button class="btn btn-cancel" onclick="document.getElementById('restoreFile').click()">IMPORTAR</button><input type="file" id="restoreFile" accept=".json" style="display:none;"></div></div>
 
 <!-- ABA CONFIG -->
-<div id="abaConfig" class="app-section">
-    <div class="input-group">
-        <h3>Configuracoes</h3>
-        <div class="config-group"><h4>Aparencia</h4><div style="display:flex;justify-content:space-between;"><span>Modo Claro</span><label class="toggle-switch"><input type="checkbox" id="themeToggle" onchange="toggleTheme()"><span class="slider"></span></label></div></div>
-        <div class="config-group"><h4>Alterar Chave</h4><label>Atual</label><input type="password" id="oldMasterPassword"><label>Nova</label><input type="password" id="newMasterPassword"><label>Confirmar</label><input type="password" id="confirmNewMasterPassword"><button class="btn btn-save" onclick="changeMasterPassword()">ALTERAR</button></div>
-    </div>
-</div>
+<div id="abaConfig" class="app-section"><div class="input-group"><h3>Configuracoes</h3><div class="config-group"><h4>Aparencia</h4><div style="display:flex;justify-content:space-between;"><span>Modo Claro</span><label class="toggle-switch"><input type="checkbox" id="themeToggle" onchange="toggleTheme()"><span class="slider"></span></label></div></div><div class="config-group"><h4>Alterar Chave</h4><label>Atual</label><input type="password" id="oldMasterPassword"><label>Nova</label><input type="password" id="newMasterPassword"><label>Confirmar</label><input type="password" id="confirmNewMasterPassword"><button class="btn btn-save" onclick="changeMasterPassword()">ALTERAR</button></div></div></div>
+
 <script>
 // ==========================================
-// VARIAVEIS GLOBAIS
-// ==========================================
-var db = null;
-var ocultarValores = false;
-var filtroVisualizacao = "aberto";
-var mapaCores = {};
-var editStatusManual = null;
-var FERIADOS = ['01-01','21-04','01-05','07-09','12-10','02-11','15-11','25-12'];
-var coresGrafico = ['#38bdf8','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316','#a855f7','#06b6d4'];
+var db=null,ocultarValores=false,filtroVisualizacao="aberto",mapaCores={},editStatusManual=null;
+var FERIADOS=['01-01','21-04','01-05','07-09','12-10','02-11','15-11','25-12'];
+var coresGrafico=['#38bdf8','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316','#a855f7','#06b6d4'];
 
-// ==========================================
-// TELA DE LOGIN
-// ==========================================
-function togglePassword(){
-    var i = document.getElementById('senhaInput');
-    var b = document.querySelector('.toggle-password');
-    if(i.type === 'password'){
-        i.type = 'text';
-        b.innerHTML = '<svg class="icon-svg"><use href="#icon-eye-off"/></svg>';
-    } else {
-        i.type = 'password';
-        b.innerHTML = '<svg class="icon-svg"><use href="#icon-eye"/></svg>';
-    }
-}
+function togglePassword(){var i=document.getElementById('senhaInput');var b=document.querySelector('.toggle-password');if(i.type==='password'){i.type='text';b.innerHTML='<svg class="icon-svg"><use href="#icon-eye-off"/></svg>';}else{i.type='password';b.innerHTML='<svg class="icon-svg"><use href="#icon-eye"/></svg>';}}
+function codificarSenha(s){var h=0;var str=s.split('').reverse().join('')+'_fx';for(var i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}return 'fx_'+Math.abs(h).toString(36);}
+function emergencyReset(){if(confirm("PERDER TODOS OS DADOS?")){localStorage.clear();indexedDB.deleteDatabase("CacheFinal_V33").onsuccess=function(){alert("Redefinido!");window.location.reload();};}}
+function toggleCadastroSenha(){var b=document.getElementById("novaSenhaBox");b.style.display=(b.style.display==="none"||b.style.display==="")?"block":"none";}
+function cadastrarSenha(){var ns=document.getElementById("novaSenha").value;var cs=document.getElementById("confirmarSenha").value;var em=document.getElementById("emailRecuperacao").value.trim();if(!ns||!em){alert("Chave e e-mail obrigatorios.");return;}if(em.indexOf('@')<0){alert("E-mail invalido.");return;}if(ns.length<6){alert("Minimo 6.");return;}if(ns!==cs){alert("Nao conferem.");return;}localStorage.setItem("senha_cache_control",codificarSenha(ns));localStorage.setItem("email_cache_control",em);alert("Registrado!");window.location.reload();}
+function login(){var s=document.getElementById("senhaInput").value;var ss=localStorage.getItem("senha_cache_control");if(!ss){if(s.length<4){alert("Minimo 4.");return;}localStorage.setItem("senha_cache_control",codificarSenha(s));localStorage.setItem("email_cache_control","suporte@faderlivre.com");document.getElementById("loginScreen").style.display="none";initApp();return;}if(codificarSenha(s)===ss){document.getElementById("loginScreen").style.display="none";initApp();}else{alert("Chave Incorreta.");}}
+function recuperarSenha(){var em=localStorage.getItem("email_cache_control");var tl=localStorage.getItem("telefone_cache_control");var m="";if(em)m="E-mail: "+em+"\n";if(tl)m="Telefone: "+tl;alert(m||"Nenhum dado.");}
+function toggleTheme(){document.body.classList.toggle('light-mode');localStorage.setItem('app_theme',document.body.classList.contains('light-mode')?'light':'dark');}
+function changeMasterPassword(){var op=document.getElementById('oldMasterPassword').value;var np=document.getElementById('newMasterPassword').value;var cp=document.getElementById('confirmNewMasterPassword').value;var sa=localStorage.getItem("senha_cache_control");if(!op||!np||!cp){alert("Preencha todos.");return;}if(codificarSenha(op)!==sa){alert("Chave atual incorreta.");return;}if(np.length<6){alert("Minimo 6.");return;}if(np!==cp){alert("Nao conferem.");return;}localStorage.setItem("senha_cache_control",codificarSenha(np));alert("Alterada!");document.getElementById('oldMasterPassword').value='';document.getElementById('newMasterPassword').value='';document.getElementById('confirmNewMasterPassword').value='';}
 
-function codificarSenha(s){
-    var h = 0;
-    var str = s.split('').reverse().join('') + '_fader';
-    for(var i=0; i<str.length; i++){
-        h = ((h << 5) - h) + str.charCodeAt(i);
-        h = h | 0;
-    }
-    return 'fx_' + Math.abs(h).toString(36);
-}
+function initApp(){var t=localStorage.getItem('app_theme')||'dark';if(t==='light'){document.body.classList.add('light-mode');var tt=document.getElementById('themeToggle');if(tt)tt.checked=true;}try{document.getElementById("dataJob").value=new Date().toISOString().split('T')[0];}catch(e){}atualizarTela();atualizarListaEmpresas();checkNotif();verificarPgto();atualizarIconeOlho();}
+function atualizarIconeOlho(){var eb=document.getElementById("eyeButton");if(eb){eb.innerHTML=ocultarValores?'<svg class="icon-btn"><use href="#icon-eye"/></svg>':'<svg class="icon-btn"><use href="#icon-eye-off"/></svg>';}}
 
-function emergencyReset(){
-    if(confirm("PERDER TODOS OS DADOS? NAO TEM VOLTA!")){
-        localStorage.clear();
-        indexedDB.deleteDatabase("CacheFinal_V33").onsuccess = function(){
-            alert("Sistema redefinido!");
-            window.location.reload();
-        };
-    }
-}
+var requestDB=indexedDB.open("CacheFinal_V33",1);
+requestDB.onupgradeneeded=function(e){var d=e.target.result;if(!d.objectStoreNames.contains("jobs"))d.createObjectStore("jobs",{keyPath:"id",autoIncrement:true});if(!d.objectStoreNames.contains("empresas"))d.createObjectStore("empresas",{keyPath:"id",autoIncrement:true});};
+requestDB.onsuccess=function(e){db=e.target.result;if(document.getElementById("loginScreen").style.display==="none")initApp();};
+requestDB.onerror=function(){alert("Erro no banco.");};
 
-function toggleCadastro(){
-    var b = document.getElementById("novaSenhaBox");
-    b.style.display = (b.style.display === "none") ? "block" : "none";
-}
+function toggleValores(){ocultarValores=!ocultarValores;atualizarIconeOlho();atualizarTela();}
+function formatarValor(v){if(ocultarValores)return"R$ *****";return Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
+function formatarHoras(hd){var h=Math.floor(hd);var m=Math.round((hd-h)*60);return(h<10?'0':'')+h+':'+(m<10?'0':'')+m+'h';}
+function formatarData(iso){var p=iso.split("-");var d=new Date(p[0],p[1]-1,p[2]);var dias=["domingo","segunda-feira","terca-feira","quarta-feira","quinta-feira","sexta-feira","sabado"];return dias[d.getDay()]+', '+p[2]+'/'+p[1]+'/'+p[0];}
+function formatarDataExt(iso){var p=iso.split("-");var d=new Date(p[0],p[1]-1,p[2]);var dias=["domingo","segunda-feira","terca-feira","quarta-feira","quinta-feira","sexta-feira","sabado"];return p[2]+'/'+p[1]+'/'+p[0]+' - '+dias[d.getDay()];}
+function toast(m){var ta=document.getElementById('toastMsg');if(ta)ta.remove();var t=document.createElement('div');t.id='toastMsg';t.className='toast-notification';t.textContent=m;t.onclick=function(){t.remove();};document.body.appendChild(t);setTimeout(function(){if(t.parentNode)t.remove();},5000);}
 
-function cadastrarSenha(){
-    var ns = document.getElementById("novaSenha").value;
-    var cs = document.getElementById("confirmarSenha").value;
-    var em = document.getElementById("emailRecuperacao").value.trim();
-    var tl = document.getElementById("telefoneRecuperacao").value.trim();
-    
-    if(!ns || !em){ alert("Chave e e-mail obrigatorios."); return; }
-    if(em.indexOf('@') < 0){ alert("E-mail invalido."); return; }
-    if(ns.length < 6){ alert("Minimo 6 caracteres."); return; }
-    if(ns !== cs){ alert("Chaves nao conferem."); return; }
-    
-    localStorage.setItem("senha_cache_control", codificarSenha(ns));
-    localStorage.setItem("email_cache_control", em);
-    localStorage.setItem("telefone_cache_control", tl);
-    alert("Registrado!"); window.location.reload();
-}
+function isFeriado(d){var m=(d.getMonth()<9?'0':'')+(d.getMonth()+1);var dia=(d.getDate()<10?'0':'')+d.getDate();return FERIADOS.indexOf(dia+'-'+m)>=0;}
+function isDiaUtil(d){var ds=d.getDay();if(ds===0||ds===6)return false;if(isFeriado(d))return false;return true;}
+function adicionarDiasUteis(dataInicial,dias){var d=new Date(dataInicial);var ad=0;while(ad<dias){d.setDate(d.getDate()+1);if(isDiaUtil(d))ad++;}d.setHours(0,0,0,0);return d;}
 
-function login(){
-    var s = document.getElementById("senhaInput").value;
-    var ss = localStorage.getItem("senha_cache_control");
-    
-    if(!ss){
-        if(s.length < 4){ alert("Minimo 4 caracteres."); return; }
-        localStorage.setItem("senha_cache_control", codificarSenha(s));
-        localStorage.setItem("email_cache_control", "suporte@faderlivre.com");
-        document.getElementById("loginScreen").style.display = "none";
-        initApp(); return;
-    }
-    
-    if(codificarSenha(s) === ss){
-        document.getElementById("loginScreen").style.display = "none";
-        initApp();
-    } else {
-        alert("Chave Incorreta.");
-    }
-}
+function backupAuto(){if(!db)return;var tJ=db.transaction("jobs","readonly");tJ.objectStore("jobs").getAll().onsuccess=function(ej){var tE=db.transaction("empresas","readonly");tE.objectStore("empresas").getAll().onsuccess=function(ee){var p={jobs:ej.target.result,empresas:ee.target.result,data:new Date().toISOString()};localStorage.setItem("fader_auto_backup",JSON.stringify(p));};};}
+function fazerBackup(){if(!db)return;var tJ=db.transaction("jobs","readonly");tJ.objectStore("jobs").getAll().onsuccess=function(ej){var tE=db.transaction("empresas","readonly");tE.objectStore("empresas").getAll().onsuccess=function(ee){var p={jobs:ej.target.result,empresas:ee.target.result};var b=new Blob([JSON.stringify(p)],{type:"application/json"});var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="backup_"+new Date().toISOString().split('T')[0]+".json";a.click();toast("Backup local!");};};}
+function backupNuvem(){if(!db)return;var tJ=db.transaction("jobs","readonly");tJ.objectStore("jobs").getAll().onsuccess=function(ej){var tE=db.transaction("empresas","readonly");tE.objectStore("empresas").getAll().onsuccess=function(ee){var d={jobs:ej.target.result,empresas:ee.target.result,ts:new Date().toISOString()};var bn=JSON.parse(localStorage.getItem('fader_nuvem')||'[]');bn.push(d);if(bn.length>5)bn.shift();localStorage.setItem('fader_nuvem',JSON.stringify(bn));toast("Nuvem salvo!");alert("Backup nuvem! Total: "+bn.length);};};}
+function restaurarNuvem(){var bn=JSON.parse(localStorage.getItem('fader_nuvem')||'[]');if(bn.length===0){alert("Nenhum backup.");return;}var u=bn[bn.length-1];if(!confirm("Restaurar de "+new Date(u.ts).toLocaleString('pt-BR')+"?"))return;var tc=db.transaction("jobs","readwrite");tc.objectStore("jobs").clear().onsuccess=function(){var tJ=db.transaction("jobs","readwrite");u.jobs.forEach(function(i){tJ.objectStore("jobs").put(i);});tJ.oncomplete=function(){var tcE=db.transaction("empresas","readwrite");tcE.objectStore("empresas").clear().onsuccess=function(){var tE=db.transaction("empresas","readwrite");u.empresas.forEach(function(i){tE.objectStore("empresas").put(i);});tE.oncomplete=function(){alert("Restaurado!");window.location.reload();};};};};}
+document.getElementById("restoreFile").addEventListener("change",function(e){var a=e.target.files[0];if(!a)return;var l=new FileReader();l.onload=function(){try{var d=JSON.parse(l.result);if(d.jobs&&d.empresas){var tc=db.transaction("jobs","readwrite");tc.objectStore("jobs").clear().onsuccess=function(){var tJ=db.transaction("jobs","readwrite");d.jobs.forEach(function(i){tJ.objectStore("jobs").put(i);});tJ.oncomplete=function(){var tcE=db.transaction("empresas","readwrite");tcE.objectStore("empresas").clear().onsuccess=function(){var tE=db.transaction("empresas","readwrite");d.empresas.forEach(function(i){tE.objectStore("empresas").put(i);});tE.oncomplete=function(){alert("Importado!");window.location.reload();};};};};}}catch(err){alert("Arquivo invalido.");}};l.readAsText(a);});
 
-function recuperarSenha(){
-    var em = localStorage.getItem("email_cache_control");
-    var tl = localStorage.getItem("telefone_cache_control");
-    var m = "";
-    if(em) m += "E-mail: " + em + "\n";
-    if(tl) m += "Telefone: " + tl;
-    alert(m || "Nenhum dado configurado.");
-}
+function alternarAba(id,ev){document.querySelectorAll('.app-section').forEach(function(s){s.classList.remove('active');});document.querySelectorAll('.tab-button').forEach(function(b){b.classList.remove('active');});document.getElementById(id).classList.add('active');if(ev)ev.currentTarget.classList.add('active');if(id==='abaEmpresas')atualizarListaEmpresas();else if(id==='abaJobs')atualizarTela();}
+function definirFiltroVisualizacao(t){filtroVisualizacao=t;document.getElementById("btnFiltroAberto").classList.toggle("active",t==='aberto');document.getElementById("btnFiltroArquivado").classList.toggle("active",t==='arquivado');document.getElementById("sectionTitleJobs").innerText=t==='aberto'?"Jobs em Aberto":"Jobs Arquivados/Pagos";atualizarTela();}
+function gerenciarAutocomplete(t){var c=document.getElementById("autocompleteContainer");c.innerHTML="";if(!db||!t||t.trim()==="")return;var tx=db.transaction("empresas","readonly");tx.objectStore("empresas").getAll().onsuccess=function(e){var f=e.target.result.filter(function(em){return em.nome.toLowerCase().indexOf(t.toLowerCase())>=0;});if(f.length>0){var l=document.createElement("div");l.className="autocomplete-list";f.forEach(function(em){var i=document.createElement("div");i.className="autocomplete-item";i.innerText=em.nome;i.onclick=function(){document.getElementById("empresaJob").value=em.nome;c.innerHTML="";};l.appendChild(i);});c.appendChild(l);}};}
 
-function changeMasterPassword(){
-    var op = document.getElementById('oldMasterPassword').value;
-    var np = document.getElementById('newMasterPassword').value;
-    var cp = document.getElementById('confirmNewMasterPassword').value;
-    var sa = localStorage.getItem("senha_cache_control");
-    
-    if(!op || !np || !cp){ alert("Preencha todos."); return; }
-    if(codificarSenha(op) !== sa){ alert("Chave atual incorreta."); return; }
-    if(np.length < 6){ alert("Minimo 6."); return; }
-    if(np !== cp){ alert("Nao conferem."); return; }
-    
-    localStorage.setItem("senha_cache_control", codificarSenha(np));
-    alert("Chave alterada!");
-    document.getElementById('oldMasterPassword').value = '';
-    document.getElementById('newMasterPassword').value = '';
-    document.getElementById('confirmNewMasterPassword').value = '';
-}
+function salvarEmpresa(){var n=document.getElementById("cadNomeEmpresa").value.trim();var ie=document.getElementById("cadIdEmpresa").value;if(!n){alert("Nome obrigatorio.");return;}var tv=db.transaction("empresas","readonly");tv.objectStore("empresas").getAll().onsuccess=function(ev){var dup=ev.target.result.find(function(e){return e.nome.toLowerCase().trim()===n.toLowerCase().trim()&&(!ie||e.id!==parseInt(ie));});if(dup){alert("Ja cadastrada.");return;}var tp=document.getElementById("cadTipoPagamento").value;var pl={nome:n,cacheBase:parseFloat(document.getElementById("cadCacheBase").value||0),diaria:parseFloat(document.getElementById("cadDiaria").value||0),tipoPagamento:tp,diasPagamento:parseInt(document.getElementById("cadDiasPagamento").value||0),nfPercentual:parseFloat(document.getElementById("cadNfPercentual").value||0)};if(tp==="Semanal"){pl.inicioSemana=parseInt(document.getElementById("cadInicioSemana").value);pl.fimSemana=parseInt(document.getElementById("cadFimSemana").value);}else if(tp==="Quinzenal"){pl.inicioCiclo1=parseInt(document.getElementById("cadInicioCiclo1").value)||11;pl.fimCiclo1=parseInt(document.getElementById("cadFimCiclo1").value)||25;pl.inicioCiclo2=parseInt(document.getElementById("cadInicioCiclo2").value)||26;pl.fimCiclo2=parseInt(document.getElementById("cadFimCiclo2").value)||10;}else{pl.fimPeriodo=parseInt(document.getElementById("cadFimPeriodo").value)||30;}if(ie)pl.id=parseInt(ie);var tx=db.transaction("empresas","readwrite");var rq=ie?tx.objectStore("empresas").put(pl):tx.objectStore("empresas").add(pl);rq.onsuccess=function(){alert("Salva!");backupAuto();limparCamposEmpresa();atualizarListaEmpresas();};};}
+function carregarEmpresaParaEdicao(id){db.transaction("empresas","readonly").objectStore("empresas").get(id).onsuccess=function(e){var d=e.target.result;if(!d)return;document.getElementById("formEmpresaTitle").innerHTML="Editando: "+d.nome;document.getElementById("cadIdEmpresa").value=d.id;document.getElementById("cadNomeEmpresa").value=d.nome;document.getElementById("cadCacheBase").value=d.cacheBase;document.getElementById("cadDiaria").value=d.diaria;document.getElementById("cadTipoPagamento").value=d.tipoPagamento;document.getElementById("cadDiasPagamento").value=d.diasPagamento||0;document.getElementById("cadNfPercentual").value=d.nfPercentual||0;document.getElementById("cadInicioCiclo1").value=d.inicioCiclo1||11;document.getElementById("cadFimCiclo1").value=d.fimCiclo1||25;document.getElementById("cadInicioCiclo2").value=d.inicioCiclo2||26;document.getElementById("cadFimCiclo2").value=d.fimCiclo2||10;document.getElementById("cadFimPeriodo").value=d.fimPeriodo||30;document.getElementById("cadInicioSemana").value=d.inicioSemana||1;document.getElementById("cadFimSemana").value=d.fimSemana||0;alterarPeriodoPagamentoCadastro();document.getElementById("formEmpresaTitle").scrollIntoView({behavior:'smooth',block:'center'});};}
+function deletarEmpresa(id){if(confirm("Remover?")){db.transaction("empresas","readwrite").objectStore("empresas").delete(id).onsuccess=function(){backupAuto();atualizarListaEmpresas();};}}
+function atualizarListaEmpresas(){if(!db)return;var c=document.getElementById("listaEmpresasCadastradas");c.innerHTML="";db.transaction("empresas","readonly").objectStore("empresas").getAll().onsuccess=function(e){var col=e.target.result;if(col.length===0){c.innerHTML="<p style='color:var(--muted);'>Nenhuma.</p>";return;}col.forEach(function(em){var cd=document.createElement("div");cd.style="background:var(--card);padding:12px;border-radius:16px;margin-bottom:8px;border:1px solid var(--border-color);position:relative;";var dc=em.tipoPagamento;if(em.tipoPagamento==="Quinzenal")dc="Quinzenal ("+(em.inicioCiclo1||11)+"a"+(em.fimCiclo1||25)+"/"+(em.inicioCiclo2||26)+"a"+(em.fimCiclo2||10)+")";cd.innerHTML='<div class="empresa-title">'+em.nome+'</div><div class="meta-text">Cache: <b>R$ '+em.cacheBase.toFixed(2)+'</b> | Diaria: <b>R$ '+em.diaria.toFixed(2)+'</b></div><div class="meta-text">Ciclo: <b>'+dc+'</b> | NF: <b>'+em.nfPercentual+'%</b></div><button class="btn-edit-inline" onclick="carregarEmpresaParaEdicao('+em.id+')"><svg class="icon-btn"><use href="#icon-edit"/></svg></button><button class="btn-del" onclick="deletarEmpresa('+em.id+')"><svg class="icon-btn"><use href="#icon-trash"/></svg></button>';c.appendChild(cd);});};}
+function limparCamposEmpresa(){document.getElementById("formEmpresaTitle").innerText="Nova Empresa";document.getElementById("cadIdEmpresa").value="";document.getElementById("cadNomeEmpresa").value="";document.getElementById("cadCacheBase").value="";document.getElementById("cadDiaria").value="";document.getElementById("cadNfPercentual").value="0";document.getElementById("cadTipoPagamento").value="Semanal";alterarPeriodoPagamentoCadastro();}
+function alterarPeriodoPagamentoCadastro(){var t=document.getElementById("cadTipoPagamento").value;document.getElementById("cadPeriodoPersonalizado").style.display=(t==="Quinzenal"||t==="Mensal")?"block":"none";document.getElementById("cadPeriodoSemanalBox").style.display=(t==="Semanal")?"grid":"none";document.getElementById("quinzenalPeriodos").style.display=(t==="Quinzenal")?"block":"none";document.getElementById("mensalPeriodos").style.display=(t==="Mensal")?"block":"none";}
 
-function toggleTheme(){
-    document.body.classList.toggle('light-mode');
-    localStorage.setItem('app_theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
-}
+function obterStatus(job){if(job.statusManual==="pago")return"pago";var da=new Date();da.setHours(0,0,0,0);var df=calcFechamento(job);var dl=adicionarDiasUteis(df,job.diasPagamento);if(da>dl)return"pago";if(da>df)return"arquivado";return"aberto";}
+function calcFechamento(job){var od=new Date(job.data+"T00:00:00");var of=new Date(od);if(job.tipoPagamento==="Semanal"){var dc=parseInt(job.fimSemana||0);var dr=(dc-od.getDay()+7)%7;if(dr===0)dr=7;of.setDate(od.getDate()+dr);}else if(job.tipoPagamento==="Quinzenal"){var dia=od.getDate(),mes=od.getMonth(),ano=od.getFullYear();var ud=new Date(ano,mes+1,0).getDate();var c1i=parseInt(job.inicioCiclo1||11),c1f=Math.min(parseInt(job.fimCiclo1||25),ud);var c2i=Math.min(parseInt(job.inicioCiclo2||26),ud),c2f=Math.min(parseInt(job.fimCiclo2||10),ud);if(dia>=c1i&&dia<=c1f)of=new Date(ano,mes,c1f);else if(dia>=c2i&&dia<=c2f)of=new Date(ano,mes,c2f);else if(dia<c1i)of=new Date(ano,mes,c1f);else of=new Date(ano,mes+1,Math.min(c1f,new Date(ano,mes+2,0).getDate()));}else{var dia2=od.getDate();var pf=Math.min(parseInt(job.fimPeriodo||30),new Date(od.getFullYear(),od.getMonth()+1,0).getDate());if(dia2<=pf)of=new Date(od.getFullYear(),od.getMonth(),pf);else of=new Date(od.getFullYear(),od.getMonth()+1,Math.min(pf,new Date(od.getFullYear(),od.getMonth()+2,0).getDate()));}of.setHours(0,0,0,0);return of;}
+function calcPrevisao(job){return adicionarDiasUteis(calcFechamento(job),job.diasPagamento);}
 
-// ==========================================
-// INICIALIZACAO
-// ==========================================
-function initApp(){
-    var t = localStorage.getItem('app_theme') || 'dark';
-    if(t === 'light'){ document.body.classList.add('light-mode'); var tt = document.getElementById('themeToggle'); if(tt) tt.checked = true; }
-    
-    try { document.getElementById("dataJob").value = new Date().toISOString().split('T')[0]; } catch(e){}
-    
-    atualizarTela();
-    atualizarListaEmpresas();
-    checkNotif();
-    verificarPgto();
-    atualizarIconeOlho();
-}
+function checkNotif(){if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();}
+function verificarPgto(){if(!db||Notification.permission!=="granted")return;var hoje=new Date();if(hoje.getHours()<9)return;hoje.setHours(0,0,0,0);var tx=db.transaction("jobs","readonly");tx.objectStore("jobs").getAll().onsuccess=function(e){var th=0;var nt=JSON.parse(localStorage.getItem('nt_hoje')||'{}');var hs=new Date().toISOString().split('T')[0];e.target.result.forEach(function(j){if(j.statusManual==="pago")return;var dp=calcPrevisao(j);if(dp.getTime()===hoje.getTime()&&!nt[j.id]){th+=j.total;nt[j.id]=hs;}});if(th>0){localStorage.setItem('nt_hoje',JSON.stringify(nt));new Notification("Pagamentos!",{body:"Total: "+formatarValor(th)});toast("Pagamentos hoje: "+formatarValor(th));}};}
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')verificarPgto();});
 
-function atualizarIconeOlho(){
-    var eb = document.getElementById("eyeButton");
-    if(eb){
-        eb.innerHTML = ocultarValores ? '<svg class="icon-btn"><use href="#icon-eye"/></svg>' : '<svg class="icon-btn"><use href="#icon-eye-off"/></svg>';
-    }
-}
+function salvarJob(){var di=document.getElementById("dataJob").value;var ne=document.getElementById("empresaJob").value.trim();var ie=document.getElementById("editJobId").value;if(!di||!ne){alert("Data e Empresa obrigatorios.");return;}var tE=db.transaction("empresas","readonly");tE.objectStore("empresas").getAll().onsuccess=function(e){var em=e.target.result.find(function(x){return x.nome.toLowerCase()===ne.toLowerCase();});if(!em){alert("Empresa nao encontrada.");return;}var BH=12;var cb=parseFloat(em.cacheBase||0);var dd=parseFloat(em.diaria||0);var nf=parseFloat(em.nfPercentual||0);var aI=document.getElementById("inicio").value.split(":");var aF=document.getElementById("fim").value.split(":");var dm=(parseInt(aF[0])*60+parseInt(aF[1]))-(parseInt(aI[0])*60+parseInt(aI[1]));if(dm<0)dm+=1440;var th=dm/60;var ve=Math.max(0,th-BH);var re=ve*(cb/BH);var fb=cb+dd+re;var imp=fb*(nf/100);var jt={data:di,tipoPagamento:em.tipoPagamento,diasPagamento:parseInt(em.diasPagamento||0),fimPeriodo:parseInt(em.fimPeriodo||30),inicioSemana:parseInt(em.inicioSemana||1),fimSemana:parseInt(em.fimSemana||0),inicioCiclo1:parseInt(em.inicioCiclo1||11),fimCiclo1:parseInt(em.fimCiclo1||25),inicioCiclo2:parseInt(em.inicioCiclo2||26),fimCiclo2:parseInt(em.fimCiclo2||10)};var dp=calcPrevisao(jt);var pv=formatarDataExt(dp.toISOString().split('T')[0]);var pj={data:di,empresa:em.nome,job:document.getElementById("nomeJob").value||"Job",cache:cb,diaria:dd,extra:re,total:fb,valorNF:imp,horas:th,inicio:document.getElementById("inicio").value,fim:document.getElementById("fim").value,tipoPagamento:em.tipoPagamento,diasPagamento:parseInt(em.diasPagamento||0),fimPeriodo:parseInt(em.fimPeriodo||30),inicioSemana:parseInt(em.inicioSemana||1),fimSemana:parseInt(em.fimSemana||0),inicioCiclo1:parseInt(em.inicioCiclo1||11),fimCiclo1:parseInt(em.fimCiclo1||25),inicioCiclo2:parseInt(em.inicioCiclo2||26),fimCiclo2:parseInt(em.fimCiclo2||10),previsaoPagamento:pv,statusManual:ie?editStatusManual:null};if(ie)pj.id=parseInt(ie);var tG=db.transaction("jobs","readwrite");var rq=ie?tG.objectStore("jobs").put(pj):tG.objectStore("jobs").add(pj);rq.onsuccess=function(){alert("Salvo!");backupAuto();atualizarTela();limparCampos();};};}
+function carregarJobParaEdicao(id){db.transaction("jobs","readonly").objectStore("jobs").get(id).onsuccess=function(e){var i=e.target.result;if(!i)return;document.getElementById("formJobTitle").innerText="Editando";document.getElementById("editJobId").value=i.id;document.getElementById("empresaJob").value=i.empresa;document.getElementById("dataJob").value=i.data;document.getElementById("nomeJob").value=i.job;document.getElementById("inicio").value=i.inicio;document.getElementById("fim").value=i.fim;editStatusManual=i.statusManual||null;document.getElementById("formJobTitle").scrollIntoView({behavior:'smooth',block:'center'});};}
+function deletarJob(id){if(confirm("Excluir?")){db.transaction("jobs","readwrite").objectStore("jobs").delete(id).onsuccess=function(){backupAuto();atualizarTela();};}}
+function marcarPago(id){if(confirm("Confirmar pagamento?")){db.transaction("jobs","readwrite").objectStore("jobs").get(id).onsuccess=function(e){var j=e.target.result;if(!j)return;j.statusManual="pago";db.transaction("jobs","readwrite").objectStore("jobs").put(j).onsuccess=function(){backupAuto();atualizarTela();toast("Pago!");};};}}
+function reabrirJob(id){if(confirm("Reabrir?")){db.transaction("jobs","readwrite").objectStore("jobs").get(id).onsuccess=function(e){var j=e.target.result;if(!j)return;j.statusManual=null;db.transaction("jobs","readwrite").objectStore("jobs").put(j).onsuccess=function(){backupAuto();atualizarTela();toast("Reaberto!");};};}}
+function limparCampos(){document.getElementById("formJobTitle").innerText="Novo Job";document.getElementById("editJobId").value="";document.getElementById("empresaJob").value="";document.getElementById("nomeJob").value="";document.getElementById("dataJob").value=new Date().toISOString().split('T')[0];document.getElementById("inicio").value="08:00";document.getElementById("fim").value="20:00";editStatusManual=null;}
 
-// ==========================================
-// BANCO DE DADOS
-// ==========================================
-var requestDB = indexedDB.open("CacheFinal_V33", 1);
-requestDB.onupgradeneeded = function(e){
-    var d = e.target.result;
-    if(!d.objectStoreNames.contains("jobs")) d.createObjectStore("jobs", {keyPath:"id", autoIncrement:true});
-    if(!d.objectStoreNames.contains("empresas")) d.createObjectStore("empresas", {keyPath:"id", autoIncrement:true});
-};
-requestDB.onsuccess = function(e){
-    db = e.target.result;
-    if(document.getElementById("loginScreen").style.display === "none") initApp();
-};
-requestDB.onerror = function(){ alert("Erro no banco de dados."); };
+function atualizarTela(){if(!db)return;var pn=document.getElementById("listaHistorico");pn.innerHTML="";var tB=0,tN=0,tH=0;var dG={};var dM={};var tE=db.transaction("empresas","readonly");tE.objectStore("empresas").getAll().onsuccess=function(ee){var tn=ee.target.result.some(function(em){return em.nfPercentual>0;});document.getElementById("dashboardNfCard").style.display=tn?'block':'none';document.getElementById("dashboardLiquidoCard").style.display=tn?'block':'none';var tx=db.transaction("jobs","readonly");tx.objectStore("jobs").getAll().onsuccess=function(e){var mt=e.target.result.sort(function(a,b){return new Date(b.data)-new Date(a.data);});mt.forEach(function(r){var st=obterStatus(r);if(st==="aberto"){tB+=r.total||0;tN+=r.valorNF||0;tH+=parseFloat(r.horas||0);dG[r.empresa]=(dG[r.empresa]||0)+r.total;}var ma=r.data.substring(0,7);dM[ma]=(dM[ma]||0)+(r.total||0);if(!mapaCores[r.empresa])mapaCores[r.empresa]=coresGrafico[Object.keys(mapaCores).length%coresGrafico.length];var ck=(filtroVisualizacao==="aberto"&&st==="aberto")||(filtroVisualizacao==="arquivado"&&(st==="arquivado"||st==="pago"));if(ck){var cd=document.createElement("div");cd.className="history-card";cd.style.borderLeft="4px solid "+mapaCores[r.empresa];var bd=st==="aberto"?'<span class="badge-status status-aberto">Aberto</span>':(st==="arquivado"?'<span class="badge-status status-fechado">Aguardando</span>':'<span class="badge-status status-pago">Quitado</span>');var df=formatarData(r.data);var hf=formatarHoras(r.horas);cd.innerHTML='<button class="btn-del" onclick="deletarJob('+r.id+')"><svg class="icon-btn"><use href="#icon-trash"/></svg></button><button class="btn-edit-inline" onclick="carregarJobParaEdicao('+r.id+')"><svg class="icon-btn"><use href="#icon-edit"/></svg></button>'+(st==='pago'?'<button class="btn-reopen" onclick="reabrirJob('+r.id+')">Reabrir</button>':'<button class="btn-paid" onclick="marcarPago('+r.id+')">Pago</button>')+'<div class="empresa-title">'+r.empresa+'</div><div class="meta-text">Data: '+df+'</div><div class="meta-text">Job: '+r.job+'</div><div>'+bd+'</div><div class="meta-text">Horarios: '+r.inicio+' as '+r.fim+' ('+hf+')</div><div class="meta-text">Cache: '+formatarValor(r.cache)+'</div><div class="meta-text">Alimentacao: '+formatarValor(r.diaria)+'</div><div class="meta-text">Hora Extra: '+formatarValor(r.extra)+'</div><div class="meta-text">Previsao: <b>'+r.previsaoPagamento+'</b></div><div style="margin-top:6px;font-weight:900;">Total: '+formatarValor(r.total)+'</div>';pn.appendChild(cd);}});document.getElementById("vTotalSemana").innerText=formatarValor(tB);document.getElementById("vTotalNF").innerText="- "+formatarValor(tN);document.getElementById("vTotalLiquido").innerText=formatarValor(tB-tN);document.getElementById("vTotalHoras").innerText=formatarHoras(tH);renderGrafico(dG);renderGraficoMensal(dM);if(document.getElementById("searchBox").style.display==="block")filtrarTabela();};};}
 
-// ==========================================
-// AUXILIARES
-// ==========================================
-function toggleValores(){ ocultarValores = !ocultarValores; atualizarIconeOlho(); atualizarTela(); }
+function renderGrafico(d){var ctx=document.getElementById("graficoEmpresas");if(!ctx)return;var l=Object.keys(d),v=Object.values(d);var co=l.map(function(lb){return mapaCores[lb]||'#38bdf8';});if(window.chart1){window.chart1.data.labels=l;window.chart1.data.datasets[0].data=v;window.chart1.data.datasets[0].backgroundColor=co;window.chart1.update();}else{if(l.length===0)return;window.chart1=new Chart(ctx,{type:"bar",data:{labels:l,datasets:[{data:v,backgroundColor:co,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{display:false},x:{ticks:{color:"#94a3b8"}}}});}}
+function renderGraficoMensal(d){var ctx=document.getElementById("graficoMensal");if(!ctx)return;var mo=Object.keys(d).sort();var nm=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];var l=mo.map(function(m){var a=m.split('-');return nm[parseInt(a[1])-1]+'/'+a[0];});var v=mo.map(function(m){return d[m];});if(window.chart2){window.chart2.data.labels=l;window.chart2.data.datasets[0].data=v;window.chart2.update();}else{if(l.length===0)return;window.chart2=new Chart(ctx,{type:"line",data:{labels:l,datasets:[{data:v,borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.1)',fill:true,tension:0.4,pointRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{display:false},x:{ticks:{color:"#94a3b8"}}}});}}
 
-function formatarValor(v){
-    if(ocultarValores) return "R$ *****";
-    return Number(v).toLocaleString("pt-BR", {style:"currency", currency:"BRL"});
-}
+function abrirBusca(){document.getElementById("searchBox").style.display="block";}
+function limparBusca(){document.getElementById("inputBusca").value="";document.getElementById("searchBox").style.display="none";filtrarTabela();}
+function filtrarTabela(){var t=document.getElementById("inputBusca").value.toUpperCase().trim();document.querySelectorAll(".history-card").forEach(function(c){c.style.display=c.innerText.toUpperCase().indexOf(t)>=0?"block":"none";});}
 
-function formatarHoras(hd){
-    var h = Math.floor(hd);
-    var m = Math.round((hd - h) * 60);
-    return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + 'h';
-}
+function enviarWhatsApp(){var tx=db.transaction("jobs","readonly");tx.objectStore("jobs").getAll().onsuccess=function(e){var tr=document.getElementById("inputBusca").value.toUpperCase().trim();var ba=document.getElementById("searchBox").style.display==="block"&&tr!=="";var fl=e.target.result.filter(function(j){var st=obterStatus(j);if(filtroVisualizacao==="aberto"&&st!=="aberto")return false;if(filtroVisualizacao==="arquivado"&&st==="aberto")return false;if(ba){var tx=(j.empresa+" "+j.job+" "+j.data.split("-").reverse().join("/")).toUpperCase();return tx.indexOf(tr)>=0;}return true;}).sort(function(a,b){return new Date(b.data)-new Date(a.data);});if(fl.length===0){alert("Nenhum.");return;}var m="FADER LIVRE - EXTRATO\n======================\n\n";var tC=0,tD=0,tE=0,tG=0;fl.forEach(function(j){m+="Empresa: "+j.empresa+"\nData: "+formatarDataExt(j.data)+"\nJob: "+j.job+"\nHorarios: "+j.inicio+"h as "+j.fim+"h\nCache: "+formatarValor(j.cache)+"\n";if(j.extra>0)m+="Horas Extras: "+formatarValor(j.extra)+"\n";m+="Diaria: "+formatarValor(j.diaria)+"\nTotal: "+formatarValor(j.total)+"\nPrevisao: "+j.previsaoPagamento+"\n\n";tC+=j.cache||0;tD+=j.diaria||0;tE+=j.extra||0;tG+=j.total||0;});m+="======================\nTotal Geral: "+formatarValor(tG)+"\n"+new Date().toLocaleDateString("pt-BR");window.open("https://api.whatsapp.com/send?text="+encodeURIComponent(m),"_blank");};}
 
-function formatarData(iso){
-    var p = iso.split("-");
-    var d = new Date(p[0], p[1]-1, p[2]);
-    var dias = ["domingo","segunda-feira","terca-feira","quarta-feira","quinta-feira","sexta-feira","sabado"];
-    return dias[d.getDay()] + ', ' + p[2] + '/' + p[1] + '/' + p[0];
-}
+function baixarExcel(){var tx=db.transaction("jobs","readonly");tx.objectStore("jobs").getAll().onsuccess=function(e){var od=e.target.result.sort(function(a,b){return new Date(b.data)-new Date(a.data);});var c="Data;Empresa;Job;Cache;Alimentacao;Hora_Extra;Total_Bruto;NF;Liquido;Horas;Previsao\n";od.forEach(function(i){var lq=i.total-i.valorNF;c+=i.data+";"+i.empresa+";"+i.job+";R$ "+(i.cache||0).toFixed(2)+";R$ "+(i.diaria||0).toFixed(2)+";R$ "+(i.extra||0).toFixed(2)+";R$ "+(i.total||0).toFixed(2)+";R$ "+(i.valorNF||0).toFixed(2)+";R$ "+lq.toFixed(2)+";"+formatarHoras(i.horas)+";"+i.previsaoPagamento+"\n";});var b=new Blob(["\ufeff"+c],{type:'text/csv;charset=utf-8;'});var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="fader_"+new Date().toISOString().split('T')[0]+".csv";a.click();toast("Excel exportado!");};}
 
-function formatarDataExt(iso){
-    var p = iso.split("-");
-    var d = new Date(p[0], p[1]-1, p[2]);
-    var dias = ["domingo","segunda-feira","terca-feira","quarta-feira","quinta-feira","sexta-feira","sabado"];
-    return p[2] + '/' + p[1] + '/' + p[0] + ' - ' + dias[d.getDay()];
-}
-
-function toast(m){
-    var ta = document.getElementById('toastMsg'); if(ta) ta.remove();
-    var t = document.createElement('div'); t.id = 'toastMsg'; t.className = 'toast-notification';
-    t.textContent = m; t.onclick = function(){ t.remove(); };
-    document.body.appendChild(t);
-    setTimeout(function(){ if(t.parentNode) t.remove(); }, 5000);
-}
-
-// ==========================================
-// FERIADOS E DIAS UTEIS
-// ==========================================
-function isFeriado(d){
-    var m = (d.getMonth() < 9 ? '0' : '') + (d.getMonth()+1);
-    var dia = (d.getDate() < 10 ? '0' : '') + d.getDate();
-    return FERIADOS.indexOf(dia + '-' + m) >= 0;
-}
-
-function isDiaUtil(d){
-    var ds = d.getDay();
-    if(ds === 0 || ds === 6) return false;
-    if(isFeriado(d)) return false;
-    return true;
-}
-
-function adicionarDiasUteis(dataInicial, dias){
-    var d = new Date(dataInicial);
-    var ad = 0;
-    while(ad < dias){
-        d.setDate(d.getDate() + 1);
-        if(isDiaUtil(d)) ad++;
-    }
-    d.setHours(0,0,0,0);
-    return d;
-}
-
-// ==========================================
-// BACKUP
-// ==========================================
-function backupAuto(){
-    if(!db) return;
-    var tJ = db.transaction("jobs","readonly");
-    tJ.objectStore("jobs").getAll().onsuccess = function(ej){
-        var tE = db.transaction("empresas","readonly");
-        tE.objectStore("empresas").getAll().onsuccess = function(ee){
-            var p = {jobs:ej.target.result, empresas:ee.target.result, data:new Date().toISOString()};
-            localStorage.setItem("fader_auto_backup", JSON.stringify(p));
-        };
-    };
-}
-
-function fazerBackup(){
-    if(!db) return;
-    var tJ = db.transaction("jobs","readonly");
-    tJ.objectStore("jobs").getAll().onsuccess = function(ej){
-        var tE = db.transaction("empresas","readonly");
-        tE.objectStore("empresas").getAll().onsuccess = function(ee){
-            var p = {jobs:ej.target.result, empresas:ee.target.result};
-            var b = new Blob([JSON.stringify(p)], {type:"application/json"});
-            var a = document.createElement("a");
-            a.href = URL.createObjectURL(b);
-            a.download = "backup_" + new Date().toISOString().split('T')[0] + ".json";
-            a.click(); toast("Backup local gerado!");
-        };
-    };
-}
-
-function backupNuvem(){
-    if(!db) return;
-    var tJ = db.transaction("jobs","readonly");
-    tJ.objectStore("jobs").getAll().onsuccess = function(ej){
-        var tE = db.transaction("empresas","readonly");
-        tE.objectStore("empresas").getAll().onsuccess = function(ee){
-            var d = {jobs:ej.target.result, empresas:ee.target.result, ts:new Date().toISOString()};
-            var bn = JSON.parse(localStorage.getItem('fader_nuvem') || '[]');
-            bn.push(d); if(bn.length > 5) bn.shift();
-            localStorage.setItem('fader_nuvem', JSON.stringify(bn));
-            toast("Backup nuvem salvo!"); alert("Backup na nuvem! Total: " + bn.length);
-        };
-    };
-}
-
-function restaurarNuvem(){
-    var bn = JSON.parse(localStorage.getItem('fader_nuvem') || '[]');
-    if(bn.length === 0){ alert("Nenhum backup na nuvem."); return; }
-    var u = bn[bn.length-1];
-    if(!confirm("Restaurar backup de " + new Date(u.ts).toLocaleString('pt-BR') + "?")) return;
-    
-    var tc = db.transaction("jobs","readwrite");
-    tc.objectStore("jobs").clear().onsuccess = function(){
-        var tJ = db.transaction("jobs","readwrite");
-        u.jobs.forEach(function(i){ tJ.objectStore("jobs").put(i); });
-        tJ.oncomplete = function(){
-            var tcE = db.transaction("empresas","readwrite");
-            tcE.objectStore("empresas").clear().onsuccess = function(){
-                var tE = db.transaction("empresas","readwrite");
-                u.empresas.forEach(function(i){ tE.objectStore("empresas").put(i); });
-                tE.oncomplete = function(){ alert("Restaurado!"); window.location.reload(); };
-            };
-        };
-    };
-}
-
-document.getElementById("restoreFile").addEventListener("change", function(e){
-    var a = e.target.files[0]; if(!a) return;
-    var l = new FileReader();
-    l.onload = function(){
-        try {
-            var d = JSON.parse(l.result);
-            if(d.jobs && d.empresas){
-                var tc = db.transaction("jobs","readwrite");
-                tc.objectStore("jobs").clear().onsuccess = function(){
-                    var tJ = db.transaction("jobs","readwrite");
-                    d.jobs.forEach(function(i){ tJ.objectStore("jobs").put(i); });
-                    tJ.oncomplete = function(){
-                        var tcE = db.transaction("empresas","readwrite");
-                        tcE.objectStore("empresas").clear().onsuccess = function(){
-                            var tE = db.transaction("empresas","readwrite");
-                            d.empresas.forEach(function(i){ tE.objectStore("empresas").put(i); });
-                            tE.oncomplete = function(){ alert("Importado!"); window.location.reload(); };
-                        };
-                    };
-                };
-            }
-        } catch(err){ alert("Arquivo invalido."); }
-    };
-    l.readAsText(a);
-});
-
-// ==========================================
-// NAVEGACAO
-// ==========================================
-function mudarAba(id, btn){
-    document.querySelectorAll('.app-section').forEach(function(s){ s.classList.remove('active'); });
-    document.querySelectorAll('.tab-button').forEach(function(b){ b.classList.remove('active'); });
-    document.getElementById(id).classList.add('active');
-    if(btn) btn.classList.add('active');
-    if(id === 'abaEmpresas') atualizarListaEmpresas();
-    else if(id === 'abaJobs') atualizarTela();
-}
-
-function definirFiltro(t){
-    filtroVisualizacao = t;
-    document.getElementById("btnFiltroAberto").classList.toggle("active", t === 'aberto');
-    document.getElementById("btnFiltroArquivado").classList.toggle("active", t === 'arquivado');
-    document.getElementById("sectionTitleJobs").innerText = t === 'aberto' ? "Jobs em Aberto" : "Jobs Arquivados/Pagos";
-    atualizarTela();
-}
-
-// ==========================================
-// AUTOCOMPLETE
-// ==========================================
-function gerenciarAutocomplete(t){
-    var c = document.getElementById("autocompleteContainer"); c.innerHTML = "";
-    if(!db || !t || t.trim() === "") return;
-    var tx = db.transaction("empresas","readonly");
-    tx.objectStore("empresas").getAll().onsuccess = function(e){
-        var f = e.target.result.filter(function(em){ return em.nome.toLowerCase().indexOf(t.toLowerCase()) >= 0; });
-        if(f.length > 0){
-            var l = document.createElement("div"); l.className = "autocomplete-list";
-            f.forEach(function(em){
-                var i = document.createElement("div"); i.className = "autocomplete-item"; i.innerText = em.nome;
-                i.onclick = function(){ document.getElementById("empresaJob").value = em.nome; c.innerHTML = ""; };
-                l.appendChild(i);
-            });
-            c.appendChild(l);
-        }
-    };
-}
-
-// ==========================================
-// CRUD EMPRESAS
-// ==========================================
-function salvarEmpresa(){
-    var n = document.getElementById("cadNomeEmpresa").value.trim();
-    var ie = document.getElementById("cadIdEmpresa").value;
-    if(!n){ alert("Nome obrigatorio."); return; }
-    
-    var tv = db.transaction("empresas","readonly");
-    tv.objectStore("empresas").getAll().onsuccess = function(ev){
-        var dup = ev.target.result.find(function(e){ return e.nome.toLowerCase().trim() === n.toLowerCase().trim() && (!ie || e.id !== parseInt(ie)); });
-        if(dup){ alert("Ja cadastrada."); return; }
-        
-        var tp = document.getElementById("cadTipoPagamento").value;
-        var pl = {
-            nome: n,
-            cacheBase: parseFloat(document.getElementById("cadCacheBase").value || 0),
-            diaria: parseFloat(document.getElementById("cadDiaria").value || 0),
-            tipoPagamento: tp,
-            diasPagamento: parseInt(document.getElementById("cadDiasPagamento").value || 0),
-            nfPercentual: parseFloat(document.getElementById("cadNfPercentual").value || 0)
-        };
-        
-        if(tp === "Semanal"){
-            pl.inicioSemana = parseInt(document.getElementById("cadInicioSemana").value);
-            pl.fimSemana = parseInt(document.getElementById("cadFimSemana").value);
-        } else if(tp === "Quinzenal"){
-            pl.inicioCiclo1 = parseInt(document.getElementById("cadInicioCiclo1").value) || 11;
-            pl.fimCiclo1 = parseInt(document.getElementById("cadFimCiclo1").value) || 25;
-            pl.inicioCiclo2 = parseInt(document.getElementById("cadInicioCiclo2").value) || 26;
-            pl.fimCiclo2 = parseInt(document.getElementById("cadFimCiclo2").value) || 10;
-        } else {
-            pl.fimPeriodo = parseInt(document.getElementById("cadFimPeriodo").value) || 30;
-        }
-        
-        if(ie) pl.id = parseInt(ie);
-        
-        var tx = db.transaction("empresas","readwrite");
-        var rq = ie ? tx.objectStore("empresas").put(pl) : tx.objectStore("empresas").add(pl);
-        rq.onsuccess = function(){ alert("Salva!"); backupAuto(); limparEmpresa(); atualizarListaEmpresas(); };
-    };
-}
-
-function carregarEmpresaParaEdicao(id){
-    db.transaction("empresas","readonly").objectStore("empresas").get(id).onsuccess = function(e){
-        var d = e.target.result; if(!d) return;
-        document.getElementById("formEmpresaTitle").innerHTML = "Editando: " + d.nome;
-        document.getElementById("cadIdEmpresa").value = d.id;
-        document.getElementById("cadNomeEmpresa").value = d.nome;
-        document.getElementById("cadCacheBase").value = d.cacheBase;
-        document.getElementById("cadDiaria").value = d.diaria;
-        document.getElementById("cadTipoPagamento").value = d.tipoPagamento;
-        document.getElementById("cadDiasPagamento").value = d.diasPagamento || 0;
-        document.getElementById("cadNfPercentual").value = d.nfPercentual || 0;
-        document.getElementById("cadInicioCiclo1").value = d.inicioCiclo1 || 11;
-        document.getElementById("cadFimCiclo1").value = d.fimCiclo1 || 25;
-        document.getElementById("cadInicioCiclo2").value = d.inicioCiclo2 || 26;
-        document.getElementById("cadFimCiclo2").value = d.fimCiclo2 || 10;
-        document.getElementById("cadFimPeriodo").value = d.fimPeriodo || 30;
-        document.getElementById("cadInicioSemana").value = d.inicioSemana || 1;
-        document.getElementById("cadFimSemana").value = d.fimSemana || 0;
-        alterarPeriodo();
-        document.getElementById("formEmpresaTitle").scrollIntoView({behavior:'smooth',block:'center'});
-    };
-}
-
-function deletarEmpresa(id){
-    if(confirm("Remover?")){ db.transaction("empresas","readwrite").objectStore("empresas").delete(id).onsuccess = function(){ backupAuto(); atualizarListaEmpresas(); }; }
-}
-
-function atualizarListaEmpresas(){
-    if(!db) return;
-    var c = document.getElementById("listaEmpresasCadastradas"); c.innerHTML = "";
-    db.transaction("empresas","readonly").objectStore("empresas").getAll().onsuccess = function(e){
-        var col = e.target.result;
-        if(col.length === 0){ c.innerHTML = "<p style='color:var(--muted);'>Nenhuma.</p>"; return; }
-        col.forEach(function(em){
-            var cd = document.createElement("div");
-            cd.style = "background:var(--card);padding:12px;border-radius:16px;margin-bottom:8px;border:1px solid var(--border-color);position:relative;";
-            var dc = em.tipoPagamento;
-            if(em.tipoPagamento === "Quinzenal") dc = "Quinzenal (" + (em.inicioCiclo1||11) + "a" + (em.fimCiclo1||25) + "/" + (em.inicioCiclo2||26) + "a" + (em.fimCiclo2||10) + ")";
-            cd.innerHTML = '<div class="empresa-title">' + em.nome + '</div><div class="meta-text">Cache: <b>R$ ' + em.cacheBase.toFixed(2) + '</b> | Diaria: <b>R$ ' + em.diaria.toFixed(2) + '</b></div><div class="meta-text">Ciclo: <b>' + dc + '</b> | NF: <b>' + em.nfPercentual + '%</b></div><button class="btn-edit-inline" onclick="carregarEmpresaParaEdicao(' + em.id + ')"><svg class="icon-btn"><use href="#icon-edit"/></svg></button><button class="btn-del" onclick="deletarEmpresa(' + em.id + ')"><svg class="icon-btn"><use href="#icon-trash"/></svg></button>';
-            c.appendChild(cd);
-        });
-    };
-}
-
-function limparEmpresa(){
-    document.getElementById("formEmpresaTitle").innerText = "Nova Empresa";
-    document.getElementById("cadIdEmpresa").value = "";
-    document.getElementById("cadNomeEmpresa").value = "";
-    document.getElementById("cadCacheBase").value = "";
-    document.getElementById("cadDiaria").value = "";
-    document.getElementById("cadNfPercentual").value = "0";
-    document.getElementById("cadTipoPagamento").value = "Semanal";
-    alterarPeriodo();
-}
-
-function alterarPeriodo(){
-    var t = document.getElementById("cadTipoPagamento").value;
-    document.getElementById("cadPeriodoPersonalizado").style.display = (t === "Quinzenal" || t === "Mensal") ? "block" : "none";
-    document.getElementById("cadPeriodoSemanalBox").style.display = (t === "Semanal") ? "grid" : "none";
-    document.getElementById("quinzenalPeriodos").style.display = (t === "Quinzenal") ? "block" : "none";
-    document.getElementById("mensalPeriodos").style.display = (t === "Mensal") ? "block" : "none";
-}
-
-// ==========================================
-// CALCULO DE DATAS
-// ==========================================
-function obterStatus(job){
-    if(job.statusManual === "pago") return "pago";
-    var da = new Date(); da.setHours(0,0,0,0);
-    var df = calcFechamento(job);
-    var dl = adicionarDiasUteis(df, job.diasPagamento);
-    if(da > dl) return "pago";
-    if(da > df) return "arquivado";
-    return "aberto";
-}
-
-function calcFechamento(job){
-    var od = new Date(job.data + "T00:00:00");
-    var of = new Date(od);
-    
-    if(job.tipoPagamento === "Semanal"){
-        var dc = parseInt(job.fimSemana || 0);
-        var dr = (dc - od.getDay() + 7) % 7;
-        if(dr === 0) dr = 7;
-        of.setDate(od.getDate() + dr);
-    } else if(job.tipoPagamento === "Quinzenal"){
-        var dia = od.getDate(), mes = od.getMonth(), ano = od.getFullYear();
-        var ud = new Date(ano, mes+1, 0).getDate();
-        var c1i = parseInt(job.inicioCiclo1 || 11), c1f = Math.min(parseInt(job.fimCiclo1 || 25), ud);
-        var c2i = Math.min(parseInt(job.inicioCiclo2 || 26), ud), c2f = Math.min(parseInt(job.fimCiclo2 || 10), ud);
-        if(dia >= c1i && dia <= c1f) of = new Date(ano, mes, c1f);
-        else if(dia >= c2i && dia <= c2f) of = new Date(ano, mes, c2f);
-        else if(dia < c1i) of = new Date(ano, mes, c1f);
-        else of = new Date(ano, mes+1, Math.min(c1f, new Date(ano, mes+2, 0).getDate()));
-    } else {
-        var dia2 = od.getDate();
-        var pf = Math.min(parseInt(job.fimPeriodo || 30), new Date(od.getFullYear(), od.getMonth()+1, 0).getDate());
-        if(dia2 <= pf) of = new Date(od.getFullYear(), od.getMonth(), pf);
-        else of = new Date(od.getFullYear(), od.getMonth()+1, Math.min(pf, new Date(od.getFullYear(), od.getMonth()+2, 0).getDate()));
-    }
-    of.setHours(0,0,0,0);
-    return of;
-}
-
-function calcPrevisao(job){ return adicionarDiasUteis(calcFechamento(job), job.diasPagamento); }
-
-// ==========================================
-// NOTIFICACOES
-// ==========================================
-function checkNotif(){ if('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); }
-
-function verificarPgto(){
-    if(!db || Notification.permission !== "granted") return;
-    var hoje = new Date();
-    if(hoje.getHours() < 9) return;
-    hoje.setHours(0,0,0,0);
-    var tx = db.transaction("jobs","readonly");
-    tx.objectStore("jobs").getAll().onsuccess = function(e){
-        var th = 0;
-        var nt = JSON.parse(localStorage.getItem('nt_hoje') || '{}');
-        var hs = new Date().toISOString().split('T')[0];
-        e.target.result.forEach(function(j){
-            if(j.statusManual === "pago") return;
-            var dp = calcPrevisao(j);
-            if(dp.getTime() === hoje.getTime() && !nt[j.id]){ th += j.total; nt[j.id] = hs; }
-        });
-        if(th > 0){
-            localStorage.setItem('nt_hoje', JSON.stringify(nt));
-            new Notification("Pagamentos Hoje!", {body: "Total: " + formatarValor(th)});
-            toast("Pagamentos hoje: " + formatarValor(th));
-        }
-    };
-}
-document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'visible') verificarPgto(); });
-
-// ==========================================
-// CRUD JOBS
-// ==========================================
-function salvarJob(){
-    var di = document.getElementById("dataJob").value;
-    var ne = document.getElementById("empresaJob").value.trim();
-    var ie = document.getElementById("editJobId").value;
-    if(!di || !ne){ alert("Data e Empresa obrigatorios."); return; }
-    
-    var tE = db.transaction("empresas","readonly");
-    tE.objectStore("empresas").getAll().onsuccess = function(e){
-        var em = e.target.result.find(function(x){ return x.nome.toLowerCase() === ne.toLowerCase(); });
-        if(!em){ alert("Empresa nao encontrada."); return; }
-        
-        var BH = 12;
-        var cb = parseFloat(em.cacheBase || 0);
-        var dd = parseFloat(em.diaria || 0);
-        var nf = parseFloat(em.nfPercentual || 0);
-        var aI = document.getElementById("inicio").value.split(":");
-        var aF = document.getElementById("fim").value.split(":");
-        var dm = (parseInt(aF[0])*60 + parseInt(aF[1])) - (parseInt(aI[0])*60 + parseInt(aI[1]));
-        if(dm < 0) dm += 1440;
-        var th = dm / 60;
-        var ve = Math.max(0, th - BH);
-        var re = ve * (cb / BH);
-        var fb = cb + dd + re;
-        var imp = fb * (nf / 100);
-        
-        var jt = {data:di, tipoPagamento:em.tipoPagamento, diasPagamento:parseInt(em.diasPagamento||0), fimPeriodo:parseInt(em.fimPeriodo||30), inicioSemana:parseInt(em.inicioSemana||1), fimSemana:parseInt(em.fimSemana||0), inicioCiclo1:parseInt(em.inicioCiclo1||11), fimCiclo1:parseInt(em.fimCiclo1||25), inicioCiclo2:parseInt(em.inicioCiclo2||26), fimCiclo2:parseInt(em.fimCiclo2||10)};
-        var dp = calcPrevisao(jt);
-        var pv = formatarDataExt(dp.toISOString().split('T')[0]);
-        
-        var pj = {data:di, empresa:em.nome, job:document.getElementById("nomeJob").value||"Job", cache:cb, diaria:dd, extra:re, total:fb, valorNF:imp, horas:th, inicio:document.getElementById("inicio").value, fim:document.getElementById("fim").value, tipoPagamento:em.tipoPagamento, diasPagamento:parseInt(em.diasPagamento||0), fimPeriodo:parseInt(em.fimPeriodo||30), inicioSemana:parseInt(em.inicioSemana||1), fimSemana:parseInt(em.fimSemana||0), inicioCiclo1:parseInt(em.inicioCiclo1||11), fimCiclo1:parseInt(em.fimCiclo1||25), inicioCiclo2:parseInt(em.inicioCiclo2||26), fimCiclo2:parseInt(em.fimCiclo2||10), previsaoPagamento:pv, statusManual:ie?editStatusManual:null};
-        if(ie) pj.id = parseInt(ie);
-        
-        var tG = db.transaction("jobs","readwrite");
-        var rq = ie ? tG.objectStore("jobs").put(pj) : tG.objectStore("jobs").add(pj);
-        rq.onsuccess = function(){ alert("Salvo!"); backupAuto(); atualizarTela(); limparCampos(); };
-    };
-}
-
-function carregarJobParaEdicao(id){
-    db.transaction("jobs","readonly").objectStore("jobs").get(id).onsuccess = function(e){
-        var i = e.target.result; if(!i) return;
-        document.getElementById("formJobTitle").innerText = "Editando";
-        document.getElementById("editJobId").value = i.id;
-        document.getElementById("empresaJob").value = i.empresa;
-        document.getElementById("dataJob").value = i.data;
-        document.getElementById("nomeJob").value = i.job;
-        document.getElementById("inicio").value = i.inicio;
-        document.getElementById("fim").value = i.fim;
-        editStatusManual = i.statusManual || null;
-        document.getElementById("formJobTitle").scrollIntoView({behavior:'smooth',block:'center'});
-    };
-}
-
-function deletarJob(id){ if(confirm("Excluir?")){ db.transaction("jobs","readwrite").objectStore("jobs").delete(id).onsuccess = function(){ backupAuto(); atualizarTela(); }; } }
-
-function marcarPago(id){
-    if(confirm("Confirmar pagamento?")){
-        db.transaction("jobs","readwrite").objectStore("jobs").get(id).onsuccess = function(e){
-            var j = e.target.result; if(!j) return;
-            j.statusManual = "pago";
-            db.transaction("jobs","readwrite").objectStore("jobs").put(j).onsuccess = function(){ backupAuto(); atualizarTela(); toast("Pago!"); };
-        };
-    }
-}
-
-function reabrirJob(id){
-    if(confirm("Reabrir?")){
-        db.transaction("jobs","readwrite").objectStore("jobs").get(id).onsuccess = function(e){
-            var j = e.target.result; if(!j) return;
-            j.statusManual = null;
-            db.transaction("jobs","readwrite").objectStore("jobs").put(j).onsuccess = function(){ backupAuto(); atualizarTela(); toast("Reaberto!"); };
-        };
-    }
-}
-
-function limparCampos(){
-    document.getElementById("formJobTitle").innerText = "Novo Job";
-    document.getElementById("editJobId").value = "";
-    document.getElementById("empresaJob").value = "";
-    document.getElementById("nomeJob").value = "";
-    document.getElementById("dataJob").value = new Date().toISOString().split('T')[0];
-    document.getElementById("inicio").value = "08:00";
-    document.getElementById("fim").value = "20:00";
-    editStatusManual = null;
-}
-
-// ==========================================
-// ATUALIZACAO DA TELA
-// ==========================================
-function atualizarTela(){
-    if(!db) return;
-    var pn = document.getElementById("listaHistorico"); pn.innerHTML = "";
-    var tB=0, tN=0, tH=0; var dG={}; var dM={};
-    
-    var tE = db.transaction("empresas","readonly");
-    tE.objectStore("empresas").getAll().onsuccess = function(ee){
-        var tn = ee.target.result.some(function(em){ return em.nfPercentual > 0; });
-        document.getElementById("dashboardNfCard").style.display = tn?'block':'none';
-        document.getElementById("dashboardLiquidoCard").style.display = tn?'block':'none';
-        
-        var tx = db.transaction("jobs","readonly");
-        tx.objectStore("jobs").getAll().onsuccess = function(e){
-            var mt = e.target.result.sort(function(a,b){ return new Date(b.data) - new Date(a.data); });
-            
-            mt.forEach(function(r){
-                var st = obterStatus(r);
-                if(st === "aberto"){ tB+=r.total||0; tN+=r.valorNF||0; tH+=parseFloat(r.horas||0); dG[r.empresa]=(dG[r.empresa]||0)+r.total; }
-                var ma = r.data.substring(0,7); dM[ma]=(dM[ma]||0)+(r.total||0);
-                if(!mapaCores[r.empresa]) mapaCores[r.empresa] = coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
-                
-                var ck = (filtroVisualizacao==="aberto"&&st==="aberto") || (filtroVisualizacao==="arquivado"&&(st==="arquivado"||st==="pago"));
-                if(ck){
-                    var cd = document.createElement("div"); cd.className = "history-card"; cd.style.borderLeft = "4px solid " + mapaCores[r.empresa];
-                    var bd = st==="aberto"?'<span class="badge-status status-aberto">Aberto</span>':(st==="arquivado"?'<span class="badge-status status-fechado">Aguardando</span>':'<span class="badge-status status-pago">Quitado</span>');
-                    var df = formatarData(r.data); var hf = formatarHoras(r.horas);
-                    
-                    cd.innerHTML = '<button class="btn-del" onclick="deletarJob('+r.id+')"><svg class="icon-btn"><use href="#icon-trash"/></svg></button><button class="btn-edit-inline" onclick="carregarJobParaEdicao('+r.id+')"><svg class="icon-btn"><use href="#icon-edit"/></svg></button>'+(st==='pago'?'<button class="btn-reopen" onclick="reabrirJob('+r.id+')">Reabrir</button>':'<button class="btn-paid" onclick="marcarPago('+r.id+')">Pago</button>')+'<div class="empresa-title">'+r.empresa+'</div><div class="meta-text">Data: '+df+'</div><div class="meta-text">Job: '+r.job+'</div><div>'+bd+'</div><div class="meta-text">Horarios: '+r.inicio+' as '+r.fim+' ('+hf+')</div><div class="meta-text">Cache: '+formatarValor(r.cache)+'</div><div class="meta-text">Alimentacao: '+formatarValor(r.diaria)+'</div><div class="meta-text">Hora Extra: '+formatarValor(r.extra)+'</div><div class="meta-text">Previsao: <b>'+r.previsaoPagamento+'</b></div><div style="margin-top:6px;font-weight:900;">Total: '+formatarValor(r.total)+'</div>';
-                    pn.appendChild(cd);
-                }
-            });
-            
-            document.getElementById("vTotalSemana").innerText = formatarValor(tB);
-            document.getElementById("vTotalNF").innerText = "- " + formatarValor(tN);
-            document.getElementById("vTotalLiquido").innerText = formatarValor(tB-tN);
-            document.getElementById("vTotalHoras").innerText = formatarHoras(tH);
-            renderGrafico(dG); renderGraficoMensal(dM);
-            if(document.getElementById("searchBox").style.display === "block") filtrarTabela();
-        };
-    };
-}
-
-// ==========================================
-// GRAFICOS
-// ==========================================
-function renderGrafico(d){
-    var ctx = document.getElementById("graficoEmpresas"); if(!ctx) return;
-    var l = Object.keys(d), v = Object.values(d);
-    var co = l.map(function(lb){ return mapaCores[lb] || '#38bdf8'; });
-    if(window.chart1){ window.chart1.data.labels=l; window.chart1.data.datasets[0].data=v; window.chart1.data.datasets[0].backgroundColor=co; window.chart1.update(); }
-    else { if(l.length===0) return; window.chart1 = new Chart(ctx, {type:"bar", data:{labels:l, datasets:[{data:v, backgroundColor:co, borderRadius:8}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{display:false}, x:{ticks:{color:"#94a3b8"}}}}); }
-}
-
-function renderGraficoMensal(d){
-    var ctx = document.getElementById("graficoMensal"); if(!ctx) return;
-    var mo = Object.keys(d).sort();
-    var nm = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-    var l = mo.map(function(m){ var a=m.split('-'); return nm[parseInt(a[1])-1]+'/'+a[0]; });
-    var v = mo.map(function(m){ return d[m]; });
-    if(window.chart2){ window.chart2.data.labels=l; window.chart2.data.datasets[0].data=v; window.chart2.update(); }
-    else { if(l.length===0) return; window.chart2 = new Chart(ctx, {type:"line", data:{labels:l, datasets:[{data:v, borderColor:'#10b981', backgroundColor:'rgba(16,185,129,0.1)', fill:true, tension:0.4, pointRadius:5}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{display:false}, x:{ticks:{color:"#94a3b8"}}}}); }
-}
-
-// ==========================================
-// BUSCA
-// ==========================================
-function abrirBusca(){ document.getElementById("searchBox").style.display = "block"; }
-function limparBusca(){ document.getElementById("inputBusca").value = ""; document.getElementById("searchBox").style.display = "none"; filtrarTabela(); }
-function filtrarTabela(){
-    var t = document.getElementById("inputBusca").value.toUpperCase().trim();
-    document.querySelectorAll(".history-card").forEach(function(c){ c.style.display = c.innerText.toUpperCase().indexOf(t) >= 0 ? "block" : "none"; });
-}
-
-// ==========================================
-// WHATSAPP
-// ==========================================
-function enviarWhatsApp(){
-    var tx = db.transaction("jobs","readonly");
-    tx.objectStore("jobs").getAll().onsuccess = function(e){
-        var tr = document.getElementById("inputBusca").value.toUpperCase().trim();
-        var ba = document.getElementById("searchBox").style.display === "block" && tr !== "";
-        
-        var fl = e.target.result.filter(function(j){
-            var st = obterStatus(j);
-            if(filtroVisualizacao==="aberto"&&st!=="aberto") return false;
-            if(filtroVisualizacao==="arquivado"&&st==="aberto") return false;
-            if(ba){ var tx = (j.empresa+" "+j.job+" "+j.data.split("-").reverse().join("/")).toUpperCase(); return tx.indexOf(tr) >= 0; }
-            return true;
-        }).sort(function(a,b){ return new Date(b.data) - new Date(a.data); });
-        
-        if(fl.length===0){ alert("Nenhum."); return; }
-        
-        var m = "FADER LIVRE - EXTRATO\n======================\n\n";
-        var tC=0, tD=0, tE=0, tG=0;
-        fl.forEach(function(j){
-            m += "Empresa: " + j.empresa + "\n";
-            m += "Data: " + formatarDataExt(j.data) + "\n";
-            m += "Job: " + j.job + "\n";
-            m += "Horarios: " + j.inicio + "h as " + j.fim + "h\n";
-            m += "Cache: " + formatarValor(j.cache) + "\n";
-            if(j.extra > 0) m += "Horas Extras: " + formatarValor(j.extra) + "\n";
-            m += "Diaria: " + formatarValor(j.diaria) + "\n";
-            m += "Total: " + formatarValor(j.total) + "\n";
-            m += "Previsao: " + j.previsaoPagamento + "\n\n";
-            tC+=j.cache||0; tD+=j.diaria||0; tE+=j.extra||0; tG+=j.total||0;
-        });
-        m += "======================\nTotal Geral: " + formatarValor(tG) + "\n" + new Date().toLocaleDateString("pt-BR");
-        window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(m), "_blank");
-    };
-}
-
-// ==========================================
-// EXCEL
-// ==========================================
-function baixarExcel(){
-    var tx = db.transaction("jobs","readonly");
-    tx.objectStore("jobs").getAll().onsuccess = function(e){
-        var od = e.target.result.sort(function(a,b){ return new Date(b.data) - new Date(a.data); });
-        var c = "Data;Empresa;Job;Cache;Alimentacao;Hora_Extra;Total_Bruto;NF;Liquido;Horas;Previsao\n";
-        od.forEach(function(i){
-            var lq = i.total - i.valorNF;
-            c += i.data + ";" + i.empresa + ";" + i.job + ";";
-            c += "R$ " + (i.cache||0).toFixed(2) + ";R$ " + (i.diaria||0).toFixed(2) + ";R$ " + (i.extra||0).toFixed(2) + ";";
-            c += "R$ " + (i.total||0).toFixed(2) + ";R$ " + (i.valorNF||0).toFixed(2) + ";R$ " + lq.toFixed(2) + ";";
-            c += formatarHoras(i.horas) + ";" + i.previsaoPagamento + "\n";
-        });
-        var b = new Blob(["\ufeff" + c], {type:'text/csv;charset=utf-8;'});
-        var a = document.createElement("a"); a.href = URL.createObjectURL(b);
-        a.download = "fader_" + new Date().toISOString().split('T')[0] + ".csv"; a.click();
-        toast("Excel exportado!");
-    };
-}
-
-// ==========================================
-// INICIALIZACAO
-// ==========================================
-window.onload = function(){
-    if(!localStorage.getItem("senha_cache_control")){
-        document.getElementById("senhaInput").placeholder = "Defina sua chave";
-    }
-};
+window.onload=function(){if(!localStorage.getItem("senha_cache_control")){document.getElementById("senhaInput").placeholder="Defina sua chave";}};
 </script>
 </body>
 </html>
