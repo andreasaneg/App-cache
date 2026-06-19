@@ -99,6 +99,11 @@ body {
   margin-bottom: 25px;
   position: relative;
 }
+.header .logo {
+  height: 60px;
+  display: block;
+  margin: 0 auto 10px;
+}
 .header h2 {
   font-size: 1.6em;
   font-weight: 800;
@@ -361,13 +366,13 @@ input:focus, select:focus {
 .status-fechado { background: rgba(234, 88, 12, 0.15); color: #fb923c; border: 1px solid rgba(234, 88, 12, 0.3); }
 .status-pago { background: rgba(22, 163, 74, 0.15); color: #4ade80; border: 1px solid rgba(22, 163, 74, 0.3); }
 
-/* ===== TELA DE VALIDAÇÃO (LICENÇA) ===== */
+/* ===== TELA DE VALIDAÇÃO (LICENÇA) - OCULTA POR PADRÃO ===== */
 #telaValidacao {
   position: fixed;
   inset: 0;
   background: var(--bg);
   z-index: 10000;
-  display: none;
+  display: none; /* nunca será mostrada com a licença automática */
   align-items: center;
   justify-content: center;
   padding: 20px;
@@ -478,33 +483,37 @@ input:checked + .slider:before {
 ::-webkit-scrollbar-track { background: var(--dark-pure); border-radius: 3px; }
 ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary-hover); }
+
+/* Logo placeholder - substitua a URL pela sua imagem real */
+.logo-img {
+  height: 60px;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
+}
 </style>
 </head>
 <body>
 
 <!-- ========================================== -->
-<!-- TELA DE VALIDAÇÃO DE LICENÇA               -->
+<!-- TELA DE VALIDAÇÃO DE LICENÇA (mantida mas oculta) -->
 <!-- ========================================== -->
 <div id="telaValidacao">
   <div class="modal">
     <div style="text-align:center; margin-bottom:30px;">
-      <div style="width:80px; height:80px; background:var(--primary); border-radius:24px; display:inline-flex; align-items:center; justify-content:center; margin-bottom:15px;">
-        <i class="fas fa-shield-alt" style="font-size:40px; color:white;"></i>
-      </div>
+      <img src="#" alt="Fader Livre" class="logo-img" style="height:80px; margin-bottom:10px;">
       <h2 style="color:var(--text); font-size:1.4em; font-weight:800;">Validação de Licença</h2>
       <p style="color:var(--muted); font-size:0.9em; margin-top:5px;">Ative seu acesso ao FADER LIVRE</p>
     </div>
-
     <div id="statusLicenca" style="background:var(--dark-pure); border-radius:16px; padding:15px; margin-bottom:20px; border-left:4px solid var(--warning);">
       <div style="display:flex; align-items:center; gap:10px;">
         <i class="fas fa-clock" style="font-size:1.2em; color:var(--warning);"></i>
         <div>
           <div style="font-weight:600; color:var(--text);">Período de Teste</div>
-          <div style="font-size:0.9em; color:var(--muted);" id="diasTesteRestantes">30 dias restantes</div>
+          <div style="font-size:0.9em; color:var(--muted);" id="diasTesteRestantes">999 dias restantes</div>
         </div>
       </div>
     </div>
-
     <div style="margin-bottom:25px;">
       <label style="display:block; font-size:0.8em; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:8px; letter-spacing:1px;">
         <i class="fas fa-key"></i> Chave de Ativação
@@ -513,11 +522,9 @@ input:checked + .slider:before {
              style="width:100%; padding:14px; border-radius:14px; border:1px solid var(--border-color); background:var(--dark-pure); color:var(--text); font-size:16px; text-align:center; letter-spacing:4px; font-family:'Courier New',monospace;">
       <input type="hidden" id="inputDadosCripto">
     </div>
-
     <button onclick="ativarLicenca()" class="btn btn-save" style="margin-bottom:15px;">
       <i class="fas fa-unlock"></i> Ativar Licença
     </button>
-
     <div style="margin-top:20px; background:#FFF9E6; border-radius:16px; padding:15px; border:1px dashed #F39C12;">
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
         <i class="fas fa-qrcode" style="font-size:24px; color:#F39C12;"></i>
@@ -533,9 +540,8 @@ input:checked + .slider:before {
         <i class="fas fa-copy"></i> Copiar Código PIX
       </button>
     </div>
-
     <div style="text-align:center; margin-top:20px; padding:10px; color:var(--muted); font-size:0.85em;">
-      <span id="timerLicenca"><i class="fas fa-hourglass-half"></i> 30 dias restantes</span>
+      <span id="timerLicenca"><i class="fas fa-hourglass-half"></i> 999 dias restantes</span>
     </div>
   </div>
 </div>
@@ -549,7 +555,8 @@ input:checked + .slider:before {
   </button>
   <div style="background:var(--card); padding:25px; border-radius:28px; width:100%; max-width:400px; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6); border: 1px solid var(--border-color);">
     <div style="text-align:center; margin-bottom:20px;">
-      <h2 style="color:var(--text); margin-top:10px; font-size:1.4em; font-weight:800;">Acesso Identificado</h2>
+      <!-- LOGO AQUI -->
+      <img src="#" alt="Fader Livre" class="logo-img" style="height:60px; margin-bottom:10px;">
       <p style="color:var(--muted); font-size:0.8em; margin-top:4px; letter-spacing:1px;">Cachê Control ERP v3.0</p>
     </div>
     <label><i class="fas fa-lock"></i> Chave Codificada de Segurança</label>
@@ -579,7 +586,8 @@ input:checked + .slider:before {
 <div id="appContent" style="display:none;">
 
   <div class="header">
-    <h2>FADER LIVRE</h2>
+    <!-- LOGO AQUI -->
+    <img src="#" alt="Fader Livre" class="logo-img">
     <p>SISTEMA CONTROLADOR DE CACHÊS</p>
   </div>
 
@@ -858,10 +866,10 @@ input:checked + .slider:before {
 <!-- ========================================== -->
 <script>
 // ============================================================
-//  SISTEMA DE LICENÇA (período de teste + ativação via PIX)
+//  SISTEMA DE LICENÇA COM ACESSO AUTOMÁTICO (TESTE INFINITO)
 // ============================================================
-const PERIODO_TESTE = 999; // dias
-const PERIODO_LICENCA = 365; // dias
+const PERIODO_TESTE = 999999; // dias (praticamente infinito)
+const PERIODO_LICENCA = 999999;
 const CHAVE_CRIPTO = 'FADER_LIVRE_2024_SECRET_KEY';
 
 class SistemaLicenca {
@@ -869,7 +877,6 @@ class SistemaLicenca {
     this.arquivoLicenca = 'licenca_fader.dat';
   }
 
-  // Gera chave de ativação a partir do código PIX
   gerarChaveAtivacao(codigoPIX) {
     const timestamp = Date.now();
     const dados = {
@@ -886,21 +893,14 @@ class SistemaLicenca {
     };
   }
 
-  // Valida a licença atual
   validarLicenca(chaveAtivacao, dadosCripto) {
     try {
       const dadosJson = this._descriptografar(dadosCripto);
       const dados = JSON.parse(dadosJson);
       const agora = Date.now();
-
       if (agora > dados.expiracao) {
-        return {
-          valida: false,
-          mensagem: 'Licença expirada. Faça uma nova ativação.',
-          codigoPIX: dados.codigoPIX
-        };
+        return { valida: false, mensagem: 'Licença expirada.', codigoPIX: dados.codigoPIX };
       }
-
       const diasUso = (agora - dados.timestamp) / (24 * 60 * 60 * 1000);
       if (diasUso <= PERIODO_TESTE) {
         return {
@@ -910,7 +910,6 @@ class SistemaLicenca {
           codigoPIX: dados.codigoPIX
         };
       }
-
       return {
         valida: true,
         modo: 'licenciado',
@@ -918,21 +917,17 @@ class SistemaLicenca {
         codigoPIX: dados.codigoPIX
       };
     } catch (erro) {
-      return {
-        valida: false,
-        mensagem: 'Erro ao validar licença: ' + erro.message
-      };
+      return { valida: false, mensagem: 'Erro: ' + erro.message };
     }
   }
 
-  // Verifica se a licença está próxima de expirar (≤7 dias)
   verificarExpiracaoProxima() {
     const licenca = this._carregarLicenca();
     if (!licenca) {
-      return {
-        alerta: true,
-        mensagem: 'Ative sua licença para continuar usando o app.'
-      };
+      // Gera licença automática de teste
+      const chaveTeste = this.gerarChaveAtivacao('teste@faderlivre.com');
+      this.salvarLicenca(chaveTeste.chaveAtivacao, chaveTeste.dadosCripto);
+      return { alerta: false, mensagem: 'Licença de teste gerada automaticamente.' };
     }
     const resultado = this.validarLicenca(licenca.chave, licenca.dadosCripto);
     if (resultado.valida && resultado.diasRestantes <= 7) {
@@ -953,7 +948,6 @@ class SistemaLicenca {
     }));
   }
 
-  // --- métodos privados ---
   _gerarHash(texto) {
     let hash = 0;
     for (let i = 0; i < texto.length; i++) {
@@ -964,50 +958,38 @@ class SistemaLicenca {
     return Math.abs(hash).toString(16).padStart(16, '0');
   }
 
-  _criptografar(dados) {
-    return btoa(dados);
-  }
-
-  _descriptografar(dadosCripto) {
-    return atob(dadosCripto);
-  }
+  _criptografar(dados) { return btoa(dados); }
+  _descriptografar(dadosCripto) { return atob(dadosCripto); }
 
   _carregarLicenca() {
     try {
       const dados = localStorage.getItem(this.arquivoLicenca);
       return dados ? JSON.parse(dados) : null;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   }
 }
 
 const sistemaLicenca = new SistemaLicenca();
 
 // ============================================================
-//  FUNÇÕES DA TELA DE VALIDAÇÃO
+//  FUNÇÕES DA TELA DE VALIDAÇÃO (mantidas mas não usadas)
 // ============================================================
 function mostrarTelaValidacao(status) {
+  // Não será chamada porque a licença já é válida automaticamente
   const tela = document.getElementById('telaValidacao');
   tela.style.display = 'flex';
   const dias = status.diasRestantes || PERIODO_TESTE;
   document.getElementById('diasTesteRestantes').textContent = dias + ' dias restantes';
   document.getElementById('timerLicenca').innerHTML = `<i class="fas fa-hourglass-half"></i> ${dias} dias restantes`;
-  if (status.alerta && status.mensagem) {
-    document.getElementById('statusLicenca').style.borderLeftColor = '#EF4444';
-    document.getElementById('statusLicenca').querySelector('.status-detail').textContent = status.mensagem;
-  }
 }
-
 function esconderTelaValidacao() {
   document.getElementById('telaValidacao').style.display = 'none';
 }
-
 function ativarLicenca() {
   const chave = document.getElementById('inputChaveAtivacao').value.trim().toUpperCase();
   const dadosCripto = document.getElementById('inputDadosCripto').value;
   if (!chave || chave.length < 16) {
-    alert('Por favor, insira uma chave de ativação válida (16 caracteres).');
+    alert('Por favor, insira uma chave de ativação válida.');
     return;
   }
   const validacao = sistemaLicenca.validarLicenca(chave, dadosCripto);
@@ -1022,7 +1004,6 @@ function ativarLicenca() {
     alert('❌ ' + validacao.mensagem);
   }
 }
-
 function copiarPIX() {
   const codigo = document.getElementById('codigoPIX').textContent;
   navigator.clipboard.writeText(codigo).then(() => {
@@ -1041,7 +1022,6 @@ function toggleCadastroSenha() {
   const box = document.getElementById('novaSenhaBox');
   box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
 }
-
 function cadastrarSenha() {
   const novaSenha = document.getElementById('novaSenha').value;
   const email = document.getElementById('emailRecuperacao').value;
@@ -1060,7 +1040,6 @@ function cadastrarSenha() {
   alert('Credenciais registradas com sucesso!');
   window.location.reload();
 }
-
 function login() {
   const senha = document.getElementById('senhaInput').value;
   const currentSavedPassword = localStorage.getItem('senha_cache_control');
@@ -1074,7 +1053,6 @@ function login() {
     localStorage.setItem('telefone_cache_control', '');
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appContent').style.display = 'block';
-    // Inicializa app após login
     setTimeout(inicializarApp, 100);
     return;
   }
@@ -1086,7 +1064,6 @@ function login() {
     alert('🚨 Chave Master Incorreta.');
   }
 }
-
 function recuperarSenha() {
   const email = localStorage.getItem('email_cache_control');
   const telefone = localStorage.getItem('telefone_cache_control');
@@ -1097,7 +1074,6 @@ function recuperarSenha() {
   if (!has) msg = 'Nenhum dado de recuperação configurado. Acesse "Configurar" para adicionar.';
   alert(msg);
 }
-
 function changeMasterPassword() {
   const old = document.getElementById('oldMasterPassword').value;
   const newP = document.getElementById('newMasterPassword').value;
@@ -1113,7 +1089,6 @@ function changeMasterPassword() {
   document.getElementById('newMasterPassword').value = '';
   document.getElementById('confirmNewMasterPassword').value = '';
 }
-
 function emergencyReset() {
   if (confirm('Deseja forçar o reset de emergência? Todos os dados serão perdidos. Esta ação é irreversível.')) {
     localStorage.clear();
@@ -1130,20 +1105,21 @@ function emergencyReset() {
 }
 
 // ============================================================
-//  INICIALIZAÇÃO DO APP (verifica licença)
+//  INICIALIZAÇÃO DO APP (verifica licença e carrega dados)
 // ============================================================
 function inicializarApp() {
-  // Verifica licença primeiro
+  // Verifica e gera licença automática se necessário
   const statusLic = sistemaLicenca.verificarExpiracaoProxima();
   if (statusLic.alerta) {
+    // Se por algum motivo ainda mostrar alerta, exibe a tela de validação
     mostrarTelaValidacao(statusLic);
-    return; // não carrega dados
+    return;
   }
 
-  // Se licença válida, prossegue
+  // Licença válida: oculta tela de validação e mostra o app
   esconderTelaValidacao();
   document.getElementById('appContent').style.display = 'block';
-  
+
   // Inicializa configurações
   const savedTheme = localStorage.getItem('app_theme') || 'dark';
   if (savedTheme === 'light') {
@@ -1168,12 +1144,10 @@ function inicializarApp() {
     document.getElementById('notificationCheckHour').value = '09:00';
   }
 
-  // Configura data inicial
   try {
     document.getElementById('dataJob').value = new Date().toISOString().split('T')[0];
   } catch(e) {}
 
-  // Inicializa banco e carrega dados
   inicializarDB();
   executarBackupAutomatico();
   checkAndRequestNotificationPermission();
@@ -1229,18 +1203,15 @@ function formatarValor(valor) {
   if (ocultarValores) return 'R$ •••••';
   return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
-
 function formatarDataComDiaSemana(dataISO) {
   const partes = dataISO.split('-');
   const data = new Date(partes[0], partes[1] - 1, partes[2]);
   const diasSemana = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
   return `${diasSemana[data.getDay()]}, ${partes[2]}/${partes[1]}/${partes[0]}`;
 }
-
 function ultimoDiaDoMes(ano, mes) {
   return new Date(ano, mes + 1, 0).getDate();
 }
-
 function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, fimPeriodoMensal, inicioSemana, fimSemana, inicioCiclo1, fimCiclo1, inicioCiclo2, fimCiclo2) {
   let objetoData = new Date(dataPrestacao + 'T00:00:00');
   let objetoFechamento = new Date(objetoData);
@@ -1280,14 +1251,12 @@ function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, fimPeriodoMensal, 
   objetoFechamento.setHours(0,0,0,0);
   return objetoFechamento;
 }
-
 function calcularDataPagamentoReal(dataFechamento, diasUteis) {
   let objetoPagamento = new Date(dataFechamento);
   objetoPagamento.setDate(objetoPagamento.getDate() + Number(diasUteis));
   objetoPagamento.setHours(0,0,0,0);
   return objetoPagamento;
 }
-
 function isDataPagamentoAtingida(job) {
   let dataFechamento = calcularDataFechamentoReal(
     job.data, job.tipoPagamento, job.fimPeriodo,
@@ -1299,7 +1268,6 @@ function isDataPagamentoAtingida(job) {
   hoje.setHours(0,0,0,0);
   return hoje.getTime() >= dataPagamento.getTime();
 }
-
 function obterStatusPeriodo(job) {
   if (job.statusManual === 'pago') return 'pago';
   let dataAtual = new Date();
@@ -1326,7 +1294,6 @@ function toggleValores() {
     '<i class="fas fa-eye-slash"></i>';
   atualizarTela();
 }
-
 function alternarAba(abaId, event) {
   document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
@@ -1343,7 +1310,6 @@ function alternarAba(abaId, event) {
     document.getElementById('notificationCheckHour').value = localStorage.getItem('notification_check_hour') || '09:00';
   }
 }
-
 function definirFiltroVisualizacao(tipo) {
   filtroVisualizacao = tipo;
   document.getElementById('btnFiltroAberto').classList.toggle('active', tipo === 'aberto');
@@ -1353,11 +1319,9 @@ function definirFiltroVisualizacao(tipo) {
     '<i class="fas fa-archive"></i> Jobs Arquivados / Pagos';
   atualizarTela();
 }
-
 function handleEnterKey(event) {
   if (event.key === 'Enter') event.target.blur();
 }
-
 function alterarPeriodoPagamentoCadastro() {
   const tipo = document.getElementById('cadTipoPagamento').value;
   document.getElementById('cadPeriodoPersonalizado').style.display = 'none';
@@ -1375,7 +1339,6 @@ function alterarPeriodoPagamentoCadastro() {
     }
   }
 }
-
 function gerenciarAutocomplete(textoBusca) {
   const container = document.getElementById('autocompleteContainer');
   container.innerHTML = '';
@@ -1402,7 +1365,6 @@ function gerenciarAutocomplete(textoBusca) {
     }
   };
 }
-
 function limparCampos() {
   document.getElementById('formJobTitle').innerText = 'Novo Job';
   document.getElementById('editJobId').value = '';
@@ -1413,7 +1375,6 @@ function limparCampos() {
   document.getElementById('fim').value = '20:00';
   editStatusManual = null;
 }
-
 function abrirBusca() { document.getElementById('searchBox').style.display = 'block'; }
 function limparBusca() { document.getElementById('inputBusca').value = ''; document.getElementById('searchBox').style.display = 'none'; filtrarTabela(); }
 function filtrarTabela() {
@@ -1487,7 +1448,6 @@ function salvarEmpresa() {
     };
   };
 }
-
 function carregarEmpresaParaEdicao(id) {
   const tx = db.transaction('empresas', 'readonly');
   tx.objectStore('empresas').get(id).onsuccess = function(e) {
@@ -1512,7 +1472,6 @@ function carregarEmpresaParaEdicao(id) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 }
-
 function deletarEmpresa(id) {
   if (confirm('Deseja remover permanentemente esta empresa?')) {
     const tx = db.transaction('empresas', 'readwrite');
@@ -1524,7 +1483,6 @@ function deletarEmpresa(id) {
     };
   }
 }
-
 function limparCamposEmpresa() {
   document.getElementById('formEmpresaTitle').innerHTML = '<i class="fas fa-building"></i> Nova Empresa e Regras';
   document.getElementById('cadIdEmpresa').value = '';
@@ -1543,7 +1501,6 @@ function limparCamposEmpresa() {
   document.getElementById('cadDiasPagamento').value = '5';
   alterarPeriodoPagamentoCadastro();
 }
-
 function atualizarListaEmpresas() {
   if (!db) return;
   const container = document.getElementById('listaEmpresasCadastradas');
@@ -1645,13 +1602,11 @@ function salvarJob() {
     };
   };
 }
-
 function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, fimPeriodoMensal, inicioSemana, fimSemana, inicioCiclo1, fimCiclo1, inicioCiclo2, fimCiclo2) {
   const dataFechamento = calcularDataFechamentoReal(dataPrestacao, tipoCiclo, fimPeriodoMensal, inicioSemana, fimSemana, inicioCiclo1, fimCiclo1, inicioCiclo2, fimCiclo2);
   const dataFaturamento = calcularDataPagamentoReal(dataFechamento, diasUteis);
   return dataFaturamento.toLocaleDateString('pt-BR');
 }
-
 function carregarJobParaEdicao(id) {
   const tx = db.transaction('jobs', 'readonly');
   tx.objectStore('jobs').get(id).onsuccess = function(event) {
@@ -1668,7 +1623,6 @@ function carregarJobParaEdicao(id) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 }
-
 function deletarJob(id) {
   if (confirm('Excluir definitivamente este lançamento?')) {
     const tx = db.transaction('jobs', 'readwrite');
@@ -1681,7 +1635,6 @@ function deletarJob(id) {
     };
   }
 }
-
 function alternarStatusManual(jobId, novoStatus) {
   const tx = db.transaction('jobs', 'readwrite');
   tx.objectStore('jobs').get(jobId).onsuccess = function(e) {
@@ -1791,7 +1744,6 @@ function atualizarTela() {
     };
   };
 }
-
 function renderGrafico(dict) {
   const ctx = document.getElementById('graficoEmpresas');
   if (!ctx) return;
@@ -1865,7 +1817,6 @@ function baixarExcelCompleto() {
     alert('Planilha CSV exportada!');
   };
 }
-
 function fazerBackup() {
   const txJ = db.transaction('jobs', 'readonly');
   txJ.objectStore('jobs').getAll().onsuccess = function(e_jobs) {
@@ -1883,7 +1834,6 @@ function fazerBackup() {
     };
   };
 }
-
 document.getElementById('restoreFile').addEventListener('change', function(event) {
   const arquivo = event.target.files[0];
   if (!arquivo) return;
@@ -1920,7 +1870,6 @@ document.getElementById('restoreFile').addEventListener('change', function(event
   };
   leitor.readAsText(arquivo);
 });
-
 function executarBackupAutomatico() {
   if (!db) return;
   const txJ = db.transaction('jobs', 'readonly');
@@ -1981,7 +1930,6 @@ function toggleTheme() {
   const currentTheme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
   localStorage.setItem('app_theme', currentTheme);
 }
-
 function updateBaseHours(value) {
   const newHours = parseFloat(value);
   if (!isNaN(newHours) && newHours > 0) {
@@ -1993,7 +1941,6 @@ function updateBaseHours(value) {
     document.getElementById('baseHoursInput').value = BASE_HOURS;
   }
 }
-
 function updateNotificationCheckHour(value) {
   const regex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
   if (!regex.test(value)) {
@@ -2012,9 +1959,7 @@ function checkAndRequestNotificationPermission() {
   if (!('Notification' in window)) return;
   if (Notification.permission === 'default') Notification.requestPermission();
 }
-
 let jobNotificationsStatus = JSON.parse(localStorage.getItem('job_notifications_status') || '{}');
-
 function sendPaymentNotification(job) {
   if (Notification.permission !== 'granted') return;
   const todayStr = new Date().toISOString().split('T')[0];
@@ -2027,7 +1972,6 @@ function sendPaymentNotification(job) {
   jobNotificationsStatus[job.id] = todayStr;
   localStorage.setItem('job_notifications_status', JSON.stringify(jobNotificationsStatus));
 }
-
 function checkDuePayments() {
   if (!db || Notification.permission !== 'granted') return;
   const today = new Date();
@@ -2049,49 +1993,37 @@ function checkDuePayments() {
     });
   };
 }
-
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') checkDuePayments();
 });
 window.addEventListener('focus', checkDuePayments);
 
 // ============================================================
-//  INICIALIZAÇÃO AUTOMÁTICA COM LICENÇA DE TESTE
+//  INICIALIZAÇÃO AUTOMÁTICA
 // ============================================================
 (function() {
-  // Verifica se já existe licença salva
-  let licenca = localStorage.getItem('licenca_fader.dat');
-  
-  // Se NÃO existe licença, cria uma de teste automaticamente
-  if (!licenca) {
-    console.log('Gerando licença de teste automática...');
-    const chaveTeste = sistemaLicenca.gerarChaveAtivacao('teste@faderlivre.com');
-    sistemaLicenca.salvarLicenca(chaveTeste.chaveAtivacao, chaveTeste.dadosCripto);
-    // Recarrega a página para aplicar a licença
-    window.location.reload();
-    return; // impede que o restante execute agora
-  }
-
-  // Agora verifica se a licença é válida (já existe)
+  // Verifica se já existe licença, senão gera automaticamente
   const statusLic = sistemaLicenca.verificarExpiracaoProxima();
   if (statusLic.alerta) {
-    // Se expirou, mostra a tela de validação (mas com 999 dias não vai expirar)
+    // Caso raro, mostra a validação
     mostrarTelaValidacao(statusLic);
     document.getElementById('appContent').style.display = 'none';
   } else {
-    // Licença válida: esconde validação e mostra app
+    // Licença ok: esconde validação
     esconderTelaValidacao();
+    // Verifica se já tem senha master
     const senha = localStorage.getItem('senha_cache_control');
     if (senha) {
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('appContent').style.display = 'block';
-      setTimeout(inicializarApp, 100);
-    } else {
-      // Primeiro acesso: pede para definir a senha master
+      // Se já tem, tenta login automático (opcional)
+      // Aqui deixamos a tela de login aparecendo para o usuário digitar
       document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('appContent').style.display = 'none';
+    } else {
+      // Primeiro acesso: mostra tela de login para definir senha
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('appContent').style.display = 'none';
     }
   }
-})();
 })();
 </script>
 </body>
