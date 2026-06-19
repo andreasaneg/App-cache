@@ -2056,31 +2056,42 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('focus', checkDuePayments);
 
 // ============================================================
-//  INICIALIZAÇÃO AUTOMÁTICA
+//  INICIALIZAÇÃO AUTOMÁTICA COM LICENÇA DE TESTE
 // ============================================================
-// Verifica licença e inicia o app
 (function() {
-  // Primeiro verifica se já existe licença válida
+  // Verifica se já existe licença salva
+  let licenca = localStorage.getItem('licenca_fader.dat');
+  
+  // Se NÃO existe licença, cria uma de teste automaticamente
+  if (!licenca) {
+    console.log('Gerando licença de teste automática...');
+    const chaveTeste = sistemaLicenca.gerarChaveAtivacao('teste@faderlivre.com');
+    sistemaLicenca.salvarLicenca(chaveTeste.chaveAtivacao, chaveTeste.dadosCripto);
+    // Recarrega a página para aplicar a licença
+    window.location.reload();
+    return; // impede que o restante execute agora
+  }
+
+  // Agora verifica se a licença é válida (já existe)
   const statusLic = sistemaLicenca.verificarExpiracaoProxima();
   if (statusLic.alerta) {
-    // Se não tem licença ou expirou, mostra tela de validação
+    // Se expirou, mostra a tela de validação (mas com 999 dias não vai expirar)
     mostrarTelaValidacao(statusLic);
-    // Oculta o conteúdo principal até ativação
     document.getElementById('appContent').style.display = 'none';
   } else {
-    // Licença válida, pode prosseguir
+    // Licença válida: esconde validação e mostra app
     esconderTelaValidacao();
-    // Se já tiver senha master, login automático (pode ser melhorado)
     const senha = localStorage.getItem('senha_cache_control');
     if (senha) {
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('appContent').style.display = 'block';
       setTimeout(inicializarApp, 100);
     } else {
-      // Mostra tela de login para definir senha
+      // Primeiro acesso: pede para definir a senha master
       document.getElementById('loginScreen').style.display = 'flex';
     }
   }
+})();
 })();
 </script>
 </body>
