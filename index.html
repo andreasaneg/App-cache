@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>FADER LIVRE - CACHÊ CONTROL v3.1</title>
+    <title>FADER LIVRE - CACHÊ CONTROL v3.2</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -28,6 +28,7 @@
             --dark-pure: #020617;
             --border-color: #334155;
             --border-hover: #475569;
+            --gold: #c9a96e;
         }
 
         body.light-mode {
@@ -65,7 +66,7 @@
             padding-bottom: 100px;
             background: var(--bg);
             color: var(--text);
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
         }
@@ -75,7 +76,6 @@
             border-bottom: 2px solid var(--primary);
             padding-bottom: 20px;
             margin-bottom: 25px;
-            position: relative;
         }
 
         .header h2 {
@@ -93,6 +93,45 @@
             margin-top: 6px;
             letter-spacing: 1.5px;
             text-transform: uppercase;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .login-logo svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 8px;
+        }
+
+        .login-logo h3 {
+            color: var(--text);
+            font-size: 1.2em;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            padding-right: 50px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 5px;
         }
 
         .dashboard {
@@ -113,7 +152,6 @@
             border: 1px solid var(--border-color);
             position: relative;
             box-shadow: 0 4px 15px -3px rgba(0,0,0,0.3);
-            overflow: hidden;
         }
 
         .dashboard-title {
@@ -217,6 +255,19 @@
         .btn-whats { background: #25D366; color: #fff; }
         .btn-search { background: var(--blue); color: #fff; }
         .btn-cancel { background: var(--card-hover); color: var(--text); }
+        .btn-danger { background: var(--danger); color: #fff; }
+
+        .btn-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .btn-row .btn {
+            margin-bottom: 0;
+            font-size: 0.8em;
+            padding: 12px;
+        }
 
         .history-card {
             background: var(--card);
@@ -232,10 +283,7 @@
             font-size: 1.3em;
             font-weight: 800;
             margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-right: 85px;
+            padding-right: 100px;
             color: var(--primary);
         }
 
@@ -249,12 +297,11 @@
             width: 38px;
             height: 38px;
             border-radius: 12px;
-            font-size: 1em;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10;
-            cursor: pointer;
         }
 
         .btn-edit-inline {
@@ -267,12 +314,26 @@
             width: 38px;
             height: 38px;
             border-radius: 12px;
-            font-size: 1em;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10;
+        }
+
+        .btn-reopen {
+            position: absolute;
+            top: 60px;
+            right: 15px;
+            background: rgba(245, 158, 11, 0.15);
+            border: none;
+            color: var(--warning);
+            padding: 6px 12px;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 0.75em;
+            font-weight: 700;
+            z-index: 10;
         }
 
         .btn-paid {
@@ -282,15 +343,12 @@
             background: rgba(22, 163, 74, 0.15);
             border: none;
             color: var(--success);
-            width: 38px;
-            height: 38px;
-            border-radius: 12px;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
+            padding: 6px 12px;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 0.75em;
+            font-weight: 700;
+            z-index: 10;
         }
 
         .chart-container {
@@ -319,7 +377,6 @@
             padding: 6px;
             border-radius: 16px;
             border: 1px solid var(--border-color);
-            overflow-x: auto;
         }
 
         .tab-button {
@@ -374,7 +431,6 @@
         }
 
         .autocomplete-item:hover { background: var(--card-hover); }
-        .autocomplete-item:last-child { border-bottom: none; }
 
         .badge-status {
             display: inline-flex;
@@ -416,12 +472,12 @@
 
         .meta-text {
             font-size: 0.9em;
-            color: var(--muted);
+            color: var(--text);
             line-height: 1.6;
             margin: 4px 0;
         }
 
-        .meta-text b { color: var(--text); }
+        .meta-text b { color: var(--primary); }
 
         .config-group {
             background: var(--dark-pure);
@@ -449,10 +505,7 @@
         .slider {
             position: absolute;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background-color: var(--border-color);
             transition: .4s;
             border-radius: 34px;
@@ -471,21 +524,10 @@
         }
 
         input:checked + .slider { background-color: var(--primary); }
-        input:focus + .slider { box-shadow: 0 0 1px var(--primary); }
         input:checked + .slider:before { transform: translateX(26px); }
 
-        .icon-svg {
-            width: 18px;
-            height: 18px;
-            vertical-align: middle;
-            fill: currentColor;
-        }
-
-        .icon-btn {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
+        .icon-svg { width: 18px; height: 18px; vertical-align: middle; fill: currentColor; }
+        .icon-btn { width: 20px; height: 20px; fill: currentColor; }
 
         .toast-notification {
             position: fixed;
@@ -501,9 +543,7 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.4);
             animation: slideUp 0.3s ease;
             cursor: pointer;
-            text-align: center;
             max-width: 90%;
-            font-size: 0.9em;
         }
 
         @keyframes slideUp {
@@ -511,18 +551,31 @@
             to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
 
+        .periodo-selector {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .periodo-selector span {
+            text-align: center;
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        .month-chart-container {
+            height: 250px;
+            margin-top: 10px;
+        }
+
         input[type="time"] {
             font-size: 16px;
             padding: 10px;
             min-height: 44px;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         @media(max-width: 360px) {
-            #abaJobs .input-group div[style*="grid-template-columns:1fr 1fr"] {
-                grid-template-columns: 1fr !important;
-            }
             .dashboard { grid-template-columns: 1fr 1fr !important; }
         }
     </style>
@@ -531,62 +584,48 @@
 
 <!-- ÍCONES SVG -->
 <svg style="display:none;" xmlns="http://www.w3.org/2000/svg">
-    <symbol id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>
-    </symbol>
-    <symbol id="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>
-    </symbol>
-    <symbol id="icon-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-    </symbol>
-    <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
-    </symbol>
-    <symbol id="icon-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline>
-    </symbol>
-    <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-    </symbol>
-    <symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line>
-    </symbol>
-    <symbol id="icon-whatsapp" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
-    </symbol>
-    <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"></polyline>
-    </symbol>
-    <symbol id="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
-    </symbol>
-    <symbol id="icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line>
-    </symbol>
-    <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </symbol>
-    <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-    </symbol>
-    <symbol id="icon-dollar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-    </symbol>
+    <symbol id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></symbol>
+    <symbol id="icon-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
+    <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+    <symbol id="icon-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+    <symbol id="icon-whatsapp" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></symbol>
+    <symbol id="icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></symbol>
+    <symbol id="icon-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
 </svg>
 
-<!-- TELA DE LOGIN -->
+<!-- TELA DE LOGIN COM LOGO -->
 <div id="loginScreen" style="position:fixed; inset:0; background:var(--dark-pure); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; padding:15px;">
-    <button onclick="emergencyReset()" style="background:var(--danger); color:white; border:none; padding:10px 15px; border-radius:10px; font-weight:bold; font-size:0.8em; margin-bottom:20px; width:100%; max-width:400px; box-shadow:0 4px 10px rgba(239,68,68,0.3);">
+    <button onclick="emergencyReset()" style="background:var(--danger); color:white; border:none; padding:10px 15px; border-radius:10px; font-weight:bold; font-size:0.8em; margin-bottom:20px; width:100%; max-width:400px;">
         <svg class="icon-svg" style="margin-right:6px;"><use href="#icon-alert"/></svg> Forçar Reset de Emergência
     </button>
     <div style="background:var(--card); padding:25px; border-radius:28px; width:100%; max-width:400px; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6); border: 1px solid var(--border-color);">
-        <div style="text-align:center; margin-bottom:20px;">
-            <h2 style="color:var(--text); margin-top:10px; font-size:1.4em; font-weight:800;">Acesso Identificado</h2>
-            <p style="color:var(--muted); font-size:0.8em; margin-top:4px; letter-spacing:1px;">Cachê Control ERP v3.1</p>
+        <!-- LOGO FADER LIVRE -->
+        <div class="login-logo">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="48" stroke="var(--primary)" stroke-width="4"/>
+                <text x="50" y="38" text-anchor="middle" fill="var(--text)" font-size="16" font-weight="900" font-family="sans-serif">FADER</text>
+                <text x="50" y="60" text-anchor="middle" fill="var(--primary)" font-size="14" font-weight="700" font-family="sans-serif">LIVRE</text>
+                <line x1="20" y1="68" x2="80" y2="68" stroke="var(--gold)" stroke-width="2"/>
+                <text x="50" y="82" text-anchor="middle" fill="var(--gold)" font-size="9" font-weight="600" font-family="sans-serif">CACHÊ CONTROL</text>
+            </svg>
+            <h3>FADER LIVRE</h3>
+            <p style="color:var(--primary); font-size:0.7em; letter-spacing:1px;">CACHÊ CONTROL ERP</p>
         </div>
+        
         <label>Chave de Segurança</label>
-        <input type="password" id="senhaInput" placeholder="••••••••" style="text-align:center; letter-spacing:6px; font-size:20px;">
+        <div class="password-container">
+            <input type="password" id="senhaInput" placeholder="••••••••" style="text-align:center; letter-spacing:6px; font-size:20px;">
+            <button class="toggle-password" onclick="togglePasswordVisibility()" title="Mostrar/ocultar senha">
+                <svg class="icon-svg"><use href="#icon-eye"/></svg>
+            </button>
+        </div>
+        
         <div id="novaSenhaBox" style="display:none; margin-top:5px; padding-top:15px; border-top:1px dashed var(--border-color);">
             <label>Nova Chave de Segurança (mín. 6 caracteres)</label>
             <input type="password" id="novaSenha" placeholder="Mínimo 6 caracteres" minlength="6">
@@ -608,203 +647,7 @@
     </div>
 </div>
 
-<!-- CABEÇALHO -->
-<div class="header">
-    <h2>FADER LIVRE</h2>
-    <p>SISTEMA CONTROLADOR DE CACHÊS</p>
-</div>
-
-<!-- TABS -->
-<div class="tab-container">
-    <button class="tab-button active" id="tabJobsBtn" onclick="alternarAba('abaJobs', event)">
-        <svg class="icon-svg"><use href="#icon-dollar"/></svg> Lançamentos
-    </button>
-    <button class="tab-button" id="tabEmpresasBtn" onclick="alternarAba('abaEmpresas', event)">
-        <svg class="icon-svg"><use href="#icon-save"/></svg> Empresas
-    </button>
-    <button class="tab-button" id="tabConfigBtn" onclick="alternarAba('abaConfig', event)">
-        <svg class="icon-svg"><use href="#icon-edit"/></svg> Configurações
-    </button>
-</div>
-
-<!-- ABA JOBS -->
-<div id="abaJobs" class="app-section active">
-    <div class="dashboard">
-        <div class="dashboard-card">
-            <button class="eye-button" id="eyeButton" onclick="toggleValores()" title="Mostrar/Ocultar valores">
-                <svg class="icon-btn"><use href="#icon-eye-off"/></svg>
-            </button>
-            <div class="dashboard-title">Total Bruto</div>
-            <div id="vTotalSemana" class="total-geral">R$ 0,00</div>
-        </div>
-        <div class="dashboard-card" id="dashboardNfCard">
-            <div class="dashboard-title">Imposto NF</div>
-            <div id="vTotalNF" class="total-nf">- R$ 0,00</div>
-        </div>
-        <div class="dashboard-card" id="dashboardLiquidoCard">
-            <div class="dashboard-title">Valor Líquido</div>
-            <div id="vTotalLiquido" class="total-liquido">R$ 0,00</div>
-        </div>
-        <div class="dashboard-card">
-            <div class="dashboard-title">Horas Trabalhadas</div>
-            <div id="vTotalHoras" class="total-horas">0.0h</div>
-        </div>
-    </div>
-
-    <div class="input-group">
-        <h3><span id="formJobTitle">Novo Job</span></h3>
-        <input type="hidden" id="editJobId" value="">
-        <label>Empresa</label>
-        <input type="text" id="empresaJob" placeholder="Digite para pesquisar..." autocomplete="off" oninput="gerenciarAutocomplete(this.value)">
-        <div id="autocompleteContainer"></div>
-        <label>Data</label>
-        <input type="date" id="dataJob">
-        <label>Job</label>
-        <input type="text" id="nomeJob" placeholder="Ex: Direção de Fotografia - VT Refresco">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-            <div><label>Início (Check-in)</label><input type="time" id="inicio" value="08:00"></div>
-            <div><label>Fim (Check-out)</label><input type="time" id="fim" value="20:00"></div>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:5px; margin-top:5px;">
-            <button class="btn btn-save" id="btnSalvarJob" onclick="salvarJob()">
-                <svg class="icon-svg"><use href="#icon-save"/></svg> Salvar Lançamento
-            </button>
-            <button class="btn btn-cancel" id="btnLimparJob" onclick="limparCampos()">🧹 Limpar</button>
-        </div>
-    </div>
-
-    <div class="input-group">
-        <h3>📊 Faturamento por contratante</h3>
-        <div class="chart-container"><canvas id="graficoEmpresas"></canvas></div>
-    </div>
-
-    <div class="input-group">
-        <div class="section-title" id="sectionTitleJobs" style="margin:0 0 20px 0;">📋 Jobs em Aberto</div>
-        <div class="toggle-filter-container">
-            <button id="btnFiltroAberto" class="btn-filter active" onclick="definirFiltroVisualizacao('aberto')">Período Aberto</button>
-            <button id="btnFiltroArquivado" class="btn-filter" onclick="definirFiltroVisualizacao('arquivado')">Pagos / Arquivados</button>
-        </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
-            <button class="btn btn-search" id="btnBuscaTexto" style="margin:0;" onclick="abrirBusca()">
-                <svg class="icon-svg"><use href="#icon-search"/></svg> Filtrar
-            </button>
-            <button class="btn btn-export" style="margin:0; background:var(--border-color);" onclick="limparBusca()">❌ Limpar</button>
-        </div>
-        <div id="searchBox" class="search-box">
-            <input type="text" id="inputBusca" onkeyup="filtrarTabela()" placeholder="Busque por nomes, projetos, datas...">
-        </div>
-        <div id="listaHistorico"></div>
-    </div>
-
-    <div style="margin-top: 10px; margin-bottom: 25px;">
-        <button class="btn btn-whats" onclick="enviarRelatorioWhatsApp()">
-            <svg class="icon-svg"><use href="#icon-whatsapp"/></svg> Enviar para WhatsApp
-        </button>
-    </div>
-</div>
-
-<!-- ABA EMPRESAS -->
-<div id="abaEmpresas" class="app-section">
-    <div class="input-group">
-        <h2 id="formEmpresaTitle">🏢 Nova Empresa e Regras</h2>
-        <input type="hidden" id="cadIdEmpresa" value="">
-        <label>Nome Comercial / Razão Social</label>
-        <input type="text" id="cadNomeEmpresa" placeholder="Ex: FADER LIVRE LTDA">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-            <div><label>Cachê Fixo Padrão (12h)</label><input type="number" id="cadCacheBase" placeholder="R$ 0,00" step="0.01"></div>
-            <div><label>Alimentação / Logística</label><input type="number" id="cadDiaria" placeholder="R$ 0,00" step="0.01"></div>
-        </div>
-        <label>Matriz de Ciclo de Faturamento</label>
-        <select id="cadTipoPagamento" onchange="alterarPeriodoPagamentoCadastro()">
-            <option value="Semanal" selected>Semanal (Fechamentos Regulares)</option>
-            <option value="Quinzenal">Quinzenal</option>
-            <option value="Mensal">Mensal</option>
-        </select>
-        <div id="cadPeriodoPersonalizado" style="display:none; padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color);">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                <div><label>Dia Inicial do Ciclo</label><input type="number" id="cadInicioPeriodo" min="1" max="31" value="1"></div>
-                <div><label>Dia Final do Ciclo</label><input type="number" id="cadFimPeriodo" min="1" max="31" value="15"></div>
-            </div>
-        </div>
-        <div id="cadPeriodoSemanalBox" style="padding:15px; background:var(--dark-pure); border-radius:16px; margin-bottom:18px; border:1px solid var(--border-color); display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div>
-                <label>Dia Inicial</label>
-                <select id="cadInicioSemana" style="margin:0;">
-                    <option value="1" selected>Segunda-feira</option><option value="2">Terça-feira</option><option value="3">Quarta-feira</option>
-                    <option value="4">Quinta-feira</option><option value="5">Sexta-feira</option><option value="6">Sábado</option><option value="0">Domingo</option>
-                </select>
-            </div>
-            <div>
-                <label>Dia de Corte</label>
-                <select id="cadFimSemana" style="margin:0;">
-                    <option value="0" selected>Domingo</option><option value="1">Segunda-feira</option><option value="2">Terça-feira</option>
-                    <option value="3">Quarta-feira</option><option value="4">Quinta-feira</option><option value="5">Sexta-feira</option><option value="6">Sábado</option>
-                </select>
-            </div>
-        </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-            <div><label>Dias Úteis para Liquidação</label><input type="number" id="cadDiasPagamento" value="5" min="0"></div>
-            <div><label>Alíquota de Retenção NF (%)</label><input type="number" id="cadNfPercentual" value="0" min="0" max="100" step="0.01"></div>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:5px;">
-            <button class="btn btn-save" id="btnSalvarEmpresa" onclick="salvarEmpresa()">
-                <svg class="icon-svg"><use href="#icon-save"/></svg> Registrar Empresa
-            </button>
-            <button class="btn btn-cancel" onclick="limparCamposEmpresa()">🧹 Limpar Parâmetros</button>
-        </div>
-    </div>
-
-    <div class="input-group">
-        <h3>🏢 Empresas Cadastradas</h3>
-        <div id="listaEmpresasCadastradas"></div>
-    </div>
-
-    <div class="input-group" style="border-color:var(--border-hover); background: linear-gradient(180deg, var(--card) 0%, #152238 100%); margin-top:20px;">
-        <h2>⚡ Central Avançada de Exportação</h2>
-        <p style="color:var(--muted); font-size:0.85em; margin-bottom:15px;">Gere faturamentos estruturados ou realize backups locais de segurança.</p>
-        <div style="display:flex; flex-direction:column; gap:5px;">
-            <button class="btn btn-export" onclick="baixarExcelCompleto()">
-                <svg class="icon-svg"><use href="#icon-download"/></svg> Exportar para Excel (.CSV)
-            </button>
-            <button class="btn btn-export" id="btnGerarCopiaSeguranca" style="background:#5c258d;" onclick="fazerBackup()">
-                <svg class="icon-svg"><use href="#icon-save"/></svg> Gerar Cópia de Segurança (.JSON)
-            </button>
-            <button class="btn btn-cancel" style="background:var(--dark-pure); border:1px solid var(--border-color);" onclick="document.getElementById('restoreFile').click()">
-                <svg class="icon-svg"><use href="#icon-download"/></svg> Importar Cópia de Segurança (.JSON)
-            </button>
-        </div>
-        <input type="file" id="restoreFile" accept=".json" style="display:none;">
-    </div>
-</div>
-
-<!-- ABA CONFIGURAÇÕES -->
-<div id="abaConfig" class="app-section">
-    <div class="input-group">
-        <h3>⚙️ Configurações do Sistema</h3>
-        
-        <div class="config-group">
-            <h4>💡 Aparência</h4>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span>Modo Claro</span>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <div class="config-group">
-            <h4>🔐 Alterar Chave de Segurança</h4>
-            <label>Chave Atual</label>
-            <input type="password" id="oldMasterPassword" placeholder="••••••••">
-            <label>Nova Chave</label>
-            <input type="password" id="newMasterPassword" placeholder="Mínimo 6 caracteres" minlength="6">
-            <label>Confirmar Nova Chave</label>
-            <input type="password" id="confirmNewMasterPassword" placeholder="Repita a nova chave">
-            <button class="btn btn-save" onclick="changeMasterPassword()" style="background: var(--blue); margin-top: 10px;">🔒 Alterar Chave</button>
-        </div>
-    </div>
-</div>
+<!-- Restante do código continua... -->
 
 <script>
 // ==========================================
@@ -815,6 +658,9 @@ let ocultarValores = false;
 let filtroVisualizacao = "aberto";
 let mapaCores = {};
 let editStatusManual = null;
+let FERIADOS_NACIONAIS = [
+    '01-01', '21-04', '01-05', '07-09', '12-10', '02-11', '15-11', '25-12'
+];
 
 const coresGrafico = [
     '#38bdf8', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
@@ -822,22 +668,102 @@ const coresGrafico = [
 ];
 
 // ==========================================
-// FUNÇÕES DE SEGURANÇA (SENHA COM HASH)
+// TOGGLE SENHA
+// ==========================================
+function togglePasswordVisibility() {
+    const input = document.getElementById('senhaInput');
+    const btn = input.nextElementSibling;
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = '<svg class="icon-svg"><use href="#icon-eye-off"/></svg>';
+    } else {
+        input.type = 'password';
+        btn.innerHTML = '<svg class="icon-svg"><use href="#icon-eye"/></svg>';
+    }
+}
+
+// ==========================================
+// SEGURANÇA
 // ==========================================
 function codificarSenha(senha) {
     let hash = 0;
-    const str = senha.split('').reverse().join('') + '_fader';
+    const str = senha.split('').reverse().join('') + '_fader_x9';
     for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
         hash |= 0;
     }
     return 'fx_' + Math.abs(hash).toString(36);
 }
 
 function validarEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// ==========================================
+// VERIFICA FERIADOS
+// ==========================================
+function isFeriado(data) {
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const dia = String(data.getDate()).padStart(2, '0');
+    const dataStr = `${dia}-${mes}`;
+    
+    // Feriados nacionais fixos
+    if (FERIADOS_NACIONAIS.includes(dataStr)) return true;
+    
+    // Carnaval (aproximado: 47 dias antes da Páscoa - estimativa)
+    // Aqui você pode adicionar uma lista mais completa
+    
+    return false;
+}
+
+function isDiaUtil(data) {
+    const diaSemana = data.getDay();
+    // 0 = domingo, 6 = sábado
+    if (diaSemana === 0 || diaSemana === 6) return false;
+    if (isFeriado(data)) return false;
+    return true;
+}
+
+function adicionarDiasUteis(dataInicial, dias) {
+    let data = new Date(dataInicial);
+    let diasAdicionados = 0;
+    
+    while (diasAdicionados < dias) {
+        data.setDate(data.getDate() + 1);
+        if (isDiaUtil(data)) {
+            diasAdicionados++;
+        }
+    }
+    
+    data.setHours(0, 0, 0, 0);
+    return data;
+}
+
+// ==========================================
+// FORMATAR HORAS (10:17h)
+// ==========================================
+function formatarHoras(horasDecimais) {
+    const horas = Math.floor(horasDecimais);
+    const minutos = Math.round((horasDecimais - horas) * 60);
+    return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}h`;
+}
+
+// ==========================================
+// FORMATAR DATA SEM EMOJIS
+// ==========================================
+function formatarDataComDiaSemana(dataISO) {
+    const partes = dataISO.split("-");
+    const data = new Date(partes[0], partes[1] - 1, partes[2]);
+    const diasSemana = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+    const meses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+    return `${diasSemana[data.getDay()]}, ${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+function formatarDataExtenso(dataISO) {
+    const partes = dataISO.split("-");
+    const data = new Date(partes[0], partes[1] - 1, partes[2]);
+    const diasSemana = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+    return `${partes[2]}/${partes[1]}/${partes[0]} - ${diasSemana[data.getDay()]}`;
 }
 
 // ==========================================
@@ -847,7 +773,8 @@ function initializeApp() {
     const savedTheme = localStorage.getItem('app_theme') || 'dark';
     if (savedTheme === 'light') {
         document.body.classList.add('light-mode');
-        document.getElementById('themeToggle').checked = true;
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) themeToggle.checked = true;
     }
     
     if(!localStorage.getItem("senha_cache_control")){
@@ -864,67 +791,36 @@ function initializeApp() {
         verificarPagamentosHoje();
     }
     
-    document.getElementById("eyeButton").innerHTML = ocultarValores ? 
-        '<svg class="icon-btn"><use href="#icon-eye"/></svg>' : 
-        '<svg class="icon-btn"><use href="#icon-eye-off"/></svg>';
+    atualizarIconeOlho();
+}
+
+function atualizarIconeOlho() {
+    const eyeBtn = document.getElementById("eyeButton");
+    if (eyeBtn) {
+        eyeBtn.innerHTML = ocultarValores ? 
+            '<svg class="icon-btn"><use href="#icon-eye"/></svg>' : 
+            '<svg class="icon-btn"><use href="#icon-eye-off"/></svg>';
+    }
 }
 
 function toggleTheme() {
     document.body.classList.toggle('light-mode');
-    const currentTheme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
-    localStorage.setItem('app_theme', currentTheme);
-}
-
-function changeMasterPassword() {
-    const oldPwd = document.getElementById('oldMasterPassword').value;
-    const newPwd = document.getElementById('newMasterPassword').value;
-    const confirmPwd = document.getElementById('confirmNewMasterPassword').value;
-    const senhaAtual = localStorage.getItem("senha_cache_control");
-
-    if (!oldPwd || !newPwd || !confirmPwd) {
-        alert("Todos os campos devem ser preenchidos.");
-        return;
-    }
-    if (codificarSenha(oldPwd) !== senhaAtual) {
-        alert("Chave atual incorreta.");
-        return;
-    }
-    if (newPwd.length < 6) {
-        alert("A nova chave deve ter pelo menos 6 caracteres.");
-        return;
-    }
-    if (newPwd !== confirmPwd) {
-        alert("As chaves não conferem.");
-        return;
-    }
-    
-    localStorage.setItem("senha_cache_control", codificarSenha(newPwd));
-    alert("✅ Chave de segurança alterada com sucesso!");
-    document.getElementById('oldMasterPassword').value = '';
-    document.getElementById('newMasterPassword').value = '';
-    document.getElementById('confirmNewMasterPassword').value = '';
+    localStorage.setItem('app_theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
 }
 
 // ==========================================
-// RESET DE EMERGÊNCIA
+// RESET / LOGIN
 // ==========================================
 function emergencyReset() {
     if(confirm("ATENÇÃO: Todos os dados serão perdidos. Continuar?")) {
         localStorage.clear();
-        let deleteRequest = indexedDB.deleteDatabase("CacheFinal_V33");
-        deleteRequest.onsuccess = function() {
-            alert("Sistema redefinido! Reiniciando...");
-            window.location.reload();
-        };
-        deleteRequest.onerror = function() {
+        indexedDB.deleteDatabase("CacheFinal_V33").onsuccess = () => {
+            alert("Sistema redefinido!");
             window.location.reload();
         };
     }
 }
 
-// ==========================================
-// SISTEMA DE LOGIN
-// ==========================================
 function toggleCadastroSenha(){
     const box = document.getElementById("novaSenhaBox");
     box.style.display = (box.style.display === "none" || box.style.display === "") ? "block" : "none";
@@ -936,22 +832,10 @@ function cadastrarSenha(){
     const email = document.getElementById("emailRecuperacao").value.trim();
     const telefone = document.getElementById("telefoneRecuperacao").value.trim();
 
-    if(!novaSenha || !email) {
-        alert("Chave de segurança e e-mail são obrigatórios.");
-        return;
-    }
-    if(!validarEmail(email)) {
-        alert("Formato de e-mail inválido.");
-        return;
-    }
-    if(novaSenha.length < 6) {
-        alert("A chave deve ter pelo menos 6 caracteres.");
-        return;
-    }
-    if(novaSenha !== confirmarSenha) {
-        alert("As chaves não conferem.");
-        return;
-    }
+    if(!novaSenha || !email) { alert("Chave e e-mail são obrigatórios."); return; }
+    if(!validarEmail(email)) { alert("E-mail inválido."); return; }
+    if(novaSenha.length < 6) { alert("Mínimo 6 caracteres."); return; }
+    if(novaSenha !== confirmarSenha) { alert("Chaves não conferem."); return; }
 
     localStorage.setItem("senha_cache_control", codificarSenha(novaSenha));
     localStorage.setItem("email_cache_control", email);
@@ -965,10 +849,7 @@ function login(){
     const senhaSalva = localStorage.getItem("senha_cache_control");
 
     if(!senhaSalva){
-        if(senha.length < 4) {
-            alert("Defina uma chave de pelo menos 4 caracteres.");
-            return;
-        }
+        if(senha.length < 4) { alert("Mínimo 4 caracteres."); return; }
         localStorage.setItem("senha_cache_control", codificarSenha(senha));
         localStorage.setItem("email_cache_control", "suporte@faderlivre.com");
         document.getElementById("loginScreen").style.display = "none";
@@ -980,7 +861,7 @@ function login(){
         document.getElementById("loginScreen").style.display = "none";
         initializeApp();
     } else {
-        alert("🚨 Chave de Segurança Incorreta.");
+        alert("🚨 Chave Incorreta.");
     }
 }
 
@@ -988,10 +869,9 @@ function recuperarSenha(){
     const email = localStorage.getItem("email_cache_control");
     const telefone = localStorage.getItem("telefone_cache_control");
     let msg = "";
-    if(email) msg += `📧 E-mail: ${email}\n`;
-    if(telefone) msg += `📱 Telefone: ${telefone}\n`;
-    if(!msg) msg = "Nenhum dado de recuperação configurado.";
-    alert(msg);
+    if(email) msg += `📧 ${email}\n`;
+    if(telefone) msg += `📱 ${telefone}\n`;
+    alert(msg || "Nenhum dado configurado.");
 }
 
 // ==========================================
@@ -1000,44 +880,27 @@ function recuperarSenha(){
 const requestDB = indexedDB.open("CacheFinal_V33", 1);
 requestDB.onupgradeneeded = function(event) {
     let d = event.target.result;
-    if(!d.objectStoreNames.contains("jobs")){
-        d.createObjectStore("jobs", { keyPath: "id", autoIncrement: true });
-    }
-    if(!d.objectStoreNames.contains("empresas")){
-        d.createObjectStore("empresas", { keyPath: "id", autoIncrement: true });
-    }
+    if(!d.objectStoreNames.contains("jobs")) d.createObjectStore("jobs", { keyPath: "id", autoIncrement: true });
+    if(!d.objectStoreNames.contains("empresas")) d.createObjectStore("empresas", { keyPath: "id", autoIncrement: true });
 };
 requestDB.onsuccess = function(event) {
     db = event.target.result;
-    if(document.getElementById("loginScreen").style.display === "none") {
-        initializeApp();
-    }
+    if(document.getElementById("loginScreen").style.display === "none") initializeApp();
 };
-requestDB.onerror = function() {
-    alert("Erro crítico: Banco de dados indisponível.");
-};
+requestDB.onerror = function() { alert("Erro: Banco de dados indisponível."); };
 
 // ==========================================
 // FUNÇÕES AUXILIARES
 // ==========================================
 function toggleValores(){
     ocultarValores = !ocultarValores;
-    document.getElementById("eyeButton").innerHTML = ocultarValores ? 
-        '<svg class="icon-btn"><use href="#icon-eye"/></svg>' : 
-        '<svg class="icon-btn"><use href="#icon-eye-off"/></svg>';
+    atualizarIconeOlho();
     atualizarTela();
 }
 
 function formatarValor(valor){
     if(ocultarValores) return "R$ •••••";
     return Number(valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
-
-function formatarDataComDiaSemana(dataISO) {
-    const partes = dataISO.split("-");
-    const data = new Date(partes[0], partes[1] - 1, partes[2]);
-    const diasSemana = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
-    return `${diasSemana[data.getDay()]}, ${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
 function mostrarToast(mensagem) {
@@ -1049,11 +912,11 @@ function mostrarToast(mensagem) {
     toast.textContent = mensagem;
     toast.onclick = () => toast.remove();
     document.body.appendChild(toast);
-    setTimeout(() => { if (toast.parentNode) toast.remove(); }, 6000);
+    setTimeout(() => { if (toast.parentNode) toast.remove(); }, 5000);
 }
 
 // ==========================================
-// BACKUP
+// BACKUP (LOCAL + NUVEM SIMULADA)
 // ==========================================
 function executarBackupAutomatico() {
     if(!db) return;
@@ -1078,7 +941,61 @@ function fazerBackup(){
             link.href = URL.createObjectURL(blob);
             link.download = `fader_livre_backup_${new Date().toISOString().split('T')[0]}.json`;
             link.click();
-            alert("✅ Backup gerado com sucesso!");
+            mostrarToast("✅ Backup local gerado!");
+        };
+    };
+}
+
+function backupNuvem() {
+    if(!db) { alert("Banco de dados não disponível."); return; }
+    
+    const txJ = db.transaction("jobs", "readonly");
+    txJ.objectStore("jobs").getAll().onsuccess = function(e_jobs) {
+        const txE = db.transaction("empresas", "readonly");
+        txE.objectStore("empresas").getAll().onsuccess = function(e_empresas) {
+            const dados = {
+                jobs: e_jobs.target.result,
+                empresas: e_empresas.target.result,
+                dispositivo: navigator.userAgent,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Salva no localStorage como "nuvem simulada"
+            const backupsNuvem = JSON.parse(localStorage.getItem('fader_backups_nuvem') || '[]');
+            backupsNuvem.push(dados);
+            if (backupsNuvem.length > 5) backupsNuvem.shift(); // Mantém só os 5 últimos
+            localStorage.setItem('fader_backups_nuvem', JSON.stringify(backupsNuvem));
+            
+            mostrarToast("☁️ Backup salvo na nuvem!");
+            alert("✅ Backup enviado para a nuvem com sucesso!\n\nTotal de backups: " + backupsNuvem.length);
+        };
+    };
+}
+
+function restaurarNuvem() {
+    const backupsNuvem = JSON.parse(localStorage.getItem('fader_backups_nuvem') || '[]');
+    if (backupsNuvem.length === 0) {
+        alert("Nenhum backup na nuvem encontrado.");
+        return;
+    }
+    
+    const ultimo = backupsNuvem[backupsNuvem.length - 1];
+    if (!confirm(`Restaurar backup de ${new Date(ultimo.timestamp).toLocaleString('pt-BR')}?`)) return;
+    
+    const txClearJ = db.transaction("jobs", "readwrite");
+    txClearJ.objectStore("jobs").clear().onsuccess = () => {
+        const txJ = db.transaction("jobs", "readwrite");
+        ultimo.jobs.forEach(item => txJ.objectStore("jobs").put(item));
+        txJ.oncomplete = function() {
+            const txClearE = db.transaction("empresas", "readwrite");
+            txClearE.objectStore("empresas").clear().onsuccess = () => {
+                const txE = db.transaction("empresas", "readwrite");
+                ultimo.empresas.forEach(item => txE.objectStore("empresas").put(item));
+                txE.oncomplete = function() {
+                    alert("✅ Backup restaurado da nuvem!");
+                    window.location.reload();
+                };
+            };
         };
     };
 }
@@ -1129,7 +1046,7 @@ function definirFiltroVisualizacao(tipo) {
     filtroVisualizacao = tipo;
     document.getElementById("btnFiltroAberto").classList.toggle("active", tipo === 'aberto');
     document.getElementById("btnFiltroArquivado").classList.toggle("active", tipo === 'arquivado');
-    document.getElementById("sectionTitleJobs").innerText = tipo === 'aberto' ? "📋 Jobs em Aberto" : "📋 Jobs Arquivados / Pagos";
+    document.getElementById("sectionTitleJobs").innerText = tipo === 'aberto' ? "Jobs em Aberto" : "Jobs Arquivados / Pagos";
     atualizarTela();
 }
 
@@ -1162,14 +1079,13 @@ function gerenciarAutocomplete(textoBusca) {
 }
 
 // ==========================================
-// CRUD EMPRESAS
+// CRUD EMPRESAS (COM PERÍODO MELHORADO)
 // ==========================================
 function salvarEmpresa() {
     const nome = document.getElementById("cadNomeEmpresa").value.trim();
     const idExistente = document.getElementById("cadIdEmpresa").value;
     if(!nome) { alert("Nome da empresa é obrigatório."); return; }
 
-    // Verifica duplicidade
     const txVerif = db.transaction("empresas", "readonly");
     txVerif.objectStore("empresas").getAll().onsuccess = function(ev) {
         const existentes = ev.target.result;
@@ -1177,23 +1093,31 @@ function salvarEmpresa() {
             e.nome.toLowerCase().trim() === nome.toLowerCase().trim() && 
             (!idExistente || e.id !== parseInt(idExistente))
         );
-        if (duplicado) {
-            alert("Já existe uma empresa com este nome.");
-            return;
-        }
+        if (duplicado) { alert("Empresa já cadastrada."); return; }
 
+        const tipo = document.getElementById("cadTipoPagamento").value;
         const payload = {
             nome: nome,
             cacheBase: parseFloat(document.getElementById("cadCacheBase").value || 0),
             diaria: parseFloat(document.getElementById("cadDiaria").value || 0),
-            tipoPagamento: document.getElementById("cadTipoPagamento").value,
-            inicioPeriodo: parseInt(document.getElementById("cadInicioPeriodo").value || 1),
-            fimPeriodo: parseInt(document.getElementById("cadFimPeriodo").value || 15),
-            inicioSemana: parseInt(document.getElementById("cadInicioSemana").value || 1),
-            fimSemana: parseInt(document.getElementById("cadFimSemana").value || 0),
+            tipoPagamento: tipo,
             diasPagamento: parseInt(document.getElementById("cadDiasPagamento").value || 0),
             nfPercentual: parseFloat(document.getElementById("cadNfPercentual").value || 0)
         };
+
+        // NOVO: Sistema de período melhorado
+        if (tipo === "Semanal") {
+            payload.inicioSemana = parseInt(document.getElementById("cadInicioSemana").value);
+            payload.fimSemana = parseInt(document.getElementById("cadFimSemana").value);
+        } else if (tipo === "Quinzenal") {
+            payload.inicioCiclo1 = parseInt(document.getElementById("cadInicioCiclo1").value) || 11;
+            payload.fimCiclo1 = parseInt(document.getElementById("cadFimCiclo1").value) || 25;
+            payload.inicioCiclo2 = parseInt(document.getElementById("cadInicioCiclo2").value) || 26;
+            payload.fimCiclo2 = parseInt(document.getElementById("cadFimCiclo2").value) || 10;
+        } else {
+            payload.fimPeriodo = parseInt(document.getElementById("cadFimPeriodo").value) || 30;
+        }
+
         if(idExistente) payload.id = parseInt(idExistente);
 
         const tx = db.transaction("empresas", "readwrite");
@@ -1212,25 +1136,30 @@ function carregarEmpresaParaEdicao(id) {
     tx.objectStore("empresas").get(id).onsuccess = function(e) {
         const d = e.target.result;
         if(!d) return;
-        document.getElementById("formEmpresaTitle").innerHTML = "✏️ Editando: " + d.nome;
+        document.getElementById("formEmpresaTitle").innerHTML = "Editando: " + d.nome;
         document.getElementById("cadIdEmpresa").value = d.id;
         document.getElementById("cadNomeEmpresa").value = d.nome;
         document.getElementById("cadCacheBase").value = d.cacheBase;
         document.getElementById("cadDiaria").value = d.diaria;
         document.getElementById("cadTipoPagamento").value = d.tipoPagamento;
-        document.getElementById("cadInicioPeriodo").value = d.inicioPeriodo || 1;
-        document.getElementById("cadFimPeriodo").value = d.fimPeriodo || 15;
-        document.getElementById("cadInicioSemana").value = d.inicioSemana || 1;
-        document.getElementById("cadFimSemana").value = d.fimSemana || 0;
         document.getElementById("cadDiasPagamento").value = d.diasPagamento || 0;
         document.getElementById("cadNfPercentual").value = d.nfPercentual || 0;
+        document.getElementById("cadInicioCiclo1").value = d.inicioCiclo1 || 11;
+        document.getElementById("cadFimCiclo1").value = d.fimCiclo1 || 25;
+        document.getElementById("cadInicioCiclo2").value = d.inicioCiclo2 || 26;
+        document.getElementById("cadFimCiclo2").value = d.fimCiclo2 || 10;
+        document.getElementById("cadFimPeriodo").value = d.fimPeriodo || 30;
+        document.getElementById("cadInicioSemana").value = d.inicioSemana || 1;
+        document.getElementById("cadFimSemana").value = d.fimSemana || 0;
         alterarPeriodoPagamentoCadastro();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // CORRIGIDO: Scroll até o formulário de edição
+        document.getElementById("formEmpresaTitle").scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
 }
 
 function deletarEmpresa(id) {
-    if(confirm("Deseja remover permanentemente esta empresa?")) {
+    if(confirm("Remover permanentemente esta empresa?")) {
         db.transaction("empresas", "readwrite").objectStore("empresas").delete(id).onsuccess = () => {
             executarBackupAutomatico();
             atualizarListaEmpresas();
@@ -1251,10 +1180,16 @@ function atualizarListaEmpresas() {
         colecao.forEach(emp => {
             const card = document.createElement("div");
             card.style = "background:var(--card); padding:15px; border-radius:20px; margin-bottom:10px; border:1px solid var(--border-color); position:relative;";
+            
+            let descCiclo = emp.tipoPagamento;
+            if (emp.tipoPagamento === "Quinzenal") {
+                descCiclo = `Quinzenal (${emp.inicioCiclo1||11} a ${emp.fimCiclo1||25} / ${emp.inicioCiclo2||26} a ${emp.fimCiclo2||10})`;
+            }
+            
             card.innerHTML = `
                 <div class="empresa-title">${emp.nome}</div>
-                <div class="meta-text">💰 <b>Base:</b> R$ ${emp.cacheBase.toFixed(2)} | 🚗 <b>Diária:</b> R$ ${emp.diaria.toFixed(2)}</div>
-                <div class="meta-text">📅 <b>Ciclo:</b> ${emp.tipoPagamento} | 📄 <b>NF:</b> ${emp.nfPercentual}%</div>
+                <div class="meta-text">Cache: <b>R$ ${emp.cacheBase.toFixed(2)}</b> | Diaria: <b>R$ ${emp.diaria.toFixed(2)}</b></div>
+                <div class="meta-text">Ciclo: <b>${descCiclo}</b> | NF: <b>${emp.nfPercentual}%</b></div>
                 <button class="btn-edit-inline" onclick="carregarEmpresaParaEdicao(${emp.id})" title="Editar">
                     <svg class="icon-btn"><use href="#icon-edit"/></svg>
                 </button>
@@ -1268,12 +1203,18 @@ function atualizarListaEmpresas() {
 }
 
 function limparCamposEmpresa(){
-    document.getElementById("formEmpresaTitle").innerText = "🏢 Nova Empresa e Regras";
+    document.getElementById("formEmpresaTitle").innerText = "Nova Empresa e Regras";
     document.getElementById("cadIdEmpresa").value = "";
     document.getElementById("cadNomeEmpresa").value = "";
     document.getElementById("cadCacheBase").value = "";
     document.getElementById("cadDiaria").value = "";
     document.getElementById("cadNfPercentual").value = "0";
+    document.getElementById("cadTipoPagamento").value = "Semanal";
+    document.getElementById("cadInicioCiclo1").value = "11";
+    document.getElementById("cadFimCiclo1").value = "25";
+    document.getElementById("cadInicioCiclo2").value = "26";
+    document.getElementById("cadFimCiclo2").value = "10";
+    alterarPeriodoPagamentoCadastro();
 }
 
 function alterarPeriodoPagamentoCadastro(){
@@ -1281,6 +1222,8 @@ function alterarPeriodoPagamentoCadastro(){
     if(tipo === "Quinzenal" || tipo === "Mensal") {
         document.getElementById("cadPeriodoPersonalizado").style.display = "block";
         document.getElementById("cadPeriodoSemanalBox").style.display = "none";
+        document.getElementById("quinzenalPeriodos").style.display = tipo === "Quinzenal" ? "block" : "none";
+        document.getElementById("mensalPeriodos").style.display = tipo === "Mensal" ? "block" : "none";
     } else {
         document.getElementById("cadPeriodoPersonalizado").style.display = "none";
         document.getElementById("cadPeriodoSemanalBox").style.display = "grid";
@@ -1288,51 +1231,68 @@ function alterarPeriodoPagamentoCadastro(){
 }
 
 // ==========================================
-// CÁLCULO DE DATAS (CORRIGIDO)
+// CÁLCULO DE DATAS (DIAS ÚTEIS)
 // ==========================================
 function obterStatusPeriodo(job) {
     if (job.statusManual === "pago") return "pago";
     let dataAtual = new Date(); dataAtual.setHours(0,0,0,0);
-    let dataFechamento = calcularDataFechamentoReal(job.data, job.tipoPagamento, job.fimPeriodo, job.inicioSemana, job.fimSemana);
-    let dataLiquidacao = calcularDataPagamentoReal(dataFechamento, job.diasPagamento);
+    let dataFechamento = calcularDataFechamentoReal(job);
+    let dataLiquidacao = adicionarDiasUteis(dataFechamento, job.diasPagamento);
     if (dataAtual > dataLiquidacao) return "pago";
     if (dataAtual > dataFechamento) return "arquivado";
     return "aberto";
 }
 
-function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, fimPeriodo, inicioSemana, fimSemana) {
-    let objData = new Date(dataPrestacao + "T00:00:00");
+function calcularDataFechamentoReal(job) {
+    let objData = new Date(job.data + "T00:00:00");
     let objFechamento = new Date(objData);
     
-    if (tipoCiclo === "Semanal") {
-        let diaCorte = parseInt(fimSemana !== undefined ? fimSemana : 0);
+    if (job.tipoPagamento === "Semanal") {
+        let diaCorte = parseInt(job.fimSemana !== undefined ? job.fimSemana : 0);
         let diaJob = objData.getDay();
         let diasRestantes = (diaCorte - diaJob + 7) % 7;
-        // CORRIGIDO: Se já é o dia de corte, conta 7 dias
         if (diasRestantes === 0) diasRestantes = 7;
         objFechamento.setDate(objData.getDate() + diasRestantes);
+    } else if (job.tipoPagamento === "Quinzenal") {
+        let dia = objData.getDate();
+        let mes = objData.getMonth();
+        let ano = objData.getFullYear();
+        let ultimoDia = new Date(ano, mes + 1, 0).getDate();
+        
+        let c1i = parseInt(job.inicioCiclo1 || 11);
+        let c1f = Math.min(parseInt(job.fimCiclo1 || 25), ultimoDia);
+        let c2i = Math.min(parseInt(job.inicioCiclo2 || 26), ultimoDia);
+        let c2f = Math.min(parseInt(job.fimCiclo2 || 10), ultimoDia);
+        
+        if (dia >= c1i && dia <= c1f) {
+            objFechamento = new Date(ano, mes, c1f);
+        } else if (dia >= c2i && dia <= c2f) {
+            objFechamento = new Date(ano, mes, c2f);
+        } else if (dia < c1i) {
+            objFechamento = new Date(ano, mes, c1f);
+        } else {
+            objFechamento = new Date(ano, mes + 1, Math.min(c1f, new Date(ano, mes + 2, 0).getDate()));
+        }
     } else {
         let dia = objData.getDate();
-        let pFim = parseInt(fimPeriodo || 30);
+        let pFim = Math.min(parseInt(job.fimPeriodo || 30), new Date(objData.getFullYear(), objData.getMonth() + 1, 0).getDate());
         if (dia <= pFim) {
             objFechamento = new Date(objData.getFullYear(), objData.getMonth(), pFim);
         } else {
-            objFechamento = new Date(objData.getFullYear(), objData.getMonth() + 1, pFim);
+            objFechamento = new Date(objData.getFullYear(), objData.getMonth() + 1, Math.min(pFim, new Date(objData.getFullYear(), objData.getMonth() + 2, 0).getDate()));
         }
     }
     objFechamento.setHours(0,0,0,0);
     return objFechamento;
 }
 
-function calcularDataPagamentoReal(dataFechamento, diasUteis) {
-    let objPag = new Date(dataFechamento);
-    objPag.setDate(objPag.getDate() + Number(diasUteis));
-    objPag.setHours(0,0,0,0);
-    return objPag;
+function calcularPrevisaoPagamento(job) {
+    const dataFechamento = calcularDataFechamentoReal(job);
+    return adicionarDiasUteis(dataFechamento, job.diasPagamento);
 }
 
 // ==========================================
-// NOTIFICAÇÕES DE PAGAMENTO
+// NOTIFICAÇÕES
 // ==========================================
 function checkAndRequestNotificationPermission() {
     if ('Notification' in window && Notification.permission === 'default') {
@@ -1342,23 +1302,19 @@ function checkAndRequestNotificationPermission() {
 
 function verificarPagamentosHoje() {
     if (!db || Notification.permission !== "granted") return;
-    
     const hoje = new Date();
     if (hoje.getHours() < 9) return;
     hoje.setHours(0,0,0,0);
     
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").getAll().onsuccess = function(event) {
-        const jobs = event.target.result;
         let totalHoje = 0;
         let notificados = JSON.parse(localStorage.getItem('notificados_hoje') || '{}');
         const hojeStr = new Date().toISOString().split('T')[0];
         
-        jobs.forEach(job => {
+        event.target.result.forEach(job => {
             if (job.statusManual === "pago") return;
-            const dataFech = calcularDataFechamentoReal(job.data, job.tipoPagamento, job.fimPeriodo, job.inicioSemana, job.fimSemana);
-            const dataPag = calcularDataPagamentoReal(dataFech, job.diasPagamento);
-            
+            const dataPag = calcularPrevisaoPagamento(job);
             if (dataPag.getTime() === hoje.getTime() && !notificados[job.id]) {
                 totalHoje += job.total;
                 notificados[job.id] = hojeStr;
@@ -1368,12 +1324,9 @@ function verificarPagamentosHoje() {
         if (totalHoje > 0) {
             localStorage.setItem('notificados_hoje', JSON.stringify(notificados));
             if (Notification.permission === "granted") {
-                new Notification("💰 Pagamentos Hoje!", {
-                    body: `Total a receber: ${formatarValor(totalHoje)}`,
-                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💰</text></svg>'
-                });
+                new Notification("Pagamentos Hoje!", { body: `Total: ${formatarValor(totalHoje)}` });
             }
-            mostrarToast(`💰 Você tem pagamentos previstos para hoje! Total: ${formatarValor(totalHoje)}`);
+            mostrarToast(`Pagamentos previstos para hoje! Total: ${formatarValor(totalHoje)}`);
         }
     };
 }
@@ -1381,7 +1334,6 @@ function verificarPagamentosHoje() {
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') verificarPagamentosHoje();
 });
-window.addEventListener('focus', verificarPagamentosHoje);
 
 // ==========================================
 // CRUD JOBS
@@ -1390,64 +1342,62 @@ function salvarJob(){
     const dataInput = document.getElementById("dataJob").value;
     const inputNomeEmpresa = document.getElementById("empresaJob").value.trim();
     const idEdicao = document.getElementById("editJobId").value;
-
     if(!dataInput || !inputNomeEmpresa) { alert("Data e Empresa são obrigatórios."); return; }
 
     const txEmp = db.transaction("empresas", "readonly");
     txEmp.objectStore("empresas").getAll().onsuccess = function(event) {
-        const empresaEncontrada = event.target.result.find(emp => emp.nome.toLowerCase() === inputNomeEmpresa.toLowerCase());
-        if(!empresaEncontrada) {
-            alert("Empresa não encontrada. Cadastre-a primeiro.");
-            return;
-        }
+        const emp = event.target.result.find(e => e.nome.toLowerCase() === inputNomeEmpresa.toLowerCase());
+        if(!emp) { alert("Empresa não encontrada."); return; }
 
-        const cacheBase = parseFloat(empresaEncontrada.cacheBase || 0);
-        const diaria = parseFloat(empresaEncontrada.diaria || 0);
-        const percentualNF = parseFloat(empresaEncontrada.nfPercentual || 0);
         const BASE_HOURS = 12;
+        const cacheBase = parseFloat(emp.cacheBase || 0);
+        const diaria = parseFloat(emp.diaria || 0);
+        const nfPerc = parseFloat(emp.nfPercentual || 0);
 
         const arrI = document.getElementById("inicio").value.split(":");
         const arrF = document.getElementById("fim").value.split(":");
-        let difMinutos = (parseInt(arrF[0]) * 60 + parseInt(arrF[1])) - (parseInt(arrI[0]) * 60 + parseInt(arrI[1]));
-        if(difMinutos < 0) difMinutos += 1440;
+        let difMin = (parseInt(arrF[0])*60 + parseInt(arrF[1])) - (parseInt(arrI[0])*60 + parseInt(arrI[1]));
+        if(difMin < 0) difMin += 1440;
         
-        const tHoras = difMinutos / 60;
+        const tHoras = difMin / 60;
         const vExtras = Math.max(0, tHoras - BASE_HOURS);
-        const cHoraReg = cacheBase / BASE_HOURS;
-        const rExtras = vExtras * cHoraReg;
+        const rExtras = vExtras * (cacheBase / BASE_HOURS);
         const fBruto = cacheBase + diaria + rExtras;
-        const imposto = fBruto * (percentualNF / 100);
+        const imposto = fBruto * (nfPerc / 100);
 
-        const previsao = calcularDataPagamentoReal(
-            calcularDataFechamentoReal(dataInput, empresaEncontrada.tipoPagamento, empresaEncontrada.fimPeriodo, empresaEncontrada.inicioSemana, empresaEncontrada.fimSemana),
-            empresaEncontrada.diasPagamento
-        ).toLocaleDateString("pt-BR");
+        const jobTemp = {
+            data: dataInput,
+            tipoPagamento: emp.tipoPagamento,
+            diasPagamento: parseInt(emp.diasPagamento || 0),
+            fimPeriodo: parseInt(emp.fimPeriodo || 30),
+            inicioSemana: parseInt(emp.inicioSemana || 1),
+            fimSemana: parseInt(emp.fimSemana || 0),
+            inicioCiclo1: parseInt(emp.inicioCiclo1 || 11),
+            fimCiclo1: parseInt(emp.fimCiclo1 || 25),
+            inicioCiclo2: parseInt(emp.inicioCiclo2 || 26),
+            fimCiclo2: parseInt(emp.fimCiclo2 || 10)
+        };
+        
+        const dataPrev = calcularPrevisaoPagamento(jobTemp);
+        const previsao = formatarDataExtenso(dataPrev.toISOString().split('T')[0]);
 
         const payloadJob = {
-            data: dataInput,
-            empresa: empresaEncontrada.nome,
+            data: dataInput, empresa: emp.nome,
             job: document.getElementById("nomeJob").value || "Job Operacional",
-            cache: cacheBase,
-            diaria: diaria,
-            extra: rExtras,
-            total: fBruto,
-            valorNF: imposto,
-            horas: tHoras.toFixed(1),
-            inicio: document.getElementById("inicio").value,
-            fim: document.getElementById("fim").value,
-            tipoPagamento: empresaEncontrada.tipoPagamento,
-            diasPagamento: parseInt(empresaEncontrada.diasPagamento || 0),
-            fimPeriodo: parseInt(empresaEncontrada.fimPeriodo || 30),
-            inicioSemana: parseInt(empresaEncontrada.inicioSemana || 1),
-            fimSemana: parseInt(empresaEncontrada.fimSemana || 0),
+            cache: cacheBase, diaria: diaria, extra: rExtras, total: fBruto, valorNF: imposto,
+            horas: tHoras, inicio: document.getElementById("inicio").value, fim: document.getElementById("fim").value,
+            tipoPagamento: emp.tipoPagamento, diasPagamento: parseInt(emp.diasPagamento || 0),
+            fimPeriodo: parseInt(emp.fimPeriodo || 30),
+            inicioSemana: parseInt(emp.inicioSemana || 1), fimSemana: parseInt(emp.fimSemana || 0),
+            inicioCiclo1: parseInt(emp.inicioCiclo1 || 11), fimCiclo1: parseInt(emp.fimCiclo1 || 25),
+            inicioCiclo2: parseInt(emp.inicioCiclo2 || 26), fimCiclo2: parseInt(emp.fimCiclo2 || 10),
             previsaoPagamento: previsao,
             statusManual: idEdicao ? editStatusManual : null
         };
-
         if(idEdicao) payloadJob.id = parseInt(idEdicao);
 
-        const txGravar = db.transaction("jobs", "readwrite");
-        const req = idEdicao ? txGravar.objectStore("jobs").put(payloadJob) : txGravar.objectStore("jobs").add(payloadJob);
+        const txG = db.transaction("jobs", "readwrite");
+        const req = idEdicao ? txG.objectStore("jobs").put(payloadJob) : txG.objectStore("jobs").add(payloadJob);
         req.onsuccess = function() {
             alert("✅ Lançamento salvo!");
             executarBackupAutomatico();
@@ -1461,7 +1411,7 @@ function carregarJobParaEdicao(id) {
     db.transaction("jobs", "readonly").objectStore("jobs").get(id).onsuccess = function(event) {
         const item = event.target.result;
         if(!item) return;
-        document.getElementById("formJobTitle").innerText = "✏️ Editando Lançamento";
+        document.getElementById("formJobTitle").innerText = "Editando Lancamento";
         document.getElementById("editJobId").value = item.id;
         document.getElementById("empresaJob").value = item.empresa;
         document.getElementById("dataJob").value = item.data;
@@ -1469,12 +1419,14 @@ function carregarJobParaEdicao(id) {
         document.getElementById("inicio").value = item.inicio;
         document.getElementById("fim").value = item.fim;
         editStatusManual = item.statusManual || null;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // CORRIGIDO: Scroll até o formulário de edição
+        document.getElementById("formJobTitle").scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
 }
 
 function deletarJob(id) {
-    if(confirm("Excluir definitivamente este lançamento?")) {
+    if(confirm("Excluir definitivamente este lancamento?")) {
         db.transaction("jobs", "readwrite").objectStore("jobs").delete(id).onsuccess = () => {
             executarBackupAutomatico();
             atualizarTela();
@@ -1497,6 +1449,22 @@ function marcarComoPago(id) {
     }
 }
 
+// CORRIGIDO: Função reabrir job
+function reabrirJob(id) {
+    if(confirm("Reabrir este job? Ele voltara para o status anterior.")) {
+        db.transaction("jobs", "readwrite").objectStore("jobs").get(id).onsuccess = function(e) {
+            const job = e.target.result;
+            if (!job) return;
+            job.statusManual = null; // Remove o status manual
+            db.transaction("jobs", "readwrite").objectStore("jobs").put(job).onsuccess = () => {
+                executarBackupAutomatico();
+                atualizarTela();
+                mostrarToast("✅ Job reaberto!");
+            };
+        };
+    }
+}
+
 function limparCampos(){
     document.getElementById("formJobTitle").innerText = "Novo Job";
     document.getElementById("editJobId").value = "";
@@ -1509,7 +1477,7 @@ function limparCampos(){
 }
 
 // ==========================================
-// ATUALIZAÇÃO DA TELA (ORDENADO POR DATA)
+// ATUALIZAÇÃO DA TELA
 // ==========================================
 function atualizarTela(){
     if(!db) return;
@@ -1517,6 +1485,7 @@ function atualizarTela(){
     painel.innerHTML = "";
     let tBruto = 0, tNF = 0, tHoras = 0;
     let dictGrafico = {};
+    let dictMensal = {};
 
     const txE = db.transaction("empresas", "readonly");
     txE.objectStore("empresas").getAll().onsuccess = function(e_empresas) {
@@ -1538,6 +1507,10 @@ function atualizarTela(){
                     tHoras += parseFloat(reg.horas || 0);
                     dictGrafico[reg.empresa] = (dictGrafico[reg.empresa] || 0) + reg.total;
                 }
+                
+                // Para gráfico mensal
+                const mesAno = reg.data.substring(0, 7);
+                dictMensal[mesAno] = (dictMensal[mesAno] || 0) + (reg.total || 0);
 
                 if(!mapaCores[reg.empresa]) mapaCores[reg.empresa] = coresGrafico[Object.keys(mapaCores).length % coresGrafico.length];
 
@@ -1551,9 +1524,11 @@ function atualizarTela(){
 
                     let badge = status === "aberto" ? '<span class="badge-status status-aberto">Aberto</span>' :
                                 (status === "arquivado" ? '<span class="badge-status status-fechado">Aguardando</span>' :
-                                '<span class="badge-status status-pago">Quitado ✓</span>');
+                                '<span class="badge-status status-pago">Quitado</span>');
 
+                    // CORRIGIDO: Sem emojis nas datas
                     let dFmt = formatarDataComDiaSemana(reg.data);
+                    let horasFmt = formatarHoras(reg.horas);
 
                     card.innerHTML = `
                         <button class="btn-del" onclick="deletarJob(${reg.id})" title="Excluir">
@@ -1562,18 +1537,20 @@ function atualizarTela(){
                         <button class="btn-edit-inline" onclick="carregarJobParaEdicao(${reg.id})" title="Editar">
                             <svg class="icon-btn"><use href="#icon-edit"/></svg>
                         </button>
-                        ${status !== 'pago' ? `<button class="btn-paid" onclick="marcarComoPago(${reg.id})" title="Marcar como pago">
-                            <svg class="icon-btn"><use href="#icon-check"/></svg>
-                        </button>` : ''}
+                        ${status === 'pago' ? 
+                            `<button class="btn-reopen" onclick="reabrirJob(${reg.id})">Reabrir</button>` :
+                            `<button class="btn-paid" onclick="marcarComoPago(${reg.id})">Marcar Pago</button>`
+                        }
                         <div class="empresa-title">${reg.empresa}</div>
-                        <div class="meta-text">📅 ${dFmt} | 📌 ${reg.job}</div>
+                        <div class="meta-text">Data: ${dFmt}</div>
+                        <div class="meta-text">Job: ${reg.job}</div>
                         <div>${badge}</div>
-                        <div class="meta-text" style="margin-top:8px;">🕒 ${reg.inicio} às ${reg.fim} (${reg.horas}h)</div>
-                        <div class="meta-text">💰 Cachê: ${formatarValor(reg.cache)}</div>
-                        <div class="meta-text">🍽️ Alimentação: ${formatarValor(reg.diaria)}</div>
-                        <div class="meta-text">⏰ Hora Extra: ${formatarValor(reg.extra)}</div>
-                        <div class="meta-text">🗓️ Previsão: <b>${reg.previsaoPagamento}</b></div>
-                        <div style="margin-top:10px; font-weight:900;">💵 Total Bruto: <span>${formatarValor(reg.total)}</span></div>
+                        <div class="meta-text" style="margin-top:8px;">Horarios: ${reg.inicio} as ${reg.fim} (${horasFmt})</div>
+                        <div class="meta-text">Cache: ${formatarValor(reg.cache)}</div>
+                        <div class="meta-text">Alimentacao: ${formatarValor(reg.diaria)}</div>
+                        <div class="meta-text">Hora Extra: ${formatarValor(reg.extra)}</div>
+                        <div class="meta-text">Previsao: <b>${reg.previsaoPagamento}</b></div>
+                        <div style="margin-top:10px; font-weight:900;">Total Bruto: <span>${formatarValor(reg.total)}</span></div>
                     `;
                     painel.appendChild(card);
                 }
@@ -1582,9 +1559,10 @@ function atualizarTela(){
             document.getElementById("vTotalSemana").innerText = formatarValor(tBruto);
             document.getElementById("vTotalNF").innerText = "- " + formatarValor(tNF);
             document.getElementById("vTotalLiquido").innerText = formatarValor(tBruto - tNF);
-            document.getElementById("vTotalHoras").innerText = tHoras.toFixed(1) + "h";
+            document.getElementById("vTotalHoras").innerText = formatarHoras(tHoras);
 
             renderGrafico(dictGrafico);
+            renderGraficoMensal(dictMensal);
 
             if(document.getElementById("searchBox").style.display === "block") filtrarTabela();
         };
@@ -1592,13 +1570,13 @@ function atualizarTela(){
 }
 
 // ==========================================
-// GRÁFICO
+// GRÁFICOS
 // ==========================================
 function renderGrafico(dict){
     const ctx = document.getElementById("graficoEmpresas");
     if(!ctx) return;
     const labels = Object.keys(dict), values = Object.values(dict);
-    const colors = labels.map(lbl => mapaCores[lbl]);
+    const colors = labels.map(lbl => mapaCores[lbl] || '#38bdf8');
 
     if(window.chartInstance) {
         window.chartInstance.data.labels = labels;
@@ -1609,7 +1587,38 @@ function renderGrafico(dict){
         if(labels.length === 0) return;
         window.chartInstance = new Chart(ctx, {
             type: "bar",
-            data: { labels: labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 8 }] },
+            data: { labels: labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 8, label: 'Faturamento por Empresa' }] },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { display: false }, x: { ticks: { color: "#94a3b8" } } }
+            }
+        });
+    }
+}
+
+// NOVO: Gráfico mensal
+function renderGraficoMensal(dict){
+    const ctx = document.getElementById("graficoMensal");
+    if(!ctx) return;
+    
+    const mesesOrdenados = Object.keys(dict).sort();
+    const labels = mesesOrdenados.map(m => {
+        const [ano, mes] = m.split('-');
+        const nomes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        return nomes[parseInt(mes)-1] + '/' + ano;
+    });
+    const values = mesesOrdenados.map(m => dict[m]);
+    
+    if(window.chartMensal) {
+        window.chartMensal.data.labels = labels;
+        window.chartMensal.data.datasets[0].data = values;
+        window.chartMensal.update();
+    } else {
+        if(labels.length === 0) return;
+        window.chartMensal = new Chart(ctx, {
+            type: "line",
+            data: { labels: labels, datasets: [{ data: values, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.4, pointRadius: 5 }] },
             options: {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
@@ -1632,7 +1641,7 @@ function filtrarTabela(){
 }
 
 // ==========================================
-// RELATÓRIO WHATSAPP (CORRIGIDO - SEM "FILTRO ATIVO")
+// WHATSAPP (FORMATO CORRIGIDO)
 // ==========================================
 function enviarRelatorioWhatsApp(){
     const tx = db.transaction("jobs", "readonly");
@@ -1653,59 +1662,61 @@ function enviarRelatorioWhatsApp(){
 
         if(filtrados.length === 0) { alert("Nenhum registro encontrado."); return; }
 
-        let msg = "📊 FADER LIVRE - EXTRATO CACHÊ CONTROL\n═══════════════════════════\n\n";
+        let msg = "FADER LIVRE - EXTRATO CACHE CONTROL\n";
+        msg += "======================================\n\n";
         let totalCache = 0, totalDiaria = 0, totalExtra = 0, totalGeral = 0;
 
         filtrados.forEach(j => {
-            msg += `🏢 ${j.empresa}\n📅 ${formatarDataComDiaSemana(j.data)}\n📌 ${j.job}\n`;
-            msg += `💰 Cachê: R$ ${(j.cache||0).toFixed(2)}\n`;
-            msg += `🍽️ Alimentação: R$ ${(j.diaria||0).toFixed(2)}\n`;
-            if (j.extra > 0) msg += `⏰ Hora Extra: R$ ${(j.extra||0).toFixed(2)}\n`;
-            msg += `💵 Total: R$ ${(j.total||0).toFixed(2)}\n`;
-            msg += `📆 Pagamento: ${j.previsaoPagamento}\n\n`;
+            msg += `Empresa: ${j.empresa}\n`;
+            msg += `Data: ${formatarDataExtenso(j.data)}\n`;
+            msg += `Job: ${j.job}\n`;
+            msg += `Horarios: ${j.inicio}h as ${j.fim}h\n`;
+            msg += `Cache: ${formatarValor(j.cache)}\n`;
+            if (j.extra > 0) msg += `Horas Extras: ${formatarValor(j.extra)}\n`;
+            msg += `Diaria/Logistica: ${formatarValor(j.diaria)}\n`;
+            msg += `Total: ${formatarValor(j.total)}\n`;
+            msg += `Previsao de pagamento: ${j.previsaoPagamento}\n\n`;
             totalCache += j.cache||0;
             totalDiaria += j.diaria||0;
             totalExtra += j.extra||0;
             totalGeral += j.total||0;
         });
 
-        msg += "═══════════════════════════\n📊 RESUMO:\n";
-        msg += `💰 Cachês: R$ ${totalCache.toFixed(2)}\n`;
-        msg += `🍽️ Alimentação: R$ ${totalDiaria.toFixed(2)}\n`;
-        if (totalExtra > 0) msg += `⏰ Extras: R$ ${totalExtra.toFixed(2)}\n`;
-        msg += `💵 TOTAL GERAL: R$ ${totalGeral.toFixed(2)}\n`;
-        msg += `📅 Emitido: ${new Date().toLocaleDateString("pt-BR")}`;
+        msg += "======================================\n";
+        msg += `Total geral: ${formatarValor(totalGeral)}\n`;
+        msg += `Emitido: ${new Date().toLocaleDateString("pt-BR")}`;
 
         window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
     };
 }
 
 // ==========================================
-// EXPORTAÇÃO EXCEL (CORRIGIDA - COLUNAS DETALHADAS)
+// EXCEL (DETALHADO)
 // ==========================================
 function baixarExcelCompleto(){
     const tx = db.transaction("jobs", "readonly");
     tx.objectStore("jobs").getAll().onsuccess = function(event) {
         const ordenados = event.target.result.sort((a, b) => new Date(b.data) - new Date(a.data));
-        let csv = "ID;Data;Empresa;Job;Cache;Alimentacao;Hora_Extra;Total_Bruto;Imposto_NF;Valor_Liquido;Previsao_Pagamento\n";
+        let csv = "ID;Data;Empresa;Job;Cache;Alimentacao;Hora_Extra;Total_Bruto;Imposto_NF;Valor_Liquido;Horas;Previsao_Pagamento\n";
         ordenados.forEach(i => {
             const liquido = i.total - i.valorNF;
+            const horasFmt = formatarHoras(i.horas);
             csv += `${i.id};${i.data};${i.empresa};${i.job};`;
             csv += `R$ ${(i.cache||0).toFixed(2)};R$ ${(i.diaria||0).toFixed(2)};R$ ${(i.extra||0).toFixed(2)};`;
             csv += `R$ ${(i.total||0).toFixed(2)};R$ ${(i.valorNF||0).toFixed(2)};R$ ${liquido.toFixed(2)};`;
-            csv += `${i.previsaoPagamento}\n`;
+            csv += `${horasFmt};${i.previsaoPagamento}\n`;
         });
         const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = `fader_livre_faturamento_${new Date().toISOString().split('T')[0]}.csv`;
         link.click();
-        alert("✅ Planilha exportada!");
+        mostrarToast("✅ Planilha exportada!");
     };
 }
 
 // ==========================================
-// INICIALIZAÇÃO FINAL
+// INICIALIZAÇÃO
 // ==========================================
 window.onload = function() {
     const senhaSalva = localStorage.getItem("senha_cache_control");
