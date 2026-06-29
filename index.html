@@ -1573,41 +1573,71 @@ function baixarExcelCompleto() {
 // ============================================================
 //  BACKUP NA NUVEM (envia para servidor PHP)
 // ============================================================
-function enviarBackupNuvem() {
-  if (!db) return;
-  // Coleta dados
-  const txJ = db.transaction('jobs','readonly');
-  txJ.objectStore('jobs').getAll().onsuccess = function(e_jobs) {
+async function enviarBackupNuvem() {
+  if (!db) {
+    alert("Banco de dados não inicializado.");
+    return;
+  }
+  
+  // 1. Coleta e organiza todos os dados locais (Jobs e Empresas)
+  const transactionJobs = db.transaction('jobs', 'readonly');
+  transactionJobs.objectStore('jobs').getAll().onsuccess = function(e_jobs) {
     const jobs = e_jobs.target.result;
-    const txE = db.transaction('empresas','readonly');
-    txE.objectStore('empresas').getAll().onsuccess = function(e_empresas) {
+    
+    const transactionEmpresas = db.transaction('empresas', 'readonly');
+    transactionEmpresas.objectStore('empresas').getAll().onsuccess = function(e_empresas) {
       const empresas = e_empresas.target.result;
-      const pacote = { jobs, empresas, exportadoEm: new Date().toISOString() };
-      const json = JSON.stringify(pacote);
-      // Envia para um endpoint PHP (exemplo)
-      // Se não tiver servidor, faz download forçado como alternativa
-      if (confirm('Deseja enviar para a nuvem (servidor) ou baixar localmente?')) {
-        // Tentar enviar via fetch
-        const url = 'https://seudominio.com/backup_cloud.php'; // Substitua pela URL real
-        fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: json
+      
+      // Cria o pacote oficial de backup
+      const dadosBackup = {
+        jobs,
+        empresas,
+        exportadoEm: new Date().toISOString(),
+        versaoBanco: db.version
+      };
+      
+      const jsonString = JSON.stringify(dadosBackup, null, 2);
+      const dataAtual = new Date().toISOString().split('T')[0];
+      const nomeArquivo = `fader_livre_backup_${dataAtual}.json`;
+      
+      // 2. Transforma o texto em um arquivo de memória temporário
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const arquivoParaCompartilhar = new File([blob], nomeArquivo, { type: 'application/json' });
+      
+      // 3. ESTRATÉGIA MOBILE: Se estiver no Smartphone (Android/iOS como App)
+      if (navigator.canShare && navigator.canShare({ files: [arquivoParaCompartilhar] })) {
+        navigator.share({
+          files: [arquivoParaCompartilhar],
+          title: 'Backup Fader Livre',
+          text: 'Escolha onde deseja salvar seu backup (OneDrive, Google Drive, etc.):'
         })
-        .then(res => res.json())
-        .then(data => {
-          alert(data.message || 'Backup enviado com sucesso!');
+        .then(() => {
+          // Registra na memória do app a data do último backup com sucesso
+          localStorage.setItem('data_ultimo_backup', new Date().toLocaleDateString('pt-BR'));
+          alert("Processo de backup iniciado com sucesso!");
         })
-        .catch(err => {
-          alert('Falha ao enviar para a nuvem. Fazendo download local como fallback.');
-          fazerBackup();
+        .catch((erro) => {
+          console.log("Compartilhamento cancelado ou falhou:", erro);
         });
-      } else {
-        fazerBackup();
+      } 
+      // 4. PLANO B (Computador / Testes locais): Faz o download direto
+      else {
+        const urlDownload = URL.createObjectURL(blob);
+        const linkTemporario = document.createElement('a');
+        linkTemporario.href = urlDownload;
+        linkTemporario.download = nomeArquivo;
+        document.body.appendChild(linkTemporario);
+        linkTemporario.click();
+        document.body.removeChild(linkTemporario);
+        URL.revokeObjectURL(urlDownload);
+        
+        localStorage.setItem('data_ultimo_backup', new Date().toLocaleDateString('pt-BR'));
+        alert("Backup gerado localmente (.JSON)! Mova o arquivo para sua nuvem preferida.");
       }
     };
   };
 }
+
 
 // ============================================================
 //  BACKUP LOCAL
