@@ -1574,71 +1574,36 @@ function baixarExcelCompleto() {
 //  BACKUP NA NUVEM (envia para servidor PHP)
 // ============================================================
 async function enviarBackupNuvem() {
-  if (!db) {
-    alert("Banco de dados não inicializado.");
-    return;
-  }
-  
-  // 1. Coleta e organiza todos os dados locais (Jobs e Empresas)
-  const transactionJobs = db.transaction('jobs', 'readonly');
-  transactionJobs.objectStore('jobs').getAll().onsuccess = function(e_jobs) {
-    const jobs = e_jobs.target.result;
-    
-    const transactionEmpresas = db.transaction('empresas', 'readonly');
-    transactionEmpresas.objectStore('empresas').getAll().onsuccess = function(e_empresas) {
-      const empresas = e_empresas.target.result;
+  if (!db) { alert("Banco não inicializado."); return; }
+  db.transaction('jobs','readonly').objectStore('jobs').getAll().onsuccess = function(ej) {
+    const jobs = ej.target.result;
+    db.transaction('empresas','readonly').objectStore('empresas').getAll().onsuccess = function(ee) {
+      const empresas = ee.target.result;
+      const pacote = { jobs, empresas, exportadoEm: new Date().toISOString(), versaoBanco: db.version };
+      const blob = new Blob([JSON.stringify(pacote, null, 2)], { type: 'application/json' });
+      const arquivo = new File([blob], `fader_livre_backup_${new Date().toISOString().split('T')[0]}.json`, { type: 'application/json' });
       
-      // Cria o pacote oficial de backup
-      const dadosBackup = {
-        jobs,
-        empresas,
-        exportadoEm: new Date().toISOString(),
-        versaoBanco: db.version
-      };
-      
-      const jsonString = JSON.stringify(dadosBackup, null, 2);
-      const dataAtual = new Date().toISOString().split('T')[0];
-      const nomeArquivo = `fader_livre_backup_${dataAtual}.json`;
-      
-      // 2. Transforma o texto em um arquivo de memória temporário
-      const blob = new Blob([jsonString], { type: 'application/json' });
-      const arquivoParaCompartilhar = new File([blob], nomeArquivo, { type: 'application/json' });
-      
-      // 3. ESTRATÉGIA MOBILE: Se estiver no Smartphone (Android/iOS como App)
-      if (navigator.canShare && navigator.canShare({ files: [arquivoParaCompartilhar] })) {
-        navigator.share({
-          files: [arquivoParaCompartilhar],
-          title: 'Backup Fader Livre',
-          text: 'Escolha onde deseja salvar seu backup (OneDrive, Google Drive, etc.):'
-        })
-        .then(() => {
-          // Registra na memória do app a data do último backup com sucesso
-          localStorage.setItem('data_ultimo_backup', new Date().toLocaleDateString('pt-BR'));
-          alert("Processo de backup iniciado com sucesso!");
-        })
-        .catch((erro) => {
-          console.log("Compartilhamento cancelado ou falhou:", erro);
-        });
-      } 
-      // 4. PLANO B (Computador / Testes locais): Faz o download direto
-      else {
-        const urlDownload = URL.createObjectURL(blob);
-        const linkTemporario = document.createElement('a');
-        linkTemporario.href = urlDownload;
-        linkTemporario.download = nomeArquivo;
-        document.body.appendChild(linkTemporario);
-        linkTemporario.click();
-        document.body.removeChild(linkTemporario);
-        URL.revokeObjectURL(urlDownload);
-        
+      if (navigator.canShare && navigator.canShare({ files: [arquivo] })) {
+        navigator.share({ files: [arquivo], title: 'Backup Fader Livre' })
+          .then(() => {
+            localStorage.setItem('data_ultimo_backup', new Date().toLocaleDateString('pt-BR'));
+            alert("Backup iniciado!");
+          }).catch(() => {});
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = arquivo.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
         localStorage.setItem('data_ultimo_backup', new Date().toLocaleDateString('pt-BR'));
-        alert("Backup gerado localmente (.JSON)! Mova o arquivo para sua nuvem preferida.");
+        alert("Backup baixado localmente (.JSON)!");
       }
     };
   };
 }
-
-
 // ============================================================
 //  BACKUP LOCAL
 // ============================================================
