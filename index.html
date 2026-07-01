@@ -8,6 +8,7 @@
 
 <!-- Bibliotecas externas -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
@@ -86,6 +87,54 @@ body {
   to { transform: translateX(0); opacity: 1; }
 }
 
+/* ===== SPLASH SCREEN ===== */
+#splashScreen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  animation: splashFadeOut 0.6s ease-out 2.2s forwards;
+}
+@keyframes splashFadeOut {
+  to { opacity: 0; visibility: hidden; }
+}
+.splash-logo {
+  width: auto;
+  height: auto;
+  max-width: 70%;
+  max-height: 180px;
+  object-fit: contain;
+  animation: logoEntrance 1s ease-out;
+}
+@keyframes logoEntrance {
+  0% { opacity: 0; transform: scale(0.3); }
+  60% { opacity: 0.9; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.splash-title {
+  color: var(--primary);
+  font-size: 1.8em;
+  font-weight: 900;
+  margin-top: 20px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  animation: textFadeIn 1s ease-out 0.5s both;
+}
+@keyframes textFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.splash-subtitle {
+  color: var(--muted);
+  font-size: 0.9em;
+  margin-top: 8px;
+  animation: textFadeIn 1s ease-out 0.8s both;
+}
+
 /* ===== HEADER ===== */
 .header {
   text-align: center;
@@ -97,9 +146,9 @@ body {
 .logo-img {
   display: block;
   margin: 0 auto 5px;
-  max-width: 100%;
+  max-width: 90%;
   height: auto;
-  max-height: 50px;
+  max-height: 100px;
   object-fit: contain;
 }
 .header p.subtitle {
@@ -208,6 +257,30 @@ input:focus, select:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
+.password-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+}
+.password-wrapper input {
+  padding-right: 45px;
+  margin-bottom: 0;
+}
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1.1em;
+  padding: 8px;
+  z-index: 2;
+}
+.password-toggle:hover {
+  color: var(--text);
+}
 .btn {
   width: 100%;
   border: none;
@@ -302,19 +375,20 @@ input:focus, select:focus {
 .tab-button {
   flex: 1;
   min-width: 80px;
-  padding: 10px 6px;
+  padding: 12px 8px;
   background: transparent;
   color: var(--muted);
   border: none;
   border-radius: 10px;
   cursor: pointer;
   font-weight: 700;
-  font-size: 0.75em;
+  font-size: 0.8em;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
   transition: all 0.3s;
+  min-height: 44px;
 }
 .tab-button.active {
   background: var(--card);
@@ -463,9 +537,9 @@ input:checked + .slider:before {
 .modal .logo-img {
   display: block;
   margin: 0 auto 10px;
-  max-width: 100%;
+  max-width: 80%;
   height: auto;
-  max-height: 60px;
+  max-height: 120px;
   object-fit: contain;
 }
 .modal h2 {
@@ -481,21 +555,31 @@ input:checked + .slider:before {
   letter-spacing: 1px;
 }
 
+/* ===== RECUPERAÇÃO DE SENHA ===== */
+#recuperacaoBox {
+  display: none;
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border-color);
+}
+#recuperacaoBox.active {
+  display: block;
+  animation: fadeIn 0.4s ease-out;
+}
+
 /* ===== RESPONSIVIDADE ===== */
 @media (max-width: 480px) {
   .dashboard { grid-template-columns: 1fr 1fr; gap: 8px; }
   .dashboard-card { padding: 12px; }
   .total-geral, .total-nf, .total-horas, .total-liquido { font-size: 1.3em; }
-  .tab-button { font-size: 0.65em; padding: 8px 4px; min-width: 60px; }
+  .tab-button { font-size: 0.7em; padding: 10px 4px; min-width: 55px; min-height: 40px; }
   .input-group { padding: 12px; }
   .history-card { padding: 12px; }
   .btn { padding: 12px; font-size: 0.8em; }
-  .logo-img {
-    max-height: 40px;
-  }
-  .modal .logo-img {
-    max-height: 48px;
-  }
+  .logo-img { max-height: 80px; }
+  .modal .logo-img { max-height: 100px; }
+  .splash-logo { max-height: 140px; }
+  .splash-title { font-size: 1.4em; }
 }
 @media (max-width: 360px) {
   .dashboard { grid-template-columns: 1fr 1fr; }
@@ -513,7 +597,16 @@ input:checked + .slider:before {
 <body>
 
 <!-- ========================================== -->
-<!-- TELA DE VALIDAÇÃO (licença - sempre oculta) -->
+<!-- SPLASH SCREEN -->
+<!-- ========================================== -->
+<div id="splashScreen">
+  <img src="FaderLivreIcon.png" alt="Fader Livre" class="splash-logo">
+  <div class="splash-title">FADER LIVRE</div>
+  <div class="splash-subtitle">Controle de Cachês</div>
+</div>
+
+<!-- ========================================== -->
+<!-- TELA DE VALIDAÇÃO -->
 <!-- ========================================== -->
 <div id="telaValidacao" style="display:none;">
   <div class="modal">
@@ -540,18 +633,53 @@ input:checked + .slider:before {
 </div>
 
 <!-- ========================================== -->
-<!-- TELA DE LOGIN (senha master)              -->
+<!-- TELA DE LOGIN -->
 <!-- ========================================== -->
-<div id="loginScreen">
+<div id="loginScreen" style="display:none;">
   <div class="modal">
     <img src="FaderLivreIcon.png" alt="Fader Livre" class="logo-img">
     <p class="sub" style="margin-top:5px;">Controle de Cachês</p>
     <div style="margin:20px 0;">
       <label><i class="fas fa-lock"></i> Chave de Segurança</label>
-      <input type="password" id="senhaInput" placeholder="••••••••" style="text-align:center; letter-spacing:6px; font-size:18px;">
+      <div class="password-wrapper">
+        <input type="password" id="senhaInput" placeholder="••••••••" style="text-align:center; letter-spacing:6px; font-size:18px;">
+        <button class="password-toggle" onclick="togglePasswordVisibility('senhaInput', this)" title="Mostrar/ocultar senha">
+          <i class="fas fa-eye-slash"></i>
+        </button>
+      </div>
+      
+      <div style="text-align:right; margin-bottom:10px;">
+        <a href="javascript:void(0)" onclick="toggleRecuperacaoSenha()" style="color:var(--blue); font-size:0.75em; text-decoration:none;">
+          <i class="fas fa-question-circle"></i> Esqueci minha senha
+        </a>
+      </div>
+      
+      <div id="recuperacaoBox">
+        <label>E-mail de Recuperação</label>
+        <input type="email" id="recEmail" placeholder="nome@empresa.com">
+        <button class="btn btn-search" onclick="recuperarSenhaLogin()" style="margin-bottom:8px;">
+          <i class="fas fa-key"></i> Verificar e Redefinir
+        </button>
+        <div id="novaSenhaRecBox" style="display:none;">
+          <label>Nova Chave Master</label>
+          <div class="password-wrapper">
+            <input type="password" id="novaSenhaRec" placeholder="Digite uma chave forte">
+            <button class="password-toggle" onclick="togglePasswordVisibility('novaSenhaRec', this)" title="Mostrar/ocultar senha">
+              <i class="fas fa-eye-slash"></i>
+            </button>
+          </div>
+          <button class="btn btn-save" onclick="redefinirSenha()"><i class="fas fa-save"></i> Salvar Nova Senha</button>
+        </div>
+      </div>
+      
       <div id="novaSenhaBox" style="display:none; margin-top:10px; padding-top:12px; border-top:1px dashed var(--border-color);">
         <label>Nova Chave Master</label>
-        <input type="password" id="novaSenha" placeholder="Digite uma chave forte">
+        <div class="password-wrapper">
+          <input type="password" id="novaSenha" placeholder="Digite uma chave forte">
+          <button class="password-toggle" onclick="togglePasswordVisibility('novaSenha', this)" title="Mostrar/ocultar senha">
+            <i class="fas fa-eye-slash"></i>
+          </button>
+        </div>
         <label>E-mail de Recuperação</label>
         <input type="email" id="emailRecuperacao" placeholder="nome@empresa.com">
         <label>Telefone (opcional)</label>
@@ -571,7 +699,7 @@ input:checked + .slider:before {
 </div>
 
 <!-- ========================================== -->
-<!-- CONTEÚDO PRINCIPAL                        -->
+<!-- CONTEÚDO PRINCIPAL -->
 <!-- ========================================== -->
 <div id="appContent" style="display:none;">
 
@@ -617,7 +745,7 @@ input:checked + .slider:before {
       </div>
     </div>
 
-    <div class="input-group">
+    <div class="input-group" id="formJobContainer">
       <h3><span id="formJobTitle">Novo Job</span></h3>
       <input type="hidden" id="editJobId" value="">
       <label><i class="fas fa-building"></i> Empresa</label>
@@ -637,11 +765,16 @@ input:checked + .slider:before {
           <input type="time" id="fim" value="20:00">
         </div>
       </div>
-      <div style="display:flex; flex-direction:column; gap:5px; margin-top:5px;">
-        <button class="btn btn-save" id="btnSalvarJob" onclick="salvarJob()">
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:10px;">
+        <button class="btn btn-save" id="btnSalvarJob" onclick="salvarJob()" style="margin-bottom:0;">
           <i class="fas fa-save"></i> Salvar
         </button>
-        <button class="btn btn-cancel" onclick="limparCampos()"><i class="fas fa-undo"></i> Limpar</button>
+        <button class="btn btn-cancel" onclick="limparCampos()" style="margin-bottom:0;">
+          <i class="fas fa-undo"></i> Limpar
+        </button>
+        <button class="btn btn-export" onclick="cancelarEdicao()" style="margin-bottom:0;">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
       </div>
     </div>
 
@@ -695,26 +828,35 @@ input:checked + .slider:before {
         <option value="Quinzenal">Quinzenal</option>
         <option value="Mensal">Mensal</option>
       </select>
-      <div id="cadPeriodoPersonalizado" style="display:none; background:var(--dark-pure); border-radius:12px; padding:10px; margin-bottom:10px;">
-        <div id="quinzenalPeriodos" style="display:none; gap:8px;">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <div><label>Início Ciclo 1</label><input type="number" id="cadInicioCiclo1" value="1" min="1" max="31"></div>
-            <div><label>Fim Ciclo 1</label><input type="number" id="cadFimCiclo1" value="15" min="1" max="31"></div>
-          </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
-            <div><label>Início Ciclo 2</label><input type="number" id="cadInicioCiclo2" value="16" min="1" max="31"></div>
-            <div><label>Fim Ciclo 2</label><input type="number" id="cadFimCiclo2" value="31" min="1" max="31"></div>
-          </div>
+      
+      <!-- Período Quinzenal (Opção A) -->
+      <div id="cadQuinzenalBox" style="display:none; background:var(--dark-pure); border-radius:12px; padding:10px; margin-bottom:10px;">
+        <label style="color:var(--primary);">Períodos de Corte</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+          <div><label>Início Período 1</label><input type="number" id="cadInicioCiclo1" value="1" min="1" max="31"></div>
+          <div><label>Fim Período 1</label><input type="number" id="cadFimCiclo1" value="15" min="1" max="31"></div>
         </div>
-        <div id="mensalPeriodos" style="display:none;">
-          <label>Dia Final do Ciclo</label>
-          <input type="number" id="cadFimPeriodo" value="30" min="1" max="31">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div><label>Início Período 2</label><input type="number" id="cadInicioCiclo2" value="16" min="1" max="31"></div>
+          <div><label>Fim Período 2</label><input type="number" id="cadFimCiclo2" value="31" min="1" max="31"></div>
+        </div>
+        <div style="margin-top:8px; font-size:0.7em; color:var(--muted);">
+          <i class="fas fa-info-circle"></i> Ex: Período 1: 11 a 25 | Período 2: 26 a 10
         </div>
       </div>
-      <div id="cadPeriodoSemanalBox" style="display:none; background:var(--dark-pure); border-radius:12px; padding:10px; margin-bottom:10px; display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+      
+      <!-- Período Mensal -->
+      <div id="cadMensalBox" style="display:none; background:var(--dark-pure); border-radius:12px; padding:10px; margin-bottom:10px;">
+        <label>Dia Final do Ciclo</label>
+        <input type="number" id="cadFimPeriodo" value="30" min="1" max="31">
+      </div>
+      
+      <!-- Período Semanal -->
+      <div id="cadSemanalBox" style="display:none; background:var(--dark-pure); border-radius:12px; padding:10px; margin-bottom:10px; display:grid; grid-template-columns:1fr 1fr; gap:8px;">
         <div><label>Início Semana</label><select id="cadInicioSemana"><option value="1">Segunda</option><option value="2">Terça</option><option value="3">Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option><option value="6">Sábado</option><option value="0">Domingo</option></select></div>
         <div><label>Fim Semana</label><select id="cadFimSemana"><option value="0">Domingo</option><option value="1">Segunda</option><option value="2">Terça</option><option value="3">Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option><option value="6">Sábado</option></select></div>
       </div>
+      
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div><label>Dias p/ Liquidação</label><input type="number" id="cadDiasPagamento" value="5" min="0"></div>
         <div><label>Alíquota NF (%)</label><input type="number" id="cadNfPercentual" value="0" min="0" max="100" step="0.01"></div>
@@ -760,6 +902,24 @@ input:checked + .slider:before {
         <input type="number" id="baseHoursInput" value="12" onchange="updateBaseHours(this.value)">
       </div>
       <div class="config-group">
+        <h4><i class="fas fa-map-marker-alt"></i> Localização para Feriados</h4>
+        <label>Estado</label>
+        <select id="estadoFeriados" onchange="salvarEstadoFeriados()">
+          <option value="NACIONAL">Apenas Feriados Nacionais</option>
+          <option value="SP">São Paulo</option>
+          <option value="RJ">Rio de Janeiro</option>
+          <option value="MG">Minas Gerais</option>
+          <option value="BA">Bahia</option>
+          <option value="RS">Rio Grande do Sul</option>
+          <option value="PR">Paraná</option>
+          <option value="SC">Santa Catarina</option>
+          <option value="DF">Distrito Federal</option>
+          <option value="PE">Pernambuco</option>
+          <option value="CE">Ceará</option>
+        </select>
+        <small style="color:var(--muted); font-size:0.7em;">Usado para cálculo de dias úteis (feriados estaduais)</small>
+      </div>
+      <div class="config-group">
         <h4><i class="fas fa-bell"></i> Notificações</h4>
         <label>Horário de verificação (HH:MM)</label>
         <input type="text" id="notificationCheckHour" value="09:00" onchange="updateNotificationCheckHour(this.value)">
@@ -768,11 +928,26 @@ input:checked + .slider:before {
       <div class="config-group">
         <h4><i class="fas fa-key"></i> Chave Master</h4>
         <label>Antiga</label>
-        <input type="password" id="oldMasterPassword" placeholder="••••••••">
+        <div class="password-wrapper">
+          <input type="password" id="oldMasterPassword" placeholder="••••••••">
+          <button class="password-toggle" onclick="togglePasswordVisibility('oldMasterPassword', this)" title="Mostrar/ocultar senha">
+            <i class="fas fa-eye-slash"></i>
+          </button>
+        </div>
         <label>Nova</label>
-        <input type="password" id="newMasterPassword" placeholder="••••••••">
+        <div class="password-wrapper">
+          <input type="password" id="newMasterPassword" placeholder="••••••••">
+          <button class="password-toggle" onclick="togglePasswordVisibility('newMasterPassword', this)" title="Mostrar/ocultar senha">
+            <i class="fas fa-eye-slash"></i>
+          </button>
+        </div>
         <label>Confirmar</label>
-        <input type="password" id="confirmNewMasterPassword" placeholder="••••••••">
+        <div class="password-wrapper">
+          <input type="password" id="confirmNewMasterPassword" placeholder="••••••••">
+          <button class="password-toggle" onclick="togglePasswordVisibility('confirmNewMasterPassword', this)" title="Mostrar/ocultar senha">
+            <i class="fas fa-eye-slash"></i>
+          </button>
+        </div>
         <button class="btn btn-save" onclick="changeMasterPassword()" style="background:var(--blue);"><i class="fas fa-lock"></i> Alterar</button>
       </div>
     </div>
@@ -781,27 +956,21 @@ input:checked + .slider:before {
 </div><!-- fim #appContent -->
 
 <!-- ========================================== -->
-<!-- SCRIPTS                                   -->
+<!-- SCRIPTS -->
 <!-- ========================================== -->
 <script>
 // ============================================================
-//  SISTEMA DE LICENÇA COM ACESSO AUTOMÁTICO (TESTE INFINITO)
+//  SISTEMA DE LICENÇA
 // ============================================================
 const PERIODO_TESTE = 999999;
 const PERIODO_LICENCA = 999999;
 const CHAVE_CRIPTO = 'FADER_LIVRE_2024_SECRET_KEY';
 
 class SistemaLicenca {
-  constructor() {
-    this.arquivoLicenca = 'licenca_fader.dat';
-  }
+  constructor() { this.arquivoLicenca = 'licenca_fader.dat'; }
   gerarChaveAtivacao(codigoPIX) {
     const timestamp = Date.now();
-    const dados = {
-      codigoPIX: codigoPIX,
-      timestamp: timestamp,
-      expiracao: timestamp + (PERIODO_LICENCA * 24 * 60 * 60 * 1000)
-    };
+    const dados = { codigoPIX, timestamp, expiracao: timestamp + (PERIODO_LICENCA * 24 * 60 * 60 * 1000) };
     const hash = this._gerarHash(codigoPIX + timestamp);
     const dadosCripto = this._criptografar(JSON.stringify(dados));
     return { chaveAtivacao: hash.substring(0,16).toUpperCase(), dadosCripto, validadeDias: PERIODO_LICENCA };
@@ -812,9 +981,7 @@ class SistemaLicenca {
       const agora = Date.now();
       if (agora > dados.expiracao) return { valida: false, mensagem: 'Expirada', codigoPIX: dados.codigoPIX };
       const diasUso = (agora - dados.timestamp) / (24*60*60*1000);
-      if (diasUso <= PERIODO_TESTE) {
-        return { valida: true, modo: 'teste', diasRestantes: Math.ceil(PERIODO_TESTE - diasUso), codigoPIX: dados.codigoPIX };
-      }
+      if (diasUso <= PERIODO_TESTE) return { valida: true, modo: 'teste', diasRestantes: Math.ceil(PERIODO_TESTE - diasUso), codigoPIX: dados.codigoPIX };
       return { valida: true, modo: 'licenciado', diasRestantes: Math.ceil((dados.expiracao - agora) / (24*60*60*1000)), codigoPIX: dados.codigoPIX };
     } catch(e) { return { valida: false, mensagem: 'Erro: '+e.message }; }
   }
@@ -826,9 +993,7 @@ class SistemaLicenca {
       return { alerta: false };
     }
     const resultado = this.validarLicenca(licenca.chave, licenca.dadosCripto);
-    if (resultado.valida && resultado.diasRestantes <= 7) {
-      return { alerta: true, diasRestantes: resultado.diasRestantes, mensagem: `⚠️ Expira em ${resultado.diasRestantes} dias` };
-    }
+    if (resultado.valida && resultado.diasRestantes <= 7) return { alerta: true, diasRestantes: resultado.diasRestantes, mensagem: `⚠️ Expira em ${resultado.diasRestantes} dias` };
     return { alerta: false };
   }
   salvarLicenca(chave, dadosCripto) {
@@ -840,6 +1005,172 @@ class SistemaLicenca {
   _carregarLicenca() { try { return JSON.parse(localStorage.getItem(this.arquivoLicenca)); } catch { return null; } }
 }
 const sistemaLicenca = new SistemaLicenca();
+
+// ============================================================
+//  FERIADOS (Nacionais + Estaduais)
+// ============================================================
+const FERIADOS_NACIONAIS = [
+  '01-01', // Confraternização Universal
+  '04-21', // Tiradentes
+  '05-01', // Dia do Trabalho
+  '09-07', // Independência
+  '10-12', // Nossa Senhora Aparecida
+  '11-02', // Finados
+  '11-15', // Proclamação da República
+  '12-25', // Natal
+];
+
+const FERIADOS_ESTADUAIS = {
+  'SP': ['07-09'], // Revolução Constitucionalista
+  'RJ': ['04-23', '11-20'], // São Jorge, Consciência Negra
+  'MG': ['04-21'], // Tiradentes (já nacional)
+  'BA': ['07-02'], // Independência da Bahia
+  'RS': ['09-20'], // Revolução Farroupilha
+  'PR': ['12-19'], // Emancipação do Paraná
+  'SC': ['08-11'], // Fundação de SC
+  'DF': ['04-21', '11-30'], // Tiradentes + Aniversário de Brasília
+  'PE': ['03-06'], // Revolução Pernambucana
+  'CE': ['03-25'], // Abolição da Escravatura no Ceará
+};
+
+function getFeriadosFixos() {
+  const estado = localStorage.getItem('estado_feriados') || 'NACIONAL';
+  let feriados = [...FERIADOS_NACIONAIS];
+  if (estado !== 'NACIONAL' && FERIADOS_ESTADUAIS[estado]) {
+    feriados = feriados.concat(FERIADOS_ESTADUAIS[estado]);
+  }
+  return feriados;
+}
+
+function getFeriadosMoveis(ano) {
+  // Páscoa (Algoritmo de Gauss)
+  const a = ano % 19;
+  const b = Math.floor(ano / 100);
+  const c = ano % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const mes = Math.floor((h + l - 7 * m + 114) / 31);
+  const dia = ((h + l - 7 * m + 114) % 31) + 1;
+  
+  const pascoa = new Date(ano, mes - 1, dia);
+  const carnaval = new Date(pascoa);
+  carnaval.setDate(pascoa.getDate() - 47);
+  const corpusChristi = new Date(pascoa);
+  corpusChristi.setDate(pascoa.getDate() + 60);
+  
+  const moveis = [];
+  moveis.push(formatarDataFeriado(carnaval));
+  moveis.push(formatarDataFeriado(carnaval.getTime() + 86400000)); // segunda de carnaval
+  moveis.push(formatarDataFeriado(pascoa));
+  moveis.push(formatarDataFeriado(corpusChristi));
+  
+  return moveis;
+}
+
+function formatarDataFeriado(data) {
+  const dia = String(data.getDate()).padStart(2, '0');
+  const mes = String(data.getMonth() + 1).padStart(2, '0');
+  return `${dia}-${mes}`;
+}
+
+function ehFeriado(data) {
+  const dia = String(data.getDate()).padStart(2, '0');
+  const mes = String(data.getMonth() + 1).padStart(2, '0');
+  const dataStr = `${dia}-${mes}`;
+  const feriadosFixos = getFeriadosFixos();
+  const feriadosMoveis = getFeriadosMoveis(data.getFullYear());
+  return feriadosFixos.includes(dataStr) || feriadosMoveis.includes(dataStr);
+}
+
+function ehDiaUtil(data) {
+  const diaSemana = data.getDay();
+  if (diaSemana === 0 || diaSemana === 6) return false; // sábado e domingo
+  if (ehFeriado(data)) return false;
+  return true;
+}
+
+function adicionarDiasUteis(dataInicial, dias) {
+  const data = new Date(dataInicial);
+  let diasAdicionados = 0;
+  while (diasAdicionados < dias) {
+    data.setDate(data.getDate() + 1);
+    if (ehDiaUtil(data)) diasAdicionados++;
+  }
+  return data;
+}
+
+// ============================================================
+//  SPLASH SCREEN
+// ============================================================
+setTimeout(function() {
+  const splash = document.getElementById('splashScreen');
+  if (splash) splash.style.display = 'none';
+}, 2800);
+
+// ============================================================
+//  TOGGLE DE SENHA
+// ============================================================
+function togglePasswordVisibility(inputId, button) {
+  const input = document.getElementById(inputId);
+  const icon = button.querySelector('i');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.classList.remove('fa-eye-slash');
+    icon.classList.add('fa-eye');
+  } else {
+    input.type = 'password';
+    icon.classList.remove('fa-eye');
+    icon.classList.add('fa-eye-slash');
+  }
+}
+
+// ============================================================
+//  RECUPERAÇÃO DE SENHA NA TELA DE LOGIN
+// ============================================================
+function toggleRecuperacaoSenha() {
+  const box = document.getElementById('recuperacaoBox');
+  box.classList.toggle('active');
+  document.getElementById('novaSenhaRecBox').style.display = 'none';
+}
+
+function recuperarSenhaLogin() {
+  const email = document.getElementById('recEmail').value.trim();
+  const savedEmail = localStorage.getItem('email_cache_control');
+  if (!savedEmail) {
+    alert('Nenhum e-mail de recuperação cadastrado. Use "Configurar" para definir.');
+    return;
+  }
+  if (!email) {
+    alert('Digite o e-mail de recuperação.');
+    return;
+  }
+  if (email.toLowerCase() !== savedEmail.toLowerCase()) {
+    alert('E-mail não confere com o cadastrado.');
+    return;
+  }
+  document.getElementById('novaSenhaRecBox').style.display = 'block';
+}
+
+function redefinirSenha() {
+  const novaSenha = document.getElementById('novaSenhaRec').value.trim();
+  if (!novaSenha || novaSenha.length < 4) {
+    alert('A nova senha deve ter pelo menos 4 caracteres.');
+    return;
+  }
+  localStorage.setItem('senha_cache_control', novaSenha);
+  alert('Senha redefinida com sucesso!');
+  document.getElementById('recuperacaoBox').classList.remove('active');
+  document.getElementById('novaSenhaRecBox').style.display = 'none';
+  document.getElementById('recEmail').value = '';
+  document.getElementById('novaSenhaRec').value = '';
+}
 
 // ============================================================
 //  FUNÇÕES DE LOGIN / SENHA
@@ -916,7 +1247,7 @@ function emergencyReset() {
 }
 
 // ============================================================
-//  FUNÇÕES DE VALIDAÇÃO (mantidas para compatibilidade)
+//  FUNÇÕES DE VALIDAÇÃO
 // ============================================================
 function ativarLicenca() { alert('Licença já ativa (modo teste).'); }
 function copiarPIX() {
@@ -952,11 +1283,20 @@ function inicializarApp() {
     const [h,m] = savedNotif.split(':').map(Number);
     NOTIFICATION_CHECK_HOUR_FLOAT = h + m/60;
   }
+  const savedEstado = localStorage.getItem('estado_feriados') || 'NACIONAL';
+  document.getElementById('estadoFeriados').value = savedEstado;
+  
   try { document.getElementById('dataJob').value = new Date().toISOString().split('T')[0]; } catch(e) {}
   inicializarDB();
   executarBackupAutomatico();
   checkAndRequestNotificationPermission();
   checkDuePayments();
+}
+
+function salvarEstadoFeriados() {
+  const estado = document.getElementById('estadoFeriados').value;
+  localStorage.setItem('estado_feriados', estado);
+  atualizarTela(); // recalcula previsões
 }
 
 // ============================================================
@@ -1044,18 +1384,18 @@ function calcularDataFechamentoReal(dataPrestacao, tipoCiclo, fimPeriodoMensal, 
   fech.setHours(0,0,0,0);
   return fech;
 }
+
 function calcularDataPagamentoReal(dataFechamento, diasUteis) {
-  let pag = new Date(dataFechamento);
-  pag.setDate(pag.getDate() + Number(diasUteis));
-  pag.setHours(0,0,0,0);
-  return pag;
+  return adicionarDiasUteis(dataFechamento, Number(diasUteis));
 }
+
 function isDataPagamentoAtingida(job) {
   let fech = calcularDataFechamentoReal(job.data, job.tipoPagamento, job.fimPeriodo, job.inicioSemana, job.fimSemana, job.inicioCiclo1, job.fimCiclo1, job.inicioCiclo2, job.fimCiclo2);
   let pag = calcularDataPagamentoReal(fech, job.diasPagamento);
   let hoje = new Date(); hoje.setHours(0,0,0,0);
   return hoje.getTime() >= pag.getTime();
 }
+
 function obterStatusPeriodo(job) {
   if (job.statusManual === 'pago') return 'pago';
   let hoje = new Date(); hoje.setHours(0,0,0,0);
@@ -1086,6 +1426,7 @@ function alternarAba(abaId, event) {
     document.getElementById('themeToggle').checked = document.body.classList.contains('light-mode');
     document.getElementById('baseHoursInput').value = BASE_HOURS;
     document.getElementById('notificationCheckHour').value = localStorage.getItem('notification_check_hour') || '09:00';
+    document.getElementById('estadoFeriados').value = localStorage.getItem('estado_feriados') || 'NACIONAL';
   }
 }
 function definirFiltroVisualizacao(tipo) {
@@ -1097,19 +1438,17 @@ function definirFiltroVisualizacao(tipo) {
     '<i class="fas fa-archive"></i> Jobs Arquivados / Pagos';
   atualizarTela();
 }
-function handleEnterKey(e) { if (e.key === 'Enter') e.target.blur(); }
 function alterarPeriodoPagamentoCadastro() {
   const tipo = document.getElementById('cadTipoPagamento').value;
-  document.getElementById('cadPeriodoPersonalizado').style.display = 'none';
-  document.getElementById('cadPeriodoSemanalBox').style.display = 'none';
-  document.getElementById('quinzenalPeriodos').style.display = 'none';
-  document.getElementById('mensalPeriodos').style.display = 'none';
+  document.getElementById('cadQuinzenalBox').style.display = 'none';
+  document.getElementById('cadMensalBox').style.display = 'none';
+  document.getElementById('cadSemanalBox').style.display = 'none';
   if (tipo === 'Semanal') {
-    document.getElementById('cadPeriodoSemanalBox').style.display = 'grid';
-  } else {
-    document.getElementById('cadPeriodoPersonalizado').style.display = 'block';
-    if (tipo === 'Quinzenal') document.getElementById('quinzenalPeriodos').style.display = 'block';
-    else if (tipo === 'Mensal') document.getElementById('mensalPeriodos').style.display = 'block';
+    document.getElementById('cadSemanalBox').style.display = 'grid';
+  } else if (tipo === 'Quinzenal') {
+    document.getElementById('cadQuinzenalBox').style.display = 'block';
+  } else if (tipo === 'Mensal') {
+    document.getElementById('cadMensalBox').style.display = 'block';
   }
 }
 function gerenciarAutocomplete(texto) {
@@ -1147,6 +1486,10 @@ function limparCampos() {
   document.getElementById('inicio').value = '08:00';
   document.getElementById('fim').value = '20:00';
   editStatusManual = null;
+}
+function cancelarEdicao() {
+  limparCampos();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function abrirBusca() { document.getElementById('searchBox').style.display = 'block'; }
 function limparBusca() { document.getElementById('inputBusca').value = ''; document.getElementById('searchBox').style.display = 'none'; filtrarTabela(); }
@@ -1227,6 +1570,9 @@ function carregarEmpresaParaEdicao(id) {
     document.getElementById('cadFimSemana').value = d.fimSemana || 0;
     alterarPeriodoPagamentoCadastro();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      document.getElementById('abaEmpresas').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 }
 function deletarEmpresa(id) {
@@ -1356,11 +1702,13 @@ function salvarJob() {
     };
   };
 }
+
 function calcularPagamento(dataPrestacao, tipoCiclo, diasUteis, fimPeriodoMensal, inicioSemana, fimSemana, inicioCiclo1, fimCiclo1, inicioCiclo2, fimCiclo2) {
   const fech = calcularDataFechamentoReal(dataPrestacao, tipoCiclo, fimPeriodoMensal, inicioSemana, fimSemana, inicioCiclo1, fimCiclo1, inicioCiclo2, fimCiclo2);
-  const pag = calcularDataPagamentoReal(fech, diasUteis);
+  const pag = adicionarDiasUteis(fech, Number(diasUteis));
   return pag.toLocaleDateString('pt-BR');
 }
+
 function carregarJobParaEdicao(id) {
   const tx = db.transaction('jobs','readonly');
   tx.objectStore('jobs').get(id).onsuccess = function(e) {
@@ -1374,9 +1722,20 @@ function carregarJobParaEdicao(id) {
     document.getElementById('inicio').value = item.inicio;
     document.getElementById('fim').value = item.fim;
     editStatusManual = item.statusManual || null;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Rolar até a aba de Lançamentos e o formulário
+    alternarAba('abaJobs', null);
+    document.getElementById('tabJobsBtn').classList.add('active');
+    setTimeout(() => {
+      document.getElementById('formJobContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('formJobContainer').style.boxShadow = '0 0 0 3px var(--primary-glow)';
+      setTimeout(() => {
+        document.getElementById('formJobContainer').style.boxShadow = '';
+      }, 2000);
+    }, 200);
   };
 }
+
 function deletarJob(id) {
   if (confirm('Excluir job?')) {
     const tx = db.transaction('jobs','readwrite');
@@ -1389,11 +1748,19 @@ function deletarJob(id) {
     };
   }
 }
+
 function alternarStatusManual(jobId, novoStatus) {
   const tx = db.transaction('jobs','readwrite');
   tx.objectStore('jobs').get(jobId).onsuccess = function(e) {
     const job = e.target.result;
-    if (!job) return;
+    if (!job) { alert('Job não encontrado.'); return; }
+    // Se for para reabrir (novoStatus === null), SEMPRE permite
+    if (novoStatus === null) {
+      job.statusManual = null;
+      tx.objectStore('jobs').put(job).onsuccess = () => { executarBackupAutomatico(); atualizarTela(); };
+      return;
+    }
+    // Se for para marcar como pago, verifica data
     if (novoStatus === 'pago' && !isDataPagamentoAtingida(job)) {
       alert('Data de pagamento ainda não atingida.');
       return;
@@ -1486,6 +1853,7 @@ function atualizarTela() {
     };
   };
 }
+
 function renderGrafico(dict) {
   const ctx = document.getElementById('graficoEmpresas');
   if (!ctx) return;
@@ -1531,50 +1899,141 @@ function renderGrafico(dict) {
 }
 
 // ============================================================
-//  EXPORTAÇÃO EXCEL (AGRUPADO POR EMPRESA E MÊS)
+//  EXPORTAÇÃO EXCEL COM GRÁFICOS (XLSX)
 // ============================================================
 function baixarExcelCompleto() {
   if (!db) return;
+  if (typeof XLSX === 'undefined') { alert('Carregando biblioteca... Tente novamente.'); return; }
+  
   const tx = db.transaction('jobs','readonly');
   tx.objectStore('jobs').getAll().onsuccess = function(e) {
     const jobs = e.target.result;
     if (!jobs.length) { alert('Nenhum job para exportar.'); return; }
-    const grupos = {};
+    
+    const wb = XLSX.utils.book_new();
+    
+    // Aba 1: Lançamentos Detalhados
+    const dadosLancamentos = jobs.map(j => ({
+      'Empresa': j.empresa,
+      'Data': j.data,
+      'Job': j.job,
+      'Início': j.inicio,
+      'Fim': j.fim,
+      'Horas': formatarHoras(j.horas),
+      'Cachê': j.cache,
+      'Diária': j.diaria,
+      'Extras': j.extra,
+      'Total Bruto': j.total,
+      'NF': j.valorNF || 0,
+      'Líquido': j.total - (j.valorNF || 0),
+      'Previsão Pagamento': j.previsaoPagamento
+    }));
+    const ws1 = XLSX.utils.json_to_sheet(dadosLancamentos);
+    ws1['!cols'] = [
+      {wch: 20}, {wch: 12}, {wch: 25}, {wch: 8}, {wch: 8}, {wch: 10},
+      {wch: 12}, {wch: 12}, {wch: 12}, {wch: 14}, {wch: 12}, {wch: 14}, {wch: 20}
+    ];
+    XLSX.utils.book_append_sheet(wb, ws1, 'Lançamentos');
+    
+    // Aba 2: Resumo por Empresa
+    const resumoEmpresa = {};
+    jobs.forEach(j => {
+      if (!resumoEmpresa[j.empresa]) {
+        resumoEmpresa[j.empresa] = { 'Empresa': j.empresa, 'Total Cachê': 0, 'Total Diária': 0, 'Total Extras': 0, 'Total Bruto': 0, 'Total NF': 0, 'Total Líquido': 0, 'Qtd Jobs': 0 };
+      }
+      resumoEmpresa[j.empresa]['Total Cachê'] += j.cache;
+      resumoEmpresa[j.empresa]['Total Diária'] += j.diaria;
+      resumoEmpresa[j.empresa]['Total Extras'] += j.extra;
+      resumoEmpresa[j.empresa]['Total Bruto'] += j.total;
+      resumoEmpresa[j.empresa]['Total NF'] += (j.valorNF || 0);
+      resumoEmpresa[j.empresa]['Total Líquido'] += (j.total - (j.valorNF || 0));
+      resumoEmpresa[j.empresa]['Qtd Jobs'] += 1;
+    });
+    const ws2 = XLSX.utils.json_to_sheet(Object.values(resumoEmpresa));
+    XLSX.utils.book_append_sheet(wb, ws2, 'Resumo por Empresa');
+    
+    // Aba 3: Resumo Mensal (para gráficos)
+    const resumoMensal = {};
     jobs.forEach(j => {
       const [ano, mes] = j.data.split('-');
-      const chave = `${j.empresa}|${ano}-${mes}`;
-      if (!grupos[chave]) grupos[chave] = { empresa: j.empresa, mes: `${mes}/${ano}`, jobs: [] };
-      grupos[chave].jobs.push(j);
+      const chave = `${ano}-${mes}`;
+      if (!resumoMensal[chave]) {
+        resumoMensal[chave] = { 'Mês': chave, 'Total Bruto': 0, 'Total NF': 0, 'Total Líquido': 0 };
+      }
+      resumoMensal[chave]['Total Bruto'] += j.total;
+      resumoMensal[chave]['Total NF'] += (j.valorNF || 0);
+      resumoMensal[chave]['Total Líquido'] += (j.total - (j.valorNF || 0));
     });
-
-    let csv = '\uFEFF';
-    csv += 'EMPRESA;MÊS;DATA;JOB;INÍCIO;FIM;HORAS;CACHÊ;DIÁRIA;EXTRAS;TOTAL BRUTO;NF;LÍQUIDO;PREVISÃO PAGTO\n';
-    let totalGeral = 0;
-    Object.keys(grupos).forEach(key => {
-      const grupo = grupos[key];
-      csv += `\n"${grupo.empresa}";"${grupo.mes}";;;;TOTAL MÊS:;;;;;;\n`;
-      let subTotal = 0;
-      grupo.jobs.forEach(j => {
-        const liquido = j.total - (j.valorNF || 0);
-        csv += `${j.empresa};${grupo.mes};${j.data};${j.job};${j.inicio};${j.fim};${formatarHoras(j.horas)};${j.cache.toFixed(2)};${j.diaria.toFixed(2)};${j.extra.toFixed(2)};${j.total.toFixed(2)};${(j.valorNF||0).toFixed(2)};${liquido.toFixed(2)};${j.previsaoPagamento}\n`;
-        subTotal += j.total;
-        totalGeral += j.total;
+    const dadosMensais = Object.values(resumoMensal).sort((a,b) => a['Mês'].localeCompare(b['Mês']));
+    const ws3 = XLSX.utils.json_to_sheet(dadosMensais);
+    XLSX.utils.book_append_sheet(wb, ws3, 'Resumo Mensal');
+    
+    // Aba 4: Gráfico (usando dados mensais)
+    if (dadosMensais.length > 0) {
+      const ws4 = XLSX.utils.aoa_to_sheet([['Mês', 'Total Bruto', 'Total Líquido']]);
+      dadosMensais.forEach(d => {
+        XLSX.utils.sheet_add_aoa(ws4, [[d['Mês'], d['Total Bruto'], d['Total Líquido']]], {origin: -1});
       });
-      csv += `;;;;;TOTAL ${grupo.empresa}:;${subTotal.toFixed(2)};;;;\n`;
-    });
-    csv += `\nTOTAL GERAL;${totalGeral.toFixed(2)};;;;\n`;
-
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `fader_livre_export_${new Date().toISOString().split('T')[0]}.csv`;
-    link.click();
-    alert('Exportação concluída!');
+      XLSX.utils.book_append_sheet(wb, ws4, 'Dados Gráfico');
+    }
+    
+    XLSX.writeFile(wb, `fader_livre_export_${new Date().toISOString().split('T')[0]}.xlsx`);
+    alert('Exportação Excel concluída!');
   };
 }
 
 // ============================================================
-//  BACKUP NA NUVEM (envia para servidor PHP)
+//  WHATSAPP (FORMATO MELHORADO)
+// ============================================================
+function enviarRelatorioWhatsApp() {
+  const tx = db.transaction('jobs','readonly');
+  tx.objectStore('jobs').getAll().onsuccess = function(e) {
+    const jobs = e.target.result;
+    const busca = document.getElementById('inputBusca').value.trim().toUpperCase();
+    const buscaAtiva = document.getElementById('searchBox').style.display === 'block' && busca.length > 0;
+    const filtrados = jobs.filter(j => {
+      const status = obterStatusPeriodo(j);
+      if (filtroVisualizacao === 'aberto' && status !== 'aberto') return false;
+      if (filtroVisualizacao === 'arquivado' && status === 'aberto') return false;
+      if (buscaAtiva) {
+        const texto = `${j.empresa} ${j.job} ${j.data}`.toUpperCase();
+        return texto.includes(busca);
+      }
+      return true;
+    }).sort((a,b) => new Date(b.data) - new Date(a.data));
+
+    if (!filtrados.length) { alert('Nenhum registro para enviar.'); return; }
+    
+    let msg = '*FADER LIVRE - EXTRATO CACHÊ CONTROL*\n';
+    msg += '═══════════════════════════\n\n';
+    let totalGeral = 0;
+    
+    filtrados.forEach(j => {
+      msg += `*Empresa:* ${j.empresa}\n`;
+      msg += `*Data:* ${formatarDataComDiaSemana(j.data)}\n`;
+      msg += `*Job:* ${j.job}\n`;
+      msg += `*Horários:* ${j.inicio}h às ${j.fim}h\n`;
+      msg += `*Cachê:* ${formatarValor(j.cache)}\n`;
+      if (j.extra > 0) {
+        msg += `*Horas Extras:* ${formatarValor(j.extra)}\n`;
+      }
+      msg += `*Diária/Logística:* ${formatarValor(j.diaria)}\n`;
+      msg += `*Total:* ${formatarValor(j.total)}\n`;
+      msg += `*Previsão de Pagamento:* ${j.previsaoPagamento}\n`;
+      msg += '───────────────────────────\n\n';
+      totalGeral += j.total;
+    });
+    
+    msg += '═══════════════════════════\n';
+    msg += `*TOTAL GERAL:* ${formatarValor(totalGeral)}\n`;
+    msg += `*Relatório:* ${new Date().toLocaleDateString('pt-BR')}`;
+    
+    window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg), '_blank');
+  };
+}
+
+// ============================================================
+//  BACKUP E RESTAURAÇÃO
 // ============================================================
 async function enviarBackupNuvem() {
   if (!db) { alert("Banco não inicializado."); return; }
@@ -1607,9 +2066,7 @@ async function enviarBackupNuvem() {
     };
   };
 }
-// ============================================================
-//  BACKUP LOCAL
-// ============================================================
+
 function fazerBackup() {
   const txJ = db.transaction('jobs','readonly');
   txJ.objectStore('jobs').getAll().onsuccess = function(e_jobs) {
@@ -1627,6 +2084,7 @@ function fazerBackup() {
     };
   };
 }
+
 document.getElementById('restoreFile').addEventListener('change', function(e) {
   const arquivo = e.target.files[0];
   if (!arquivo) return;
@@ -1669,43 +2127,6 @@ function executarBackupAutomatico() {
       const empresas = e_empresas.target.result;
       localStorage.setItem('fader_livre_auto_backup', JSON.stringify({ jobs, empresas, dataBackup: new Date().toISOString() }));
     };
-  };
-}
-
-// ============================================================
-//  WHATSAPP
-// ============================================================
-function enviarRelatorioWhatsApp() {
-  const tx = db.transaction('jobs','readonly');
-  tx.objectStore('jobs').getAll().onsuccess = function(e) {
-    const jobs = e.target.result;
-    const busca = document.getElementById('inputBusca').value.trim().toUpperCase();
-    const buscaAtiva = document.getElementById('searchBox').style.display === 'block' && busca.length > 0;
-    const filtrados = jobs.filter(j => {
-      const status = obterStatusPeriodo(j);
-      if (filtroVisualizacao === 'aberto' && status !== 'aberto') return false;
-      if (filtroVisualizacao === 'arquivado' && status === 'aberto') return false;
-      if (buscaAtiva) {
-        const texto = `${j.empresa} ${j.job} ${j.data}`.toUpperCase();
-        return texto.includes(busca);
-      }
-      return true;
-    }).sort((a,b) => new Date(b.data) - new Date(a.data));
-
-    if (!filtrados.length) { alert('Nenhum registro para enviar.'); return; }
-    let msg = 'FADER LIVRE - EXTRATO CACHÊ CONTROL\n--------------------------------------\n\n';
-    let total = 0;
-    filtrados.forEach(j => {
-      msg += `*${j.empresa}* - ${formatarDataComDiaSemana(j.data)}\n`;
-      msg += `Job: ${j.job}\nCachê: R$ ${j.cache.toFixed(2)}\nDiária: R$ ${j.diaria.toFixed(2)}\n`;
-      msg += `Extras: R$ ${j.extra.toFixed(2)}\nTotal: R$ ${j.total.toFixed(2)}\n`;
-      msg += `Previsão: ${j.previsaoPagamento}\n\n`;
-      total += j.total;
-    });
-    msg += '--------------------------------------\n';
-    msg += `*TOTAL GERAL: R$ ${total.toFixed(2)}*\n`;
-    msg += `Relatório: ${new Date().toLocaleDateString('pt-BR')}`;
-    window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg), '_blank');
   };
 }
 
@@ -1786,20 +2207,21 @@ window.addEventListener('focus', checkDuePayments);
 //  INICIALIZAÇÃO AUTOMÁTICA
 // ============================================================
 (function() {
+  const splash = document.getElementById('splashScreen');
+  
   const status = sistemaLicenca.verificarExpiracaoProxima();
   if (status.alerta) {
-    document.getElementById('telaValidacao').style.display = 'flex';
-    document.getElementById('appContent').style.display = 'none';
+    setTimeout(() => {
+      if (splash) splash.style.display = 'none';
+      document.getElementById('telaValidacao').style.display = 'flex';
+    }, 2800);
   } else {
-    document.getElementById('telaValidacao').style.display = 'none';
-    const senha = localStorage.getItem('senha_cache_control');
-    if (senha) {
+    setTimeout(() => {
+      if (splash) splash.style.display = 'none';
+      document.getElementById('telaValidacao').style.display = 'none';
       document.getElementById('loginScreen').style.display = 'flex';
       document.getElementById('appContent').style.display = 'none';
-    } else {
-      document.getElementById('loginScreen').style.display = 'flex';
-      document.getElementById('appContent').style.display = 'none';
-    }
+    }, 2800);
   }
 })();
 </script>
