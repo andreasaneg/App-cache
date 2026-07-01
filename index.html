@@ -1573,33 +1573,37 @@ function baixarExcelCompleto() {
 // ============================================================
 //  BACKUP NA NUVEM (envia para servidor PHP)
 // ============================================================
-async function enviarBackupNuvem() {
-  if (!db) { alert("Banco não inicializado."); return; }
-  db.transaction('jobs','readonly').objectStore('jobs').getAll().onsuccess = function(ej) {
-    const jobs = ej.target.result;
-    db.transaction('empresas','readonly').objectStore('empresas').getAll().onsuccess = function(ee) {
-      const empresas = ee.target.result;
-      const pacote = { jobs, empresas, exportadoEm: new Date().toISOString(), versaoBanco: db.version };
-      const blob = new Blob([JSON.stringify(pacote, null, 2)], { type: 'application/json' });
-      const arquivo = new File([blob], `fader_livre_backup_${new Date().toISOString().split('T')[0]}.json`, { type: 'application/json' });
-      
-      if (navigator.canShare && navigator.canShare({ files: [arquivo] })) {
-        navigator.share({ files: [arquivo], title: 'Backup Fader Livre' })
-          .then(() => {
-            localStorage.setItem('data_ultimo_backup', new Date().toLocaleDateString('pt-BR'));
-            alert("Backup iniciado!");
-          }).catch(() => {});
+function enviarBackupNuvem() {
+  if (!db) return;
+  // Coleta dados
+  const txJ = db.transaction('jobs','readonly');
+  txJ.objectStore('jobs').getAll().onsuccess = function(e_jobs) {
+    const jobs = e_jobs.target.result;
+    const txE = db.transaction('empresas','readonly');
+    txE.objectStore('empresas').getAll().onsuccess = function(e_empresas) {
+      const empresas = e_empresas.target.result;
+      const pacote = { jobs, empresas, exportadoEm: new Date().toISOString() };
+      const json = JSON.stringify(pacote);
+      // Envia para um endpoint PHP (exemplo)
+      // Se não tiver servidor, faz download forçado como alternativa
+      if (confirm('Deseja enviar para a nuvem (servidor) ou baixar localmente?')) {
+        // Tentar enviar via fetch
+        const url = 'https://seudominio.com/backup_cloud.php'; // Substitua pela URL real
+        fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: json
+        })
+        .then(res => res.json())
+        .then(data => {
+          alert(data.message || 'Backup enviado com sucesso!');
+        })
+        .catch(err => {
+          alert('Falha ao enviar para a nuvem. Fazendo download local como fallback.');
+          fazerBackup();
+        });
       } else {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = arquivo.name;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        localStorage.setItem('data_ultimo_backup', new Date().toLocaleDateString('pt-BR'));
-        alert("Backup baixado localmente (.JSON)!");
+        fazerBackup();
       }
     };
   };
