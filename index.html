@@ -95,9 +95,11 @@ body {
   position: relative;
 }
 .logo-img {
-  height: 50px;
   display: block;
   margin: 0 auto 5px;
+  max-width: 100%;
+  height: auto;
+  max-height: 50px;
   object-fit: contain;
 }
 .header p.subtitle {
@@ -153,7 +155,7 @@ body {
   margin-bottom: 4px;
   letter-spacing: 0.5px;
   color: var(--text-secondary);
-  padding-right: 35px; /* espaço para o botão */
+  padding-right: 35px;
 }
 .total-geral { font-size: 1.6em; font-weight: 900; color: var(--blue); }
 .total-nf { font-size: 1.6em; font-weight: 900; color: var(--danger); }
@@ -459,9 +461,12 @@ input:checked + .slider:before {
   border: 1px solid var(--border-color);
 }
 .modal .logo-img {
-  height: 60px;
   display: block;
   margin: 0 auto 10px;
+  max-width: 100%;
+  height: auto;
+  max-height: 60px;
+  object-fit: contain;
 }
 .modal h2 {
   color: var(--text);
@@ -485,6 +490,12 @@ input:checked + .slider:before {
   .input-group { padding: 12px; }
   .history-card { padding: 12px; }
   .btn { padding: 12px; font-size: 0.8em; }
+  .logo-img {
+    max-height: 40px;
+  }
+  .modal .logo-img {
+    max-height: 48px;
+  }
 }
 @media (max-width: 360px) {
   .dashboard { grid-template-columns: 1fr 1fr; }
@@ -919,14 +930,12 @@ function copiarPIX() {
 function inicializarApp() {
   const status = sistemaLicenca.verificarExpiracaoProxima();
   if (status.alerta) {
-    // não deve ocorrer, mas se acontecer mostra validação
     document.getElementById('telaValidacao').style.display = 'flex';
     return;
   }
   document.getElementById('telaValidacao').style.display = 'none';
   document.getElementById('appContent').style.display = 'block';
 
-  // Tema
   const savedTheme = localStorage.getItem('app_theme') || 'dark';
   if (savedTheme === 'light') {
     document.body.classList.add('light-mode');
@@ -935,17 +944,14 @@ function inicializarApp() {
     document.body.classList.remove('light-mode');
     document.getElementById('themeToggle').checked = false;
   }
-  // Horas base
   const savedBase = localStorage.getItem('base_hours');
   if (savedBase) { BASE_HOURS = parseFloat(savedBase); document.getElementById('baseHoursInput').value = BASE_HOURS; }
-  // Notificação
   const savedNotif = localStorage.getItem('notification_check_hour');
   if (savedNotif) {
     document.getElementById('notificationCheckHour').value = savedNotif;
     const [h,m] = savedNotif.split(':').map(Number);
     NOTIFICATION_CHECK_HOUR_FLOAT = h + m/60;
   }
-  // Data
   try { document.getElementById('dataJob').value = new Date().toISOString().split('T')[0]; } catch(e) {}
   inicializarDB();
   executarBackupAutomatico();
@@ -1002,7 +1008,6 @@ function formatarDataComDiaSemana(dataISO) {
 }
 function ultimoDiaDoMes(ano, mes) { return new Date(ano, mes+1, 0).getDate(); }
 
-// Formata horas no formato 13h:02m
 function formatarHoras(horasDecimais) {
   const horas = Math.floor(horasDecimais);
   const minutos = Math.round((horasDecimais - horas) * 60);
@@ -1534,7 +1539,6 @@ function baixarExcelCompleto() {
   tx.objectStore('jobs').getAll().onsuccess = function(e) {
     const jobs = e.target.result;
     if (!jobs.length) { alert('Nenhum job para exportar.'); return; }
-    // Agrupar por empresa e mês
     const grupos = {};
     jobs.forEach(j => {
       const [ano, mes] = j.data.split('-');
@@ -1543,12 +1547,11 @@ function baixarExcelCompleto() {
       grupos[chave].jobs.push(j);
     });
 
-    let csv = '\uFEFF'; // BOM para Excel
+    let csv = '\uFEFF';
     csv += 'EMPRESA;MÊS;DATA;JOB;INÍCIO;FIM;HORAS;CACHÊ;DIÁRIA;EXTRAS;TOTAL BRUTO;NF;LÍQUIDO;PREVISÃO PAGTO\n';
     let totalGeral = 0;
     Object.keys(grupos).forEach(key => {
       const grupo = grupos[key];
-      // Linha de cabeçalho do grupo
       csv += `\n"${grupo.empresa}";"${grupo.mes}";;;;TOTAL MÊS:;;;;;;\n`;
       let subTotal = 0;
       grupo.jobs.forEach(j => {
@@ -1573,37 +1576,33 @@ function baixarExcelCompleto() {
 // ============================================================
 //  BACKUP NA NUVEM (envia para servidor PHP)
 // ============================================================
-function enviarBackupNuvem() {
-  if (!db) return;
-  // Coleta dados
-  const txJ = db.transaction('jobs','readonly');
-  txJ.objectStore('jobs').getAll().onsuccess = function(e_jobs) {
-    const jobs = e_jobs.target.result;
-    const txE = db.transaction('empresas','readonly');
-    txE.objectStore('empresas').getAll().onsuccess = function(e_empresas) {
-      const empresas = e_empresas.target.result;
-      const pacote = { jobs, empresas, exportadoEm: new Date().toISOString() };
-      const json = JSON.stringify(pacote);
-      // Envia para um endpoint PHP (exemplo)
-      // Se não tiver servidor, faz download forçado como alternativa
-      if (confirm('Deseja enviar para a nuvem (servidor) ou baixar localmente?')) {
-        // Tentar enviar via fetch
-        const url = 'https://seudominio.com/backup_cloud.php'; // Substitua pela URL real
-        fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: json
-        })
-        .then(res => res.json())
-        .then(data => {
-          alert(data.message || 'Backup enviado com sucesso!');
-        })
-        .catch(err => {
-          alert('Falha ao enviar para a nuvem. Fazendo download local como fallback.');
-          fazerBackup();
-        });
+async function enviarBackupNuvem() {
+  if (!db) { alert("Banco não inicializado."); return; }
+  db.transaction('jobs','readonly').objectStore('jobs').getAll().onsuccess = function(ej) {
+    const jobs = ej.target.result;
+    db.transaction('empresas','readonly').objectStore('empresas').getAll().onsuccess = function(ee) {
+      const empresas = ee.target.result;
+      const pacote = { jobs, empresas, exportadoEm: new Date().toISOString(), versaoBanco: db.version };
+      const blob = new Blob([JSON.stringify(pacote, null, 2)], { type: 'application/json' });
+      const arquivo = new File([blob], `fader_livre_backup_${new Date().toISOString().split('T')[0]}.json`, { type: 'application/json' });
+      
+      if (navigator.canShare && navigator.canShare({ files: [arquivo] })) {
+        navigator.share({ files: [arquivo], title: 'Backup Fader Livre' })
+          .then(() => {
+            localStorage.setItem('data_ultimo_backup', new Date().toLocaleDateString('pt-BR'));
+            alert("Backup iniciado!");
+          }).catch(() => {});
       } else {
-        fazerBackup();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = arquivo.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        localStorage.setItem('data_ultimo_backup', new Date().toLocaleDateString('pt-BR'));
+        alert("Backup baixado localmente (.JSON)!");
       }
     };
   };
